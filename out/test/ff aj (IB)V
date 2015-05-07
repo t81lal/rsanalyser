@@ -1,0 +1,1039 @@
+ff aj (IB)VL1
+    iload 1
+    sipush 240
+    iand
+    istore 3
+    goto L2
+L3
+    iload 6
+    bipush 64
+    if_icmplt L4
+    goto L5
+L6
+    iload 5
+    ifne L7
+    iload 2
+    iconst_0
+    if_icmpeq L8
+    return
+L9
+    iload 1
+    bipush 8
+    ishr
+    bipush 127
+    iand
+    istore 5
+    goto L10
+L11
+    aload 0
+    getfield ff s:[I
+    iload 4
+    iload 6
+    bipush 7
+    ishl
+    aload 0
+    getfield ff s:[I
+    iload 4
+    iaload
+    sipush -16257
+    iand
+    iadd
+    iastore
+    goto L12
+L13
+    aload 0
+    iload 4
+    iload 5
+    iload 6
+    ldc 328524993 (java.lang.Integer)
+    invokevirtual ff q:(IIII)V
+L14
+    return
+L15
+    iload 3
+    sipush 144
+    if_icmpne L16
+    goto L17
+L18
+    iload 5
+    bipush 33
+    if_icmpne L19
+    iload 2
+    iconst_0
+    if_icmpeq L20
+    return
+L21
+    iload 1
+    bipush 8
+    ishr
+    bipush 127
+    iand
+    istore 5
+L22
+    iload 1
+    bipush 16
+    ishr
+    bipush 127
+    iand
+    istore 6
+L23
+    iload 6
+    ifle L24
+    iload 2
+    iconst_0
+    if_icmpeq L25
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L26
+    iload 1
+    bipush 8
+    ishr
+    bipush 127
+    iand
+    istore 5
+    goto L27
+L28
+    iload 1
+    bipush 15
+    iand
+    istore 4
+    goto L9
+L29
+    return
+L16
+    iload 3
+    sipush 160
+    if_icmpne L30
+    iload 2
+    iconst_0
+    if_icmpeq L31
+    return
+L32
+    bipush 64
+    iload 5
+    if_icmpne L33
+    iload 2
+    iconst_0
+    if_icmpeq L34
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L2
+    sipush 128
+    iload 3
+    if_icmpne L15
+    iload 2
+    iconst_0
+    if_icmpeq L28
+    return
+L35
+    iload 1
+    bipush 16
+    ishr
+    bipush 127
+    iand
+    istore 6
+L36
+    aload 0
+    iload 4
+    iload 5
+    iload 6
+    bipush -3
+    invokevirtual ff d:(IIIB)V
+L37
+    return
+L31
+    iload 1
+    bipush 15
+    iand
+    istore 4
+    goto L38
+L39
+    iload 1
+    bipush 15
+    iand
+    istore 4
+    goto L26
+L40
+    iload 1
+    sipush 255
+    iand
+    istore 3
+    goto L41
+L42
+    iload 1
+    bipush 8
+    ishr
+    bipush 127
+    iand
+    istore 5
+    goto L43
+L44
+    aload 0
+    iload 4
+    iload 5
+    iconst_1
+    invokevirtual ff b:(IIB)V
+    goto L45
+L46
+    iload 3
+    sipush 224
+    if_icmpne L40
+    iload 2
+    iconst_0
+    if_icmpeq L47
+    return
+L8
+    aload 0
+    getfield ff g:[I
+    iload 4
+    iload 6
+    bipush 14
+    ishl
+    aload 0
+    getfield ff g:[I
+    iload 4
+    iaload
+    ldc -2080769 (java.lang.Integer)
+    iand
+    iadd
+    iastore
+    goto L7
+L48
+    aload 0
+    getfield ff g:[I
+    iload 4
+    iload 6
+    bipush 7
+    ishl
+    aload 0
+    getfield ff g:[I
+    iload 4
+    iaload
+    sipush -16257
+    iand
+    iadd
+    iastore
+L49
+    iconst_1
+    iload 5
+    if_icmpne L18
+    iload 2
+    iconst_0
+    if_icmpeq L50
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L50
+    aload 0
+    getfield ff h:[I
+    iload 4
+    iload 6
+    bipush 7
+    ishl
+    aload 0
+    getfield ff h:[I
+    iload 4
+    iaload
+    sipush -16257
+    iand
+    iadd
+    iastore
+    goto L18
+L51
+    aload 0
+    getfield ff c:[I
+    iload 4
+    iload 6
+    aload 0
+    getfield ff c:[I
+    iload 4
+    iaload
+    bipush -128
+    iand
+    iadd
+    iastore
+    goto L52
+L20
+    aload 0
+    getfield ff h:[I
+    iload 4
+    aload 0
+    getfield ff h:[I
+    iload 4
+    iaload
+    bipush -128
+    iand
+    iload 6
+    iadd
+    iastore
+    goto L19
+L53
+    iload 1
+    bipush 15
+    iand
+    istore 4
+    goto L54
+L55
+    iload 5
+    bipush 7
+    if_icmpne L56
+    iload 2
+    iconst_0
+    if_icmpeq L57
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    iload 5
+    bipush 37
+    if_icmpne L55
+    iload 2
+    iconst_0
+    if_icmpeq L58
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L58
+    aload 0
+    getfield ff s:[I
+    iload 4
+    aload 0
+    getfield ff s:[I
+    iload 4
+    iaload
+    bipush -128
+    iand
+    iload 6
+    iadd
+    iastore
+    goto L55
+L59
+    aload 0
+    iload 4
+    iload 6
+    aload 0
+    getfield ff v:[I
+    iload 4
+    iaload
+    bipush -128
+    iand
+    iadd
+    ldc -1775449003 (java.lang.Integer)
+    invokevirtual ff ah:(III)V
+    goto L60
+L57
+    aload 0
+    getfield ff c:[I
+    iload 4
+    aload 0
+    getfield ff c:[I
+    iload 4
+    iaload
+    sipush -16257
+    iand
+    iload 6
+    bipush 7
+    ishl
+    iadd
+    iastore
+L56
+    bipush 39
+    iload 5
+    if_icmpne L52
+    iload 2
+    iconst_0
+    if_icmpeq L51
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L43
+    aload 0
+    iload 4
+    iload 5
+    aload 0
+    getfield ff g:[I
+    iload 4
+    iaload
+    iadd
+    ldc 893511267 (java.lang.Integer)
+    invokevirtual ff t:(III)V
+    goto L61
+L52
+    iload 5
+    bipush 10
+    if_icmpne L62
+    iload 2
+    iconst_0
+    if_icmpeq L63
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L64
+    return
+L62
+    bipush 42
+    iload 5
+    if_icmpne L65
+    iload 2
+    iconst_0
+    if_icmpeq L66
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L66
+    aload 0
+    getfield ff u:[I
+    iload 4
+    iload 6
+    aload 0
+    getfield ff u:[I
+    iload 4
+    iaload
+    bipush -128
+    iand
+    iadd
+    iastore
+L65
+    iload 5
+    bipush 11
+    if_icmpne L67
+    iload 2
+    iconst_0
+    if_icmpeq L68
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L30
+    sipush 176
+    iload 3
+    if_icmpne L69
+    iload 2
+    iconst_0
+    if_icmpeq L39
+    return
+L10
+    iload 1
+    bipush 16
+    ishr
+    bipush 127
+    iand
+    istore 6
+    goto L13
+L70
+    aload 0
+    getfield ff i:[I
+    iload 4
+    aload 0
+    getfield ff i:[I
+    iload 4
+    iaload
+    bipush -128
+    iand
+    iload 6
+    iadd
+    iastore
+    goto L32
+L71
+    aload 0
+    getfield ff b:[I
+    iload 4
+    iaload
+    istore 7
+    goto L72
+L34
+    iload 6
+    bipush 64
+    if_icmplt L73
+    iload 2
+    iconst_0
+    if_icmpeq L74
+    return
+L74
+    aload 0
+    getfield ff d:[I
+    iload 4
+    dup2
+    iaload
+    iconst_1
+    ior
+    iastore
+    goto L33
+L75
+    bipush 17
+    iload 5
+    if_icmpne L76
+    goto L77
+L33
+    iload 5
+    bipush 65
+    if_icmpne L78
+    goto L79
+L72
+    sipush 16384
+    iload 7
+    if_icmpne L80
+    iload 2
+    iconst_0
+    if_icmpeq L81
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L82
+    aload 0
+    getfield ff d:[I
+    iload 4
+    dup2
+    iaload
+    iconst_2
+    ior
+    iastore
+    goto L78
+L83
+    aload 0
+    iload 4
+    ldc -1410994146 (java.lang.Integer)
+    invokevirtual ff ae:(II)V
+L84
+    aload 0
+    getfield ff d:[I
+    iload 4
+    dup2
+    iaload
+    bipush -3
+    iand
+    iastore
+L78
+    iload 5
+    bipush 99
+    if_icmpne L85
+    aload 0
+    getfield ff b:[I
+    iload 4
+    aload 0
+    getfield ff b:[I
+    iload 4
+    iaload
+    bipush 127
+    iand
+    iload 6
+    bipush 7
+    ishl
+    iadd
+    iastore
+    goto L85
+L7
+    bipush 32
+    iload 5
+    if_icmpne L49
+    iload 2
+    iconst_0
+    if_icmpeq L48
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L86
+    aload 0
+    getfield ff b:[I
+    iload 4
+    aload 0
+    getfield ff b:[I
+    iload 4
+    iaload
+    sipush 16256
+    iand
+    iload 6
+    iadd
+    iastore
+L87
+    bipush 101
+    iload 5
+    if_icmpne L88
+    iload 2
+    iconst_0
+    if_icmpeq L89
+    return
+L89
+    aload 0
+    getfield ff b:[I
+    iload 4
+    iload 6
+    bipush 7
+    ishl
+    sipush 16384
+    aload 0
+    getfield ff b:[I
+    iload 4
+    iaload
+    bipush 127
+    iand
+    iadd
+    iadd
+    iastore
+L88
+    bipush 100
+    iload 5
+    if_icmpne L90
+    iload 2
+    iconst_0
+    if_icmpeq L91
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L91
+    aload 0
+    getfield ff b:[I
+    iload 4
+    sipush 16384
+    aload 0
+    getfield ff b:[I
+    iload 4
+    iaload
+    sipush 16256
+    iand
+    iadd
+    iload 6
+    iadd
+    iastore
+L90
+    iload 5
+    bipush 120
+    if_icmpne L92
+    iload 2
+    iconst_0
+    if_icmpeq L93
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L93
+    aload 0
+    iload 4
+    ldc -244131776 (java.lang.Integer)
+    invokevirtual ff n:(II)V
+L92
+    bipush 121
+    iload 5
+    if_icmpne L94
+    aload 0
+    iload 4
+    ldc 1300480066 (java.lang.Integer)
+    invokevirtual ff aw:(II)V
+L94
+    bipush 123
+    iload 5
+    if_icmpne L95
+    iload 2
+    iconst_0
+    if_icmpeq L96
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L85
+    bipush 98
+    iload 5
+    if_icmpne L87
+    iload 2
+    iconst_0
+    if_icmpeq L86
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L95
+    iload 5
+    bipush 6
+    if_icmpne L97
+    iload 2
+    iconst_0
+    if_icmpeq L98
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L98
+    aload 0
+    getfield ff b:[I
+    iload 4
+    iaload
+    istore 7
+L99
+    sipush 16384
+    iload 7
+    if_icmpne L97
+    goto L100
+L27
+    iload 1
+    bipush 16
+    ishr
+    bipush 127
+    iand
+    istore 6
+    goto L6
+L97
+    iload 5
+    bipush 38
+    if_icmpne L80
+    iload 2
+    iconst_0
+    if_icmpeq L71
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L101
+    bipush 48
+    iload 5
+    if_icmpne L102
+    iload 2
+    iconst_0
+    if_icmpeq L103
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L67
+    iload 5
+    bipush 43
+    if_icmpne L32
+    iload 2
+    iconst_0
+    if_icmpeq L70
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L104
+    aload 0
+    getfield ff d:[I
+    iload 4
+    dup2
+    iaload
+    bipush -5
+    iand
+    iastore
+    goto L75
+L80
+    bipush 16
+    iload 5
+    if_icmpne L101
+    iload 2
+    iconst_0
+    if_icmpeq L105
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L105
+    aload 0
+    getfield ff n:[I
+    iload 4
+    iload 6
+    bipush 7
+    ishl
+    aload 0
+    getfield ff n:[I
+    iload 4
+    iaload
+    sipush -16257
+    iand
+    iadd
+    iastore
+    goto L101
+L24
+    aload 0
+    iload 4
+    iload 5
+    bipush 64
+    ldc -857650161 (java.lang.Integer)
+    invokevirtual ff q:(IIII)V
+    goto L29
+L103
+    aload 0
+    getfield ff n:[I
+    iload 4
+    aload 0
+    getfield ff n:[I
+    iload 4
+    iaload
+    bipush -128
+    iand
+    iload 6
+    iadd
+    iastore
+L102
+    iload 5
+    bipush 81
+    if_icmpne L75
+    iload 2
+    iconst_0
+    if_icmpeq L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L73
+    aload 0
+    getfield ff d:[I
+    iload 4
+    dup2
+    iaload
+    bipush -2
+    iand
+    iastore
+    goto L33
+L5
+    aload 0
+    getfield ff d:[I
+    iload 4
+    dup2
+    iaload
+    iconst_4
+    ior
+    iastore
+    goto L75
+L4
+    aload 0
+    iload 4
+    bipush 7
+    invokevirtual ff ag:(IB)V
+    goto L104
+L100
+    aload 0
+    getfield ff x:[I
+    iload 4
+    iload 6
+    bipush 7
+    ishl
+    aload 0
+    getfield ff x:[I
+    iload 4
+    iaload
+    sipush -16257
+    iand
+    iadd
+    iastore
+    goto L97
+L17
+    iload 1
+    bipush 15
+    iand
+    istore 4
+    goto L21
+L77
+    aload 0
+    iload 4
+    aload 0
+    getfield ff v:[I
+    iload 4
+    iaload
+    sipush -16257
+    iand
+    iload 6
+    bipush 7
+    ishl
+    iadd
+    ldc -1984732399 (java.lang.Integer)
+    invokevirtual ff ah:(III)V
+L76
+    bipush 49
+    iload 5
+    if_icmpne L60
+    iload 2
+    iconst_0
+    if_icmpeq L59
+    return
+L19
+    iconst_5
+    iload 5
+    if_icmpne L12
+    iload 2
+    iconst_0
+    if_icmpeq L11
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L60
+    return
+L69
+    iload 3
+    sipush 192
+    if_icmpne L106
+    iload 2
+    iconst_0
+    if_icmpeq L107
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L107
+    iload 1
+    bipush 15
+    iand
+    istore 4
+    goto L42
+L38
+    iload 1
+    bipush 8
+    ishr
+    bipush 127
+    iand
+    istore 5
+    goto L35
+L68
+    aload 0
+    getfield ff i:[I
+    iload 4
+    iload 6
+    bipush 7
+    ishl
+    aload 0
+    getfield ff i:[I
+    iload 4
+    iaload
+    sipush -16257
+    iand
+    iadd
+    iastore
+    goto L67
+L61
+    return
+L106
+    sipush 208
+    iload 3
+    if_icmpne L46
+    iload 2
+    iconst_0
+    if_icmpeq L53
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L63
+    aload 0
+    getfield ff u:[I
+    iload 4
+    aload 0
+    getfield ff u:[I
+    iload 4
+    iaload
+    sipush -16257
+    iand
+    iload 6
+    bipush 7
+    ishl
+    iadd
+    iastore
+    goto L62
+L54
+    iload 1
+    bipush 8
+    ishr
+    bipush 127
+    iand
+    istore 5
+    goto L44
+L96
+    aload 0
+    iload 4
+    bipush 24
+    invokevirtual ff am:(IB)V
+    goto L95
+L45
+    return
+L79
+    iload 6
+    bipush 64
+    if_icmplt L83
+    iload 2
+    iconst_0
+    if_icmpeq L82
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L47
+    iload 1
+    bipush 15
+    iand
+    istore 4
+L108
+    iload 1
+    bipush 8
+    ishr
+    bipush 127
+    iand
+    iload 1
+    bipush 9
+    ishr
+    sipush 16256
+    iand
+    iadd
+    istore 5
+L109
+    aload 0
+    iload 4
+    iload 5
+    ldc -459151962 (java.lang.Integer)
+    invokevirtual ff x:(III)V
+L110
+    return
+L25
+    aload 0
+    iload 4
+    iload 5
+    iload 6
+    ldc -213146627 (java.lang.Integer)
+    invokevirtual ff z:(IIII)V
+    goto L29
+L41
+    sipush 255
+    iload 3
+    if_icmpne L111
+L112
+    aload 0
+    ldc -174197406 (java.lang.Integer)
+    invokevirtual ff au:(I)V
+    goto L64
+L81
+    aload 0
+    getfield ff x:[I
+    iload 4
+    iload 6
+    aload 0
+    getfield ff x:[I
+    iload 4
+    iaload
+    bipush -128
+    iand
+    iadd
+    iastore
+    goto L80
+L111
+    return
+L113
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ff.aj(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

@@ -1,0 +1,346 @@
+ec l (III)IL1
+    ldc 1889159231 (java.lang.Integer)
+    aload 0
+    getfield ec a:I
+    imul
+    istore 4
+    goto L2
+L3
+    aload 0
+    getfield ec e:[J
+    aload 0
+    getfield ec w:I
+    ldc -1940715451 (java.lang.Integer)
+    imul
+    ldc -8989827805685905469 (java.lang.Long)
+    aload 0
+    getfield ec c:J
+    lmul
+    lastore
+    goto L4
+L5
+    aload 0
+    ldc -1488940076 (java.lang.Integer)
+    putfield ec a:I
+    goto L6
+L7
+    aload 0
+    iload 4
+    ldc -1350719553 (java.lang.Integer)
+    imul
+    putfield ec a:I
+    goto L8
+L9
+    aload 0
+    ldc -1484487313 (java.lang.Integer)
+    invokestatic ab e:(I)J
+    ldc 5715551850543456491 (java.lang.Long)
+    lmul
+    putfield ec c:J
+    goto L10
+L11
+    aload 0
+    ldc 1726132099 (java.lang.Integer)
+    iload 1
+    imul
+    putfield ec l:I
+    goto L3
+L12
+    iload 6
+    ireturn
+L8
+    aload 0
+    iload 5
+    ldc 1726132099 (java.lang.Integer)
+    imul
+    putfield ec l:I
+    goto L13
+L14
+    aload 0
+    getfield ec a:I
+    ldc 1889159231 (java.lang.Integer)
+    imul
+    sipush 256
+    if_icmple L15
+    iload 3
+    ldc 1028546156 (java.lang.Integer)
+    if_icmpgt L16
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L17
+    aload 0
+    iload 1
+    sipush 2560
+    imul
+    i2l
+    ldc -8989827805685905469 (java.lang.Long)
+    aload 0
+    getfield ec c:J
+    lmul
+    aload 0
+    getfield ec e:[J
+    ldc -1940715451 (java.lang.Integer)
+    aload 0
+    getfield ec w:I
+    imul
+    laload
+    lsub
+    ldiv
+    l2i
+    ldc -1350719553 (java.lang.Integer)
+    imul
+    putfield ec a:I
+L13
+    ldc 1889159231 (java.lang.Integer)
+    aload 0
+    getfield ec a:I
+    imul
+    bipush 25
+    if_icmpge L14
+    iload 3
+    ldc 1028546156 (java.lang.Integer)
+    if_icmpgt L18
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L18
+    aload 0
+    ldc 591749543 (java.lang.Integer)
+    putfield ec a:I
+    goto L14
+L19
+    aload 0
+    getfield ec e:[J
+    iload 6
+    aload 0
+    getfield ec e:[J
+    iload 6
+    laload
+    ldc 1726830379 (java.lang.Integer)
+    aload 0
+    getfield ec l:I
+    imul
+    i2l
+    ladd
+    lastore
+    goto L20
+L16
+    aload 0
+    ldc 2108145408 (java.lang.Integer)
+    putfield ec a:I
+L21
+    aload 0
+    iload 1
+    i2l
+    aload 0
+    getfield ec c:J
+    ldc -8989827805685905469 (java.lang.Long)
+    lmul
+    aload 0
+    getfield ec e:[J
+    ldc -1940715451 (java.lang.Integer)
+    aload 0
+    getfield ec w:I
+    imul
+    laload
+    lsub
+    ldc 10 (java.lang.Long)
+    ldiv
+    lsub
+    l2i
+    ldc 1726132099 (java.lang.Integer)
+    imul
+    putfield ec l:I
+    goto L15
+L22
+    aload 0
+    getfield ec u:I
+    ldc -1692148415 (java.lang.Integer)
+    imul
+    sipush 256
+    if_icmpge L23
+    iload 3
+    ldc 1028546156 (java.lang.Integer)
+    if_icmpgt L24
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L25
+    aload 0
+    iload 2
+    ldc 1726132099 (java.lang.Integer)
+    imul
+    putfield ec l:I
+    goto L26
+L15
+    ldc 1726830379 (java.lang.Integer)
+    aload 0
+    getfield ec l:I
+    imul
+    iload 1
+    if_icmple L3
+    goto L11
+L4
+    aload 0
+    aload 0
+    getfield ec w:I
+    ldc -1940715451 (java.lang.Integer)
+    imul
+    iconst_1
+    iadd
+    bipush 10
+    irem
+    ldc 1369885325 (java.lang.Integer)
+    imul
+    putfield ec w:I
+L27
+    aload 0
+    getfield ec l:I
+    ldc 1726830379 (java.lang.Integer)
+    imul
+    iconst_1
+    if_icmple L28
+    iload 3
+    ldc 1028546156 (java.lang.Integer)
+    if_icmpgt L29
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L29
+    iconst_0
+    istore 6
+    goto L30
+L31
+    ldc -8989827805685905469 (java.lang.Long)
+    aload 0
+    getfield ec c:J
+    lmul
+    aload 0
+    getfield ec e:[J
+    aload 0
+    getfield ec w:I
+    ldc -1940715451 (java.lang.Integer)
+    imul
+    laload
+    lcmp
+    ifle L13
+    iload 3
+    ldc 1028546156 (java.lang.Integer)
+    if_icmpgt L17
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L32
+    lconst_0
+    aload 0
+    getfield ec e:[J
+    iload 6
+    laload
+    lcmp
+    ifeq L20
+    goto L19
+L10
+    lconst_0
+    aload 0
+    getfield ec e:[J
+    aload 0
+    getfield ec w:I
+    ldc -1940715451 (java.lang.Integer)
+    imul
+    laload
+    lcmp
+    ifne L31
+    iload 3
+    ldc 1028546156 (java.lang.Integer)
+    if_icmpgt L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L20
+    iinc 6 1
+    goto L30
+L28
+    ldc 1726830379 (java.lang.Integer)
+    aload 0
+    getfield ec l:I
+    imul
+    iload 2
+    if_icmpge L26
+    goto L25
+L30
+    iload 6
+    bipush 10
+    if_icmpge L28
+    iload 3
+    ldc 1028546156 (java.lang.Integer)
+    if_icmpgt L32
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L26
+    aload 0
+    getfield ec l:I
+    ldc 1726830379 (java.lang.Integer)
+    imul
+    i2l
+    invokestatic ak e:(J)V
+L33
+    iconst_0
+    istore 6
+    goto L22
+L2
+    ldc 1726830379 (java.lang.Integer)
+    aload 0
+    getfield ec l:I
+    imul
+    istore 5
+    goto L5
+L24
+    iinc 6 1
+L34
+    aload 0
+    dup
+    getfield ec u:I
+    ldc 2062370175 (java.lang.Integer)
+    aload 0
+    getfield ec a:I
+    imul
+    iadd
+    putfield ec u:I
+    goto L22
+L23
+    aload 0
+    ldc 1063236289 (java.lang.Integer)
+    aload 0
+    getfield ec u:I
+    ldc -1692148415 (java.lang.Integer)
+    imul
+    sipush 255
+    iand
+    imul
+    putfield ec u:I
+    goto L12
+L6
+    aload 0
+    ldc 1726132099 (java.lang.Integer)
+    putfield ec l:I
+    goto L9
+L35
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ec.l(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

@@ -1,0 +1,185 @@
+dh g (Ljava/lang/CharSequence;B)VL1
+    aload 1
+    ldc 473730753 (java.lang.Integer)
+    invokestatic ef e:(Ljava/lang/CharSequence;I)I
+    istore 3
+    goto L2
+L3
+    iinc 10 1
+    goto L4
+L5
+    ldc 910905453 (java.lang.Integer)
+    aload 0
+    getfield dh a:I
+    imul
+    istore 7
+    goto L6
+L7
+    iload 11
+    bipush 127
+    if_icmpgt L8
+    goto L9
+L10
+    aload 0
+    getfield dh e:[B
+    astore 6
+    goto L5
+L11
+    aload 6
+    iload 9
+    iinc 9 1
+    sipush 128
+    iload 11
+    bipush 6
+    ishr
+    bipush 63
+    iand
+    ior
+    i2b
+    bastore
+    goto L12
+L6
+    aload 1
+    invokeinterface java/lang/CharSequence length:()I
+    istore 8
+L13
+    iload 7
+    istore 9
+L14
+    iconst_0
+    istore 10
+    goto L4
+L2
+    aload 0
+    getfield dh e:[B
+    aload 0
+    dup
+    getfield dh a:I
+    ldc 1782921573 (java.lang.Integer)
+    iadd
+    dup_x1
+    putfield dh a:I
+    ldc 910905453 (java.lang.Integer)
+    imul
+    iconst_1
+    isub
+    iconst_0
+    bastore
+    goto L15
+L16
+    aload 1
+    iload 10
+    invokeinterface java/lang/CharSequence charAt:(I)C
+    istore 11
+    goto L7
+L4
+    iload 10
+    iload 8
+    if_icmpge L17
+    iload 2
+    iconst_0
+    if_icmplt L16
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
+    aload 6
+    iload 9
+    iinc 9 1
+    iload 11
+    i2b
+    bastore
+    goto L3
+L8
+    iload 11
+    sipush 2047
+    if_icmpgt L18
+    goto L19
+L18
+    aload 6
+    iload 9
+    iinc 9 1
+    sipush 224
+    iload 11
+    bipush 12
+    ishr
+    ior
+    i2b
+    bastore
+    goto L11
+L20
+    aload 6
+    iload 9
+    iinc 9 1
+    sipush 128
+    iload 11
+    bipush 63
+    iand
+    ior
+    i2b
+    bastore
+    goto L3
+L21
+    aload 0
+    iload 4
+    iload 5
+    ldc 1782921573 (java.lang.Integer)
+    imul
+    iadd
+    putfield dh a:I
+    goto L22
+L23
+    aload 0
+    getfield dh a:I
+    istore 4
+    goto L10
+L12
+    aload 6
+    iload 9
+    iinc 9 1
+    sipush 128
+    iload 11
+    bipush 63
+    iand
+    ior
+    i2b
+    bastore
+    goto L3
+L15
+    aload 0
+    iload 3
+    iconst_4
+    invokevirtual dh t:(IB)V
+    goto L23
+L17
+    iload 9
+    iload 7
+    isub
+    istore 5
+    goto L21
+L19
+    aload 6
+    iload 9
+    iinc 9 1
+    sipush 192
+    iload 11
+    bipush 6
+    ishr
+    ior
+    i2b
+    bastore
+    goto L20
+L22
+    return
+L24
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "dh.g(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

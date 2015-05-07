@@ -1,0 +1,159 @@
+fq a (IZB)VL1
+    iload 1
+    iconst_1
+    if_icmpne L2
+    iload 3
+    bipush 20
+    if_icmplt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    aload 0
+    iconst_1
+    invokevirtual fq w:(B)V
+    goto L5
+L6
+    return
+L7
+    iload 4
+    ifne L8
+    goto L9
+L10
+    iload 2
+    ifne L11
+    goto L12
+L9
+    return
+L12
+    iinc 4 -1
+    goto L13
+L14
+    ldc 1056239615 (java.lang.Integer)
+    getstatic al l:I
+    imul
+    iconst_1
+    isub
+    istore 4
+    goto L15
+L5
+    return
+L13
+    iload 4
+    ifge L15
+    iload 3
+    bipush 20
+    if_icmplt L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L2
+    aload 0
+    getfield fq e:[I
+    getstatic fq o:[I
+    iload 1
+    iaload
+    iaload
+    istore 4
+    goto L7
+L11
+    iinc 4 1
+L16
+    iload 4
+    getstatic al l:I
+    ldc 1056239615 (java.lang.Integer)
+    imul
+    if_icmplt L15
+    iload 3
+    bipush 20
+    if_icmplt L17
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L18
+    aload 0
+    getfield fq e:[I
+    getstatic fq o:[I
+    iload 1
+    iaload
+    iload 4
+    sipush 256
+    iadd
+    iastore
+    goto L4
+L15
+    iload 4
+    bipush -83
+    invokestatic q a:(IB)Lal;
+    astore 5
+L19
+    aconst_null
+    aload 5
+    if_acmpeq L20
+    aload 5
+    getfield al h:Z
+    ifne L20
+    iload 3
+    bipush 20
+    if_icmplt L21
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L21
+    iload 1
+    aload 0
+    getfield fq l:Z
+    ifeq L22
+    bipush 7
+    goto L23
+L17
+    iconst_0
+    istore 4
+    goto L15
+L23
+    iadd
+    aload 5
+    getfield al u:I
+    ldc 723232315 (java.lang.Integer)
+    imul
+    if_icmpne L20
+    iload 3
+    bipush 20
+    if_icmplt L24
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L24
+    goto L18
+L20
+    goto L10
+L3
+    aload 0
+    getfield fq l:Z
+    ifeq L2
+    iload 3
+    bipush 20
+    if_icmplt L6
+    return
+L22
+    iconst_0
+    goto L23
+L8
+    iinc 4 -256
+    goto L10
+L25
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "fq.a(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

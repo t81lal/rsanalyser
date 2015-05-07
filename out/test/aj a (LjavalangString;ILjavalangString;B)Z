@@ -1,0 +1,239 @@
+aj a (Ljava/lang/String;ILjava/lang/String;B)ZL1
+    iconst_0
+    iload 1
+    if_icmpne L2
+L3
+    getstatic dq a:Ljava/lang/String;
+    ldc "win" (java.lang.String)
+    invokevirtual java/lang/String startsWith:(Ljava/lang/String;)Z
+    ifne L4
+    iload 3
+    iconst_0
+    if_icmplt L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L5
+    new java/lang/Exception
+    dup
+    invokespecial java/lang/Exception <init>:()V
+    athrow
+L4
+    aload 0
+    ldc "http://" (java.lang.String)
+    invokevirtual java/lang/String startsWith:(Ljava/lang/String;)Z
+    ifne L6
+    iload 3
+    iconst_0
+    if_icmplt L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    aload 0
+    ldc "https://" (java.lang.String)
+    invokevirtual java/lang/String startsWith:(Ljava/lang/String;)Z
+    ifne L6
+    iload 3
+    iconst_0
+    if_icmplt L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    new java/lang/Exception
+    dup
+    invokespecial java/lang/Exception <init>:()V
+    athrow
+L6
+    ldc "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789?&=,.%+-_#:/*" (java.lang.String)
+    astore 4
+L9
+    iconst_0
+    istore 5
+L10
+    iload 5
+    aload 0
+    invokevirtual java/lang/String length:()I
+    if_icmpge L11
+L12
+    aload 4
+    aload 0
+    iload 5
+    invokevirtual java/lang/String charAt:(I)C
+    invokevirtual java/lang/String indexOf:(I)I
+    iconst_m1
+    if_icmpne L13
+    iload 3
+    iconst_0
+    if_icmplt L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L14
+    new java/lang/Exception
+    dup
+    invokespecial java/lang/Exception <init>:()V
+    athrow
+L13
+    iinc 5 1
+    goto L10
+L11
+    invokestatic java/lang/Runtime getRuntime:()Ljava/lang/Runtime;
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "cmd /c start "j" "" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    aload 0
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc """ (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokevirtual java/lang/Runtime exec:(Ljava/lang/String;)Ljava/lang/Process;
+    pop
+L15
+    iconst_1
+L16
+    ireturn
+L17
+    astore 4
+L18
+    iconst_0
+    ireturn
+L2
+    iload 1
+    iconst_1
+    if_icmpne L19
+    iload 3
+    iconst_0
+    if_icmplt L20
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L20
+    getstatic dq e:Ljava/applet/Applet;
+    aload 2
+    iconst_1
+    anewarray java/lang/Object
+    dup
+    iconst_0
+    new java/net/URL
+    dup
+    getstatic dq e:Ljava/applet/Applet;
+    invokevirtual java/applet/Applet getCodeBase:()Ljava/net/URL;
+    aload 0
+    invokespecial java/net/URL <init>:(Ljava/net/URL;Ljava/lang/String;)V
+    invokevirtual java/net/URL toString:()Ljava/lang/String;
+    aastore
+    ldc -960947086 (java.lang.Integer)
+    invokestatic dy a:(Ljava/applet/Applet;Ljava/lang/String;[Ljava/lang/Object;I)Ljava/lang/Object;
+    astore 4
+L21
+    aconst_null
+    aload 4
+    if_acmpeq L22
+    iconst_1
+    goto L23
+L22
+    iconst_0
+L23
+    ireturn
+L24
+    astore 4
+L25
+    iconst_0
+    ireturn
+L19
+    iconst_2
+    iload 1
+    if_icmpne L26
+    iload 3
+    iconst_0
+    if_icmplt L27
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L27
+    getstatic dq e:Ljava/applet/Applet;
+    invokevirtual java/applet/Applet getAppletContext:()Ljava/applet/AppletContext;
+    new java/net/URL
+    dup
+    getstatic dq e:Ljava/applet/Applet;
+    invokevirtual java/applet/Applet getCodeBase:()Ljava/net/URL;
+    aload 0
+    invokespecial java/net/URL <init>:(Ljava/net/URL;Ljava/lang/String;)V
+    ldc "_blank" (java.lang.String)
+    invokeinterface java/applet/AppletContext showDocument:(Ljava/net/URL;Ljava/lang/String;)V
+L28
+    iconst_1
+L29
+    ireturn
+L30
+    astore 4
+L31
+    iconst_0
+    ireturn
+L26
+    iload 1
+    iconst_3
+    if_icmpne L32
+    iload 3
+    iconst_0
+    if_icmplt L33
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L33
+    getstatic dq e:Ljava/applet/Applet;
+    ldc "loggedout" (java.lang.String)
+    ldc -1785882139 (java.lang.Integer)
+    invokestatic dy e:(Ljava/applet/Applet;Ljava/lang/String;I)Ljava/lang/Object;
+    pop
+L34
+    goto L35
+L36
+    astore 4
+L35
+    getstatic dq e:Ljava/applet/Applet;
+    invokevirtual java/applet/Applet getAppletContext:()Ljava/applet/AppletContext;
+    new java/net/URL
+    dup
+    getstatic dq e:Ljava/applet/Applet;
+    invokevirtual java/applet/Applet getCodeBase:()Ljava/net/URL;
+    aload 0
+    invokespecial java/net/URL <init>:(Ljava/net/URL;Ljava/lang/String;)V
+    ldc "_top" (java.lang.String)
+    invokeinterface java/applet/AppletContext showDocument:(Ljava/net/URL;Ljava/lang/String;)V
+L37
+    iconst_1
+L38
+    ireturn
+L39
+    astore 4
+L40
+    iconst_0
+    ireturn
+L32
+    new java/lang/IllegalArgumentException
+    dup
+    invokespecial java/lang/IllegalArgumentException <init>:()V
+    athrow
+L41
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "aj.a(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

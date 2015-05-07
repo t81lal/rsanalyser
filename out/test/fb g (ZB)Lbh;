@@ -1,0 +1,246 @@
+fb g (ZB)Lbh;L1
+    iconst_0
+    putstatic fb g:Z
+    goto L2
+L3
+    lconst_1
+    goto L4
+L5
+    aload 0
+    getfield fb av:I
+    ldc 1575533403 (java.lang.Integer)
+    imul
+    istore 3
+    goto L6
+L7
+    aload 6
+    invokevirtual bh i:()V
+    goto L8
+L2
+    iload 1
+    ifeq L5
+    iload 2
+    iconst_0
+    if_icmpgt L9
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    aconst_null
+    areturn
+L11
+    aload 0
+    getfield fb ah:I
+    ldc -1314196849 (java.lang.Integer)
+    imul
+    i2l
+    bipush 36
+    lshl
+    iload 3
+    i2l
+    ladd
+    aload 0
+    getfield fb al:Z
+    ifeq L12
+    iload 2
+    iconst_0
+    if_icmpgt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L13
+    getstatic fb i:Lgr;
+    aload 6
+    lload 4
+    invokevirtual gr l:(Lgd;J)V
+    goto L14
+L15
+    aload 0
+    getfield fb ah:I
+    ldc -1314196849 (java.lang.Integer)
+    imul
+    ifle L16
+    iload 2
+    iconst_0
+    if_icmpgt L17
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    bipush 38
+    lshl
+    ladd
+    aload 0
+    getfield fb ak:Z
+    ifeq L18
+    iload 2
+    iconst_0
+    if_icmpgt L19
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L19
+    lconst_1
+    goto L20
+L18
+    lconst_0
+L20
+    bipush 39
+    lshl
+    ladd
+    ldc 1297002649 (java.lang.Integer)
+    aload 0
+    getfield fb at:I
+    imul
+    i2l
+    bipush 40
+    lshl
+    ladd
+    lstore 4
+L21
+    getstatic fb i:Lgr;
+    lload 4
+    invokevirtual gr e:(J)Lgd;
+    checkcast bh
+    astore 6
+L22
+    aconst_null
+    aload 6
+    if_acmpeq L23
+    aload 6
+    areturn
+L23
+    getstatic cl u:Lfv;
+    iload 3
+    iconst_0
+    ldc 1639959438 (java.lang.Integer)
+    invokestatic f c:(Lfv;III)Lbh;
+    astore 6
+L24
+    aload 6
+    ifnonnull L25
+L26
+    iconst_1
+    putstatic fb g:Z
+    goto L27
+L14
+    aload 6
+    areturn
+L28
+    aload 6
+    iconst_1
+    invokevirtual bh r:(I)V
+    goto L29
+L6
+    iload 3
+    iconst_m1
+    if_icmpne L11
+    iload 2
+    iconst_0
+    if_icmpgt L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    aload 0
+    getfield fb ak:Z
+    ifeq L15
+    iload 2
+    iconst_0
+    if_icmpgt L30
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L30
+    aload 6
+    invokevirtual bh w:()V
+    goto L15
+L12
+    lconst_0
+    goto L4
+L9
+    ldc -1677336895 (java.lang.Integer)
+    aload 0
+    getfield fb ay:I
+    imul
+    istore 3
+    goto L6
+L25
+    aload 0
+    getfield fb al:Z
+    ifeq L8
+    goto L7
+L16
+    ldc -1314196849 (java.lang.Integer)
+    aload 0
+    getfield fb ah:I
+    imul
+    iconst_1
+    if_icmplt L29
+    iload 2
+    iconst_0
+    if_icmpgt L28
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L29
+    ldc -1314196849 (java.lang.Integer)
+    aload 0
+    getfield fb ah:I
+    imul
+    iconst_2
+    if_icmplt L31
+    iload 2
+    iconst_0
+    if_icmpgt L32
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L32
+    aload 6
+    ldc 16777215 (java.lang.Integer)
+    invokevirtual bh r:(I)V
+L31
+    iconst_0
+    ldc 1297002649 (java.lang.Integer)
+    aload 0
+    getfield fb at:I
+    imul
+    if_icmpeq L13
+    aload 6
+    ldc 1297002649 (java.lang.Integer)
+    aload 0
+    getfield fb at:I
+    imul
+    invokevirtual bh f:(I)V
+    goto L13
+L17
+    aload 6
+    ldc -1314196849 (java.lang.Integer)
+    aload 0
+    getfield fb ah:I
+    imul
+    invokevirtual bh u:(I)V
+    goto L16
+L27
+    aconst_null
+    areturn
+L33
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "fb.g(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

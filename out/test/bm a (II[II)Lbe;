@@ -1,0 +1,161 @@
+bm a (II[II)Lbe;L1
+    iload 2
+    iload 1
+    iconst_4
+    ishl
+    ldc 65535 (java.lang.Integer)
+    iand
+    iload 1
+    bipush 12
+    iushr
+    ior
+    ixor
+    istore 5
+    goto L2
+L3
+    aload 0
+    getfield bm l:Lgf;
+    aload 9
+    lload 6
+    invokevirtual gf a:(Lgm;J)V
+    goto L4
+L5
+    iload 5
+    i2l
+    ldc 4294967296 (java.lang.Long)
+    lxor
+    lstore 6
+    goto L6
+L7
+    aconst_null
+    aload 8
+    if_acmpne L8
+    iload 4
+    ldc 1042167958 (java.lang.Integer)
+    if_icmpgt L9
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    aconst_null
+    areturn
+L11
+    aload 8
+    ifnull L12
+    iload 4
+    ldc 1042167958 (java.lang.Integer)
+    if_icmpgt L13
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    aconst_null
+    aload 3
+    if_acmpeq L14
+    iload 4
+    ldc 1042167958 (java.lang.Integer)
+    if_icmpgt L15
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L15
+    aload 3
+    iconst_0
+    iaload
+    ifgt L14
+    iload 4
+    ldc 1042167958 (java.lang.Integer)
+    if_icmpgt L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L16
+    aload 0
+    getfield bm c:Lgf;
+    aload 8
+    lload 6
+    invokevirtual gf a:(Lgm;J)V
+    goto L17
+L14
+    aload 0
+    getfield bm l:Lgf;
+    lload 6
+    invokevirtual gf e:(J)Lgm;
+    checkcast bd
+    astore 9
+    goto L18
+L9
+    aconst_null
+    areturn
+L19
+    aload 9
+    ifnonnull L3
+    iload 4
+    ldc 1042167958 (java.lang.Integer)
+    if_icmpgt L20
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L2
+    iload 5
+    iload 1
+    bipush 16
+    ishl
+    ior
+    istore 5
+    goto L5
+L20
+    aconst_null
+    areturn
+L21
+    aload 0
+    getfield bm a:Lfv;
+    iload 1
+    iload 2
+    invokestatic bd f:(Lfv;II)Lbd;
+    astore 9
+    goto L19
+L4
+    aload 9
+    aload 3
+    invokevirtual bd g:([I)Lbe;
+    astore 8
+    goto L7
+L18
+    aload 9
+    ifnonnull L4
+    goto L21
+L13
+    aload 8
+    areturn
+L8
+    aload 9
+    invokevirtual bd if:()V
+    goto L16
+L6
+    aload 0
+    getfield bm c:Lgf;
+    lload 6
+    invokevirtual gf e:(J)Lgm;
+    checkcast be
+    astore 8
+    goto L11
+L17
+    aload 8
+    areturn
+L22
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "bm.a(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

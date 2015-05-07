@@ -1,0 +1,53 @@
+dg a (CII)IL1
+    iload 0
+    iconst_4
+    ishl
+    istore 3
+    goto L2
+L3
+    iload 0
+    invokestatic java/lang/Character isTitleCase:(C)Z
+    ifeq L4
+    iload 2
+    ldc 799883374 (java.lang.Integer)
+    if_icmplt L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L2
+    iload 0
+    invokestatic java/lang/Character isUpperCase:(C)Z
+    ifne L5
+    iload 2
+    ldc 799883374 (java.lang.Integer)
+    if_icmplt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L5
+    iload 0
+    invokestatic java/lang/Character toLowerCase:(C)C
+    istore 0
+L6
+    iload 0
+    iconst_4
+    ishl
+    iconst_1
+    iadd
+    istore 3
+L4
+    iload 3
+    ireturn
+L7
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "dg.a(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

@@ -1,0 +1,78 @@
+fj an (ZI)VL1
+    ldc -1970769660 (java.lang.Integer)
+    invokestatic cw n:(I)V
+L2
+    getstatic client ct:I
+    ldc 1481435769 (java.lang.Integer)
+    iadd
+    putstatic client ct:I
+L3
+    getstatic client ct:I
+    ldc 1596022729 (java.lang.Integer)
+    imul
+    bipush 50
+    if_icmpge L4
+    iload 0
+    ifne L4
+    iload 1
+    ldc -306609965 (java.lang.Integer)
+    if_icmpgt L5
+    return
+L5
+    return
+L4
+    iconst_0
+    putstatic client ct:I
+L6
+    getstatic client cw:Z
+    ifne L7
+    iload 1
+    ldc -306609965 (java.lang.Integer)
+    if_icmpgt L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    getstatic client ci:Leo;
+    ifnull L7
+L9
+    getstatic client cd:Ldj;
+    bipush 94
+    ldc -371312628 (java.lang.Integer)
+    invokevirtual dj hl:(II)V
+L10
+    getstatic client ci:Leo;
+    getstatic client cd:Ldj;
+    getfield dj e:[B
+    iconst_0
+    ldc 910905453 (java.lang.Integer)
+    getstatic client cd:Ldj;
+    getfield dj a:I
+    imul
+    ldc -31142779 (java.lang.Integer)
+    invokevirtual eo r:([BIII)V
+L11
+    getstatic client cd:Ldj;
+    iconst_0
+    putfield dj a:I
+L12
+    goto L7
+L13
+    astore 2
+L14
+    iconst_1
+    putstatic client cw:Z
+L7
+    return
+L15
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "fj.an(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

@@ -1,0 +1,111 @@
+ew ci (IIIIIIIII)VL1
+    iload 0
+    ldc 1928687330 (java.lang.Integer)
+    invokestatic df c:(II)Z
+    ifne L2
+    iload 8
+    ldc 1944229129 (java.lang.Integer)
+    if_icmpeq L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    return
+L3
+    iload 7
+    iconst_m1
+    if_icmpeq L5
+    iload 8
+    ldc 1944229129 (java.lang.Integer)
+    if_icmpeq L6
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    aconst_null
+    putstatic fb ks:[Lfb;
+    goto L4
+L8
+    iload 9
+    bipush 100
+    if_icmpge L9
+    iload 8
+    ldc 1944229129 (java.lang.Integer)
+    if_icmpeq L10
+    return
+L10
+    getstatic client lx:[Z
+    iload 9
+    iconst_1
+    bastore
+    iinc 9 1
+    goto L8
+L9
+    return
+L2
+    aconst_null
+    putstatic fb ks:[Lfb;
+L11
+    getstatic fb e:[[Lfb;
+    iload 0
+    aaload
+    iconst_m1
+    iload 1
+    iload 2
+    iload 3
+    iload 4
+    iload 5
+    iload 6
+    iload 7
+    ldc 2065435549 (java.lang.Integer)
+    invokestatic eg cg:([Lfb;IIIIIIIII)V
+L12
+    getstatic fb ks:[Lfb;
+    ifnull L4
+    iload 8
+    ldc 1944229129 (java.lang.Integer)
+    if_icmpeq L13
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L13
+    getstatic fb ks:[Lfb;
+    ldc -1412584499 (java.lang.Integer)
+    iload 1
+    iload 2
+    iload 3
+    iload 4
+    ldc -1147705433 (java.lang.Integer)
+    getstatic ae kq:I
+    imul
+    ldc -2089719953 (java.lang.Integer)
+    getstatic dz kx:I
+    imul
+    iload 7
+    ldc 2112028436 (java.lang.Integer)
+    invokestatic eg cg:([Lfb;IIIIIIIII)V
+    goto L7
+L6
+    getstatic client lx:[Z
+    iload 7
+    iconst_1
+    bastore
+    goto L9
+L5
+    iconst_0
+    istore 9
+    goto L8
+L14
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ew.ci(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

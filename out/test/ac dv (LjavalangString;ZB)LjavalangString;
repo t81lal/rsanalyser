@@ -1,0 +1,195 @@
+ac dv (Ljava/lang/String;ZB)Ljava/lang/String;L1
+    iload 1
+    ifeq L2
+    iload 2
+    bipush 10
+    if_icmplt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    ldc "" (java.lang.String)
+    astore 4
+    goto L5
+L2
+    ldc "http://" (java.lang.String)
+L6
+    astore 3
+    goto L7
+L8
+    iconst_4
+    getstatic client r:I
+    ldc -708614931 (java.lang.Integer)
+    imul
+    if_icmpne L4
+    iload 2
+    bipush 10
+    if_icmplt L9
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    aload 0
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc "-wtrc" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    astore 0
+    goto L4
+L7
+    iconst_1
+    ldc -708614931 (java.lang.Integer)
+    getstatic client r:I
+    imul
+    if_icmpne L11
+    iload 2
+    bipush 10
+    if_icmplt L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    ldc "runescape.com" (java.lang.String)
+    astore 5
+    goto L13
+L14
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "/p=" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    getstatic client m:Ljava/lang/String;
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    astore 4
+    goto L12
+L15
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    aload 0
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc "-wtwip" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    astore 0
+    goto L4
+L16
+    getstatic client r:I
+    ldc -708614931 (java.lang.Integer)
+    imul
+    iconst_5
+    if_icmpne L8
+    iload 2
+    bipush 10
+    if_icmplt L17
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L17
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    aload 0
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc "-wti" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    astore 0
+    goto L4
+L11
+    iconst_2
+    getstatic client r:I
+    ldc -708614931 (java.lang.Integer)
+    imul
+    if_icmpne L18
+    goto L19
+L9
+    ldc "local" (java.lang.String)
+    astore 0
+    goto L4
+L3
+    ldc "https://" (java.lang.String)
+    goto L6
+L5
+    getstatic client m:Ljava/lang/String;
+    ifnull L12
+    iload 2
+    bipush 10
+    if_icmplt L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L18
+    getstatic client r:I
+    ldc -708614931 (java.lang.Integer)
+    imul
+    iconst_3
+    if_icmpne L16
+    iload 2
+    bipush 10
+    if_icmplt L15
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L19
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    aload 0
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc "-wtqa" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    astore 0
+    goto L4
+L13
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    aload 3
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    aload 0
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc "." (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    aload 5
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc "/l=" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 1136922049 (java.lang.Integer)
+    getstatic client s:I
+    imul
+    invokevirtual java/lang/StringBuilder append:(I)Ljava/lang/StringBuilder;
+    ldc "/a=" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    getstatic client t:I
+    ldc -1791696979 (java.lang.Integer)
+    imul
+    invokevirtual java/lang/StringBuilder append:(I)Ljava/lang/StringBuilder;
+    aload 4
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc "/" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    areturn
+L20
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ac.dv(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

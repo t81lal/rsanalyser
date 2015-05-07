@@ -1,0 +1,261 @@
+z i (Lbs;B)VL1
+    sipush 256
+    istore 2
+    goto L2
+L3
+    iconst_0
+    istore 3
+    goto L4
+L5
+    iload 3
+    getstatic dq n:[I
+    arraylength
+    if_icmpge L6
+    goto L7
+L8
+    iinc 3 1
+    goto L9
+L6
+    iconst_0
+    istore 3
+L9
+    iload 3
+    sipush 5000
+    if_icmpge L3
+    iload 1
+    iconst_0
+    if_icmplt L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L11
+    iload 7
+    bipush 7
+    ishl
+    iload 6
+    iadd
+    istore 8
+    goto L12
+L13
+    getstatic dq n:[I
+    iload 4
+    invokestatic java/lang/Math random:()D
+    ldc 256.0 (java.lang.Double)
+    dmul
+    d2i
+    iastore
+    goto L8
+L14
+    aload 4
+    putstatic dg v:[I
+    goto L15
+L2
+    iconst_0
+    istore 3
+    goto L5
+L4
+    iload 3
+    bipush 20
+    if_icmpge L16
+    iload 1
+    iconst_0
+    if_icmplt L17
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L17
+    iconst_1
+    istore 4
+L18
+    iload 4
+    iload 2
+    iconst_1
+    isub
+    if_icmpge L19
+    iload 1
+    iconst_0
+    if_icmplt L20
+    return
+L20
+    iconst_1
+    istore 5
+L21
+    iload 5
+    bipush 127
+    if_icmpge L22
+    iload 1
+    iconst_0
+    if_icmplt L23
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L24
+    getstatic dg v:[I
+    iload 6
+    getstatic dq n:[I
+    iload 6
+    iconst_1
+    isub
+    iaload
+    getstatic dq n:[I
+    iconst_1
+    iload 6
+    iadd
+    iaload
+    iadd
+    getstatic dq n:[I
+    iload 6
+    sipush 128
+    isub
+    iaload
+    iadd
+    getstatic dq n:[I
+    iload 6
+    sipush 128
+    iadd
+    iaload
+    iadd
+    iconst_4
+    idiv
+    iastore
+    goto L25
+L23
+    iload 5
+    iload 4
+    bipush 7
+    ishl
+    iadd
+    istore 6
+    goto L24
+L10
+    invokestatic java/lang/Math random:()D
+    ldc 128.0 (java.lang.Double)
+    dmul
+    iload 2
+    i2d
+    dmul
+    d2i
+    istore 4
+    goto L13
+L22
+    iinc 4 1
+    goto L18
+L19
+    getstatic dq n:[I
+    astore 4
+L26
+    getstatic dg v:[I
+    putstatic dq n:[I
+    goto L14
+L27
+    iconst_0
+    istore 5
+    goto L28
+L15
+    iinc 3 1
+    goto L4
+L16
+    aconst_null
+    aload 0
+    if_acmpeq L29
+    iload 1
+    iconst_0
+    if_icmplt L30
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L30
+    iconst_0
+    istore 3
+    goto L31
+L25
+    iinc 5 1
+    goto L21
+L32
+    iload 4
+    aload 0
+    getfield bs c:I
+    if_icmpge L29
+    iload 1
+    iconst_0
+    if_icmplt L27
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L31
+    iconst_0
+    istore 4
+    goto L32
+L28
+    iload 5
+    aload 0
+    getfield bs l:I
+    if_icmpge L33
+    iload 1
+    iconst_0
+    if_icmplt L34
+    return
+L34
+    aload 0
+    getfield bs e:[B
+    iload 3
+    iinc 3 1
+    baload
+    ifeq L35
+    iload 1
+    iconst_0
+    if_icmplt L36
+    return
+L36
+    iload 5
+    bipush 16
+    iadd
+    aload 0
+    getfield bs u:I
+    iadd
+    istore 6
+L37
+    bipush 16
+    iload 4
+    iadd
+    aload 0
+    getfield bs w:I
+    iadd
+    istore 7
+    goto L11
+L33
+    iinc 4 1
+    goto L32
+L12
+    getstatic dq n:[I
+    iload 8
+    iconst_0
+    iastore
+L35
+    iinc 5 1
+    goto L28
+L7
+    getstatic dq n:[I
+    iload 3
+    iconst_0
+    iastore
+    iinc 3 1
+    goto L5
+L29
+    return
+L38
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "z.i(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

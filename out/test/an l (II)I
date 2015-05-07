@@ -1,0 +1,115 @@
+an l (II)IL1
+    iconst_0
+    istore 2
+    goto L2
+L3
+    iinc 2 4
+    goto L4
+L5
+    iload 0
+    ldc 65536 (java.lang.Integer)
+    if_icmplt L6
+    iload 1
+    ldc -282605531 (java.lang.Integer)
+    if_icmplt L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    iload 0
+    bipush 16
+    iushr
+    istore 0
+    goto L8
+L9
+    iload 0
+    iconst_4
+    iushr
+    istore 0
+    goto L3
+L6
+    iload 0
+    sipush 256
+    if_icmplt L10
+    goto L11
+L4
+    iload 0
+    iconst_4
+    if_icmplt L12
+    iload 1
+    ldc -282605531 (java.lang.Integer)
+    if_icmplt L13
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L14
+    iinc 2 8
+L10
+    iload 0
+    bipush 16
+    if_icmplt L4
+    goto L9
+L11
+    iload 0
+    bipush 8
+    iushr
+    istore 0
+    goto L14
+L8
+    iinc 2 16
+    goto L6
+L2
+    iload 0
+    iflt L7
+    iload 1
+    ldc -282605531 (java.lang.Integer)
+    if_icmplt L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L15
+    iinc 2 2
+    goto L12
+L13
+    iload 0
+    iconst_2
+    iushr
+    istore 0
+    goto L15
+L12
+    iload 0
+    iconst_1
+    if_icmplt L16
+    iload 1
+    ldc -282605531 (java.lang.Integer)
+    if_icmplt L17
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L17
+    iload 0
+    iconst_1
+    iushr
+    istore 0
+L18
+    iinc 2 1
+L16
+    iload 0
+    iload 2
+    iadd
+    ireturn
+L19
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "an.l(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

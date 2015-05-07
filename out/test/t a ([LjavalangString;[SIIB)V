@@ -1,0 +1,212 @@
+t a ([Ljava/lang/String;[SIIB)VL1
+    iload 2
+    iload 3
+    if_icmpge L2
+    iload 4
+    iconst_3
+    if_icmplt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    aload 1
+    iload 3
+    iload 8
+    sastore
+    goto L5
+L6
+    aload 0
+    aload 1
+    iload 2
+    iload 6
+    iconst_1
+    isub
+    bipush -3
+    invokestatic t a:([Ljava/lang/String;[SIIB)V
+    goto L7
+L8
+    aload 1
+    iload 6
+    iload 8
+    sastore
+    goto L6
+L9
+    aload 0
+    iload 5
+    aload 0
+    iload 3
+    aaload
+    aastore
+L10
+    aload 0
+    iload 3
+    aload 7
+    aastore
+L11
+    aload 1
+    iload 5
+    saload
+    istore 8
+L12
+    aload 1
+    iload 5
+    aload 1
+    iload 3
+    saload
+    sastore
+    goto L4
+L13
+    iinc 9 1
+    goto L14
+L15
+    aload 1
+    iload 3
+    aload 1
+    iload 6
+    saload
+    sastore
+    goto L8
+L14
+    iload 9
+    iload 3
+    if_icmpge L16
+    iload 4
+    iconst_3
+    if_icmplt L17
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L17
+    aconst_null
+    aload 7
+    if_acmpeq L18
+    goto L19
+L20
+    aload 1
+    iload 6
+    iinc 6 1
+    iload 11
+    sastore
+    goto L21
+L22
+    aload 0
+    iload 9
+    aaload
+    aload 7
+    invokevirtual java/lang/String compareTo:(Ljava/lang/String;)I
+    iload 9
+    iconst_1
+    iand
+    if_icmpge L13
+    iload 4
+    iconst_3
+    if_icmplt L18
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    aload 0
+    aload 1
+    iload 6
+    iconst_1
+    iadd
+    iload 3
+    bipush -73
+    invokestatic t a:([Ljava/lang/String;[SIIB)V
+    goto L2
+L23
+    aload 0
+    iload 9
+    aload 0
+    iload 6
+    aaload
+    aastore
+L24
+    aload 0
+    iload 6
+    aload 10
+    aastore
+L25
+    aload 1
+    iload 9
+    saload
+    istore 11
+L26
+    aload 1
+    iload 9
+    aload 1
+    iload 6
+    saload
+    sastore
+    goto L20
+L3
+    iload 2
+    iload 3
+    iadd
+    iconst_2
+    idiv
+    istore 5
+    goto L27
+L21
+    goto L13
+L5
+    iload 2
+    istore 9
+    goto L14
+L16
+    aload 0
+    iload 3
+    aload 0
+    iload 6
+    aaload
+    aastore
+    goto L28
+L18
+    aload 0
+    iload 9
+    aaload
+    astore 10
+    goto L23
+L27
+    iload 2
+    istore 6
+L29
+    aload 0
+    iload 5
+    aaload
+    astore 7
+    goto L9
+L28
+    aload 0
+    iload 6
+    aload 7
+    aastore
+    goto L15
+L19
+    aload 0
+    iload 9
+    aaload
+    ifnull L13
+    iload 4
+    iconst_3
+    if_icmplt L22
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L2
+    return
+L30
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "t.a(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

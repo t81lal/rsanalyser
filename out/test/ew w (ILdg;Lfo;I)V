@@ -1,0 +1,125 @@
+ew w (ILdg;Lfo;I)VL1
+    aconst_null
+    astore 4
+L2
+    getstatic fj e:Lgh;
+    dup
+    astore 5
+    monitorenter
+L3
+    getstatic fj e:Lgh;
+    invokevirtual gh i:()Lgm;
+    checkcast fu
+    astore 6
+L4
+    aconst_null
+    aload 6
+    if_acmpeq L5
+    iload 3
+    ldc -2093824353 (java.lang.Integer)
+    if_icmpne L6
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L6
+    aload 6
+    getfield fu ec:J
+    iload 0
+    i2l
+    lcmp
+    ifne L7
+    iload 3
+    ldc -2093824353 (java.lang.Integer)
+    if_icmpne L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    aload 6
+    getfield fu l:Ldg;
+    aload 1
+    if_acmpne L7
+    iload 3
+    ldc -2093824353 (java.lang.Integer)
+    if_icmpne L9
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
+    aload 6
+    getfield fu e:I
+    ldc -1789851419 (java.lang.Integer)
+    imul
+    ifne L7
+    iload 3
+    ldc -2093824353 (java.lang.Integer)
+    if_icmpne L10
+    return
+L10
+    aload 6
+    getfield fu a:[B
+    astore 4
+L11
+    goto L5
+L7
+    getstatic fj e:Lgh;
+    invokevirtual gh f:()Lgm;
+    checkcast fu
+    astore 6
+    goto L4
+L5
+    aload 5
+    monitorexit
+L12
+    goto L13
+L14
+    astore 7
+    aload 5
+    monitorexit
+L15
+    aload 7
+    athrow
+L13
+    aconst_null
+    aload 4
+    if_acmpeq L16
+L17
+    aload 2
+    aload 1
+    iload 0
+    aload 4
+    iconst_1
+    iconst_3
+    invokevirtual fo cv:(Ldg;I[BZB)V
+L18
+    return
+L16
+    aload 1
+    iload 0
+    bipush -91
+    invokevirtual dg e:(IB)[B
+    astore 5
+L19
+    aload 2
+    aload 1
+    iload 0
+    aload 5
+    iconst_1
+    bipush 122
+    invokevirtual fo cv:(Ldg;I[BZB)V
+L20
+    return
+L21
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ew.w(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

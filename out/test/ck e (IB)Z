@@ -1,0 +1,32 @@
+ck e (IB)ZL1
+    iconst_0
+    iload 0
+    iconst_1
+    iand
+    if_icmpeq L2
+    iload 1
+    iconst_3
+    if_icmpgt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    ireturn
+L2
+    iconst_0
+    goto L4
+L3
+    iconst_1
+    goto L4
+L5
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ck.e(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

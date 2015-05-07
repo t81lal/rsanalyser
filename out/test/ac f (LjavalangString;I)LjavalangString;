@@ -1,0 +1,190 @@
+ac f (Ljava/lang/String;I)Ljava/lang/String;L1
+    aload 0
+    invokevirtual java/lang/String length:()I
+    istore 2
+    goto L2
+L3
+    new java/lang/String
+    dup
+    aload 3
+    invokespecial java/lang/String <init>:([C)V
+    areturn
+L4
+    iconst_2
+    istore 4
+L5
+    iconst_0
+    istore 5
+L6
+    iload 5
+    iload 2
+    if_icmpge L3
+    iload 1
+    ldc 897335381 (java.lang.Integer)
+    if_icmpeq L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    aload 0
+    iload 5
+    invokevirtual java/lang/String charAt:(I)C
+    istore 6
+L8
+    iconst_0
+    iload 4
+    if_icmpne L9
+    goto L10
+L11
+    bipush 33
+    iload 6
+    if_icmpne L12
+    iload 1
+    ldc 897335381 (java.lang.Integer)
+    if_icmpeq L13
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
+    iload 4
+    iconst_2
+    if_icmpeq L14
+    iload 6
+    invokestatic java/lang/Character isUpperCase:(C)Z
+    ifeq L15
+    iload 1
+    ldc 897335381 (java.lang.Integer)
+    if_icmpeq L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L14
+    iload 6
+    sipush 181
+    if_icmpeq L16
+    iload 6
+    sipush 402
+    if_icmpne L17
+    iload 1
+    ldc 897335381 (java.lang.Integer)
+    if_icmpeq L16
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L18
+    iconst_0
+    istore 4
+    goto L19
+L20
+    goto L21
+L17
+    iload 6
+    invokestatic java/lang/Character toTitleCase:(C)C
+    istore 7
+L21
+    iload 7
+    istore 6
+    goto L15
+L16
+    iload 6
+    istore 7
+    goto L20
+L13
+    iconst_2
+    istore 4
+    goto L19
+L22
+    iload 6
+    bipush 46
+    if_icmpeq L13
+    iload 1
+    ldc 897335381 (java.lang.Integer)
+    if_icmpeq L23
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L23
+    iload 6
+    bipush 63
+    if_icmpeq L13
+    iload 1
+    ldc 897335381 (java.lang.Integer)
+    if_icmpeq L11
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L15
+    iload 6
+    invokestatic java/lang/Character isLetter:(C)Z
+    ifeq L22
+    iload 1
+    ldc 897335381 (java.lang.Integer)
+    if_icmpeq L18
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L24
+    iconst_1
+    istore 4
+    goto L19
+L12
+    iload 6
+    invokestatic java/lang/Character isSpaceChar:(C)Z
+    ifeq L25
+    iload 1
+    ldc 897335381 (java.lang.Integer)
+    if_icmpeq L26
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L26
+    iload 4
+    iconst_2
+    if_icmpeq L19
+    iload 1
+    ldc 897335381 (java.lang.Integer)
+    if_icmpeq L24
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    iload 6
+    invokestatic java/lang/Character toLowerCase:(C)C
+    istore 6
+    goto L15
+L25
+    iconst_1
+    istore 4
+L19
+    aload 3
+    iload 5
+    iload 6
+    castore
+L27
+    iinc 5 1
+    goto L6
+L2
+    iload 2
+    newarray 5
+    astore 3
+    goto L4
+L28
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ac.f(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

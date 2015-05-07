@@ -1,0 +1,51 @@
+gc e (Lgv;Lgv;I)IL1
+    aload 1
+    getfield gv l:Lhr;
+    getfield hr c:I
+    ldc 1042697603 (java.lang.Integer)
+    imul
+    aload 2
+    getfield gv l:Lhr;
+    getfield hr c:I
+    ldc 1042697603 (java.lang.Integer)
+    imul
+    if_icmpge L2
+    iconst_m1
+    goto L3
+L2
+    aload 2
+    getfield gv l:Lhr;
+    getfield hr c:I
+    ldc 1042697603 (java.lang.Integer)
+    imul
+    aload 1
+    getfield gv l:Lhr;
+    getfield hr c:I
+    ldc 1042697603 (java.lang.Integer)
+    imul
+    if_icmpne L4
+    iload 3
+    ldc 1593175097 (java.lang.Integer)
+    if_icmpne L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L5
+    iconst_0
+    goto L3
+L4
+    iconst_1
+L3
+    ireturn
+L6
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "gc.e(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

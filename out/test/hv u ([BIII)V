@@ -1,0 +1,709 @@
+hv u ([BIII)VL1
+    iload 2
+    iload 3
+    iadd
+    aload 1
+    arraylength
+    if_icmple L2
+    new java/lang/ArrayIndexOutOfBoundsException
+    dup
+    iload 3
+    iload 2
+    iadd
+    aload 1
+    arraylength
+    isub
+    invokespecial java/lang/ArrayIndexOutOfBoundsException <init>:(I)V
+    athrow
+L2
+    ldc 9212854830553578177 (java.lang.Long)
+    aload 0
+    getfield hv w:J
+    lmul
+    ldc -1 (java.lang.Long)
+    lcmp
+    ifeq L3
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L4
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    aload 0
+    getfield hv r:J
+    ldc 4900104632626402583 (java.lang.Long)
+    lmul
+    aload 0
+    getfield hv w:J
+    ldc 9212854830553578177 (java.lang.Long)
+    lmul
+    lcmp
+    iflt L3
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L5
+    iload 3
+    i2l
+    ldc 4900104632626402583 (java.lang.Long)
+    aload 0
+    getfield hv r:J
+    lmul
+    ladd
+    aload 0
+    getfield hv i:I
+    ldc 1471364915 (java.lang.Integer)
+    imul
+    i2l
+    aload 0
+    getfield hv w:J
+    ldc 9212854830553578177 (java.lang.Long)
+    lmul
+    ladd
+    lcmp
+    ifgt L3
+L6
+    aload 0
+    getfield hv u:[B
+    ldc 4900104632626402583 (java.lang.Long)
+    aload 0
+    getfield hv r:J
+    lmul
+    ldc 9212854830553578177 (java.lang.Long)
+    aload 0
+    getfield hv w:J
+    lmul
+    lsub
+    l2i
+    aload 1
+    iload 2
+    iload 3
+    invokestatic java/lang/System arraycopy:(Ljava/lang/Object;ILjava/lang/Object;II)V
+L7
+    aload 0
+    dup
+    getfield hv r:J
+    ldc -4677954413556059481 (java.lang.Long)
+    iload 3
+    i2l
+    lmul
+    ladd
+    putfield hv r:J
+L8
+    return
+L3
+    aload 0
+    getfield hv r:J
+    ldc 4900104632626402583 (java.lang.Long)
+    lmul
+    lstore 5
+L9
+    iload 2
+    istore 7
+L10
+    iload 3
+    istore 8
+L11
+    ldc 4900104632626402583 (java.lang.Long)
+    aload 0
+    getfield hv r:J
+    lmul
+    ldc 4113852004461160965 (java.lang.Long)
+    aload 0
+    getfield hv l:J
+    lmul
+    lcmp
+    iflt L12
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L13
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L13
+    aload 0
+    getfield hv r:J
+    ldc 4900104632626402583 (java.lang.Long)
+    lmul
+    aload 0
+    getfield hv l:J
+    ldc 4113852004461160965 (java.lang.Long)
+    lmul
+    aload 0
+    getfield hv c:I
+    ldc -412130731 (java.lang.Integer)
+    imul
+    i2l
+    ladd
+    lcmp
+    ifge L12
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L14
+    return
+L14
+    ldc -412130731 (java.lang.Integer)
+    aload 0
+    getfield hv c:I
+    imul
+    i2l
+    ldc 4900104632626402583 (java.lang.Long)
+    aload 0
+    getfield hv r:J
+    lmul
+    aload 0
+    getfield hv l:J
+    ldc 4113852004461160965 (java.lang.Long)
+    lmul
+    lsub
+    lsub
+    l2i
+    istore 9
+L15
+    iload 9
+    iload 3
+    if_icmple L16
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L17
+    return
+L17
+    iload 3
+    istore 9
+L16
+    aload 0
+    getfield hv a:[B
+    aload 0
+    getfield hv r:J
+    ldc 4900104632626402583 (java.lang.Long)
+    lmul
+    aload 0
+    getfield hv l:J
+    ldc 4113852004461160965 (java.lang.Long)
+    lmul
+    lsub
+    l2i
+    aload 1
+    iload 2
+    iload 9
+    invokestatic java/lang/System arraycopy:(Ljava/lang/Object;ILjava/lang/Object;II)V
+L18
+    aload 0
+    dup
+    getfield hv r:J
+    ldc -4677954413556059481 (java.lang.Long)
+    iload 9
+    i2l
+    lmul
+    ladd
+    putfield hv r:J
+L19
+    iload 2
+    iload 9
+    iadd
+    istore 2
+L20
+    iload 3
+    iload 9
+    isub
+    istore 3
+L12
+    iload 3
+    aload 0
+    getfield hv a:[B
+    arraylength
+    if_icmple L21
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L22
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L22
+    aload 0
+    getfield hv e:Lhq;
+    ldc 4900104632626402583 (java.lang.Long)
+    aload 0
+    getfield hv r:J
+    lmul
+    invokevirtual hq e:(J)V
+L23
+    aload 0
+    ldc -7217261981513835313 (java.lang.Long)
+    aload 0
+    getfield hv r:J
+    lmul
+    putfield hv o:J
+L24
+    iload 3
+    ifle L25
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L26
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L26
+    aload 0
+    getfield hv e:Lhq;
+    aload 1
+    iload 2
+    iload 3
+    ldc -1811256155 (java.lang.Integer)
+    invokevirtual hq u:([BIII)I
+    istore 9
+L27
+    iload 9
+    iconst_m1
+    if_icmpne L28
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L29
+    return
+L29
+    goto L25
+L28
+    aload 0
+    dup
+    getfield hv o:J
+    iload 9
+    i2l
+    ldc -7215673799252199159 (java.lang.Long)
+    lmul
+    ladd
+    putfield hv o:J
+L30
+    aload 0
+    dup
+    getfield hv r:J
+    iload 9
+    i2l
+    ldc -4677954413556059481 (java.lang.Long)
+    lmul
+    ladd
+    putfield hv r:J
+L31
+    iload 2
+    iload 9
+    iadd
+    istore 2
+L32
+    iload 3
+    iload 9
+    isub
+    istore 3
+L33
+    goto L24
+L21
+    iload 3
+    ifle L25
+L34
+    aload 0
+    ldc 480470498 (java.lang.Integer)
+    invokevirtual hv w:(I)V
+L35
+    iload 3
+    istore 9
+L36
+    iload 9
+    aload 0
+    getfield hv c:I
+    ldc -412130731 (java.lang.Integer)
+    imul
+    if_icmple L37
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L38
+    return
+L38
+    aload 0
+    getfield hv c:I
+    ldc -412130731 (java.lang.Integer)
+    imul
+    istore 9
+L37
+    aload 0
+    getfield hv a:[B
+    iconst_0
+    aload 1
+    iload 2
+    iload 9
+    invokestatic java/lang/System arraycopy:(Ljava/lang/Object;ILjava/lang/Object;II)V
+L39
+    iload 2
+    iload 9
+    iadd
+    istore 2
+L40
+    iload 3
+    iload 9
+    isub
+    istore 3
+L41
+    aload 0
+    dup
+    getfield hv r:J
+    ldc -4677954413556059481 (java.lang.Long)
+    iload 9
+    i2l
+    lmul
+    ladd
+    putfield hv r:J
+L25
+    ldc 9212854830553578177 (java.lang.Long)
+    aload 0
+    getfield hv w:J
+    lmul
+    ldc -1 (java.lang.Long)
+    lcmp
+    ifeq L42
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L43
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L43
+    ldc 9212854830553578177 (java.lang.Long)
+    aload 0
+    getfield hv w:J
+    lmul
+    aload 0
+    getfield hv r:J
+    ldc 4900104632626402583 (java.lang.Long)
+    lmul
+    lcmp
+    ifle L44
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L45
+    return
+L45
+    iload 3
+    ifle L44
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L46
+    return
+L46
+    aload 0
+    getfield hv w:J
+    ldc 9212854830553578177 (java.lang.Long)
+    lmul
+    ldc 4900104632626402583 (java.lang.Long)
+    aload 0
+    getfield hv r:J
+    lmul
+    lsub
+    l2i
+    iload 2
+    iadd
+    istore 9
+L47
+    iload 9
+    iload 2
+    iload 3
+    iadd
+    if_icmple L48
+    iload 2
+    iload 3
+    iadd
+    istore 9
+L48
+    iload 2
+    iload 9
+    if_icmpge L44
+L49
+    aload 1
+    iload 2
+    iinc 2 1
+    iconst_0
+    bastore
+L50
+    iinc 3 -1
+L51
+    aload 0
+    dup
+    getfield hv r:J
+    ldc -4677954413556059481 (java.lang.Long)
+    ladd
+    putfield hv r:J
+    goto L48
+L44
+    ldc -1 (java.lang.Long)
+    lstore 9
+L52
+    ldc -1 (java.lang.Long)
+    lstore 11
+L53
+    ldc 9212854830553578177 (java.lang.Long)
+    aload 0
+    getfield hv w:J
+    lmul
+    lload 5
+    lcmp
+    iflt L54
+    aload 0
+    getfield hv w:J
+    ldc 9212854830553578177 (java.lang.Long)
+    lmul
+    iload 8
+    i2l
+    lload 5
+    ladd
+    lcmp
+    ifge L54
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L55
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L55
+    ldc 9212854830553578177 (java.lang.Long)
+    aload 0
+    getfield hv w:J
+    lmul
+    lstore 9
+    goto L56
+L54
+    lload 5
+    aload 0
+    getfield hv w:J
+    ldc 9212854830553578177 (java.lang.Long)
+    lmul
+    lcmp
+    iflt L56
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L57
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L57
+    lload 5
+    aload 0
+    getfield hv w:J
+    ldc 9212854830553578177 (java.lang.Long)
+    lmul
+    aload 0
+    getfield hv i:I
+    ldc 1471364915 (java.lang.Integer)
+    imul
+    i2l
+    ladd
+    lcmp
+    ifge L56
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L58
+    return
+L58
+    lload 5
+    lstore 9
+L56
+    aload 0
+    getfield hv i:I
+    ldc 1471364915 (java.lang.Integer)
+    imul
+    i2l
+    ldc 9212854830553578177 (java.lang.Long)
+    aload 0
+    getfield hv w:J
+    lmul
+    ladd
+    lload 5
+    lcmp
+    ifle L59
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L60
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L60
+    aload 0
+    getfield hv w:J
+    ldc 9212854830553578177 (java.lang.Long)
+    lmul
+    ldc 1471364915 (java.lang.Integer)
+    aload 0
+    getfield hv i:I
+    imul
+    i2l
+    ladd
+    lload 5
+    iload 8
+    i2l
+    ladd
+    lcmp
+    ifgt L59
+L61
+    ldc 9212854830553578177 (java.lang.Long)
+    aload 0
+    getfield hv w:J
+    lmul
+    ldc 1471364915 (java.lang.Integer)
+    aload 0
+    getfield hv i:I
+    imul
+    i2l
+    ladd
+    lstore 11
+    goto L62
+L59
+    iload 8
+    i2l
+    lload 5
+    ladd
+    ldc 9212854830553578177 (java.lang.Long)
+    aload 0
+    getfield hv w:J
+    lmul
+    lcmp
+    ifle L62
+    iload 8
+    i2l
+    lload 5
+    ladd
+    ldc 1471364915 (java.lang.Integer)
+    aload 0
+    getfield hv i:I
+    imul
+    i2l
+    ldc 9212854830553578177 (java.lang.Long)
+    aload 0
+    getfield hv w:J
+    lmul
+    ladd
+    lcmp
+    ifgt L62
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L63
+    return
+L63
+    iload 8
+    i2l
+    lload 5
+    ladd
+    lstore 11
+L62
+    lload 9
+    ldc -1 (java.lang.Long)
+    lcmp
+    ifle L42
+    lload 11
+    lload 9
+    lcmp
+    ifle L42
+L64
+    lload 11
+    lload 9
+    lsub
+    l2i
+    istore 13
+L65
+    aload 0
+    getfield hv u:[B
+    lload 9
+    ldc 9212854830553578177 (java.lang.Long)
+    aload 0
+    getfield hv w:J
+    lmul
+    lsub
+    l2i
+    aload 1
+    lload 9
+    lload 5
+    lsub
+    l2i
+    iload 7
+    iadd
+    iload 13
+    invokestatic java/lang/System arraycopy:(Ljava/lang/Object;ILjava/lang/Object;II)V
+L66
+    lload 11
+    ldc 4900104632626402583 (java.lang.Long)
+    aload 0
+    getfield hv r:J
+    lmul
+    lcmp
+    ifle L42
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L67
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L67
+    iload 3
+    i2l
+    lload 11
+    aload 0
+    getfield hv r:J
+    ldc 4900104632626402583 (java.lang.Long)
+    lmul
+    lsub
+    lsub
+    l2i
+    istore 3
+L68
+    aload 0
+    lload 11
+    ldc -4677954413556059481 (java.lang.Long)
+    lmul
+    putfield hv r:J
+L42
+    goto L69
+L70
+    astore 5
+L71
+    aload 0
+    ldc 7215673799252199159 (java.lang.Long)
+    putfield hv o:J
+L72
+    aload 5
+    athrow
+L69
+    iload 3
+    ifle L73
+    iload 4
+    ldc 1527281550 (java.lang.Integer)
+    if_icmpgt L74
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L74
+    new java/io/EOFException
+    dup
+    invokespecial java/io/EOFException <init>:()V
+    athrow
+L73
+    return
+L75
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "hv.u(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

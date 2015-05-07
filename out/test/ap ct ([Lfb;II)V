@@ -1,0 +1,265 @@
+ap ct ([Lfb;II)VL1
+    iconst_0
+    istore 3
+    goto L2
+L3
+    new e
+    dup
+    invokespecial e <init>:()V
+    astore 5
+    goto L4
+L5
+    aload 0
+    iload 3
+    aaload
+    astore 4
+    goto L6
+L7
+    aload 5
+    aload 4
+    putfield e l:Lfb;
+    goto L8
+L9
+    goto L10
+L11
+    aload 4
+    getfield fb j:I
+    ldc -1547422441 (java.lang.Integer)
+    imul
+    ifne L12
+    iload 2
+    ldc 296812407 (java.lang.Integer)
+    if_icmpne L13
+    return
+L14
+    aconst_null
+    aload 5
+    if_acmpeq L12
+    iload 2
+    ldc 296812407 (java.lang.Integer)
+    if_icmpne L15
+    return
+L16
+    aload 4
+    getfield fb do:[Lfb;
+    iload 1
+    ldc 1029796878 (java.lang.Integer)
+    invokestatic ap ct:([Lfb;II)V
+    goto L17
+L18
+    aload 4
+    getfield fb h:I
+    ldc 952871887 (java.lang.Integer)
+    imul
+    ldc -2068421293 (java.lang.Integer)
+    invokestatic f a:(II)Lfb;
+    astore 5
+    goto L19
+L17
+    getstatic client jv:Lgf;
+    aload 4
+    getfield fb h:I
+    ldc 952871887 (java.lang.Integer)
+    imul
+    i2l
+    invokevirtual gf e:(J)Lgm;
+    checkcast c
+    astore 5
+    goto L14
+L15
+    aload 5
+    getfield c e:I
+    ldc -193401837 (java.lang.Integer)
+    imul
+    istore 6
+L20
+    iload 6
+    ldc 1928687330 (java.lang.Integer)
+    invokestatic df c:(II)Z
+    ifne L21
+    goto L22
+L12
+    iload 1
+    ifne L23
+    goto L24
+L21
+    getstatic fb e:[[Lfb;
+    iload 6
+    aaload
+    iload 1
+    ldc 1728142843 (java.lang.Integer)
+    invokestatic ap ct:([Lfb;II)V
+    goto L12
+L2
+    iload 3
+    aload 0
+    arraylength
+    if_icmpge L25
+    iload 2
+    ldc 296812407 (java.lang.Integer)
+    if_icmpne L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    aload 5
+    aload 4
+    putfield e l:Lfb;
+    goto L26
+L27
+    new e
+    dup
+    invokespecial e <init>:()V
+    astore 5
+    goto L7
+L22
+    goto L12
+L8
+    aload 5
+    aload 4
+    getfield fb df:[Ljava/lang/Object;
+    putfield e e:[Ljava/lang/Object;
+L28
+    aload 5
+    ldc -2119225707 (java.lang.Integer)
+    invokestatic k e:(Le;I)V
+L23
+    iconst_1
+    iload 1
+    if_icmpne L10
+    iload 2
+    ldc 296812407 (java.lang.Integer)
+    if_icmpne L29
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L29
+    aload 4
+    getfield fb dp:[Ljava/lang/Object;
+    ifnull L10
+L30
+    ldc 101374153 (java.lang.Integer)
+    aload 4
+    getfield fb s:I
+    imul
+    iflt L3
+    goto L18
+L6
+    aload 4
+    ifnonnull L11
+    iload 2
+    ldc 296812407 (java.lang.Integer)
+    if_icmpne L9
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L19
+    aconst_null
+    aload 5
+    if_acmpeq L10
+    iload 2
+    ldc 296812407 (java.lang.Integer)
+    if_icmpne L31
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L31
+    aload 5
+    getfield fb do:[Lfb;
+    ifnull L10
+    iload 2
+    ldc 296812407 (java.lang.Integer)
+    if_icmpne L32
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L13
+    aload 4
+    getfield fb do:[Lfb;
+    ifnull L17
+    iload 2
+    ldc 296812407 (java.lang.Integer)
+    if_icmpne L16
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L33
+    aload 5
+    getfield fb do:[Lfb;
+    ldc 101374153 (java.lang.Integer)
+    aload 4
+    getfield fb s:I
+    imul
+    aaload
+    aload 4
+    if_acmpeq L3
+    iload 2
+    ldc 296812407 (java.lang.Integer)
+    if_icmpne L34
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L34
+    goto L10
+L35
+    aload 5
+    ldc -2119225707 (java.lang.Integer)
+    invokestatic k e:(Le;I)V
+    goto L10
+L32
+    aload 4
+    getfield fb s:I
+    ldc 101374153 (java.lang.Integer)
+    imul
+    aload 5
+    getfield fb do:[Lfb;
+    arraylength
+    if_icmpge L10
+    iload 2
+    ldc 296812407 (java.lang.Integer)
+    if_icmpne L33
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L26
+    aload 5
+    aload 4
+    getfield fb dp:[Ljava/lang/Object;
+    putfield e e:[Ljava/lang/Object;
+    goto L35
+L24
+    aconst_null
+    aload 4
+    getfield fb df:[Ljava/lang/Object;
+    if_acmpeq L23
+    iload 2
+    ldc 296812407 (java.lang.Integer)
+    if_icmpne L27
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    iinc 3 1
+    goto L2
+L25
+    return
+L36
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ap.ct(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

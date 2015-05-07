@@ -1,0 +1,139 @@
+dm e (IB)[BL1
+    iload 0
+    bipush 100
+    if_icmpne L2
+    iload 1
+    iconst_1
+    if_icmplt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    aload 2
+    areturn
+L5
+    getstatic dm c:[[B
+    getstatic dm e:I
+    ldc -1521612323 (java.lang.Integer)
+    isub
+    dup
+    putstatic dm e:I
+    ldc 31889013 (java.lang.Integer)
+    imul
+    aaload
+    astore 2
+    goto L6
+L3
+    ldc 31889013 (java.lang.Integer)
+    getstatic dm e:I
+    imul
+    ifle L2
+    iload 1
+    iconst_1
+    if_icmplt L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    aload 2
+    areturn
+L2
+    iload 0
+    sipush 5000
+    if_icmpne L8
+    iload 1
+    iconst_1
+    if_icmplt L9
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
+    getstatic dm a:I
+    ldc -1786147431 (java.lang.Integer)
+    imul
+    ifle L8
+L10
+    getstatic dm u:[[B
+    getstatic dm a:I
+    ldc -1166707031 (java.lang.Integer)
+    isub
+    dup
+    putstatic dm a:I
+    ldc -1786147431 (java.lang.Integer)
+    imul
+    aaload
+    astore 2
+    goto L11
+L6
+    getstatic dm c:[[B
+    ldc 31889013 (java.lang.Integer)
+    getstatic dm e:I
+    imul
+    aconst_null
+    aastore
+    goto L7
+L12
+    aload 2
+    areturn
+L13
+    getstatic dm w:[[B
+    getstatic dm l:I
+    ldc 1500790273 (java.lang.Integer)
+    imul
+    aconst_null
+    aastore
+    goto L4
+L14
+    getstatic dm l:I
+    ldc 1500790273 (java.lang.Integer)
+    imul
+    ifle L15
+L16
+    getstatic dm w:[[B
+    getstatic dm l:I
+    ldc -309345791 (java.lang.Integer)
+    isub
+    dup
+    putstatic dm l:I
+    ldc 1500790273 (java.lang.Integer)
+    imul
+    aaload
+    astore 2
+    goto L13
+L11
+    getstatic dm u:[[B
+    ldc -1786147431 (java.lang.Integer)
+    getstatic dm a:I
+    imul
+    aconst_null
+    aastore
+    goto L12
+L15
+    iload 0
+    newarray 8
+    areturn
+L8
+    sipush 30000
+    iload 0
+    if_icmpne L15
+    iload 1
+    iconst_1
+    if_icmplt L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L17
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "dm.e(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

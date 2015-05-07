@@ -1,0 +1,518 @@
+dd l (Ljava/lang/CharSequence;B)[BL1
+    aload 0
+    invokeinterface java/lang/CharSequence length:()I
+    istore 2
+    goto L2
+L3
+    aload 3
+    iload 4
+    bipush -125
+    bastore
+    goto L4
+L5
+    iconst_0
+    istore 4
+    goto L6
+L7
+    aload 3
+    iload 4
+    bipush -107
+    bastore
+    goto L4
+L8
+    sipush 8230
+    iload 5
+    if_icmpne L9
+    iload 1
+    iconst_0
+    if_icmpeq L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L11
+    iload 5
+    ifle L12
+    iload 1
+    iconst_0
+    if_icmpeq L13
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L13
+    iload 5
+    sipush 128
+    if_icmplt L14
+    iload 1
+    iconst_0
+    if_icmpeq L12
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    iload 5
+    sipush 160
+    if_icmplt L15
+    iload 1
+    iconst_0
+    if_icmpeq L16
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L16
+    iload 5
+    sipush 255
+    if_icmpgt L15
+L14
+    aload 3
+    iload 4
+    iload 5
+    i2b
+    bastore
+    goto L4
+L15
+    iload 5
+    sipush 8364
+    if_icmpne L17
+    goto L18
+L19
+    aload 0
+    iload 4
+    invokeinterface java/lang/CharSequence charAt:(I)C
+    istore 5
+    goto L11
+L17
+    iload 5
+    sipush 8218
+    if_icmpne L20
+    iload 1
+    iconst_0
+    if_icmpeq L21
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L22
+    aload 3
+    iload 4
+    bipush -116
+    bastore
+    goto L4
+L20
+    sipush 402
+    iload 5
+    if_icmpne L23
+    iload 1
+    iconst_0
+    if_icmpeq L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    aload 3
+    iload 4
+    bipush -123
+    bastore
+    goto L4
+L23
+    iload 5
+    sipush 8222
+    if_icmpne L8
+    iload 1
+    iconst_0
+    if_icmpeq L24
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L24
+    aload 3
+    iload 4
+    bipush -124
+    bastore
+    goto L4
+L25
+    iload 5
+    sipush 8220
+    if_icmpne L26
+    goto L27
+L28
+    aload 3
+    iload 4
+    bipush -104
+    bastore
+    goto L4
+L9
+    iload 5
+    sipush 8224
+    if_icmpne L29
+    iload 1
+    iconst_0
+    if_icmpeq L30
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L30
+    aload 3
+    iload 4
+    bipush -122
+    bastore
+    goto L4
+L29
+    sipush 8225
+    iload 5
+    if_icmpne L31
+    iload 1
+    iconst_0
+    if_icmpeq L32
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L32
+    aload 3
+    iload 4
+    bipush -121
+    bastore
+    goto L4
+L31
+    iload 5
+    sipush 710
+    if_icmpne L33
+    iload 1
+    iconst_0
+    if_icmpeq L34
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    iinc 4 1
+    goto L6
+L35
+    aload 3
+    iload 4
+    bipush -97
+    bastore
+    goto L4
+L36
+    sipush 8212
+    iload 5
+    if_icmpne L37
+    goto L38
+L37
+    sipush 732
+    iload 5
+    if_icmpne L39
+    iload 1
+    iconst_0
+    if_icmpeq L28
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L40
+    aload 3
+    iload 4
+    bipush -118
+    bastore
+    goto L4
+L41
+    sipush 8249
+    iload 5
+    if_icmpne L42
+    iload 1
+    iconst_0
+    if_icmpeq L43
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L44
+    aload 3
+    iload 4
+    bipush 63
+    bastore
+    goto L4
+L21
+    aload 3
+    iload 4
+    bipush -126
+    bastore
+    goto L4
+L6
+    iload 4
+    iload 2
+    if_icmpge L45
+    iload 1
+    iconst_0
+    if_icmpeq L19
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L46
+    iload 5
+    sipush 381
+    if_icmpne L47
+    iload 1
+    iconst_0
+    if_icmpeq L48
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L48
+    aload 3
+    iload 4
+    bipush -114
+    bastore
+    goto L4
+L47
+    iload 5
+    sipush 8216
+    if_icmpne L49
+    iload 1
+    iconst_0
+    if_icmpeq L50
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L50
+    aload 3
+    iload 4
+    bipush -111
+    bastore
+    goto L4
+L49
+    sipush 8217
+    iload 5
+    if_icmpne L25
+    iload 1
+    iconst_0
+    if_icmpeq L51
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L52
+    aload 3
+    iload 4
+    bipush -119
+    bastore
+    goto L4
+L42
+    sipush 338
+    iload 5
+    if_icmpne L46
+    iload 1
+    iconst_0
+    if_icmpeq L22
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L27
+    aload 3
+    iload 4
+    bipush -109
+    bastore
+    goto L4
+L26
+    iload 5
+    sipush 8221
+    if_icmpne L53
+    iload 1
+    iconst_0
+    if_icmpeq L54
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L54
+    aload 3
+    iload 4
+    bipush -108
+    bastore
+    goto L4
+L53
+    sipush 8226
+    iload 5
+    if_icmpne L55
+    goto L7
+L56
+    iload 5
+    sipush 382
+    if_icmpne L57
+    iload 1
+    iconst_0
+    if_icmpeq L58
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L55
+    iload 5
+    sipush 8211
+    if_icmpne L36
+    iload 1
+    iconst_0
+    if_icmpeq L59
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L59
+    aload 3
+    iload 4
+    bipush -106
+    bastore
+    goto L4
+L60
+    iload 5
+    sipush 352
+    if_icmpne L41
+    goto L40
+L38
+    aload 3
+    iload 4
+    bipush -105
+    bastore
+    goto L4
+L34
+    aload 3
+    iload 4
+    bipush -120
+    bastore
+    goto L4
+L43
+    aload 3
+    iload 4
+    bipush -117
+    bastore
+    goto L4
+L39
+    iload 5
+    sipush 8482
+    if_icmpne L61
+    aload 3
+    iload 4
+    bipush -103
+    bastore
+    goto L4
+L61
+    iload 5
+    sipush 353
+    if_icmpne L62
+    iload 1
+    iconst_0
+    if_icmpeq L63
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L63
+    aload 3
+    iload 4
+    bipush -102
+    bastore
+    goto L4
+L62
+    sipush 8250
+    iload 5
+    if_icmpne L64
+    iload 1
+    iconst_0
+    if_icmpeq L65
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L33
+    sipush 8240
+    iload 5
+    if_icmpne L60
+    iload 1
+    iconst_0
+    if_icmpeq L52
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L64
+    iload 5
+    sipush 339
+    if_icmpne L56
+    iload 1
+    iconst_0
+    if_icmpeq L66
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L66
+    aload 3
+    iload 4
+    bipush -100
+    bastore
+    goto L4
+L2
+    iload 2
+    newarray 8
+    astore 3
+    goto L5
+L58
+    aload 3
+    iload 4
+    bipush -98
+    bastore
+    goto L4
+L57
+    sipush 376
+    iload 5
+    if_icmpne L44
+    iload 1
+    iconst_0
+    if_icmpeq L35
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L51
+    aload 3
+    iload 4
+    bipush -110
+    bastore
+    goto L4
+L18
+    aload 3
+    iload 4
+    bipush -128
+    bastore
+    goto L4
+L65
+    aload 3
+    iload 4
+    bipush -101
+    bastore
+    goto L4
+L45
+    aload 3
+    areturn
+L67
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "dd.l(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

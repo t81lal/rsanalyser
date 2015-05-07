@@ -1,0 +1,93 @@
+g dw (Ljava/lang/String;I)ZL1
+    aconst_null
+    aload 0
+    if_acmpne L2
+    goto L3
+L4
+    iinc 3 1
+    goto L5
+L6
+    aload 2
+    aload 4
+    getfield r a:Ljava/lang/String;
+    getstatic dj g:Lge;
+    ldc -1327945682 (java.lang.Integer)
+    invokestatic dp l:(Ljava/lang/CharSequence;Lge;I)Ljava/lang/String;
+    invokevirtual java/lang/String equalsIgnoreCase:(Ljava/lang/String;)Z
+    ifeq L4
+    iload 1
+    ldc -1071127361 (java.lang.Integer)
+    if_icmpne L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    iconst_1
+    ireturn
+L5
+    iload 3
+    getstatic client oo:I
+    ldc -1219831833 (java.lang.Integer)
+    imul
+    if_icmpge L9
+    iload 1
+    ldc -1071127361 (java.lang.Integer)
+    if_icmpne L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    getstatic client oh:[Lr;
+    iload 3
+    aaload
+    astore 4
+    goto L11
+L3
+    iconst_0
+    ireturn
+L12
+    iconst_0
+    istore 3
+    goto L5
+L2
+    aload 0
+    getstatic dj g:Lge;
+    ldc -1978760118 (java.lang.Integer)
+    invokestatic dp l:(Ljava/lang/CharSequence;Lge;I)Ljava/lang/String;
+    astore 2
+    goto L12
+L7
+    iconst_1
+    ireturn
+L11
+    aload 2
+    aload 4
+    getfield r e:Ljava/lang/String;
+    getstatic dj g:Lge;
+    ldc -523593169 (java.lang.Integer)
+    invokestatic dp l:(Ljava/lang/CharSequence;Lge;I)Ljava/lang/String;
+    invokevirtual java/lang/String equalsIgnoreCase:(Ljava/lang/String;)Z
+    ifeq L6
+    iload 1
+    ldc -1071127361 (java.lang.Integer)
+    if_icmpne L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
+    iconst_0
+    ireturn
+L13
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "g.dw(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

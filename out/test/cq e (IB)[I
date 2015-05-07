@@ -1,0 +1,108 @@
+cq e (IB)[IL1
+    aload 0
+    getfield cq e:[Lbg;
+    iload 1
+    aaload
+    astore 3
+    goto L2
+L3
+    aconst_null
+    areturn
+L4
+    aconst_null
+    aload 3
+    getfield bg s:[I
+    if_acmpeq L5
+L6
+    aload 0
+    getfield cq a:Lgh;
+    aload 3
+    invokevirtual gh l:(Lgm;)V
+    goto L7
+L8
+    goto L9
+L10
+    aload 3
+    getfield bg s:[I
+    areturn
+L5
+    aload 3
+    aload 0
+    getfield cq u:D
+    aload 0
+    getfield cq w:I
+    ldc 1606172325 (java.lang.Integer)
+    imul
+    aload 0
+    getfield cq i:Lfv;
+    invokevirtual bg e:(DILfv;)Z
+    istore 4
+L11
+    iload 4
+    ifeq L3
+L12
+    ldc -769438369 (java.lang.Integer)
+    aload 0
+    getfield cq c:I
+    imul
+    ifne L13
+    iload 2
+    iconst_4
+    if_icmplt L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L14
+    aload 0
+    getfield cq a:Lgh;
+    invokevirtual gh w:()Lgm;
+    checkcast bg
+    astore 5
+    goto L15
+L13
+    aload 0
+    dup
+    getfield cq c:I
+    ldc -713011553 (java.lang.Integer)
+    isub
+    putfield cq c:I
+L9
+    aload 0
+    getfield cq a:Lgh;
+    aload 3
+    invokevirtual gh l:(Lgm;)V
+L16
+    aload 3
+    iconst_1
+    putfield bg j:Z
+    goto L17
+L7
+    aload 3
+    iconst_1
+    putfield bg j:Z
+    goto L10
+L2
+    aconst_null
+    aload 3
+    if_acmpeq L3
+    goto L4
+L17
+    aload 3
+    getfield bg s:[I
+    areturn
+L15
+    aload 5
+    invokevirtual bg a:()V
+    goto L8
+L18
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "cq.e(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

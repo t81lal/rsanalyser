@@ -1,0 +1,42 @@
+hq u ([BIII)IL1
+    aload 0
+    getfield hq e:Ljava/io/RandomAccessFile;
+    aload 1
+    iload 2
+    iload 3
+    invokevirtual java/io/RandomAccessFile read:([BII)I
+    istore 5
+L2
+    iload 5
+    ifle L3
+    iload 4
+    ldc 1435090088 (java.lang.Integer)
+    if_icmpne L4
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    aload 0
+    dup
+    getfield hq l:J
+    iload 5
+    i2l
+    ldc -8283725945602306341 (java.lang.Long)
+    lmul
+    ladd
+    putfield hq l:J
+L3
+    iload 5
+    ireturn
+L5
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "hq.u(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

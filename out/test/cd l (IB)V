@@ -1,0 +1,38 @@
+cd l (IB)VL1
+    iconst_0
+    ldc 1022534799 (java.lang.Integer)
+    getstatic fg u:I
+    imul
+    if_icmpeq L2
+    iload 1
+    iconst_3
+    if_icmpne L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    return
+L3
+    ldc 455573299 (java.lang.Integer)
+    iload 0
+    imul
+    putstatic fu f:I
+    goto L4
+L2
+    getstatic fg c:Lff;
+    iload 0
+    bipush 6
+    invokevirtual ff e:(IB)V
+    goto L4
+L5
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "cd.l(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

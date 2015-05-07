@@ -1,0 +1,53 @@
+bm c (I[II)Lbe;L1
+    aload 0
+    getfield bm a:Lfv;
+    ldc 439842892 (java.lang.Integer)
+    invokevirtual fv j:(I)I
+    iconst_1
+    if_icmpne L2
+    aload 0
+    iconst_0
+    iload 1
+    aload 2
+    ldc 1651451702 (java.lang.Integer)
+    invokevirtual bm a:(II[II)Lbe;
+    areturn
+L3
+    new java/lang/RuntimeException
+    dup
+    invokespecial java/lang/RuntimeException <init>:()V
+    athrow
+L2
+    aload 0
+    getfield bm a:Lfv;
+    iload 1
+    ldc 1905554281 (java.lang.Integer)
+    invokevirtual fv s:(II)I
+    iconst_1
+    if_icmpne L3
+    iload 3
+    ldc -904496848 (java.lang.Integer)
+    if_icmpgt L4
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    aload 0
+    iload 1
+    iconst_0
+    aload 2
+    ldc 1547788354 (java.lang.Integer)
+    invokevirtual bm a:(II[II)Lbe;
+    areturn
+L5
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "bm.c(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

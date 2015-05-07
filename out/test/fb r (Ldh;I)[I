@@ -1,0 +1,57 @@
+fb r (Ldh;I)[IL1
+    aload 1
+    ldc 1531031415 (java.lang.Integer)
+    invokevirtual dh z:(I)I
+    istore 3
+    goto L2
+L3
+    iload 3
+    newarray 10
+    astore 4
+    goto L4
+L5
+    aconst_null
+    areturn
+L6
+    aload 4
+    iload 5
+    aload 1
+    ldc -2050940951 (java.lang.Integer)
+    invokevirtual dh x:(I)I
+    iastore
+    goto L7
+L4
+    iconst_0
+    istore 5
+L8
+    iload 5
+    iload 3
+    if_icmpge L9
+    goto L6
+L9
+    aload 4
+    areturn
+L7
+    iinc 5 1
+    goto L8
+L2
+    iload 3
+    ifne L3
+    iload 2
+    ldc 1693342606 (java.lang.Integer)
+    if_icmpne L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "fb.r(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

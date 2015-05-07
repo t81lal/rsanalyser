@@ -1,0 +1,112 @@
+ct a (CI)ZL1
+    iload 0
+    ifle L2
+    iload 1
+    ldc 611610468 (java.lang.Integer)
+    if_icmpeq L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    iinc 3 1
+    goto L5
+L3
+    iload 0
+    sipush 128
+    if_icmplt L6
+    iload 1
+    ldc 611610468 (java.lang.Integer)
+    if_icmpeq L2
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    iload 0
+    sipush 255
+    if_icmpgt L8
+    iload 1
+    ldc 611610468 (java.lang.Integer)
+    if_icmpeq L6
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L6
+    iconst_1
+    ireturn
+L8
+    iload 0
+    ifeq L9
+    iload 1
+    ldc 611610468 (java.lang.Integer)
+    if_icmpeq L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L11
+    iload 0
+    iload 4
+    if_icmpne L4
+    iload 1
+    ldc 611610468 (java.lang.Integer)
+    if_icmpeq L12
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L13
+    iconst_0
+    istore 3
+L5
+    iload 3
+    aload 2
+    arraylength
+    if_icmpge L9
+    iload 1
+    ldc 611610468 (java.lang.Integer)
+    if_icmpeq L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L14
+    aload 2
+    iload 3
+    caload
+    istore 4
+    goto L11
+L2
+    iload 0
+    sipush 160
+    if_icmplt L8
+    iload 1
+    ldc 611610468 (java.lang.Integer)
+    if_icmpeq L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
+    iconst_0
+    ireturn
+L12
+    iconst_1
+    ireturn
+L10
+    getstatic en e:[C
+    astore 2
+    goto L13
+L15
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ct.a(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

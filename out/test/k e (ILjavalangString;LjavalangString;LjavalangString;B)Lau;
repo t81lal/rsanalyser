@@ -1,0 +1,129 @@
+k e (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;B)Lau;L1
+    aload 0
+    getfield k a:[Lau;
+    bipush 99
+    aaload
+    astore 6
+    goto L2
+L3
+    iload 7
+    ifle L4
+    iload 5
+    bipush 8
+    if_icmplt L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L2
+    aload 0
+    getfield k l:I
+    ldc -1025544745 (java.lang.Integer)
+    imul
+    istore 7
+    goto L3
+L6
+    aload 6
+    invokevirtual au if:()V
+    goto L7
+L8
+    aload 6
+    areturn
+L9
+    aload 0
+    getfield k a:[Lau;
+    iload 7
+    aload 0
+    getfield k a:[Lau;
+    iload 7
+    iconst_1
+    isub
+    aaload
+    aastore
+L10
+    iinc 7 -1
+    goto L3
+L4
+    aconst_null
+    aload 6
+    if_acmpne L6
+    iload 5
+    bipush 8
+    if_icmplt L11
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L11
+    new au
+    dup
+    iload 1
+    aload 2
+    aload 4
+    aload 3
+    invokespecial au <init>:(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+    astore 6
+    goto L12
+L13
+    aload 0
+    dup
+    getfield k l:I
+    ldc -1912547865 (java.lang.Integer)
+    iadd
+    putfield k l:I
+    goto L8
+L7
+    aload 6
+    invokevirtual au en:()V
+L14
+    aload 6
+    iload 1
+    aload 2
+    aload 4
+    aload 3
+    ldc 796502559 (java.lang.Integer)
+    invokevirtual au e:(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V
+L12
+    aload 0
+    getfield k a:[Lau;
+    iconst_0
+    aload 6
+    aastore
+L15
+    ldc -1025544745 (java.lang.Integer)
+    aload 0
+    getfield k l:I
+    imul
+    bipush 100
+    if_icmpge L8
+    iload 5
+    bipush 8
+    if_icmplt L13
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L5
+    bipush 100
+    iload 7
+    if_icmpne L9
+    iload 5
+    bipush 8
+    if_icmplt L16
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L16
+    goto L10
+L17
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "k.e(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

@@ -1,0 +1,53 @@
+d e ([Lca;II)Lca;L1
+    aload 0
+    astore 3
+    goto L2
+L3
+    iload 4
+    aload 3
+    arraylength
+    if_icmpge L4
+    goto L5
+L2
+    iconst_0
+    istore 4
+    goto L3
+L6
+    iload 1
+    aload 5
+    ldc 1654114309 (java.lang.Integer)
+    invokeinterface ca a:(I)I
+    if_icmpne L7
+    iload 2
+    ldc 753832712 (java.lang.Integer)
+    if_icmplt L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L5
+    aload 3
+    iload 4
+    aaload
+    astore 5
+    goto L6
+L8
+    aload 5
+    areturn
+L7
+    iinc 4 1
+    goto L3
+L4
+    aconst_null
+    areturn
+L9
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "d.e(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

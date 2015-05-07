@@ -1,0 +1,36 @@
+fq c (ZI)VL1
+    aload 0
+    getfield fq l:Z
+    iload 1
+    if_icmpne L2
+    iload 2
+    ldc -327990299 (java.lang.Integer)
+    if_icmpgt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L3
+    return
+L2
+    aload 0
+    aconst_null
+    aload 0
+    getfield fq a:[I
+    iload 1
+    iconst_m1
+    ldc 1695105255 (java.lang.Integer)
+    invokevirtual fq e:([I[IZII)V
+L4
+    return
+L5
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "fq.c(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

@@ -1,0 +1,236 @@
+bh k (Lbs;II)VL1
+    getstatic bh q:I
+    getstatic bh y:I
+    isub
+    aload 1
+    getfield bs l:I
+    if_icmpne L2
+    goto L3
+L4
+    iload 5
+    iload 10
+    iadd
+    istore 5
+    goto L5
+L2
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L6
+    iload 2
+    aload 0
+    getfield bh c:I
+    iadd
+    istore 2
+L7
+    iload 3
+    aload 0
+    getfield bh u:I
+    iadd
+    istore 3
+    goto L8
+L9
+    iconst_0
+    istore 5
+    goto L10
+L11
+    iconst_0
+    istore 9
+    goto L12
+L10
+    aload 0
+    getfield bh l:I
+    istore 6
+    goto L13
+L14
+    return
+L15
+    getstatic bh j:I
+    iload 7
+    isub
+    istore 8
+    goto L11
+L16
+    iload 2
+    getstatic bh y:I
+    isub
+    iload 3
+    getstatic bh t:I
+    isub
+    aload 1
+    getfield bs l:I
+    imul
+    iadd
+    istore 10
+    goto L17
+L18
+    iload 7
+    ifle L19
+    goto L20
+L21
+    getstatic bh t:I
+    iload 3
+    isub
+    istore 10
+    goto L22
+L12
+    iload 3
+    getstatic bh t:I
+    if_icmpge L23
+    goto L21
+L24
+    getstatic bh t:I
+    istore 3
+L25
+    iload 5
+    iload 10
+    iload 7
+    imul
+    iadd
+    istore 5
+L26
+    iload 4
+    iload 10
+    getstatic bh j:I
+    imul
+    iadd
+    istore 4
+L23
+    iload 3
+    iload 6
+    iadd
+    getstatic bh z:I
+    if_icmple L27
+    iload 6
+    iload 3
+    iload 6
+    iadd
+    getstatic bh z:I
+    isub
+    isub
+    istore 6
+L27
+    iload 2
+    getstatic bh y:I
+    if_icmpge L28
+L29
+    getstatic bh y:I
+    iload 2
+    isub
+    istore 10
+L30
+    iload 7
+    iload 10
+    isub
+    istore 7
+    goto L31
+L17
+    aload 1
+    getfield bs l:I
+    iload 7
+    isub
+    istore 11
+    goto L32
+L33
+    iload 7
+    iload 10
+    isub
+    istore 7
+    goto L34
+L5
+    iload 4
+    iload 10
+    iadd
+    istore 4
+L35
+    iload 9
+    iload 10
+    iadd
+    istore 9
+    goto L36
+L32
+    getstatic bh s:[I
+    aload 0
+    getfield bh e:[I
+    iconst_0
+    iload 5
+    iload 4
+    iload 10
+    iload 7
+    iload 6
+    iload 8
+    iload 9
+    iload 11
+    aload 1
+    getfield bs e:[B
+    invokestatic bh ax:([I[IIIIIIIIII[B)V
+    goto L14
+L31
+    getstatic bh y:I
+    istore 2
+    goto L4
+L37
+    iload 2
+    iload 7
+    iadd
+    getstatic bh q:I
+    isub
+    istore 10
+    goto L33
+L13
+    aload 0
+    getfield bh a:I
+    istore 7
+    goto L15
+L34
+    iload 9
+    iload 10
+    iadd
+    istore 9
+L38
+    iload 8
+    iload 10
+    iadd
+    istore 8
+    goto L18
+L8
+    iload 2
+    iload 3
+    getstatic bh j:I
+    imul
+    iadd
+    istore 4
+    goto L9
+L20
+    iload 6
+    ifgt L16
+L19
+    return
+L22
+    iload 6
+    iload 10
+    isub
+    istore 6
+    goto L24
+L3
+    getstatic bh z:I
+    getstatic bh t:I
+    isub
+    aload 1
+    getfield bs c:I
+    if_icmpeq L6
+    goto L2
+L28
+    iload 2
+    iload 7
+    iadd
+    getstatic bh q:I
+    if_icmple L18
+    goto L37
+L36
+    iload 8
+    iload 10
+    iadd
+    istore 8
+    goto L28

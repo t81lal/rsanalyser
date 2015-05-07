@@ -1,0 +1,107 @@
+i s (IIB)VL1
+    iconst_4
+    newarray 10
+    astore 3
+    goto L2
+L3
+    iinc 6 1
+    goto L4
+L2
+    iconst_4
+    newarray 10
+    astore 4
+    goto L5
+L6
+    aload 4
+    iconst_0
+    iload 1
+    iastore
+    goto L7
+L8
+    iload 0
+    getstatic ai bc:[I
+    iload 6
+    iaload
+    if_icmpeq L3
+    iload 2
+    iconst_1
+    if_icmpgt L9
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    iconst_0
+    istore 6
+L4
+    iload 6
+    iconst_4
+    if_icmpge L11
+    iload 2
+    iconst_1
+    if_icmpgt L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    iconst_1
+    istore 5
+    goto L10
+L9
+    aload 3
+    iload 5
+    getstatic ai bc:[I
+    iload 6
+    iaload
+    iastore
+    goto L12
+L5
+    aload 3
+    iconst_0
+    iload 0
+    iastore
+    goto L6
+L13
+    iinc 5 1
+    goto L3
+L14
+    return
+L11
+    aload 3
+    putstatic ai bc:[I
+L15
+    aload 4
+    putstatic ai br:[I
+    goto L16
+L12
+    aload 4
+    iload 5
+    getstatic ai br:[I
+    iload 6
+    iaload
+    iastore
+    goto L13
+L16
+    getstatic b bm:[Lv;
+    iconst_0
+    getstatic b bm:[Lv;
+    arraylength
+    iconst_1
+    isub
+    getstatic ai bc:[I
+    getstatic ai br:[I
+    bipush -6
+    invokestatic w j:([Lv;II[I[IB)V
+    goto L14
+L17
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "i.s(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

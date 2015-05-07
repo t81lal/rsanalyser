@@ -1,0 +1,457 @@
+k a (Ldj;I)VL1
+    getstatic ga e:Lgk;
+    invokevirtual gk a:()Lgm;
+    checkcast gu
+    astore 2
+L2
+    aconst_null
+    aload 2
+    if_acmpne L3
+    iload 1
+    ldc 471427293 (java.lang.Integer)
+    if_icmpeq L4
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    return
+L3
+    aload 0
+    getfield dj a:I
+    ldc 910905453 (java.lang.Integer)
+    imul
+    istore 3
+L5
+    aload 0
+    aload 2
+    getfield gu e:I
+    ldc 1147385581 (java.lang.Integer)
+    imul
+    ldc 890455536 (java.lang.Integer)
+    invokevirtual dj c:(II)V
+L6
+    iconst_0
+    istore 4
+L7
+    iload 4
+    aload 2
+    getfield gu a:I
+    ldc 1917343493 (java.lang.Integer)
+    imul
+    if_icmpge L8
+    iload 1
+    ldc 471427293 (java.lang.Integer)
+    if_icmpeq L9
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
+    iconst_0
+    aload 2
+    getfield gu c:[I
+    iload 4
+    iaload
+    if_icmpeq L10
+    iload 1
+    ldc 471427293 (java.lang.Integer)
+    if_icmpeq L11
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L11
+    aload 0
+    aload 2
+    getfield gu c:[I
+    iload 4
+    iaload
+    bipush 76
+    invokevirtual dj e:(IB)V
+L12
+    goto L13
+L10
+    aload 2
+    getfield gu l:[I
+    iload 4
+    iaload
+    istore 5
+L14
+    iconst_0
+    iload 5
+    if_icmpne L15
+L16
+    aload 2
+    getfield gu u:[Ljava/lang/reflect/Field;
+    iload 4
+    aaload
+    astore 6
+L17
+    aload 6
+    aconst_null
+    invokevirtual java/lang/reflect/Field getInt:(Ljava/lang/Object;)I
+    istore 7
+L18
+    aload 0
+    iconst_0
+    bipush 51
+    invokevirtual dj e:(IB)V
+L19
+    aload 0
+    iload 7
+    ldc 2002208352 (java.lang.Integer)
+    invokevirtual dj c:(II)V
+L20
+    goto L21
+L15
+    iconst_1
+    iload 5
+    if_icmpne L22
+    iload 1
+    ldc 471427293 (java.lang.Integer)
+    if_icmpeq L23
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L23
+    aload 2
+    getfield gu u:[Ljava/lang/reflect/Field;
+    iload 4
+    aaload
+    astore 6
+L24
+    aload 6
+    aconst_null
+    aload 2
+    getfield gu w:[I
+    iload 4
+    iaload
+    invokevirtual java/lang/reflect/Field setInt:(Ljava/lang/Object;I)V
+L25
+    aload 0
+    iconst_0
+    bipush 85
+    invokevirtual dj e:(IB)V
+L26
+    goto L21
+L22
+    iconst_2
+    iload 5
+    if_icmpne L21
+L27
+    aload 2
+    getfield gu u:[Ljava/lang/reflect/Field;
+    iload 4
+    aaload
+    astore 6
+L28
+    aload 6
+    invokevirtual java/lang/reflect/Field getModifiers:()I
+    istore 7
+L29
+    aload 0
+    iconst_0
+    bipush -88
+    invokevirtual dj e:(IB)V
+L30
+    aload 0
+    iload 7
+    ldc 471727773 (java.lang.Integer)
+    invokevirtual dj c:(II)V
+L21
+    iload 5
+    iconst_3
+    if_icmpne L31
+    iload 1
+    ldc 471427293 (java.lang.Integer)
+    if_icmpeq L32
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L32
+    aload 2
+    getfield gu i:[Ljava/lang/reflect/Method;
+    iload 4
+    aaload
+    astore 6
+L33
+    aload 2
+    getfield gu r:[[[B
+    iload 4
+    aaload
+    astore 7
+L34
+    aload 7
+    arraylength
+    anewarray java/lang/Object
+    astore 8
+L35
+    iconst_0
+    istore 9
+L36
+    iload 9
+    aload 7
+    arraylength
+    if_icmpge L37
+    iload 1
+    ldc 471427293 (java.lang.Integer)
+    if_icmpeq L38
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L38
+    new java/io/ObjectInputStream
+    dup
+    new java/io/ByteArrayInputStream
+    dup
+    aload 7
+    iload 9
+    aaload
+    invokespecial java/io/ByteArrayInputStream <init>:([B)V
+    invokespecial java/io/ObjectInputStream <init>:(Ljava/io/InputStream;)V
+    astore 10
+L39
+    aload 8
+    iload 9
+    aload 10
+    invokevirtual java/io/ObjectInputStream readObject:()Ljava/lang/Object;
+    aastore
+L40
+    iinc 9 1
+    goto L36
+L37
+    aload 6
+    aconst_null
+    aload 8
+    invokevirtual java/lang/reflect/Method invoke:(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
+    astore 9
+L41
+    aload 9
+    ifnonnull L42
+    iload 1
+    ldc 471427293 (java.lang.Integer)
+    if_icmpeq L43
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L43
+    aload 0
+    iconst_0
+    bipush -67
+    invokevirtual dj e:(IB)V
+    goto L44
+L42
+    aload 9
+    instanceof java/lang/Number
+    ifeq L45
+    iload 1
+    ldc 471427293 (java.lang.Integer)
+    if_icmpeq L46
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L46
+    aload 0
+    iconst_1
+    bipush 24
+    invokevirtual dj e:(IB)V
+L47
+    aload 0
+    aload 9
+    checkcast java/lang/Number
+    invokevirtual java/lang/Number longValue:()J
+    invokevirtual dj w:(J)V
+    goto L44
+L45
+    aload 9
+    instanceof java/lang/String
+    ifeq L48
+L49
+    aload 0
+    iconst_2
+    bipush -31
+    invokevirtual dj e:(IB)V
+L50
+    aload 0
+    aload 9
+    checkcast java/lang/String
+    sipush 502
+    invokevirtual dj i:(Ljava/lang/String;S)V
+    goto L44
+L48
+    aload 0
+    iconst_4
+    bipush 20
+    invokevirtual dj e:(IB)V
+L44
+    goto L51
+L31
+    iconst_4
+    iload 5
+    if_icmpne L51
+    iload 1
+    ldc 471427293 (java.lang.Integer)
+    if_icmpeq L52
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L52
+    aload 2
+    getfield gu i:[Ljava/lang/reflect/Method;
+    iload 4
+    aaload
+    astore 6
+L53
+    aload 6
+    invokevirtual java/lang/reflect/Method getModifiers:()I
+    istore 7
+L54
+    aload 0
+    iconst_0
+    bipush -41
+    invokevirtual dj e:(IB)V
+L55
+    aload 0
+    iload 7
+    ldc 463442440 (java.lang.Integer)
+    invokevirtual dj c:(II)V
+L51
+    goto L13
+L56
+    astore 5
+L57
+    aload 0
+    bipush -10
+    bipush -25
+    invokevirtual dj e:(IB)V
+L58
+    goto L13
+L59
+    astore 5
+L60
+    aload 0
+    bipush -11
+    bipush -73
+    invokevirtual dj e:(IB)V
+L61
+    goto L13
+L62
+    astore 5
+L63
+    aload 0
+    bipush -12
+    bipush -15
+    invokevirtual dj e:(IB)V
+L64
+    goto L13
+L65
+    astore 5
+L66
+    aload 0
+    bipush -13
+    bipush 53
+    invokevirtual dj e:(IB)V
+L67
+    goto L13
+L68
+    astore 5
+L69
+    aload 0
+    bipush -14
+    bipush -65
+    invokevirtual dj e:(IB)V
+L70
+    goto L13
+L71
+    astore 5
+L72
+    aload 0
+    bipush -15
+    bipush 18
+    invokevirtual dj e:(IB)V
+L73
+    goto L13
+L74
+    astore 5
+L75
+    aload 0
+    bipush -16
+    bipush 27
+    invokevirtual dj e:(IB)V
+L76
+    goto L13
+L77
+    astore 5
+L78
+    aload 0
+    bipush -17
+    bipush -14
+    invokevirtual dj e:(IB)V
+L79
+    goto L13
+L80
+    astore 5
+L81
+    aload 0
+    bipush -18
+    bipush 65
+    invokevirtual dj e:(IB)V
+L82
+    goto L13
+L83
+    astore 5
+L84
+    aload 0
+    bipush -19
+    bipush -30
+    invokevirtual dj e:(IB)V
+L85
+    goto L13
+L86
+    astore 5
+L87
+    aload 0
+    bipush -20
+    iconst_m1
+    invokevirtual dj e:(IB)V
+L88
+    goto L13
+L89
+    astore 5
+L90
+    aload 0
+    bipush -21
+    bipush 62
+    invokevirtual dj e:(IB)V
+L13
+    iinc 4 1
+    goto L7
+L8
+    aload 0
+    iload 3
+    bipush 93
+    invokevirtual dj ag:(IB)I
+    pop
+L91
+    aload 2
+    invokevirtual gu if:()V
+L92
+    return
+L93
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "k.a(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

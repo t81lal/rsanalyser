@@ -1,0 +1,58 @@
+aa aw (II)VL1
+    aload 0
+    dup
+    getfield aa ax:I
+    ldc -1430620849 (java.lang.Integer)
+    iload 1
+    imul
+    isub
+    putfield aa ax:I
+    goto L2
+L3
+    aload 0
+    getfield aa g:Lbu;
+    ifnull L4
+    iload 2
+    ldc -1066653259 (java.lang.Integer)
+    if_icmplt L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L6
+    aload 0
+    iconst_0
+    putfield aa ax:I
+    goto L3
+L5
+    aload 0
+    getfield aa g:Lbu;
+    iload 1
+    invokevirtual bu o:(I)V
+    goto L4
+L2
+    ldc 1384350127 (java.lang.Integer)
+    aload 0
+    getfield aa ax:I
+    imul
+    ifge L3
+    iload 2
+    ldc -1066653259 (java.lang.Integer)
+    if_icmplt L6
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    return
+L7
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "aa.aw(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

@@ -1,0 +1,279 @@
+bm u (Ljava/lang/CharSequence;IZB)IL1
+    iload 1
+    iconst_2
+    if_icmplt L2
+    iload 3
+    iconst_3
+    if_icmplt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    iload 8
+    iload 7
+    if_icmpge L5
+    iload 3
+    iconst_3
+    if_icmplt L6
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    iload 9
+    ineg
+    istore 9
+    goto L8
+L3
+    iload 1
+    bipush 36
+    if_icmple L9
+    iload 3
+    iconst_3
+    if_icmplt L2
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    iload 9
+    iload 1
+    if_icmplt L11
+    iload 3
+    iconst_3
+    if_icmplt L12
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L13
+    iconst_0
+    istore 6
+    goto L14
+L15
+    iconst_0
+    istore 5
+    goto L13
+L6
+    aload 0
+    iload 8
+    invokeinterface java/lang/CharSequence charAt:(I)C
+    istore 9
+    goto L16
+L9
+    iconst_0
+    istore 4
+    goto L15
+L17
+    iload 9
+    bipush 122
+    if_icmpgt L18
+    iload 3
+    iconst_3
+    if_icmplt L19
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L16
+    iconst_0
+    iload 8
+    if_icmpne L20
+    iload 3
+    iconst_3
+    if_icmplt L21
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L22
+    iconst_0
+    istore 8
+    goto L4
+L23
+    iconst_1
+    istore 4
+    goto L24
+L25
+    goto L26
+L27
+    bipush 43
+    iload 9
+    if_icmpne L20
+    iload 3
+    iconst_3
+    if_icmplt L28
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L28
+    iload 2
+    ifeq L20
+    iload 3
+    iconst_3
+    if_icmplt L25
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L29
+    iconst_1
+    istore 5
+    goto L26
+L20
+    iload 9
+    bipush 48
+    if_icmplt L30
+    iload 3
+    iconst_3
+    if_icmplt L31
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L31
+    iload 9
+    bipush 57
+    if_icmpgt L30
+    iload 3
+    iconst_3
+    if_icmplt L32
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L32
+    iinc 9 -48
+    goto L10
+L30
+    iload 9
+    bipush 65
+    if_icmplt L33
+    iload 9
+    bipush 90
+    if_icmpgt L33
+    iload 3
+    iconst_3
+    if_icmplt L34
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L34
+    iinc 9 -55
+    goto L10
+L2
+    new java/lang/IllegalArgumentException
+    dup
+    ldc "" (java.lang.String)
+    invokespecial java/lang/IllegalArgumentException <init>:(Ljava/lang/String;)V
+    athrow
+L11
+    iload 4
+    ifeq L8
+    iload 3
+    iconst_3
+    if_icmplt L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L19
+    iinc 9 -87
+    goto L10
+L18
+    new java/lang/NumberFormatException
+    dup
+    invokespecial java/lang/NumberFormatException <init>:()V
+    athrow
+L33
+    iload 9
+    bipush 97
+    if_icmplt L18
+    iload 3
+    iconst_3
+    if_icmplt L17
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    new java/lang/NumberFormatException
+    dup
+    invokespecial java/lang/NumberFormatException <init>:()V
+    athrow
+L21
+    bipush 45
+    iload 9
+    if_icmpne L27
+    goto L23
+L24
+    goto L26
+L8
+    iload 9
+    iload 6
+    iload 1
+    imul
+    iadd
+    istore 10
+L35
+    iload 10
+    iload 1
+    idiv
+    iload 6
+    if_icmpeq L36
+    iload 3
+    iconst_3
+    if_icmplt L37
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L37
+    new java/lang/NumberFormatException
+    dup
+    invokespecial java/lang/NumberFormatException <init>:()V
+    athrow
+L36
+    iload 10
+    istore 6
+    goto L29
+L14
+    aload 0
+    invokeinterface java/lang/CharSequence length:()I
+    istore 7
+    goto L22
+L26
+    iinc 8 1
+    goto L4
+L5
+    iload 5
+    ifne L38
+    iload 3
+    iconst_3
+    if_icmplt L39
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L39
+    new java/lang/NumberFormatException
+    dup
+    invokespecial java/lang/NumberFormatException <init>:()V
+    athrow
+L38
+    iload 6
+    ireturn
+L40
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "bm.u(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

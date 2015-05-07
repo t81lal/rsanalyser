@@ -1,0 +1,100 @@
+b r (Ljava/lang/Object;ZI)[BL1
+    aconst_null
+    aload 0
+    if_acmpne L2
+    iload 2
+    ldc -618286032 (java.lang.Integer)
+    if_icmpgt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    iload 1
+    ifeq L5
+    goto L6
+L2
+    aload 0
+    instanceof [B
+    ifeq L7
+    iload 2
+    ldc -618286032 (java.lang.Integer)
+    if_icmpgt L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    aload 0
+    checkcast [B
+    checkcast [B
+    astore 3
+    goto L4
+L9
+    aload 6
+    astore 4
+    goto L10
+L6
+    aload 3
+    arraylength
+    istore 5
+    goto L11
+L7
+    aload 0
+    instanceof dv
+    ifeq L12
+    iload 2
+    ldc -618286032 (java.lang.Integer)
+    if_icmpgt L13
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L13
+    aload 0
+    checkcast dv
+    astore 3
+    goto L14
+L11
+    iload 5
+    newarray 8
+    astore 6
+    goto L15
+L10
+    aload 4
+    areturn
+L5
+    aload 3
+    areturn
+L3
+    aconst_null
+    areturn
+L15
+    aload 3
+    iconst_0
+    aload 6
+    iconst_0
+    iload 5
+    invokestatic java/lang/System arraycopy:(Ljava/lang/Object;ILjava/lang/Object;II)V
+    goto L9
+L14
+    aload 3
+    ldc -917914269 (java.lang.Integer)
+    invokevirtual dv e:(I)[B
+    areturn
+L12
+    new java/lang/IllegalArgumentException
+    dup
+    invokespecial java/lang/IllegalArgumentException <init>:()V
+    athrow
+L16
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "b.r(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

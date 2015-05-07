@@ -1,0 +1,103 @@
+fq u (Ldh;I)VL1
+    aload 1
+    aload 0
+    getfield fq l:Z
+    ifeq L2
+    iload 2
+    ldc 1211452515 (java.lang.Integer)
+    if_icmpne L3
+    return
+L4
+    aload 0
+    getfield fq e:[I
+    getstatic fq o:[I
+    iload 3
+    iaload
+    iaload
+    istore 4
+    goto L5
+L2
+    iconst_0
+    goto L6
+L7
+    aload 1
+    aload 0
+    getfield fq a:[I
+    iload 3
+    iaload
+    bipush -13
+    invokevirtual dh e:(IB)V
+    iinc 3 1
+    goto L8
+L6
+    bipush -40
+    invokevirtual dh e:(IB)V
+    goto L9
+L10
+    iload 3
+    bipush 7
+    if_icmpge L11
+    iload 2
+    ldc 1211452515 (java.lang.Integer)
+    if_icmpne L4
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    iinc 3 1
+    goto L10
+L5
+    iconst_0
+    iload 4
+    if_icmpne L13
+    iload 2
+    ldc 1211452515 (java.lang.Integer)
+    if_icmpne L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L13
+    aload 1
+    iload 4
+    sipush 256
+    isub
+    bipush 70
+    invokevirtual dh e:(IB)V
+    goto L12
+L14
+    aload 1
+    iconst_m1
+    bipush -44
+    invokevirtual dh e:(IB)V
+    goto L12
+L8
+    iload 3
+    iconst_5
+    if_icmpge L15
+    goto L7
+L11
+    iconst_0
+    istore 3
+    goto L8
+L9
+    iconst_0
+    istore 3
+    goto L10
+L3
+    iconst_1
+    goto L6
+L15
+    return
+L16
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "fq.u(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

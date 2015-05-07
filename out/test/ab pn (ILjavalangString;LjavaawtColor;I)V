@@ -1,0 +1,289 @@
+ab pn (ILjava/lang/String;Ljava/awt/Color;I)VL1
+    getstatic eb pd:Ljava/awt/Canvas;
+    invokevirtual java/awt/Canvas getGraphics:()Ljava/awt/Graphics;
+    astore 4
+L2
+    getstatic q px:Ljava/awt/Font;
+    ifnonnull L3
+L4
+    new java/awt/Font
+    dup
+    ldc "Helvetica" (java.lang.String)
+    iconst_1
+    bipush 13
+    invokespecial java/awt/Font <init>:(Ljava/lang/String;II)V
+    putstatic q px:Ljava/awt/Font;
+L5
+    getstatic eb pd:Ljava/awt/Canvas;
+    getstatic q px:Ljava/awt/Font;
+    invokevirtual java/awt/Canvas getFontMetrics:(Ljava/awt/Font;)Ljava/awt/FontMetrics;
+    putstatic cf bf:Ljava/awt/FontMetrics;
+L3
+    getstatic ew pe:Z
+    ifeq L6
+    iload 3
+    ldc 2118271803 (java.lang.Integer)
+    if_icmpne L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    iconst_0
+    putstatic ew pe:Z
+L8
+    aload 4
+    getstatic java/awt/Color black:Ljava/awt/Color;
+    invokevirtual java/awt/Graphics setColor:(Ljava/awt/Color;)V
+L9
+    aload 4
+    iconst_0
+    iconst_0
+    ldc -508536235 (java.lang.Integer)
+    getstatic i pu:I
+    imul
+    ldc -2070196715 (java.lang.Integer)
+    getstatic m pv:I
+    imul
+    invokevirtual java/awt/Graphics fillRect:(IIII)V
+L6
+    aconst_null
+    aload 2
+    if_acmpne L10
+    new java/awt/Color
+    dup
+    sipush 140
+    bipush 17
+    bipush 17
+    invokespecial java/awt/Color <init>:(III)V
+    astore 2
+L10
+    getstatic ar pz:Ljava/awt/Image;
+    ifnonnull L11
+    iload 3
+    ldc 2118271803 (java.lang.Integer)
+    if_icmpne L12
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    getstatic eb pd:Ljava/awt/Canvas;
+    sipush 304
+    bipush 34
+    invokevirtual java/awt/Canvas createImage:(II)Ljava/awt/Image;
+    putstatic ar pz:Ljava/awt/Image;
+L11
+    getstatic ar pz:Ljava/awt/Image;
+    invokevirtual java/awt/Image getGraphics:()Ljava/awt/Graphics;
+    astore 5
+L13
+    aload 5
+    aload 2
+    invokevirtual java/awt/Graphics setColor:(Ljava/awt/Color;)V
+L14
+    aload 5
+    iconst_0
+    iconst_0
+    sipush 303
+    bipush 33
+    invokevirtual java/awt/Graphics drawRect:(IIII)V
+L15
+    aload 5
+    iconst_2
+    iconst_2
+    iload 0
+    iconst_3
+    imul
+    bipush 30
+    invokevirtual java/awt/Graphics fillRect:(IIII)V
+L16
+    aload 5
+    getstatic java/awt/Color black:Ljava/awt/Color;
+    invokevirtual java/awt/Graphics setColor:(Ljava/awt/Color;)V
+L17
+    aload 5
+    iconst_1
+    iconst_1
+    sipush 301
+    bipush 31
+    invokevirtual java/awt/Graphics drawRect:(IIII)V
+L18
+    aload 5
+    iconst_3
+    iload 0
+    imul
+    iconst_2
+    iadd
+    iconst_2
+    sipush 300
+    iconst_3
+    iload 0
+    imul
+    isub
+    bipush 30
+    invokevirtual java/awt/Graphics fillRect:(IIII)V
+L19
+    aload 5
+    getstatic q px:Ljava/awt/Font;
+    invokevirtual java/awt/Graphics setFont:(Ljava/awt/Font;)V
+L20
+    aload 5
+    getstatic java/awt/Color white:Ljava/awt/Color;
+    invokevirtual java/awt/Graphics setColor:(Ljava/awt/Color;)V
+L21
+    aload 5
+    aload 1
+    sipush 304
+    getstatic cf bf:Ljava/awt/FontMetrics;
+    aload 1
+    invokevirtual java/awt/FontMetrics stringWidth:(Ljava/lang/String;)I
+    isub
+    iconst_2
+    idiv
+    bipush 22
+    invokevirtual java/awt/Graphics drawString:(Ljava/lang/String;II)V
+L22
+    aload 4
+    getstatic ar pz:Ljava/awt/Image;
+    ldc -508536235 (java.lang.Integer)
+    getstatic i pu:I
+    imul
+    iconst_2
+    idiv
+    sipush 152
+    isub
+    getstatic m pv:I
+    ldc -2070196715 (java.lang.Integer)
+    imul
+    iconst_2
+    idiv
+    bipush 18
+    isub
+    aconst_null
+    invokevirtual java/awt/Graphics drawImage:(Ljava/awt/Image;IILjava/awt/image/ImageObserver;)Z
+    pop
+L23
+    goto L24
+L25
+    astore 5
+L26
+    ldc -508536235 (java.lang.Integer)
+    getstatic i pu:I
+    imul
+    iconst_2
+    idiv
+    sipush 152
+    isub
+    istore 6
+L27
+    getstatic m pv:I
+    ldc -2070196715 (java.lang.Integer)
+    imul
+    iconst_2
+    idiv
+    bipush 18
+    isub
+    istore 7
+L28
+    aload 4
+    aload 2
+    invokevirtual java/awt/Graphics setColor:(Ljava/awt/Color;)V
+L29
+    aload 4
+    iload 6
+    iload 7
+    sipush 303
+    bipush 33
+    invokevirtual java/awt/Graphics drawRect:(IIII)V
+L30
+    aload 4
+    iload 6
+    iconst_2
+    iadd
+    iload 7
+    iconst_2
+    iadd
+    iconst_3
+    iload 0
+    imul
+    bipush 30
+    invokevirtual java/awt/Graphics fillRect:(IIII)V
+L31
+    aload 4
+    getstatic java/awt/Color black:Ljava/awt/Color;
+    invokevirtual java/awt/Graphics setColor:(Ljava/awt/Color;)V
+L32
+    aload 4
+    iconst_1
+    iload 6
+    iadd
+    iconst_1
+    iload 7
+    iadd
+    sipush 301
+    bipush 31
+    invokevirtual java/awt/Graphics drawRect:(IIII)V
+L33
+    aload 4
+    iconst_3
+    iload 0
+    imul
+    iload 6
+    iconst_2
+    iadd
+    iadd
+    iload 7
+    iconst_2
+    iadd
+    sipush 300
+    iconst_3
+    iload 0
+    imul
+    isub
+    bipush 30
+    invokevirtual java/awt/Graphics fillRect:(IIII)V
+L34
+    aload 4
+    getstatic q px:Ljava/awt/Font;
+    invokevirtual java/awt/Graphics setFont:(Ljava/awt/Font;)V
+L35
+    aload 4
+    getstatic java/awt/Color white:Ljava/awt/Color;
+    invokevirtual java/awt/Graphics setColor:(Ljava/awt/Color;)V
+L36
+    aload 4
+    aload 1
+    iload 6
+    sipush 304
+    getstatic cf bf:Ljava/awt/FontMetrics;
+    aload 1
+    invokevirtual java/awt/FontMetrics stringWidth:(Ljava/lang/String;)I
+    isub
+    iconst_2
+    idiv
+    iadd
+    bipush 22
+    iload 7
+    iadd
+    invokevirtual java/awt/Graphics drawString:(Ljava/lang/String;II)V
+L24
+    goto L37
+L38
+    astore 4
+L39
+    getstatic eb pd:Ljava/awt/Canvas;
+    invokevirtual java/awt/Canvas repaint:()V
+L37
+    return
+L40
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ab.pn(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

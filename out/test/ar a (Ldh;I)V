@@ -1,0 +1,40 @@
+ar a (Ldh;I)VL1
+    aload 1
+    ldc 1118519242 (java.lang.Integer)
+    invokevirtual dh z:(I)I
+    istore 3
+L2
+    iconst_0
+    iload 3
+    if_icmpne L3
+    iload 2
+    ldc -401521773 (java.lang.Integer)
+    if_icmplt L4
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L5
+    goto L1
+L4
+    goto L6
+L3
+    aload 0
+    aload 1
+    iload 3
+    bipush -50
+    invokevirtual ar l:(Ldh;IB)V
+    goto L5
+L6
+    return
+L7
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ar.a(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

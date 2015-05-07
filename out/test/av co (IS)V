@@ -1,0 +1,77 @@
+av co (IS)VL1
+    iload 0
+    ldc 1928687330 (java.lang.Integer)
+    invokestatic df c:(II)Z
+    ifne L2
+    iload 1
+    sipush 3500
+    if_icmplt L3
+    return
+L4
+    iload 3
+    aload 2
+    arraylength
+    if_icmpge L5
+    iload 1
+    sipush 3500
+    if_icmplt L6
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L2
+    getstatic fb e:[[Lfb;
+    iload 0
+    aaload
+    astore 2
+    goto L7
+L8
+    aload 4
+    iconst_0
+    putfield fb dx:I
+    goto L9
+L10
+    goto L9
+L6
+    aload 2
+    iload 3
+    aaload
+    astore 4
+    goto L11
+L3
+    return
+L11
+    aload 4
+    ifnonnull L12
+    iload 1
+    sipush 3500
+    if_icmplt L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    aload 4
+    iconst_0
+    putfield fb dn:I
+    goto L8
+L7
+    iconst_0
+    istore 3
+    goto L4
+L9
+    iinc 3 1
+    goto L4
+L5
+    return
+L13
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "av.co(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

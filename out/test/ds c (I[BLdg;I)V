@@ -1,0 +1,98 @@
+ds c (I[BLdg;I)VL1
+    new fu
+    dup
+    invokespecial fu <init>:()V
+    astore 4
+L2
+    aload 4
+    iconst_0
+    putfield fu e:I
+L3
+    aload 4
+    iload 0
+    i2l
+    putfield fu ec:J
+L4
+    aload 4
+    aload 1
+    putfield fu a:[B
+L5
+    aload 4
+    aload 2
+    putfield fu l:Ldg;
+L6
+    getstatic fj e:Lgh;
+    dup
+    astore 5
+    monitorenter
+L7
+    getstatic fj e:Lgh;
+    aload 4
+    invokevirtual gh a:(Lgm;)V
+L8
+    aload 5
+    monitorexit
+L9
+    goto L10
+L11
+    astore 6
+    aload 5
+    monitorexit
+L12
+    aload 6
+    athrow
+L10
+    getstatic fj c:Ljava/lang/Object;
+    dup
+    astore 5
+    monitorenter
+L13
+    iconst_0
+    ldc 1724162829 (java.lang.Integer)
+    getstatic fj l:I
+    imul
+    if_icmpne L14
+    iload 3
+    ldc -901128847 (java.lang.Integer)
+    if_icmpgt L15
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L15
+    getstatic ag pb:Ldz;
+    new fj
+    dup
+    invokespecial fj <init>:()V
+    iconst_5
+    bipush 8
+    invokevirtual dz i:(Ljava/lang/Runnable;IB)Lex;
+    pop
+L14
+    ldc -960113224 (java.lang.Integer)
+    putstatic fj l:I
+L16
+    aload 5
+    monitorexit
+L17
+    goto L18
+L19
+    astore 7
+    aload 5
+    monitorexit
+L20
+    aload 7
+    athrow
+L18
+    return
+L21
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ds.c(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

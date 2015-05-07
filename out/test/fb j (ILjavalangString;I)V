@@ -1,0 +1,88 @@
+fb j (ILjava/lang/String;I)VL1
+    aload 0
+    getfield fb bh:[Ljava/lang/String;
+    ifnull L2
+    iload 3
+    ldc -1610547797 (java.lang.Integer)
+    if_icmpgt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    iload 5
+    aload 0
+    getfield fb bh:[Ljava/lang/String;
+    arraylength
+    if_icmpge L5
+    goto L6
+L2
+    iconst_1
+    iload 1
+    iadd
+    anewarray java/lang/String
+    astore 4
+L7
+    aconst_null
+    aload 0
+    getfield fb bh:[Ljava/lang/String;
+    if_acmpeq L5
+    iload 3
+    ldc -1610547797 (java.lang.Integer)
+    if_icmpgt L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L3
+    aload 0
+    getfield fb bh:[Ljava/lang/String;
+    arraylength
+    iload 1
+    if_icmpgt L9
+    iload 3
+    ldc -1610547797 (java.lang.Integer)
+    if_icmpgt L2
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    iconst_0
+    istore 5
+    goto L4
+L6
+    aload 4
+    iload 5
+    aload 0
+    getfield fb bh:[Ljava/lang/String;
+    iload 5
+    aaload
+    aastore
+    iinc 5 1
+    goto L4
+L10
+    return
+L9
+    aload 0
+    getfield fb bh:[Ljava/lang/String;
+    iload 1
+    aload 2
+    aastore
+    goto L10
+L5
+    aload 0
+    aload 4
+    putfield fb bh:[Ljava/lang/String;
+    goto L9
+L11
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "fb.j(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

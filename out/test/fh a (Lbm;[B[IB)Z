@@ -1,0 +1,165 @@
+fh a (Lbm;[B[IB)ZL1
+    iconst_1
+    istore 5
+    goto L2
+L3
+    iinc 8 1
+    goto L4
+L5
+    aconst_null
+    astore 7
+L6
+    iconst_0
+    istore 8
+L4
+    iload 8
+    sipush 128
+    if_icmpge L7
+    iload 4
+    iconst_3
+    if_icmpne L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
+    iload 9
+    ifne L10
+    iload 4
+    iconst_3
+    if_icmpne L11
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    iconst_0
+    aload 2
+    iload 8
+    baload
+    if_icmpeq L3
+    iload 4
+    iconst_3
+    if_icmpne L13
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L13
+    aload 0
+    getfield fh r:[I
+    iload 8
+    iaload
+    istore 9
+    goto L9
+L2
+    iconst_0
+    istore 6
+    goto L5
+L11
+    goto L3
+L14
+    aload 0
+    getfield fh r:[I
+    iload 8
+    iconst_0
+    iastore
+    goto L3
+L8
+    aconst_null
+    aload 2
+    if_acmpeq L13
+    iload 4
+    iconst_3
+    if_icmpne L12
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    iload 6
+    iload 9
+    if_icmpeq L15
+    iload 4
+    iconst_3
+    if_icmpne L16
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L17
+    iconst_0
+    iload 9
+    iconst_1
+    iand
+    if_icmpne L18
+    iload 4
+    iconst_3
+    if_icmpne L19
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L19
+    aload 1
+    iload 9
+    iconst_2
+    ishr
+    aload 3
+    sipush -16740
+    invokevirtual bm l:(I[IS)Lbe;
+    astore 7
+    goto L20
+L18
+    aload 1
+    iload 9
+    iconst_2
+    ishr
+    aload 3
+    ldc 1747250467 (java.lang.Integer)
+    invokevirtual bm c:(I[II)Lbe;
+    astore 7
+L20
+    aconst_null
+    aload 7
+    if_acmpne L15
+    iconst_0
+    istore 5
+L15
+    aload 7
+    ifnull L3
+    iload 4
+    iconst_3
+    if_icmpne L21
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L22
+    iinc 9 -1
+    goto L17
+L7
+    iload 5
+    ireturn
+L16
+    iload 9
+    istore 6
+    goto L22
+L21
+    aload 0
+    getfield fh a:[Lbe;
+    iload 8
+    aload 7
+    aastore
+    goto L14
+L23
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "fh.a(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

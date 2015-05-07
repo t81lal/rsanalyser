@@ -1,0 +1,333 @@
+ff al (Lfm;I)IL1
+    aload 1
+    getfield fm c:Lfd;
+    astore 3
+    goto L2
+L3
+    aload 3
+    getfield fd e:[B
+    iconst_2
+    aload 1
+    getfield fm j:I
+    ldc -1347701651 (java.lang.Integer)
+    imul
+    iadd
+    baload
+    sipush 255
+    iand
+    bipush 8
+    ishl
+    istore 8
+    goto L4
+L5
+    iload 4
+    iload 4
+    imul
+    sipush 16384
+    iadd
+    bipush 15
+    ishr
+    istore 4
+L6
+    sipush 16384
+    iload 4
+    ldc 295470999 (java.lang.Integer)
+    aload 1
+    getfield fm i:I
+    imul
+    imul
+    iadd
+    bipush 15
+    ishr
+    istore 4
+    goto L7
+L8
+    iload 6
+    aload 3
+    getfield fd a:[B
+    aload 1
+    getfield fm t:I
+    ldc -381223443 (java.lang.Integer)
+    imul
+    iconst_3
+    iadd
+    baload
+    iload 6
+    isub
+    iload 5
+    iload 7
+    isub
+    imul
+    iload 8
+    iload 7
+    isub
+    idiv
+    iadd
+    istore 6
+    goto L9
+L10
+    ldc 666362741 (java.lang.Integer)
+    aload 3
+    getfield fd l:I
+    imul
+    ifle L11
+    iload 2
+    ldc -723880843 (java.lang.Integer)
+    if_icmpne L12
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    iload 4
+    i2d
+    ldc 0.5 (java.lang.Double)
+    ldc -566060527 (java.lang.Integer)
+    aload 1
+    getfield fm h:I
+    imul
+    i2d
+    ldc 1.953125E-5 (java.lang.Double)
+    dmul
+    ldc 666362741 (java.lang.Integer)
+    aload 3
+    getfield fd l:I
+    imul
+    i2d
+    dmul
+    invokestatic java/lang/Math pow:(DD)D
+    dmul
+    ldc 0.5 (java.lang.Double)
+    dadd
+    d2i
+    istore 4
+L11
+    aconst_null
+    aload 3
+    getfield fd e:[B
+    if_acmpeq L13
+    goto L14
+L15
+    aload 3
+    getfield fd a:[B
+    ldc -381223443 (java.lang.Integer)
+    aload 1
+    getfield fm t:I
+    imul
+    baload
+    sipush 255
+    iand
+    bipush 8
+    ishl
+    istore 7
+    goto L16
+L17
+    aload 3
+    getfield fd e:[B
+    ldc -1347701651 (java.lang.Integer)
+    aload 1
+    getfield fm j:I
+    imul
+    iconst_1
+    iadd
+    baload
+    istore 6
+L18
+    aload 1
+    getfield fm j:I
+    ldc -1347701651 (java.lang.Integer)
+    imul
+    aload 3
+    getfield fd e:[B
+    arraylength
+    iconst_2
+    isub
+    if_icmpge L19
+    iload 2
+    ldc -723880843 (java.lang.Integer)
+    if_icmpne L20
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L2
+    aload 0
+    getfield ff c:[I
+    aload 1
+    getfield fm e:I
+    ldc -980254659 (java.lang.Integer)
+    imul
+    iaload
+    aload 0
+    getfield ff i:[I
+    ldc -980254659 (java.lang.Integer)
+    aload 1
+    getfield fm e:I
+    imul
+    iaload
+    imul
+    sipush 4096
+    iadd
+    bipush 13
+    ishr
+    istore 4
+    goto L5
+L20
+    aload 3
+    getfield fd e:[B
+    aload 1
+    getfield fm j:I
+    ldc -1347701651 (java.lang.Integer)
+    imul
+    baload
+    sipush 255
+    iand
+    bipush 8
+    ishl
+    istore 7
+    goto L3
+L4
+    iload 6
+    iload 5
+    iload 7
+    isub
+    aload 3
+    getfield fd e:[B
+    iconst_3
+    aload 1
+    getfield fm j:I
+    ldc -1347701651 (java.lang.Integer)
+    imul
+    iadd
+    baload
+    iload 6
+    isub
+    imul
+    iload 8
+    iload 7
+    isub
+    idiv
+    iadd
+    istore 6
+L19
+    bipush 32
+    iload 4
+    iload 6
+    imul
+    iadd
+    bipush 6
+    ishr
+    istore 4
+L13
+    aload 1
+    getfield fm m:I
+    ldc 1106072977 (java.lang.Integer)
+    imul
+    ifle L21
+    iload 2
+    ldc -723880843 (java.lang.Integer)
+    if_icmpne L22
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L22
+    aload 3
+    getfield fd a:[B
+    ifnull L21
+    iload 2
+    ldc -723880843 (java.lang.Integer)
+    if_icmpne L23
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L23
+    aload 1
+    getfield fm m:I
+    ldc 1106072977 (java.lang.Integer)
+    imul
+    istore 5
+L24
+    aload 3
+    getfield fd a:[B
+    iconst_1
+    ldc -381223443 (java.lang.Integer)
+    aload 1
+    getfield fm t:I
+    imul
+    iadd
+    baload
+    istore 6
+L25
+    aload 1
+    getfield fm t:I
+    ldc -381223443 (java.lang.Integer)
+    imul
+    aload 3
+    getfield fd a:[B
+    arraylength
+    iconst_2
+    isub
+    if_icmpge L9
+    goto L15
+L16
+    aload 3
+    getfield fd a:[B
+    iconst_2
+    ldc -381223443 (java.lang.Integer)
+    aload 1
+    getfield fm t:I
+    imul
+    iadd
+    baload
+    sipush 255
+    iand
+    bipush 8
+    ishl
+    istore 8
+    goto L8
+L7
+    sipush 128
+    iload 4
+    ldc 1856042553 (java.lang.Integer)
+    aload 0
+    getfield ff a:I
+    imul
+    imul
+    iadd
+    bipush 8
+    ishr
+    istore 4
+    goto L10
+L21
+    iload 4
+    ireturn
+L9
+    bipush 32
+    iload 6
+    iload 4
+    imul
+    iadd
+    bipush 6
+    ishr
+    istore 4
+    goto L21
+L14
+    aload 1
+    getfield fm s:I
+    ldc 765158237 (java.lang.Integer)
+    imul
+    istore 5
+    goto L17
+L26
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ff.al(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

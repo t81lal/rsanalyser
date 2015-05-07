@@ -1,0 +1,75 @@
+q a (IB)Lal;L1
+    getstatic al c:Lgr;
+    iload 0
+    i2l
+    invokevirtual gr e:(J)Lgd;
+    checkcast al
+    astore 2
+    goto L2
+L3
+    getstatic al e:Lfv;
+    iconst_3
+    iload 0
+    ldc -758176601 (java.lang.Integer)
+    invokevirtual fv l:(III)[B
+    astore 3
+    goto L4
+L5
+    aload 2
+    areturn
+L6
+    aload 2
+    new dh
+    dup
+    aload 3
+    invokespecial dh <init>:([B)V
+    iconst_1
+    invokevirtual al l:(Ldh;B)V
+    goto L7
+L2
+    aconst_null
+    aload 2
+    if_acmpeq L3
+    iload 1
+    bipush 42
+    if_icmpne L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    aload 3
+    ifnull L7
+    iload 1
+    bipush 42
+    if_icmpne L6
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    new al
+    dup
+    invokespecial al <init>:()V
+    astore 2
+    goto L8
+L7
+    getstatic al c:Lgr;
+    aload 2
+    iload 0
+    i2l
+    invokevirtual gr l:(Lgd;J)V
+L9
+    aload 2
+    areturn
+L10
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "q.a(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

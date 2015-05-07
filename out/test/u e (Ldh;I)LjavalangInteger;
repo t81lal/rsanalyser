@@ -1,0 +1,147 @@
+u e (Ldh;I)Ljava/lang/Integer;L1
+    iconst_0
+    istore 2
+    goto L2
+L3
+    goto L4
+L5
+    aload 0
+    ldc 1285522486 (java.lang.Integer)
+    invokevirtual dh z:(I)I
+    istore 4
+L6
+    iload 4
+    sipush 255
+    if_icmpne L7
+    iload 1
+    ldc -141982103 (java.lang.Integer)
+    if_icmpeq L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
+    aload 0
+    dup
+    getfield dh a:I
+    ldc 1782921573 (java.lang.Integer)
+    isub
+    putfield dh a:I
+    goto L10
+L7
+    iconst_0
+    iload 4
+    if_icmpeq L11
+    iload 1
+    ldc -141982103 (java.lang.Integer)
+    if_icmpeq L12
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L13
+    new java/lang/IllegalStateException
+    dup
+    ldc "" (java.lang.String)
+    invokespecial java/lang/IllegalStateException <init>:(Ljava/lang/String;)V
+    athrow
+L11
+    aload 0
+    ldc 1889380654 (java.lang.Integer)
+    invokevirtual dh z:(I)I
+    istore 5
+    goto L14
+L15
+    iload 3
+    ifeq L16
+    iload 1
+    ldc -141982103 (java.lang.Integer)
+    if_icmpeq L17
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L18
+    iload 3
+    ifeq L19
+    iload 1
+    ldc -141982103 (java.lang.Integer)
+    if_icmpeq L20
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L14
+    sipush 255
+    iload 5
+    if_icmpne L9
+    iload 1
+    ldc -141982103 (java.lang.Integer)
+    if_icmpeq L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    aload 0
+    ldc -1865248792 (java.lang.Integer)
+    invokevirtual dh q:(I)I
+    ifeq L18
+    iload 1
+    ldc -141982103 (java.lang.Integer)
+    if_icmpeq L13
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    new java/lang/IllegalStateException
+    dup
+    ldc "" (java.lang.String)
+    invokespecial java/lang/IllegalStateException <init>:(Ljava/lang/String;)V
+    athrow
+L21
+    goto L11
+L20
+    new java/lang/IllegalStateException
+    dup
+    ldc "" (java.lang.String)
+    invokespecial java/lang/IllegalStateException <init>:(Ljava/lang/String;)V
+    athrow
+L19
+    aload 0
+    ldc -2135597742 (java.lang.Integer)
+    invokevirtual dh x:(I)I
+    istore 2
+L22
+    iconst_1
+    istore 3
+    goto L21
+L8
+    goto L15
+L4
+    goto L5
+L16
+    aconst_null
+    goto L23
+L17
+    iload 2
+    invokestatic java/lang/Integer valueOf:(I)Ljava/lang/Integer;
+    goto L23
+L2
+    iconst_0
+    istore 3
+    goto L5
+L23
+    areturn
+L24
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "u.e(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

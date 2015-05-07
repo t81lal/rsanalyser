@@ -1,0 +1,195 @@
+i e (IIIII)VL1
+    aload 0
+    getfield i h:Z
+    ifne L2
+    iload 5
+    ldc -201089454 (java.lang.Integer)
+    if_icmpgt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    aload 0
+    aload 0
+    getfield i c:I
+    ldc -30636975 (java.lang.Integer)
+    imul
+    i2d
+    dload 8
+    ldc 1379165203 (java.lang.Integer)
+    aload 0
+    getfield i g:I
+    imul
+    i2d
+    dmul
+    dload 10
+    ddiv
+    dadd
+    putfield i j:D
+    goto L5
+L6
+    aload 0
+    dload 6
+    aload 0
+    getfield i g:I
+    ldc 1379165203 (java.lang.Integer)
+    imul
+    i2d
+    dmul
+    dload 10
+    ddiv
+    ldc 1901561061 (java.lang.Integer)
+    aload 0
+    getfield i l:I
+    imul
+    i2d
+    dadd
+    putfield i s:D
+    goto L4
+L7
+    dload 6
+    dload 6
+    dmul
+    dload 8
+    dload 8
+    dmul
+    dadd
+    invokestatic java/lang/Math sqrt:(D)D
+    dstore 10
+    goto L6
+L2
+    aload 0
+    getfield i r:I
+    ldc -695449035 (java.lang.Integer)
+    imul
+    iconst_1
+    iadd
+    iload 4
+    isub
+    i2d
+    dstore 6
+    goto L8
+L9
+    iload 2
+    aload 0
+    getfield i c:I
+    ldc -30636975 (java.lang.Integer)
+    imul
+    isub
+    i2d
+    dstore 8
+    goto L7
+L5
+    aload 0
+    ldc 1886709023 (java.lang.Integer)
+    aload 0
+    getfield i u:I
+    imul
+    i2d
+    putfield i m:D
+    goto L2
+L8
+    aload 0
+    iload 1
+    i2d
+    aload 0
+    getfield i s:D
+    dsub
+    dload 6
+    ddiv
+    putfield i t:D
+    goto L10
+L3
+    iload 1
+    ldc 1901561061 (java.lang.Integer)
+    aload 0
+    getfield i l:I
+    imul
+    isub
+    i2d
+    dstore 6
+    goto L9
+L10
+    aload 0
+    iload 2
+    i2d
+    aload 0
+    getfield i j:D
+    dsub
+    dload 6
+    ddiv
+    putfield i z:D
+L11
+    aload 0
+    aload 0
+    getfield i z:D
+    aload 0
+    getfield i z:D
+    dmul
+    aload 0
+    getfield i t:D
+    aload 0
+    getfield i t:D
+    dmul
+    dadd
+    invokestatic java/lang/Math sqrt:(D)D
+    putfield i y:D
+L12
+    aload 0
+    getfield i h:Z
+    ifne L13
+    iload 5
+    ldc -201089454 (java.lang.Integer)
+    if_icmpgt L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L14
+    aload 0
+    aload 0
+    getfield i y:D
+    dneg
+    ldc 0.02454369 (java.lang.Double)
+    aload 0
+    getfield i f:I
+    ldc 782611587 (java.lang.Integer)
+    imul
+    i2d
+    dmul
+    invokestatic java/lang/Math tan:(D)D
+    dmul
+    putfield i q:D
+L13
+    aload 0
+    ldc 2.0 (java.lang.Double)
+    iload 3
+    i2d
+    aload 0
+    getfield i m:D
+    dsub
+    aload 0
+    getfield i q:D
+    dload 6
+    dmul
+    dsub
+    dmul
+    dload 6
+    dload 6
+    dmul
+    ddiv
+    putfield i d:D
+L15
+    return
+L16
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "i.e(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

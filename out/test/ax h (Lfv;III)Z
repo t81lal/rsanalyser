@@ -1,0 +1,39 @@
+ax h (Lfv;III)ZL1
+    aload 0
+    iload 1
+    iload 2
+    ldc -575155475 (java.lang.Integer)
+    invokevirtual fv l:(III)[B
+    astore 4
+L2
+    aconst_null
+    aload 4
+    if_acmpne L3
+    iload 3
+    ldc -2002890329 (java.lang.Integer)
+    if_icmpne L4
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    iconst_0
+    ireturn
+L3
+    aload 4
+    ldc 1580525879 (java.lang.Integer)
+    invokestatic g s:([BI)V
+L5
+    iconst_1
+    ireturn
+L6
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ax.h(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

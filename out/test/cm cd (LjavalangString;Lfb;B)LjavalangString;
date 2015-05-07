@@ -1,0 +1,201 @@
+cm cd (Ljava/lang/String;Lfb;B)Ljava/lang/String;L1
+    aload 0
+    ldc "%" (java.lang.String)
+    invokevirtual java/lang/String indexOf:(Ljava/lang/String;)I
+    iconst_m1
+    if_icmpeq L2
+    iload 2
+    iconst_5
+    if_icmpgt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    goto L5
+L6
+    iload 3
+    iconst_5
+    if_icmpgt L7
+    iload 2
+    iconst_5
+    if_icmpgt L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L3
+    iconst_1
+    istore 3
+    goto L6
+L9
+    iconst_m1
+    iload 4
+    if_icmpne L10
+    iload 2
+    iconst_5
+    if_icmpgt L11
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    goto L8
+L10
+    aload 0
+    iconst_0
+    iload 4
+    invokevirtual java/lang/String substring:(II)Ljava/lang/String;
+    astore 5
+    goto L13
+L2
+    aload 0
+    areturn
+L14
+    iload 7
+    invokestatic java/lang/Integer toString:(I)Ljava/lang/String;
+    astore 6
+    goto L4
+L15
+    iload 7
+    ldc 999999999 (java.lang.Integer)
+    if_icmpge L16
+    iload 2
+    iconst_5
+    if_icmpgt L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L17
+    getstatic eg ah:Lex;
+    getfield ex f:Ljava/lang/Object;
+    checkcast java/lang/String
+    astore 4
+    goto L18
+L11
+    goto L19
+L5
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    aload 5
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    aload 6
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    aload 0
+    iload 4
+    iconst_2
+    iadd
+    invokevirtual java/lang/String substring:(I)Ljava/lang/String;
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    astore 0
+    goto L12
+L8
+    aload 0
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "%" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    iload 3
+    invokevirtual java/lang/StringBuilder append:(I)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokevirtual java/lang/String indexOf:(Ljava/lang/String;)I
+    istore 4
+    goto L9
+L19
+    iinc 3 1
+    goto L6
+L20
+    aconst_null
+    getstatic eg ah:Lex;
+    getfield ex f:Ljava/lang/Object;
+    if_acmpeq L18
+    iload 2
+    iconst_5
+    if_icmpgt L17
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L21
+    iload 3
+    iconst_m1
+    if_icmpne L22
+    goto L23
+L13
+    aload 1
+    iload 3
+    iconst_1
+    isub
+    ldc -1285737891 (java.lang.Integer)
+    invokestatic r cj:(Lfb;II)I
+    istore 7
+    goto L15
+L22
+    ldc "" (java.lang.String)
+    astore 4
+L24
+    aconst_null
+    getstatic eg ah:Lex;
+    if_acmpeq L18
+    iload 2
+    iconst_5
+    if_icmpgt L25
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L16
+    ldc "*" (java.lang.String)
+    astore 6
+    goto L5
+L23
+    goto L2
+L7
+    aload 0
+    ldc "%dns" (java.lang.String)
+    invokevirtual java/lang/String indexOf:(Ljava/lang/String;)I
+    istore 3
+    goto L21
+L18
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    aload 0
+    iconst_0
+    iload 3
+    invokevirtual java/lang/String substring:(II)Ljava/lang/String;
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    aload 4
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    aload 0
+    iload 3
+    iconst_4
+    iadd
+    invokevirtual java/lang/String substring:(I)Ljava/lang/String;
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    astore 0
+L26
+    goto L7
+L25
+    getstatic eg ah:Lex;
+    getfield ex i:I
+    bipush 16
+    invokestatic et e:(IB)Ljava/lang/String;
+    astore 4
+    goto L20
+L27
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "cm.cd(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

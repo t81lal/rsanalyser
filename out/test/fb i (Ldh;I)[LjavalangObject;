@@ -1,0 +1,99 @@
+fb i (Ldh;I)[Ljava/lang/Object;L1
+    aload 1
+    ldc 1343444053 (java.lang.Integer)
+    invokevirtual dh z:(I)I
+    istore 3
+    goto L2
+L3
+    aload 4
+    iload 5
+    new java/lang/Integer
+    dup
+    aload 1
+    ldc -2085342166 (java.lang.Integer)
+    invokevirtual dh x:(I)I
+    invokespecial java/lang/Integer <init>:(I)V
+    aastore
+    goto L4
+L5
+    aconst_null
+    areturn
+L2
+    iconst_0
+    iload 3
+    if_icmpne L6
+    iload 2
+    ldc 1773743080 (java.lang.Integer)
+    if_icmplt L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    iconst_0
+    istore 5
+L8
+    iload 5
+    iload 3
+    if_icmpge L9
+L10
+    aload 1
+    ldc 1284163587 (java.lang.Integer)
+    invokevirtual dh z:(I)I
+    istore 6
+L11
+    iload 6
+    ifne L12
+    iload 2
+    ldc 1773743080 (java.lang.Integer)
+    if_icmplt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
+    aload 0
+    iconst_1
+    putfield fb ch:Z
+    goto L13
+L6
+    iload 3
+    anewarray java/lang/Object
+    astore 4
+    goto L7
+L14
+    aload 4
+    iload 5
+    aload 1
+    ldc 198701621 (java.lang.Integer)
+    invokevirtual dh p:(I)Ljava/lang/String;
+    aastore
+    goto L4
+L12
+    iconst_1
+    iload 6
+    if_icmpne L4
+    iload 2
+    ldc 1773743080 (java.lang.Integer)
+    if_icmplt L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    iinc 5 1
+    goto L8
+L13
+    aload 4
+    areturn
+L15
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "fb.i(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

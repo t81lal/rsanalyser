@@ -1,0 +1,83 @@
+dj cl ([Ljava/lang/String;I)[Ljava/lang/String;L1
+    iconst_5
+    anewarray java/lang/String
+    astore 2
+    goto L2
+L3
+    aload 0
+    iload 3
+    aaload
+    ifnull L4
+    iload 1
+    ldc -1378757633 (java.lang.Integer)
+    if_icmplt L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L6
+    iload 3
+    iconst_5
+    if_icmpge L7
+    goto L8
+L5
+    aload 2
+    iload 3
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    aload 2
+    iload 3
+    aaload
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    aload 0
+    iload 3
+    aaload
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    aastore
+    goto L4
+L8
+    aload 2
+    iload 3
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    iload 3
+    invokevirtual java/lang/StringBuilder append:(I)Ljava/lang/StringBuilder;
+    ldc ": " (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    aastore
+L9
+    aconst_null
+    aload 0
+    if_acmpeq L4
+    iload 1
+    ldc -1378757633 (java.lang.Integer)
+    if_icmplt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    aload 2
+    areturn
+L4
+    iinc 3 1
+    goto L6
+L2
+    iconst_0
+    istore 3
+    goto L6
+L10
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "dj.cl(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

@@ -1,0 +1,208 @@
+fr a (Lfm;IB)VL1
+    aload 0
+    getfield fr e:Lff;
+    getfield ff d:[I
+    aload 1
+    getfield fm e:I
+    ldc -980254659 (java.lang.Integer)
+    imul
+    iaload
+    iconst_4
+    iand
+    ifeq L2
+    iload 3
+    iconst_3
+    if_icmpeq L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    aload 1
+    aload 1
+    getfield fm l:Lbe;
+    aload 1
+    getfield fm q:Lbc;
+    invokevirtual bc aw:()I
+    iconst_0
+    aload 1
+    getfield fm q:Lbc;
+    invokevirtual bc t:()I
+    invokestatic bc c:(Lbe;III)Lbc;
+    putfield fm q:Lbc;
+    goto L5
+L6
+    iconst_0
+    goto L7
+L8
+    ldc 1048575 (java.lang.Integer)
+    iload 4
+    iadd
+    aload 1
+    getfield fm x:I
+    ldc -1838880367 (java.lang.Integer)
+    imul
+    isub
+    iload 4
+    idiv
+    istore 5
+L9
+    aload 1
+    ldc -1838880367 (java.lang.Integer)
+    aload 1
+    getfield fm x:I
+    imul
+    iload 2
+    iload 4
+    imul
+    iadd
+    ldc 1048575 (java.lang.Integer)
+    iand
+    ldc -444926095 (java.lang.Integer)
+    imul
+    putfield fm x:I
+    goto L10
+L3
+    aload 1
+    getfield fm m:I
+    ldc 1106072977 (java.lang.Integer)
+    imul
+    ifge L2
+    iload 3
+    iconst_3
+    if_icmpeq L11
+    return
+L12
+    iconst_0
+    aload 0
+    getfield fr e:Lff;
+    getfield ff n:[I
+    ldc -980254659 (java.lang.Integer)
+    aload 1
+    getfield fm e:I
+    imul
+    iaload
+    if_icmpne L4
+    iload 3
+    iconst_3
+    if_icmpeq L13
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    iload 5
+    iload 2
+    if_icmpgt L2
+    iload 3
+    iconst_3
+    if_icmpeq L12
+    return
+L14
+    aload 1
+    getfield fm q:Lbc;
+    iconst_m1
+    invokevirtual bc g:(I)V
+    goto L15
+L5
+    aload 0
+    getfield fr e:Lff;
+    aload 1
+    aload 1
+    getfield fm a:Lfh;
+    getfield fh l:[S
+    aload 1
+    getfield fm w:I
+    ldc 1336712917 (java.lang.Integer)
+    imul
+    saload
+    ifge L6
+    iload 3
+    iconst_3
+    if_icmpeq L16
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L16
+    iconst_1
+    goto L7
+L11
+    aload 0
+    getfield fr e:Lff;
+    getfield ff p:[I
+    aload 1
+    getfield fm e:I
+    ldc -980254659 (java.lang.Integer)
+    imul
+    iaload
+    getstatic aa l:I
+    ldc -279793531 (java.lang.Integer)
+    imul
+    idiv
+    istore 4
+    goto L8
+L7
+    bipush 55
+    invokevirtual ff y:(Lfm;ZB)V
+L17
+    aload 1
+    getfield fm a:Lfh;
+    getfield fh l:[S
+    ldc 1336712917 (java.lang.Integer)
+    aload 1
+    getfield fm w:I
+    imul
+    saload
+    ifge L15
+    iload 3
+    iconst_3
+    if_icmpeq L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L2
+    aload 1
+    getfield fm q:Lbc;
+    iload 2
+    invokevirtual bc o:(I)V
+    goto L18
+L15
+    aload 1
+    getfield fm x:I
+    ldc -1838880367 (java.lang.Integer)
+    imul
+    iload 4
+    idiv
+    istore 2
+    goto L2
+L13
+    aload 1
+    aload 1
+    getfield fm l:Lbe;
+    aload 1
+    getfield fm q:Lbc;
+    invokevirtual bc aw:()I
+    aload 1
+    getfield fm q:Lbc;
+    invokevirtual bc m:()I
+    aload 1
+    getfield fm q:Lbc;
+    invokevirtual bc t:()I
+    invokestatic bc c:(Lbe;III)Lbc;
+    putfield fm q:Lbc;
+    goto L17
+L18
+    return
+L19
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "fr.a(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

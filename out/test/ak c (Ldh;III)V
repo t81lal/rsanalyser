@@ -1,0 +1,84 @@
+ak c (Ldh;III)VL1
+    iload 2
+    iconst_1
+    if_icmpne L2
+    iload 4
+    ldc -1369146030 (java.lang.Integer)
+    if_icmpeq L3
+    return
+L4
+    iload 2
+    iconst_5
+    if_icmpne L5
+    goto L6
+L2
+    iconst_2
+    iload 2
+    if_icmpne L4
+    iload 4
+    ldc -1369146030 (java.lang.Integer)
+    if_icmpeq L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    bipush 8
+    iload 2
+    if_icmpne L9
+    iload 4
+    ldc -1369146030 (java.lang.Integer)
+    if_icmpeq L9
+    return
+L3
+    aload 0
+    aload 1
+    ldc -1924765326 (java.lang.Integer)
+    invokevirtual dh b:(I)I
+    ldc 855783749 (java.lang.Integer)
+    imul
+    putfield ak l:I
+    goto L9
+L6
+    aload 0
+    iconst_0
+    putfield ak u:Z
+    goto L9
+L5
+    bipush 7
+    iload 2
+    if_icmpne L8
+    iload 4
+    ldc -1369146030 (java.lang.Integer)
+    if_icmpeq L10
+    return
+L10
+    aload 0
+    aload 1
+    ldc -1356534438 (java.lang.Integer)
+    invokevirtual dh b:(I)I
+    ldc 114008733 (java.lang.Integer)
+    imul
+    putfield ak w:I
+    goto L9
+L7
+    aload 0
+    aload 1
+    ldc 1935177523 (java.lang.Integer)
+    invokevirtual dh z:(I)I
+    ldc 839356095 (java.lang.Integer)
+    imul
+    putfield ak c:I
+L9
+    return
+L11
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ak.c(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

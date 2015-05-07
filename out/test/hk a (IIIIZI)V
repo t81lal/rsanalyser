@@ -1,0 +1,853 @@
+hk a (IIIIZI)VL1
+    iload 1
+    aload 0
+    getfield hk k:I
+    ldc -762260917 (java.lang.Integer)
+    imul
+    isub
+    istore 1
+    goto L2
+L3
+    aload 0
+    iload 1
+    iload 2
+    iconst_1
+    isub
+    sipush 1024
+    ldc 2119822866 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L4
+L5
+    iconst_0
+    iload 3
+    if_icmpne L6
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    iconst_0
+    iload 4
+    if_icmpne L8
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L9
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    aload 0
+    iload 1
+    iload 2
+    iconst_4
+    ldc 1708664098 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L11
+L12
+    aload 0
+    iload 1
+    iconst_1
+    isub
+    iload 2
+    bipush 8
+    ldc 1945242517 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L8
+    iconst_1
+    iload 4
+    if_icmpne L13
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L15
+    aload 0
+    iload 1
+    iload 2
+    iconst_1
+    isub
+    iconst_2
+    ldc 1807070883 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L16
+L17
+    aload 0
+    iload 1
+    iload 2
+    iconst_1
+    iadd
+    bipush 32
+    ldc 2001048947 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L13
+    iconst_2
+    iload 4
+    if_icmpne L18
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L19
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L20
+    aload 0
+    iload 1
+    iload 2
+    bipush 64
+    ldc 1822755549 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L21
+L22
+    aload 0
+    iload 1
+    iconst_1
+    iadd
+    iload 2
+    sipush 128
+    ldc 2128523283 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L18
+    iload 4
+    iconst_3
+    if_icmpne L6
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L23
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L23
+    aload 0
+    iload 1
+    iload 2
+    bipush 32
+    ldc 1901811077 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L24
+L25
+    aload 0
+    iload 1
+    iconst_1
+    isub
+    iload 2
+    sipush 4096
+    ldc 1734680766 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L26
+L6
+    iload 3
+    iconst_1
+    if_icmpeq L27
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L28
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L28
+    iload 3
+    iconst_3
+    if_icmpne L29
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L27
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L27
+    iload 4
+    ifne L30
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L31
+    return
+L32
+    aload 0
+    iload 1
+    iload 2
+    ldc 81920 (java.lang.Integer)
+    ldc 2033434635 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L33
+L34
+    aload 0
+    iload 1
+    iconst_1
+    isub
+    iload 2
+    iconst_1
+    iadd
+    bipush 16
+    ldc 1810727310 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L30
+L35
+    aload 0
+    iload 1
+    iload 2
+    sipush 512
+    ldc 2056174947 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L36
+L19
+    aload 0
+    iload 1
+    iload 2
+    bipush 8
+    ldc 2072874042 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L22
+L11
+    aload 0
+    iload 1
+    iconst_1
+    iadd
+    iload 2
+    iconst_1
+    iadd
+    bipush 64
+    ldc 1726573071 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L37
+L38
+    aload 0
+    iload 1
+    iconst_1
+    iload 2
+    iadd
+    bipush 32
+    ldc 1932309993 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L39
+L40
+    aload 0
+    iload 1
+    iload 2
+    bipush 16
+    ldc 1702537051 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L41
+L42
+    aload 0
+    iload 1
+    iconst_1
+    isub
+    iload 2
+    iconst_1
+    isub
+    sipush 2048
+    ldc 1922189874 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L43
+L44
+    iconst_3
+    iload 4
+    if_icmpne L29
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L20
+    return
+L45
+    aload 0
+    iload 1
+    iload 2
+    iconst_1
+    isub
+    iconst_2
+    ldc 1797130345 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L46
+L47
+    iload 4
+    iconst_2
+    if_icmpne L48
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L49
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L37
+    iload 4
+    iconst_2
+    if_icmpne L44
+    goto L40
+L50
+    iconst_0
+    iload 4
+    if_icmpne L39
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L51
+    return
+L51
+    aload 0
+    iload 1
+    iload 2
+    sipush 130
+    ldc 1818845061 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L52
+L2
+    iload 2
+    aload 0
+    getfield hk ax:I
+    ldc -1615258397 (java.lang.Integer)
+    imul
+    isub
+    istore 2
+    goto L5
+L24
+    aload 0
+    iload 1
+    iload 2
+    iconst_1
+    isub
+    iconst_2
+    ldc 1916436488 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L6
+L39
+    iload 4
+    iconst_1
+    if_icmpne L53
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L54
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L55
+    aload 0
+    iconst_1
+    iload 1
+    iadd
+    iload 2
+    sipush 128
+    ldc 1794052149 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L15
+L56
+    aload 0
+    iload 1
+    iconst_1
+    iload 2
+    iadd
+    bipush 32
+    ldc 1719690520 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L57
+    aload 0
+    iconst_1
+    iload 1
+    iadd
+    iload 2
+    sipush 128
+    ldc 1859557497 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L53
+    iconst_2
+    iload 4
+    if_icmpne L16
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L58
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L58
+    aload 0
+    iload 1
+    iload 2
+    bipush 40
+    ldc 2104544893 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L55
+L14
+    aload 0
+    iload 1
+    iload 2
+    iconst_2
+    ldc 2103471133 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L17
+L41
+    aload 0
+    iconst_1
+    iload 1
+    iadd
+    iload 2
+    iconst_1
+    isub
+    iconst_1
+    ldc 2111860129 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L44
+L59
+    iload 4
+    iconst_3
+    if_icmpne L4
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L60
+    return
+L61
+    aload 0
+    iload 1
+    iload 2
+    sipush 160
+    ldc 1937418664 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L45
+L62
+    aload 0
+    iload 1
+    iload 2
+    sipush 4096
+    ldc 1938267132 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L63
+L52
+    aload 0
+    iload 1
+    iconst_1
+    isub
+    iload 2
+    bipush 8
+    ldc 1978730230 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L38
+L64
+    aload 0
+    iload 1
+    iload 2
+    sipush 2048
+    ldc 2115834966 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L65
+L66
+    iconst_0
+    iload 3
+    if_icmpne L4
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L67
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L67
+    iload 4
+    ifne L68
+    goto L69
+L30
+    iload 4
+    iconst_1
+    if_icmpne L37
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L70
+    aload 0
+    iload 1
+    iconst_1
+    isub
+    iload 2
+    sipush 4096
+    ldc 2014011469 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L68
+L71
+    aload 0
+    iload 1
+    iconst_1
+    iadd
+    iload 2
+    ldc 65536 (java.lang.Integer)
+    ldc 1709464493 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L72
+L73
+    aload 0
+    iload 1
+    iload 2
+    sipush 1024
+    ldc 2136730963 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L74
+    aload 0
+    iload 1
+    iconst_1
+    iload 2
+    iadd
+    sipush 16384
+    ldc 1990493763 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L75
+    iconst_2
+    iload 4
+    if_icmpne L59
+    goto L62
+L46
+    aload 0
+    iload 1
+    iconst_1
+    isub
+    iload 2
+    bipush 8
+    ldc 1993313583 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L76
+L31
+    aload 0
+    iload 1
+    iload 2
+    iconst_1
+    ldc 1755904709 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L34
+L29
+    iconst_2
+    iload 3
+    if_icmpne L76
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L50
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L60
+    aload 0
+    iload 1
+    iload 2
+    sipush 16384
+    ldc 2021783370 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L3
+L9
+    aload 0
+    iload 1
+    iload 2
+    sipush 128
+    ldc 2003563544 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L12
+L4
+    iconst_1
+    iload 3
+    if_icmpeq L77
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L78
+    return
+L78
+    iconst_3
+    iload 3
+    if_icmpne L43
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L77
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L77
+    iconst_0
+    iload 4
+    if_icmpne L79
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L35
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L76
+    iload 5
+    ifeq L80
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L66
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L36
+    aload 0
+    iload 1
+    iconst_1
+    isub
+    iload 2
+    iconst_1
+    iadd
+    sipush 8192
+    ldc 2080462673 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L79
+    iload 4
+    iconst_1
+    if_icmpne L47
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L64
+    return
+L81
+    iload 4
+    iconst_1
+    if_icmpne L82
+    goto L83
+L65
+    aload 0
+    iload 1
+    iconst_1
+    iadd
+    iconst_1
+    iload 2
+    iadd
+    ldc 32768 (java.lang.Integer)
+    ldc 1962768969 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L47
+L69
+    aload 0
+    iload 1
+    iload 2
+    ldc 65536 (java.lang.Integer)
+    ldc 1857592627 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L70
+L49
+    aload 0
+    iload 1
+    iload 2
+    sipush 8192
+    ldc 1894910857 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L84
+    aload 0
+    iconst_1
+    iload 1
+    iadd
+    iload 2
+    iconst_1
+    isub
+    sipush 512
+    ldc 1778928013 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L48
+    iconst_3
+    iload 4
+    if_icmpne L43
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L85
+    return
+L85
+    aload 0
+    iload 1
+    iload 2
+    ldc 32768 (java.lang.Integer)
+    ldc 1979913973 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L42
+L86
+    iconst_0
+    iload 4
+    if_icmpne L81
+    goto L87
+L43
+    iload 3
+    iconst_2
+    if_icmpne L80
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L86
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L54
+    aload 0
+    iload 1
+    iload 2
+    bipush 10
+    ldc 1987515688 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L56
+L87
+    aload 0
+    iload 1
+    iload 2
+    ldc 66560 (java.lang.Integer)
+    ldc 1730048217 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L25
+L21
+    aload 0
+    iload 1
+    iconst_1
+    isub
+    iload 2
+    iconst_1
+    isub
+    iconst_4
+    ldc 1880572274 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L29
+L26
+    aload 0
+    iload 1
+    iload 2
+    iconst_1
+    iadd
+    sipush 16384
+    ldc 1683832478 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L81
+L16
+    iconst_3
+    iload 4
+    if_icmpne L76
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L61
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L83
+    aload 0
+    iload 1
+    iload 2
+    sipush 5120
+    ldc 1712403303 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L88
+    aload 0
+    iload 1
+    iconst_1
+    iload 2
+    iadd
+    sipush 16384
+    ldc 2004051935 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L89
+    aload 0
+    iload 1
+    iconst_1
+    iadd
+    iload 2
+    ldc 65536 (java.lang.Integer)
+    ldc 2089286034 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L82
+    iload 4
+    iconst_2
+    if_icmpne L90
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L91
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L91
+    aload 0
+    iload 1
+    iload 2
+    sipush 20480
+    ldc 1821031486 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L71
+L72
+    aload 0
+    iload 1
+    iload 2
+    iconst_1
+    isub
+    sipush 1024
+    ldc 1826882069 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L90
+L63
+    aload 0
+    iload 1
+    iconst_1
+    iadd
+    iload 2
+    ldc 65536 (java.lang.Integer)
+    ldc 1986321524 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+    goto L59
+L90
+    iload 4
+    iconst_3
+    if_icmpne L80
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L32
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L68
+    iconst_1
+    iload 4
+    if_icmpne L75
+    iload 6
+    ldc -433807903 (java.lang.Integer)
+    if_icmplt L73
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L33
+    aload 0
+    iload 1
+    iload 2
+    iconst_1
+    isub
+    sipush 1024
+    ldc 1778171072 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L92
+    aload 0
+    iload 1
+    iconst_1
+    isub
+    iload 2
+    sipush 4096
+    ldc 1961331602 (java.lang.Integer)
+    invokevirtual hk w:(IIII)V
+L80
+    return
+L93
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "hk.a(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

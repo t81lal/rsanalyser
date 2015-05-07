@@ -1,0 +1,145 @@
+fo cb (I[BZZI)VL1
+    iload 3
+    ifeq L2
+    iload 5
+    ldc -1588161672 (java.lang.Integer)
+    if_icmpeq L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    new java/lang/RuntimeException
+    dup
+    invokespecial java/lang/RuntimeException <init>:()V
+    athrow
+L5
+    aload 0
+    getfield fo x:I
+    ldc -1850937427 (java.lang.Integer)
+    imul
+    aload 2
+    aload 0
+    getfield fo b:Ldg;
+    ldc 887355362 (java.lang.Integer)
+    invokestatic ds c:(I[BLdg;I)V
+    goto L6
+L7
+    aconst_null
+    aload 0
+    getfield fo b:Ldg;
+    if_acmpeq L6
+    iload 5
+    ldc -1588161672 (java.lang.Integer)
+    if_icmpeq L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    aload 0
+    getfield fo d:Ldg;
+    ifnull L9
+    iload 5
+    ldc -1588161672 (java.lang.Integer)
+    if_icmpeq L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L6
+    aload 0
+    aload 2
+    bipush -38
+    invokevirtual fo e:([BB)V
+L11
+    aload 0
+    ldc -1825162026 (java.lang.Integer)
+    invokevirtual fo ci:(I)V
+    goto L12
+L2
+    aload 2
+    aload 2
+    arraylength
+    iconst_2
+    isub
+    aload 0
+    getfield fo w:[I
+    iload 1
+    iaload
+    bipush 8
+    ishr
+    i2b
+    bastore
+L13
+    aload 2
+    aload 2
+    arraylength
+    iconst_1
+    isub
+    aload 0
+    getfield fo w:[I
+    iload 1
+    iaload
+    i2b
+    bastore
+    goto L8
+L14
+    aload 0
+    getfield fo o:[Ljava/lang/Object;
+    iload 1
+    aload 2
+    iconst_0
+    ldc 1561014094 (java.lang.Integer)
+    invokestatic av i:([BZI)Ljava/lang/Object;
+    aastore
+    goto L12
+L10
+    iload 1
+    aload 2
+    aload 0
+    getfield fo d:Ldg;
+    ldc 872473395 (java.lang.Integer)
+    invokestatic ds c:(I[BLdg;I)V
+    goto L15
+L3
+    aload 0
+    getfield fo n:Z
+    ifeq L7
+    iload 5
+    ldc -1588161672 (java.lang.Integer)
+    if_icmpeq L4
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
+    iload 4
+    ifeq L12
+    iload 5
+    ldc -1588161672 (java.lang.Integer)
+    if_icmpeq L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L15
+    aload 0
+    getfield fo p:[Z
+    iload 1
+    iconst_1
+    bastore
+    goto L9
+L12
+    return
+L16
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "fo.cb(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

@@ -1,0 +1,364 @@
+dh g (IB)VL1
+    iload 0
+    ldc 1532705327 (java.lang.Integer)
+    getstatic client q:I
+    imul
+    if_icmpne L2
+    goto L3
+L4
+    aconst_null
+    putstatic eb r:[Lbs;
+    goto L5
+L6
+    getstatic eb pd:Ljava/awt/Canvas;
+    getstatic ak bc:Lfo;
+    getstatic t be:Lfo;
+    iconst_1
+    getstatic client q:I
+    ldc 1532705327 (java.lang.Integer)
+    imul
+    bipush 11
+    if_icmpne L7
+    iload 1
+    iconst_2
+    if_icmpgt L8
+    return
+L9
+    aconst_null
+    putstatic ar pz:Ljava/awt/Image;
+L10
+    aconst_null
+    putstatic q px:Ljava/awt/Font;
+L11
+    aconst_null
+    putstatic cf bf:Ljava/awt/FontMetrics;
+    goto L12
+L13
+    iconst_5
+    iload 0
+    if_icmpeq L14
+    iload 1
+    iconst_2
+    if_icmpgt L15
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L16
+    bipush 40
+    iload 0
+    if_icmpeq L17
+    iload 1
+    iconst_2
+    if_icmpgt L18
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L18
+    bipush 45
+    iload 0
+    if_icmpne L19
+L17
+    iconst_0
+    putstatic client bj:I
+L20
+    iconst_0
+    putstatic client bq:I
+    goto L21
+L22
+    sipush 8138
+    invokestatic client a:(Ljava/awt/Component;Lfv;Lfv;ZIS)V
+    goto L23
+L19
+    bipush 20
+    iload 0
+    if_icmpeq L24
+    goto L25
+L26
+    aconst_null
+    putstatic dq n:[I
+    goto L27
+L2
+    getstatic client q:I
+    ldc 1532705327 (java.lang.Integer)
+    imul
+    ifne L12
+    iload 1
+    iconst_2
+    if_icmpgt L9
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L28
+    aconst_null
+    getstatic fp cg:Leo;
+    if_acmpeq L24
+    iload 1
+    iconst_2
+    if_icmpgt L29
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L30
+    aconst_null
+    putstatic fp cg:Leo;
+L24
+    bipush 25
+    ldc 1532705327 (java.lang.Integer)
+    getstatic client q:I
+    imul
+    if_icmpne L13
+    iload 1
+    iconst_2
+    if_icmpgt L31
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L31
+    iconst_0
+    putstatic client dh:I
+L32
+    iconst_0
+    putstatic client df:I
+L33
+    ldc -14698415 (java.lang.Integer)
+    putstatic client dp:I
+L34
+    iconst_0
+    putstatic client dc:I
+L35
+    ldc -178050231 (java.lang.Integer)
+    putstatic client dw:I
+    goto L13
+L14
+    getstatic eb pd:Ljava/awt/Canvas;
+    getstatic ak bc:Lfo;
+    getstatic t be:Lfo;
+    iconst_1
+    iconst_0
+    sipush 28718
+    invokestatic client a:(Ljava/awt/Component;Lfv;Lfv;ZIS)V
+    goto L23
+L36
+    return
+L21
+    iconst_0
+    putstatic client bn:I
+    goto L19
+L37
+    iload 0
+    bipush 20
+    if_icmpne L38
+    iload 1
+    iconst_2
+    if_icmpgt L6
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    bipush 20
+    iload 0
+    if_icmpeq L17
+    iload 1
+    iconst_2
+    if_icmpgt L16
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    iconst_4
+    goto L22
+L7
+    iconst_0
+    goto L22
+L29
+    getstatic fp cg:Leo;
+    bipush -3
+    invokevirtual eo c:(B)V
+    goto L30
+L5
+    aconst_null
+    putstatic y f:Lbs;
+    goto L39
+L40
+    getstatic eb pd:Ljava/awt/Canvas;
+    getstatic ak bc:Lfo;
+    getstatic t be:Lfo;
+    iconst_0
+    iconst_4
+    sipush 7604
+    invokestatic client a:(Ljava/awt/Component;Lfv;Lfv;ZIS)V
+    goto L23
+L41
+    aconst_null
+    putstatic ax d:[I
+    goto L42
+L43
+    goto L23
+L44
+    aconst_null
+    putstatic ai a:Lbs;
+L45
+    aconst_null
+    putstatic ai l:Lbs;
+L46
+    aconst_null
+    putstatic ai c:[Lbs;
+    goto L47
+L48
+    iconst_1
+    bipush -12
+    invokestatic y e:(ZB)V
+    goto L49
+L50
+    aconst_null
+    putstatic ai w:Lbh;
+L51
+    aconst_null
+    putstatic ev i:Lbs;
+    goto L4
+L25
+    bipush 40
+    iload 0
+    if_icmpeq L24
+    iload 1
+    iconst_2
+    if_icmpgt L28
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L52
+    ldc 1595330969 (java.lang.Integer)
+    putstatic fg r:I
+    goto L53
+L39
+    aconst_null
+    putstatic client g:Lbs;
+    goto L54
+L55
+    getstatic ai e:Z
+    ifne L44
+    iload 1
+    iconst_2
+    if_icmpgt L43
+    return
+L47
+    aconst_null
+    putstatic fk u:Lbh;
+    goto L50
+L56
+    aconst_null
+    putstatic av as:[Lbs;
+    goto L57
+L3
+    return
+L58
+    aconst_null
+    putstatic o bl:Lbs;
+L59
+    aconst_null
+    putstatic aj y:[I
+L60
+    aconst_null
+    putstatic cz q:[I
+    goto L41
+L57
+    aconst_null
+    putstatic ai aa:[Lbs;
+    goto L58
+L42
+    aconst_null
+    putstatic cu z:[I
+    goto L26
+L38
+    iload 0
+    bipush 11
+    if_icmpne L55
+    iload 1
+    iconst_2
+    if_icmpgt L40
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L27
+    aconst_null
+    putstatic dg v:[I
+    goto L61
+L53
+    iconst_0
+    putstatic fu f:I
+    goto L62
+L63
+    aconst_null
+    putstatic em k:[I
+    goto L64
+L15
+    iload 0
+    bipush 10
+    if_icmpne L37
+    iload 1
+    iconst_2
+    if_icmpgt L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L65
+    aconst_null
+    putstatic fg w:Lfv;
+    goto L66
+L67
+    aconst_null
+    putstatic ax af:[Lbs;
+    goto L56
+L64
+    ldc 33159791 (java.lang.Integer)
+    putstatic fg u:I
+    goto L65
+L54
+    aconst_null
+    putstatic fg az:[Lbh;
+    goto L67
+L62
+    iconst_0
+    putstatic eu o:Z
+L68
+    ldc -345418902 (java.lang.Integer)
+    putstatic fg g:I
+    goto L48
+L66
+    ldc 1420766185 (java.lang.Integer)
+    putstatic ft i:I
+    goto L52
+L49
+    iconst_0
+    putstatic ai e:Z
+L23
+    ldc -1276490545 (java.lang.Integer)
+    iload 0
+    imul
+    putstatic client q:I
+    goto L36
+L61
+    aconst_null
+    putstatic bi p:[I
+    goto L63
+L69
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "dh.g(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

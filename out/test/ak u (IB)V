@@ -1,0 +1,337 @@
+ak u (IB)VL1
+    iload 1
+    bipush 16
+    ishr
+    sipush 255
+    iand
+    i2d
+    ldc 256.0 (java.lang.Double)
+    ddiv
+    dstore 3
+    goto L2
+L3
+    aload 0
+    ldc -1418630301 (java.lang.Integer)
+    dload 17
+    ldc 256.0 (java.lang.Double)
+    dmul
+    d2i
+    imul
+    putfield ak f:I
+    goto L4
+L5
+    aload 0
+    getfield ak r:I
+    ldc 2123267359 (java.lang.Integer)
+    imul
+    sipush 255
+    if_icmple L6
+    iload 2
+    iconst_1
+    if_icmpne L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    dload 7
+    dload 9
+    dcmpg
+    ifge L9
+    iload 2
+    iconst_1
+    if_icmpne L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L11
+    aload 0
+    iconst_0
+    putfield ak f:I
+    goto L12
+L13
+    dload 5
+    dstore 9
+    goto L8
+L14
+    dload 11
+    dload 3
+    dcmpl
+    ifne L15
+    iload 2
+    iconst_1
+    if_icmpne L16
+    return
+L17
+    dload 5
+    dload 9
+    dcmpg
+    ifge L8
+    goto L13
+L9
+    dload 3
+    dstore 11
+    goto L18
+L10
+    dload 7
+    dstore 9
+    goto L9
+L2
+    iload 1
+    bipush 8
+    ishr
+    sipush 255
+    iand
+    i2d
+    ldc 256.0 (java.lang.Double)
+    ddiv
+    dstore 5
+    goto L19
+L20
+    aload 0
+    ldc 256.0 (java.lang.Double)
+    dload 15
+    dmul
+    d2i
+    ldc -629358881 (java.lang.Integer)
+    imul
+    putfield ak r:I
+    goto L3
+L21
+    aload 0
+    iconst_0
+    putfield ak r:I
+    goto L6
+L22
+    dconst_0
+    dstore 13
+L23
+    dconst_0
+    dstore 15
+L24
+    dload 11
+    dload 9
+    dadd
+    ldc 2.0 (java.lang.Double)
+    ddiv
+    dstore 17
+L25
+    dload 11
+    dload 9
+    dcmpl
+    ifeq L26
+    iload 2
+    iconst_1
+    if_icmpne L27
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L27
+    dload 17
+    ldc 0.5 (java.lang.Double)
+    dcmpg
+    ifge L28
+    iload 2
+    iconst_1
+    if_icmpne L29
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L29
+    dload 11
+    dload 9
+    dsub
+    dload 9
+    dload 11
+    dadd
+    ddiv
+    dstore 15
+L28
+    dload 17
+    ldc 0.5 (java.lang.Double)
+    dcmpl
+    iflt L14
+    goto L30
+L18
+    dload 5
+    dload 11
+    dcmpl
+    ifle L31
+    iload 2
+    iconst_1
+    if_icmpne L32
+    return
+L15
+    dload 5
+    dload 11
+    dcmpl
+    ifne L33
+    iload 2
+    iconst_1
+    if_icmpne L34
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L16
+    dload 5
+    dload 7
+    dsub
+    dload 11
+    dload 9
+    dsub
+    ddiv
+    dstore 13
+    goto L26
+L35
+    dload 7
+    dstore 11
+    goto L22
+L34
+    ldc 2.0 (java.lang.Double)
+    dload 7
+    dload 3
+    dsub
+    dload 11
+    dload 9
+    dsub
+    ddiv
+    dadd
+    dstore 13
+    goto L26
+L19
+    iload 1
+    sipush 255
+    iand
+    i2d
+    ldc 256.0 (java.lang.Double)
+    ddiv
+    dstore 7
+    goto L36
+L37
+    dload 3
+    dload 5
+    dsub
+    dload 11
+    dload 9
+    dsub
+    ddiv
+    ldc 4.0 (java.lang.Double)
+    dadd
+    dstore 13
+L26
+    dload 13
+    ldc 6.0 (java.lang.Double)
+    ddiv
+    dstore 13
+L38
+    aload 0
+    dload 13
+    ldc 256.0 (java.lang.Double)
+    dmul
+    d2i
+    ldc -817378867 (java.lang.Integer)
+    imul
+    putfield ak i:I
+    goto L20
+L32
+    dload 5
+    dstore 11
+L31
+    dload 7
+    dload 11
+    dcmpl
+    ifle L22
+    iload 2
+    iconst_1
+    if_icmpne L35
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    ldc 2123267359 (java.lang.Integer)
+    aload 0
+    getfield ak r:I
+    imul
+    ifge L5
+    iload 2
+    iconst_1
+    if_icmpne L21
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L30
+    dload 11
+    dload 9
+    dsub
+    ldc 2.0 (java.lang.Double)
+    dload 11
+    dsub
+    dload 9
+    dsub
+    ddiv
+    dstore 15
+    goto L14
+L33
+    dload 7
+    dload 11
+    dcmpl
+    ifne L26
+    iload 2
+    iconst_1
+    if_icmpne L37
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    aload 0
+    ldc -1572724703 (java.lang.Integer)
+    putfield ak r:I
+L6
+    ldc 2846283 (java.lang.Integer)
+    aload 0
+    getfield ak f:I
+    imul
+    ifge L39
+    goto L11
+L36
+    dload 3
+    dstore 9
+    goto L17
+L39
+    ldc 2846283 (java.lang.Integer)
+    aload 0
+    getfield ak f:I
+    imul
+    sipush 255
+    if_icmple L12
+    iload 2
+    iconst_1
+    if_icmpne L40
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L40
+    aload 0
+    ldc -973473891 (java.lang.Integer)
+    putfield ak f:I
+L12
+    return
+L41
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ak.u(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

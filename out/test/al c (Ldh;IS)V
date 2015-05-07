@@ -1,0 +1,250 @@
+al c (Ldh;IS)VL1
+    iload 2
+    iconst_1
+    if_icmpne L2
+    iload 3
+    sipush 999
+    if_icmpeq L3
+    return
+L4
+    aload 0
+    iload 4
+    newarray 9
+    putfield al g:[S
+    goto L5
+L6
+    goto L7
+L8
+    aload 1
+    ldc 1069877582 (java.lang.Integer)
+    invokevirtual dh z:(I)I
+    istore 4
+    goto L9
+L10
+    iconst_3
+    iload 2
+    if_icmpne L11
+    goto L12
+L13
+    iconst_0
+    istore 5
+L14
+    iload 5
+    iload 4
+    if_icmpge L15
+    iload 3
+    sipush 999
+    if_icmpeq L16
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L16
+    aload 0
+    getfield al w:[I
+    iload 5
+    aload 1
+    ldc -344443064 (java.lang.Integer)
+    invokevirtual dh q:(I)I
+    iastore
+    iinc 5 1
+    goto L14
+L15
+    goto L7
+L11
+    bipush 40
+    iload 2
+    if_icmpne L17
+    iload 3
+    sipush 999
+    if_icmpeq L18
+    return
+L12
+    aload 0
+    iconst_1
+    putfield al h:Z
+    goto L7
+L19
+    goto L7
+L18
+    aload 1
+    ldc 1858086146 (java.lang.Integer)
+    invokevirtual dh z:(I)I
+    istore 4
+L20
+    aload 0
+    iload 4
+    newarray 9
+    putfield al i:[S
+L21
+    aload 0
+    iload 4
+    newarray 9
+    putfield al r:[S
+    goto L22
+L9
+    aload 0
+    iload 4
+    newarray 10
+    putfield al w:[I
+    goto L13
+L23
+    iload 5
+    iload 4
+    if_icmpge L6
+    iload 3
+    sipush 999
+    if_icmpeq L24
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L3
+    aload 0
+    aload 1
+    ldc 1856074045 (java.lang.Integer)
+    invokevirtual dh z:(I)I
+    ldc -816692493 (java.lang.Integer)
+    imul
+    putfield al u:I
+    goto L7
+L5
+    iconst_0
+    istore 5
+    goto L25
+L26
+    iinc 5 1
+    goto L23
+L22
+    iconst_0
+    istore 5
+    goto L23
+L17
+    iload 2
+    bipush 41
+    if_icmpne L27
+    iload 3
+    sipush 999
+    if_icmpeq L28
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L2
+    iload 2
+    iconst_2
+    if_icmpne L10
+    iload 3
+    sipush 999
+    if_icmpeq L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L29
+    aload 0
+    iload 4
+    newarray 9
+    putfield al f:[S
+    goto L4
+L28
+    aload 1
+    ldc 1072564480 (java.lang.Integer)
+    invokevirtual dh z:(I)I
+    istore 4
+    goto L29
+L30
+    iinc 5 1
+    goto L25
+L31
+    aload 0
+    getfield al r:[S
+    iload 5
+    aload 1
+    ldc 1591410085 (java.lang.Integer)
+    invokevirtual dh q:(I)I
+    i2s
+    sastore
+    goto L26
+L32
+    aload 0
+    getfield al f:[S
+    iload 5
+    aload 1
+    ldc 131471222 (java.lang.Integer)
+    invokevirtual dh q:(I)I
+    i2s
+    sastore
+L33
+    aload 0
+    getfield al g:[S
+    iload 5
+    aload 1
+    ldc 2028646127 (java.lang.Integer)
+    invokevirtual dh q:(I)I
+    i2s
+    sastore
+    goto L30
+L25
+    iload 5
+    iload 4
+    if_icmpge L19
+    iload 3
+    sipush 999
+    if_icmpeq L32
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L24
+    aload 0
+    getfield al i:[S
+    iload 5
+    aload 1
+    ldc 961573618 (java.lang.Integer)
+    invokevirtual dh q:(I)I
+    i2s
+    sastore
+    goto L31
+L27
+    iload 2
+    bipush 60
+    if_icmplt L7
+    iload 3
+    sipush 999
+    if_icmpeq L34
+    return
+L34
+    iload 2
+    bipush 70
+    if_icmpge L7
+    iload 3
+    sipush 999
+    if_icmpeq L35
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L35
+    aload 0
+    getfield al o:[I
+    iload 2
+    bipush 60
+    isub
+    aload 1
+    ldc 741981805 (java.lang.Integer)
+    invokevirtual dh q:(I)I
+    iastore
+L7
+    return
+L36
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "al.c(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

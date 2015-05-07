@@ -1,0 +1,4 @@
+Actor aload,invokespecial
+NPC aload,invokespecial,return,new,dup
+camera iload,sipush,if_icmplt
+Renderable iload,iload,iload,iload,iload,iload,iload,iload

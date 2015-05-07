@@ -1,0 +1,164 @@
+bm l (Ljava/lang/String;Ljava/lang/String;ZI)Lhq;L1
+    new java/io/File
+    dup
+    getstatic m u:Ljava/io/File;
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "preferences" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    aload 0
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc ".dat" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokespecial java/io/File <init>:(Ljava/io/File;Ljava/lang/String;)V
+    astore 4
+L2
+    aload 4
+    invokevirtual java/io/File exists:()Z
+    ifeq L3
+    iload 3
+    ldc 1207493115 (java.lang.Integer)
+    if_icmpeq L4
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    new hq
+    dup
+    aload 4
+    ldc "rw" (java.lang.String)
+    ldc 10000 (java.lang.Long)
+    invokespecial hq <init>:(Ljava/io/File;Ljava/lang/String;J)V
+    astore 5
+L5
+    aload 5
+L6
+    areturn
+L7
+    astore 5
+L3
+    ldc "" (java.lang.String)
+    astore 5
+L8
+    bipush 33
+    ldc 1438272425 (java.lang.Integer)
+    getstatic ek m:I
+    imul
+    if_icmpne L9
+    iload 3
+    ldc 1207493115 (java.lang.Integer)
+    if_icmpeq L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    ldc "_rc" (java.lang.String)
+    astore 5
+    goto L11
+L9
+    getstatic ek m:I
+    ldc 1438272425 (java.lang.Integer)
+    imul
+    bipush 34
+    if_icmpne L11
+    iload 3
+    ldc 1207493115 (java.lang.Integer)
+    if_icmpeq L12
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    ldc "_wip" (java.lang.String)
+    astore 5
+L11
+    new java/io/File
+    dup
+    getstatic bi x:Ljava/lang/String;
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "jagex_" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    aload 1
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc "_preferences" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    aload 0
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    aload 5
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc ".dat" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokespecial java/io/File <init>:(Ljava/lang/String;Ljava/lang/String;)V
+    astore 6
+L13
+    iload 2
+    ifne L14
+    iload 3
+    ldc 1207493115 (java.lang.Integer)
+    if_icmpeq L15
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L15
+    aload 6
+    invokevirtual java/io/File exists:()Z
+    ifeq L14
+    iload 3
+    ldc 1207493115 (java.lang.Integer)
+    if_icmpeq L16
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L16
+    new hq
+    dup
+    aload 6
+    ldc "rw" (java.lang.String)
+    ldc 10000 (java.lang.Long)
+    invokespecial hq <init>:(Ljava/io/File;Ljava/lang/String;J)V
+    astore 7
+L17
+    aload 7
+L18
+    areturn
+L19
+    astore 7
+L14
+    new hq
+    dup
+    aload 4
+    ldc "rw" (java.lang.String)
+    ldc 10000 (java.lang.Long)
+    invokespecial hq <init>:(Ljava/io/File;Ljava/lang/String;J)V
+    astore 7
+L20
+    aload 7
+L21
+    areturn
+L22
+    astore 7
+L23
+    new java/lang/RuntimeException
+    dup
+    invokespecial java/lang/RuntimeException <init>:()V
+    athrow
+L24
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "bm.l(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

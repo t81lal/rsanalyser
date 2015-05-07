@@ -1,0 +1,53 @@
+et g (Ljava/lang/CharSequence;I)Ljava/lang/String;L1
+    aload 0
+    invokeinterface java/lang/CharSequence length:()I
+    istore 3
+    goto L2
+L3
+    aload 4
+    iload 5
+    bipush 42
+    castore
+    iinc 5 1
+    goto L4
+L5
+    new java/lang/String
+    dup
+    aload 4
+    invokespecial java/lang/String <init>:([C)V
+    astore 2
+    goto L6
+L4
+    iload 5
+    iload 3
+    if_icmpge L5
+    iload 1
+    ldc 1279378866 (java.lang.Integer)
+    if_icmplt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    iconst_0
+    istore 5
+    goto L4
+L2
+    iload 3
+    newarray 5
+    astore 4
+    goto L7
+L6
+    aload 2
+    areturn
+L8
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "et.g(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

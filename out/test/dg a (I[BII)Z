@@ -1,0 +1,79 @@
+dg a (I[BII)ZL1
+    aload 0
+    getfield dg a:Lhv;
+    dup
+    astore 5
+    monitorenter
+L2
+    iload 3
+    iflt L3
+    iload 4
+    ldc 1685821708 (java.lang.Integer)
+    if_icmpne L4
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    iload 3
+    aload 0
+    getfield dg u:I
+    ldc 461249501 (java.lang.Integer)
+    imul
+    if_icmple L5
+    iload 4
+    ldc 1685821708 (java.lang.Integer)
+    if_icmpne L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L3
+    new java/lang/IllegalArgumentException
+    dup
+    invokespecial java/lang/IllegalArgumentException <init>:()V
+    athrow
+L5
+    aload 0
+    iload 1
+    aload 2
+    iload 3
+    iconst_1
+    ldc 1290048080 (java.lang.Integer)
+    invokevirtual dg l:(I[BIZI)Z
+    istore 6
+L6
+    iload 6
+    ifne L7
+    aload 0
+    iload 1
+    aload 2
+    iload 3
+    iconst_0
+    ldc 1815920593 (java.lang.Integer)
+    invokevirtual dg l:(I[BIZI)Z
+    istore 6
+L7
+    iload 6
+    aload 5
+    monitorexit
+L8
+    ireturn
+L9
+    astore 7
+    aload 5
+    monitorexit
+L10
+    aload 7
+    athrow
+L11
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "dg.a(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

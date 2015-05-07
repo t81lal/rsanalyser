@@ -1,0 +1,96 @@
+ax l (II)VL1
+    iconst_m1
+    iload 0
+    if_icmpne L2
+    goto L3
+L4
+    getstatic fb e:[[Lfb;
+    iload 0
+    aaload
+    astore 2
+    goto L5
+L6
+    return
+L7
+    return
+L2
+    iload 0
+    ldc 1928687330 (java.lang.Integer)
+    invokestatic df c:(II)Z
+    ifne L4
+    iload 1
+    ldc -1251557586 (java.lang.Integer)
+    if_icmpeq L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    iinc 3 1
+L9
+    iload 3
+    aload 2
+    arraylength
+    if_icmpge L6
+    iload 1
+    ldc -1251557586 (java.lang.Integer)
+    if_icmpeq L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L3
+    return
+L11
+    aconst_null
+    aload 4
+    getfield fb cb:[Ljava/lang/Object;
+    if_acmpeq L8
+    iload 1
+    ldc -1251557586 (java.lang.Integer)
+    if_icmpeq L12
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    new e
+    dup
+    invokespecial e <init>:()V
+    astore 5
+L13
+    aload 5
+    aload 4
+    putfield e l:Lfb;
+L14
+    aload 5
+    aload 4
+    getfield fb cb:[Ljava/lang/Object;
+    putfield e e:[Ljava/lang/Object;
+L15
+    aload 5
+    ldc 2000000 (java.lang.Integer)
+    ldc -1772186450 (java.lang.Integer)
+    invokestatic bz a:(Le;II)V
+    goto L8
+L10
+    aload 2
+    iload 3
+    aaload
+    astore 4
+    goto L11
+L5
+    iconst_0
+    istore 3
+    goto L9
+L16
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ax.l(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

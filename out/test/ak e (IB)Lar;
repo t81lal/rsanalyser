@@ -1,0 +1,70 @@
+ak e (IB)Lar;L1
+    getstatic ar a:Lgr;
+    iload 0
+    i2l
+    invokevirtual gr e:(J)Lgd;
+    checkcast ar
+    astore 2
+    goto L2
+L3
+    aload 2
+    areturn
+L4
+    aload 2
+    areturn
+L5
+    getstatic ar e:Lfv;
+    bipush 14
+    iload 0
+    ldc -1633230538 (java.lang.Integer)
+    invokevirtual fv l:(III)[B
+    astore 3
+    goto L6
+L7
+    aload 2
+    new dh
+    dup
+    aload 3
+    invokespecial dh <init>:([B)V
+    ldc -578564428 (java.lang.Integer)
+    invokevirtual ar a:(Ldh;I)V
+    goto L8
+L9
+    aconst_null
+    aload 3
+    if_acmpeq L8
+    iload 1
+    iconst_4
+    if_icmpne L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L6
+    new ar
+    dup
+    invokespecial ar <init>:()V
+    astore 2
+    goto L9
+L8
+    getstatic ar a:Lgr;
+    aload 2
+    iload 0
+    i2l
+    invokevirtual gr l:(Lgd;J)V
+    goto L3
+L2
+    aload 2
+    ifnull L5
+    goto L4
+L10
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ak.e(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

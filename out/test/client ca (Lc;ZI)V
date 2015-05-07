@@ -1,0 +1,254 @@
+client ca (Lc;ZI)VL1
+    ldc -193401837 (java.lang.Integer)
+    aload 0
+    getfield c e:I
+    imul
+    istore 3
+    goto L2
+L3
+    aconst_null
+    getstatic fb e:[[Lfb;
+    iload 3
+    aaload
+    if_acmpne L4
+    iload 2
+    ldc 1048158519 (java.lang.Integer)
+    if_icmplt L5
+    return
+L6
+    aload 0
+    invokevirtual c if:()V
+L7
+    iload 1
+    ifeq L8
+    iload 2
+    ldc 1048158519 (java.lang.Integer)
+    if_icmplt L9
+    return
+L10
+    iconst_0
+    istore 6
+    goto L11
+L12
+    getstatic client jn:I
+    ldc -1189404095 (java.lang.Integer)
+    imul
+    iconst_m1
+    if_icmpeq L13
+    iload 2
+    ldc 1048158519 (java.lang.Integer)
+    if_icmplt L14
+    return
+L8
+    getstatic client lh:Lgf;
+    invokevirtual gf c:()Lgm;
+    checkcast gs
+    astore 5
+    goto L15
+L16
+    goto L8
+L17
+    getstatic fb l:Lfv;
+    iload 3
+    ldc 847012490 (java.lang.Integer)
+    invokevirtual fv m:(II)V
+    goto L3
+L18
+    goto L13
+L5
+    goto L8
+L19
+    iload 5
+    ifeq L20
+    iload 2
+    ldc 1048158519 (java.lang.Integer)
+    if_icmplt L21
+    return
+L2
+    aload 0
+    getfield c ec:J
+    l2i
+    istore 4
+    goto L6
+L11
+    iload 6
+    getstatic fb e:[[Lfb;
+    iload 3
+    aaload
+    arraylength
+    if_icmpge L19
+    iload 2
+    ldc 1048158519 (java.lang.Integer)
+    if_icmplt L22
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L22
+    aconst_null
+    getstatic fb e:[[Lfb;
+    iload 3
+    aaload
+    iload 6
+    aaload
+    if_acmpeq L23
+    iload 2
+    ldc 1048158519 (java.lang.Integer)
+    if_icmplt L24
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L24
+    iconst_2
+    ldc -1547422441 (java.lang.Integer)
+    getstatic fb e:[[Lfb;
+    iload 3
+    aaload
+    iload 6
+    aaload
+    getfield fb j:I
+    imul
+    if_icmpeq L25
+    iload 2
+    ldc 1048158519 (java.lang.Integer)
+    if_icmplt L26
+    return
+L26
+    getstatic fb e:[[Lfb;
+    iload 3
+    aaload
+    iload 6
+    aconst_null
+    aastore
+    goto L23
+L25
+    iconst_0
+    istore 5
+L23
+    iinc 6 1
+    goto L11
+L9
+    iconst_m1
+    iload 3
+    if_icmpne L27
+    goto L28
+L21
+    getstatic fb e:[[Lfb;
+    iload 3
+    aconst_null
+    aastore
+L20
+    getstatic fb a:[Z
+    iload 3
+    iconst_0
+    bastore
+    goto L8
+L29
+    aload 5
+    invokevirtual gs if:()V
+    goto L30
+L15
+    aconst_null
+    aload 5
+    if_acmpeq L31
+    iload 2
+    ldc 1048158519 (java.lang.Integer)
+    if_icmplt L32
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L32
+    aload 5
+    getfield gs ec:J
+    bipush 48
+    lshr
+    ldc 65535 (java.lang.Long)
+    land
+    iload 3
+    i2l
+    lcmp
+    ifne L30
+    goto L29
+L4
+    iconst_1
+    istore 5
+    goto L10
+L30
+    getstatic client lh:Lgf;
+    invokevirtual gf u:()Lgm;
+    checkcast gs
+    astore 5
+    goto L15
+L31
+    iload 4
+    ldc -2068421293 (java.lang.Integer)
+    invokestatic f a:(II)Lfb;
+    astore 5
+L33
+    aload 5
+    ifnull L34
+    iload 2
+    ldc 1048158519 (java.lang.Integer)
+    if_icmplt L35
+    return
+L35
+    aload 5
+    ldc -1023277750 (java.lang.Integer)
+    invokestatic dh cr:(Lfb;I)V
+L34
+    ldc 359132303 (java.lang.Integer)
+    invokestatic j bg:(I)V
+    goto L12
+L28
+    goto L8
+L14
+    ldc -1189404095 (java.lang.Integer)
+    getstatic client jn:I
+    imul
+    istore 6
+L36
+    iload 6
+    ldc 1928687330 (java.lang.Integer)
+    invokestatic df c:(II)Z
+    ifne L37
+    iload 2
+    ldc 1048158519 (java.lang.Integer)
+    if_icmplt L18
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L27
+    getstatic fb a:[Z
+    iload 3
+    baload
+    ifne L17
+    iload 2
+    ldc 1048158519 (java.lang.Integer)
+    if_icmplt L16
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L37
+    getstatic fb e:[[Lfb;
+    iload 6
+    aaload
+    iconst_1
+    ldc -1355336651 (java.lang.Integer)
+    invokestatic ap ct:([Lfb;II)V
+L13
+    return
+L38
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "client.ca(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

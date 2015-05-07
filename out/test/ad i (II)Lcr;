@@ -1,0 +1,259 @@
+ad i (II)Lcr;L1
+    aconst_null
+    aload 0
+    getfield ad al:[I
+    if_acmpeq L2
+    iload 2
+    ldc -1417743113 (java.lang.Integer)
+    if_icmpeq L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    aload 0
+    getfield ad z:[S
+    ifnull L5
+    goto L6
+L7
+    iconst_m1
+    istore 3
+    goto L8
+L9
+    aconst_null
+    areturn
+L10
+    iload 4
+    bipush 10
+    if_icmpge L11
+    iload 2
+    ldc -1417743113 (java.lang.Integer)
+    if_icmpeq L12
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L12
+    iload 1
+    aload 0
+    getfield ad ak:[I
+    iload 4
+    iaload
+    if_icmplt L13
+    iload 2
+    ldc -1417743113 (java.lang.Integer)
+    if_icmpeq L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L14
+    iconst_0
+    aload 0
+    getfield ad ak:[I
+    iload 4
+    iaload
+    if_icmpeq L13
+    iload 2
+    ldc -1417743113 (java.lang.Integer)
+    if_icmpeq L15
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L2
+    getstatic c u:Lfv;
+    ldc -1279523167 (java.lang.Integer)
+    aload 0
+    getfield ad s:I
+    imul
+    iconst_0
+    invokestatic cr e:(Lfv;II)Lcr;
+    astore 3
+    goto L16
+L17
+    iload 4
+    aload 0
+    getfield ad z:[S
+    arraylength
+    if_icmpge L5
+    iload 2
+    ldc -1417743113 (java.lang.Integer)
+    if_icmpeq L18
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L11
+    iconst_m1
+    iload 3
+    if_icmpeq L2
+    iload 3
+    bipush -16
+    invokestatic dj e:(IB)Lad;
+    iconst_1
+    ldc -1417743113 (java.lang.Integer)
+    invokevirtual ad i:(II)Lcr;
+    areturn
+L13
+    iinc 4 1
+    goto L10
+L16
+    aload 3
+    ifnonnull L19
+    goto L9
+L20
+    aload 3
+    aload 0
+    getfield ad ac:I
+    ldc 201822203 (java.lang.Integer)
+    imul
+    aload 0
+    getfield ad ad:I
+    ldc -982580489 (java.lang.Integer)
+    imul
+    ldc 412766295 (java.lang.Integer)
+    aload 0
+    getfield ad an:I
+    imul
+    invokevirtual cr d:(III)V
+    goto L21
+L19
+    aload 0
+    getfield ad ac:I
+    ldc 201822203 (java.lang.Integer)
+    imul
+    sipush 128
+    if_icmpne L20
+    iload 2
+    ldc -1417743113 (java.lang.Integer)
+    if_icmpeq L22
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L22
+    sipush 128
+    ldc -982580489 (java.lang.Integer)
+    aload 0
+    getfield ad ad:I
+    imul
+    if_icmpne L20
+    iload 2
+    ldc -1417743113 (java.lang.Integer)
+    if_icmpeq L23
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L23
+    sipush 128
+    ldc 412766295 (java.lang.Integer)
+    aload 0
+    getfield ad an:I
+    imul
+    if_icmpeq L21
+    iload 2
+    ldc -1417743113 (java.lang.Integer)
+    if_icmpeq L20
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L6
+    iconst_0
+    istore 4
+    goto L17
+L21
+    aload 0
+    getfield ad m:[S
+    ifnull L4
+    iload 2
+    ldc -1417743113 (java.lang.Integer)
+    if_icmpeq L24
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L24
+    iconst_0
+    istore 4
+    goto L25
+L15
+    aload 0
+    getfield ad al:[I
+    iload 4
+    iaload
+    istore 3
+    goto L13
+L3
+    iload 1
+    iconst_1
+    if_icmple L2
+    iload 2
+    ldc -1417743113 (java.lang.Integer)
+    if_icmpeq L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L26
+    iinc 4 1
+    goto L25
+L27
+    aload 3
+    aload 0
+    getfield ad m:[S
+    iload 4
+    saload
+    aload 0
+    getfield ad t:[S
+    iload 4
+    saload
+    invokevirtual cr z:(SS)V
+    goto L26
+L8
+    iconst_0
+    istore 4
+    goto L10
+L5
+    aload 3
+    areturn
+L18
+    aload 3
+    aload 0
+    getfield ad z:[S
+    iload 4
+    saload
+    aload 0
+    getfield ad y:[S
+    iload 4
+    saload
+    invokevirtual cr y:(SS)V
+L28
+    iinc 4 1
+    goto L17
+L25
+    iload 4
+    aload 0
+    getfield ad m:[S
+    arraylength
+    if_icmpge L4
+    iload 2
+    ldc -1417743113 (java.lang.Integer)
+    if_icmpeq L27
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L29
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ad.i(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

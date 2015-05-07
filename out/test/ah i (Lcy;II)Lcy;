@@ -1,0 +1,81 @@
+ah i (Lcy;II)Lcy;L1
+    aload 0
+    getfield ah w:[I
+    iload 2
+    iaload
+    istore 2
+    goto L2
+L3
+    iload 2
+    ldc 65535 (java.lang.Integer)
+    iand
+    istore 2
+    goto L4
+L5
+    aload 5
+    aload 4
+    iload 2
+    invokevirtual cy h:(Lco;I)V
+    goto L6
+L4
+    aconst_null
+    aload 4
+    if_acmpne L7
+    iload 3
+    ldc 258225783 (java.lang.Integer)
+    if_icmplt L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L2
+    iload 2
+    bipush 16
+    ishr
+    bipush -103
+    invokestatic dd g:(IB)Lco;
+    astore 4
+    goto L3
+L8
+    aload 1
+    iconst_1
+    invokevirtual cy c:(Z)Lcy;
+    areturn
+L9
+    iconst_1
+    goto L10
+L7
+    aload 1
+    aload 4
+    iload 2
+    ldc -1687184502 (java.lang.Integer)
+    invokevirtual co e:(II)Z
+    ifne L11
+    iload 3
+    ldc 258225783 (java.lang.Integer)
+    if_icmplt L9
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L10
+    invokevirtual cy c:(Z)Lcy;
+    astore 5
+    goto L5
+L11
+    iconst_0
+    goto L10
+L6
+    aload 5
+    areturn
+L12
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "ah.i(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

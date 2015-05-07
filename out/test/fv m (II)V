@@ -1,0 +1,41 @@
+fv m (II)VL1
+    iconst_0
+    istore 3
+    goto L2
+L3
+    aload 0
+    getfield fv h:[[Ljava/lang/Object;
+    iload 1
+    aaload
+    iload 3
+    aconst_null
+    aastore
+    iinc 3 1
+L2
+    iload 3
+    aload 0
+    getfield fv h:[[Ljava/lang/Object;
+    iload 1
+    aaload
+    arraylength
+    if_icmpge L4
+    iload 2
+    ldc 910905453 (java.lang.Integer)
+    if_icmplt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    return
+L5
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "fv.m(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

@@ -1,0 +1,168 @@
+cm w (IIZB)Ljava/lang/String;L1
+    iload 1
+    iconst_2
+    if_icmplt L2
+    iload 3
+    iconst_1
+    if_icmpgt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L4
+    iload 4
+    newarray 5
+    astore 6
+    goto L5
+L2
+    new java/lang/IllegalArgumentException
+    dup
+    ldc "" (java.lang.String)
+    invokespecial java/lang/IllegalArgumentException <init>:(Ljava/lang/String;)V
+    athrow
+L6
+    iload 2
+    ifeq L7
+    iload 3
+    iconst_1
+    if_icmpgt L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
+    iload 5
+    iload 1
+    idiv
+    istore 5
+    goto L10
+L7
+    iload 0
+    iload 1
+    invokestatic java/lang/Integer toString:(II)Ljava/lang/String;
+    areturn
+L11
+    iconst_2
+    istore 4
+L12
+    iload 0
+    iload 1
+    idiv
+    istore 5
+L13
+    iconst_0
+    iload 5
+    if_icmpeq L4
+    iload 3
+    iconst_1
+    if_icmpgt L9
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L14
+    aload 6
+    iload 7
+    bipush 87
+    iload 9
+    iadd
+    i2c
+    castore
+    goto L15
+L5
+    aload 6
+    iconst_0
+    bipush 43
+    castore
+    goto L16
+L3
+    iload 1
+    bipush 36
+    if_icmple L6
+    iload 3
+    iconst_1
+    if_icmpgt L2
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L17
+    new java/lang/String
+    dup
+    aload 6
+    invokespecial java/lang/String <init>:([C)V
+    areturn
+L16
+    iload 4
+    iconst_1
+    isub
+    istore 7
+L18
+    iload 7
+    ifle L17
+    goto L19
+L20
+    iload 8
+    iload 1
+    iload 0
+    imul
+    isub
+    istore 9
+    goto L21
+L22
+    iload 0
+    iload 1
+    idiv
+    istore 0
+    goto L20
+L10
+    iinc 4 1
+    goto L13
+L23
+    aload 6
+    iload 7
+    bipush 48
+    iload 9
+    iadd
+    i2c
+    castore
+    goto L15
+L19
+    iload 0
+    istore 8
+    goto L22
+L21
+    iload 9
+    bipush 10
+    if_icmplt L23
+    iload 3
+    iconst_1
+    if_icmpgt L14
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L15
+    iinc 7 -1
+    goto L18
+L8
+    iload 0
+    ifge L11
+    iload 3
+    iconst_1
+    if_icmpgt L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L24
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "cm.w(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow

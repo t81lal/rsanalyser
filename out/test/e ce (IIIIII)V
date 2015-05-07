@@ -1,0 +1,215 @@
+e ce (IIIIII)VL1
+    getstatic dg et:[Lbs;
+    iconst_0
+    aaload
+    iload 0
+    iload 1
+    invokevirtual bs l:(II)V
+    goto L2
+L3
+    iload 0
+    iload 1
+    bipush 16
+    iadd
+    bipush 16
+    iload 3
+    bipush 32
+    isub
+    ldc 2024549833 (java.lang.Integer)
+    getstatic client eg:I
+    imul
+    invokestatic bt cs:(IIIII)V
+    goto L4
+L5
+    iload 0
+    iload 7
+    bipush 16
+    iload 1
+    iadd
+    iadd
+    bipush 16
+    ldc -102280407 (java.lang.Integer)
+    getstatic client fv:I
+    imul
+    invokestatic bt dk:(IIII)V
+    goto L6
+L4
+    iload 3
+    bipush 32
+    isub
+    iload 3
+    imul
+    iload 4
+    idiv
+    istore 6
+    goto L7
+L8
+    iload 0
+    iload 1
+    bipush 16
+    iadd
+    iload 7
+    iadd
+    iload 6
+    getstatic client fv:I
+    ldc -102280407 (java.lang.Integer)
+    imul
+    invokestatic bt dp:(IIII)V
+    goto L9
+L10
+    bipush 8
+    istore 6
+L11
+    iload 3
+    bipush 32
+    isub
+    iload 6
+    isub
+    iload 2
+    imul
+    iload 4
+    iload 3
+    isub
+    idiv
+    istore 7
+L12
+    iload 0
+    iload 7
+    iload 1
+    bipush 16
+    iadd
+    iadd
+    bipush 16
+    iload 6
+    ldc -1926267591 (java.lang.Integer)
+    getstatic client en:I
+    imul
+    invokestatic bt cs:(IIIII)V
+    goto L8
+L13
+    iload 0
+    iload 6
+    iload 7
+    bipush 15
+    iload 1
+    iadd
+    iadd
+    iadd
+    bipush 16
+    ldc 938094775 (java.lang.Integer)
+    getstatic client fp:I
+    imul
+    invokestatic bt dk:(IIII)V
+    goto L14
+L9
+    iload 0
+    iconst_1
+    iadd
+    bipush 16
+    iload 1
+    iadd
+    iload 7
+    iadd
+    iload 6
+    ldc -102280407 (java.lang.Integer)
+    getstatic client fv:I
+    imul
+    invokestatic bt dp:(IIII)V
+    goto L5
+L2
+    getstatic dg et:[Lbs;
+    iconst_1
+    aaload
+    iload 0
+    iload 1
+    iload 3
+    iadd
+    bipush 16
+    isub
+    invokevirtual bs l:(II)V
+    goto L3
+L6
+    iload 0
+    bipush 17
+    iload 1
+    iadd
+    iload 7
+    iadd
+    bipush 16
+    getstatic client fv:I
+    ldc -102280407 (java.lang.Integer)
+    imul
+    invokestatic bt dk:(IIII)V
+    goto L15
+L16
+    bipush 14
+    iload 0
+    iadd
+    iload 7
+    iload 1
+    bipush 17
+    iadd
+    iadd
+    iload 6
+    iconst_1
+    isub
+    getstatic client fp:I
+    ldc 938094775 (java.lang.Integer)
+    imul
+    invokestatic bt dp:(IIII)V
+    goto L13
+L7
+    iload 6
+    bipush 8
+    if_icmpge L11
+    iload 5
+    ldc 1358229669 (java.lang.Integer)
+    if_icmplt L10
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L15
+    bipush 15
+    iload 0
+    iadd
+    iload 7
+    bipush 16
+    iload 1
+    iadd
+    iadd
+    iload 6
+    getstatic client fp:I
+    ldc 938094775 (java.lang.Integer)
+    imul
+    invokestatic bt dp:(IIII)V
+    goto L16
+L14
+    iload 0
+    iconst_1
+    iadd
+    iload 6
+    bipush 14
+    iload 1
+    iadd
+    iload 7
+    iadd
+    iadd
+    bipush 15
+    getstatic client fp:I
+    ldc 938094775 (java.lang.Integer)
+    imul
+    invokestatic bt dk:(IIII)V
+L17
+    return
+L18
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "e.ce(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic k a:(Ljava/lang/Throwable;Ljava/lang/String;)Lee;
+    athrow
