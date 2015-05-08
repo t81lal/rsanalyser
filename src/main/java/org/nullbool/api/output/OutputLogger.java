@@ -181,7 +181,7 @@ public class OutputLogger {
 					sb1.append(" º  ");
 					sb1.append(longstring(parts[0], maxLength));
 					// sb1.append(longstring(" " + niceDescMethod(parts[1]), maxLength));
-					sb1.append(longstring(" " + hook.getDesc().getRefactoredDesc(classes) + "", maxLength));
+					sb1.append(longstring(" " + hook.getDesc().getRefactoredDesc(classes) + " ", maxLength));
 					if (sb1.length() > longestLine) {
 						longestLine = sb1.length();
 					}
@@ -318,7 +318,7 @@ public class OutputLogger {
 		for (MethodHook hook : hooks) {
 			if (hook.getName().getRefactored().equals(name)) {
 				if (h != null) {
-					throw new IllegalStateException(hook + " found twice.");
+					throw new IllegalStateException(h + ", " + hook + " found twice.");
 				} else {
 					hook.setMarked(true);
 					h = hook;

@@ -330,7 +330,7 @@ public abstract class AbstractClassAnalyser implements Opcodes {
 					return c;
 			}
 		}
-		System.out.println("Making: " + k);
+		// System.out.println("Making: " + k);
 		return new ClassHook(k, null);
 	}
 

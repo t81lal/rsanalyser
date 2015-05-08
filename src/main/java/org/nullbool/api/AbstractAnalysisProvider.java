@@ -33,7 +33,9 @@ import org.objectweb.asm.tree.MethodNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 import org.topdank.byteengineer.commons.data.LocateableJarContents;
 import org.topdank.byteio.out.CompleteJarDumper;
+import org.zbot.hooks.ClassHook;
 import org.zbot.hooks.HookMap;
+import org.zbot.hooks.MethodHook;
 
 @SuppressWarnings(value = { "all" })
 public abstract class AbstractAnalysisProvider {
@@ -64,6 +66,8 @@ public abstract class AbstractAnalysisProvider {
 		multiplierHandler = new MultiplierHandler();
 		deobfuscate();
 
+		dumpDeob();
+
 		analysers = registerAnalysers();
 		if (analysers != null && analysers.size() != 0)
 			analyse();
@@ -73,10 +77,17 @@ public abstract class AbstractAnalysisProvider {
 
 	private void output() {
 		HookMap hookMap = OutputLogger.output();
+
+		for (ClassHook h : hookMap.getClasses()) {
+			for (MethodHook m : h.getMethods()) {
+				if (m.getInstructions() != null)
+					m.getInstructions().reset();
+			}
+		}
+
 		APIGenerator.createAPI(hookMap);
 		writeLog(hookMap);
 		// HookMap map = new HookMap();
-		dumpRawJar();
 		dumpJar(hookMap);
 	}
 
@@ -110,7 +121,7 @@ public abstract class AbstractAnalysisProvider {
 		}
 	}
 
-	private void dumpRawJar() {
+	private void dumpDeob() {
 		JarContents<ClassNode> contents = new JarContents<ClassNode>();
 		contents.getClassContents().addAll(getClassNodes().values());
 		CompleteJarDumper dumper = new CompleteJarDumper(contents);
@@ -154,7 +165,7 @@ public abstract class AbstractAnalysisProvider {
 		removeDummyMethods(contents);
 		// checkRecursion(contents);
 		removeUnusedParams(contents);
-		// removeDummyParameters(contents);
+		removeDummyParameters(contents);
 		this.contents.getClassContents().clear();
 		this.contents.getClassContents().addAll(contents.getClassContents());
 		this.contents.getClassContents().namedMap();

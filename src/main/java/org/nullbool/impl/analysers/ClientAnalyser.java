@@ -24,6 +24,9 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
@@ -42,7 +45,7 @@ import org.zbot.hooks.MethodHook.MethodType;
 		"getMenuSize&I", "getGroundItems&[[[Deque", "getTileSettings&[[[B", "getTileHeights&[[[I", "getMapScale&I", "getMapOffset&I", "getMapAngle&I",
 		"getPlane&I", "getCameraX&I", "getCameraY&I", "getCameraZ&I", "getCameraYaw&I", "getCameraPitch&I", "getBaseX&I", "getBaseY&I", "getWidgets&[[Widget",
 		"getClientSettings&[I", "getWidgetsSettings&[I", }, methods = { "loadObjDefinition&(II)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
-		"getPlayerModel&(I)LModel;", "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException" })
+		"getPlayerModel&(I)LModel;", "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&?" })
 public class ClientAnalyser extends AbstractClassAnalyser {
 
 	public ClientAnalyser() throws AnalysisException {
@@ -58,7 +61,7 @@ public class ClientAnalyser extends AbstractClassAnalyser {
 
 	@Override
 	protected List<IMethodAnalyser> registerMethodAnalysers() {
-		return Arrays.asList(new LoadDefinitionHook(), new ReportMethodHookAnalyser());
+		return Arrays.asList(new LoadDefinitionHook(), new ReportMethodHookAnalyser(), new ProccessActionMethodHookAnalyser());
 	}
 
 	@Override
@@ -527,5 +530,89 @@ public class ClientAnalyser extends AbstractClassAnalyser {
 			}
 			return hooks;
 		}
+	}
+
+	public class ProccessActionMethodHookAnalyser implements IMethodAnalyser {
+
+		@Override
+		public List<MethodHook> find(ClassNode _cn) {
+			List<MethodHook> hooks = new ArrayList<MethodHook>();
+			String descStart = "(IIIILjava/lang/String;Ljava/lang/String;II";
+			for (ClassNode cn : Context.current().getClassNodes().values()) {
+				for (MethodNode m : cn.methods) {
+					if (m.desc.startsWith(descStart)) {
+						InsnList insns = new InsnList();
+						final String sb = "java/lang/StringBuilder";
+						final String intAppendDesc = "(I)Ljava/lang/StringBuilder;";
+						final String stringAppendDesc = "(Ljava/lang/String;)Ljava/lang/StringBuilder;";
+						final String append = "append";
+
+						insns.add(new FieldInsnNode(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"));
+						insns.add(new TypeInsnNode(NEW, sb));
+						insns.add(new InsnNode(DUP));
+
+						insns.add(new LdcInsnNode("[doAction] Op: "));
+						insns.add(new MethodInsnNode(INVOKESPECIAL, sb, "<init>", "(Ljava/lang/String;)V", false));
+
+						insns.add(new VarInsnNode(ILOAD, 2));
+						insns.add(new MethodInsnNode(INVOKEVIRTUAL, sb, append, intAppendDesc, false));
+						insns.add(new LdcInsnNode(", Arg1: "));
+						insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+
+						insns.add(new VarInsnNode(ILOAD, 0));
+						insns.add(new MethodInsnNode(INVOKEVIRTUAL, sb, append, intAppendDesc, false));
+						insns.add(new LdcInsnNode(", Arg2: "));
+						insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+
+						insns.add(new VarInsnNode(ILOAD, 1));
+						insns.add(new MethodInsnNode(INVOKEVIRTUAL, sb, append, intAppendDesc, false));
+						insns.add(new LdcInsnNode(", Arg0: "));
+						insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+
+						insns.add(new VarInsnNode(ILOAD, 3));
+						insns.add(new MethodInsnNode(INVOKEVIRTUAL, sb, append, intAppendDesc, false));
+						insns.add(new LdcInsnNode(", Action: "));
+						insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+
+						insns.add(new VarInsnNode(ALOAD, 4));
+						insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+
+						insns.add(new LdcInsnNode(", Target: "));
+						insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+
+						insns.add(new VarInsnNode(ALOAD, 5));
+						insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+						insns.add(new LdcInsnNode(", var6: "));
+						insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+
+						insns.add(new VarInsnNode(ILOAD, 6));
+						insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, intAppendDesc, false));
+						insns.add(new LdcInsnNode(", var7: "));
+						insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+
+						insns.add(new VarInsnNode(ILOAD, 7));
+						insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, intAppendDesc, false));
+
+						insns.add(new MethodInsnNode(INVOKESPECIAL, sb, "toString", "()Ljava/lang/String;", false));
+						insns.add(new MethodInsnNode(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false));
+
+						MethodHook h = asMethodHook(MethodType.PATCH_START, m, "processAction");
+						h.setInstructions(insns);
+
+						hooks.add(h);
+					}
+				}
+			}
+			return hooks;
+			// static final void processAction (
+			// int arg1, int arg2, int opcode, int arg0, String action, String target,
+			// int mouseX, int mouseY, xxx DUMMY
+			// )
+		}
+	}
+
+	static final void processAction(int arg1, int arg2, int opcode, int arg0, String action, String target, int mouseX, int mouseY, int DUMMY) {
+		System.out.println("[doAction] Op: " + opcode + ", Arg1: " + arg1 + ", Arg2: " + arg2 + ", Arg0: " + arg0 + ", Action: " + action + ", Target: "
+				+ target + ", var6: " + mouseX + ", var7: " + mouseY);
 	}
 }

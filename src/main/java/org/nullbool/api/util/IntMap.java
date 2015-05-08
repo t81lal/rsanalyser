@@ -7,6 +7,20 @@ import java.util.Set;
 public class IntMap extends HashMap<Integer, Integer> {
 	private static final long serialVersionUID = 1313743266412543203L;
 
+	// public Set<Integer> getUseKeys() {
+	// Set<Integer> set = new HashSet<Integer>();
+	// int highestCount = Integer.MIN_VALUE;
+	// for (Entry<Integer, Integer> e : entrySet()) {
+	// if(e.getKey() != )
+	// if (e.getValue() == highestCount) {
+	// throw new IllegalArgumentException("multi: " + e.getKey());
+	// } else if (e.getValue() > highestCount) {
+	// highestCount = e.getValue();
+	// }
+	// }
+	// return set;
+	// }
+
 	public int getLargestKey() {
 		int highestVal = 0;
 		int highestCount = Integer.MIN_VALUE;
