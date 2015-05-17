@@ -33,6 +33,13 @@ L7
     iadd
     iload 1
     if_icmple L6
+    iload 4
+    ldc 1517496563 (java.lang.Integer)
+    if_icmpeq L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
 L4
     getstatic client ll:[I
     iload 5
@@ -43,13 +50,20 @@ L4
     iadd
     iload 0
     if_icmple L6
-L8
+    iload 4
+    ldc 1517496563 (java.lang.Integer)
+    if_icmpeq L5
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
     getstatic client lx:[Z
     iload 5
     iconst_1
     bastore
     goto L6
-L9
+L8
     getstatic client lu:[I
     iload 5
     iaload
@@ -57,6 +71,13 @@ L9
     iload 3
     iadd
     if_icmpge L6
+    iload 4
+    ldc 1517496563 (java.lang.Integer)
+    if_icmpeq L9
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
 L6
     iinc 5 1
     goto L2

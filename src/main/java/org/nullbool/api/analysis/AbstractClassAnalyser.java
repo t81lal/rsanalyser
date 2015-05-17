@@ -448,9 +448,9 @@ public abstract class AbstractClassAnalyser implements Opcodes {
 		AbstractInsnNode i = node.instructions.toArray()[index(node, s)];
 		List<AbstractInsnNode> list = new ArrayList<AbstractInsnNode>();
 		while ((i != null) && (compteur <= maxGoto)) {
-			condition = (i.getOpcode() != -1) && (i instanceof JumpInsnNode);
+			condition = (i.opcode() != -1) && (i instanceof JumpInsnNode);
 			i = condition ? ((JumpInsnNode) i).label.getNext() : i.getNext();
-			op = (i != null) ? i.getOpcode() : -1;
+			op = (i != null) ? i.opcode() : -1;
 			compteur += condition ? 1 : 0;
 			if ((i != null) && (op != -1) && (op != Opcodes.GOTO))
 				list.add(i);

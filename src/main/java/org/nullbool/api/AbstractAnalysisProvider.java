@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,12 +16,13 @@ import org.nullbool.api.analysis.AbstractClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.obfuscation.call.CallVisitor;
 import org.nullbool.api.obfuscation.call.HierarchyVisitor;
-import org.nullbool.api.obfuscation.dummyparam.DummyParameterVisitor;
-import org.nullbool.api.obfuscation.dummyparam.DummyVisitor;
 import org.nullbool.api.obfuscation.dummyparam.EmptyParamVisitor;
+import org.nullbool.api.obfuscation.dummyparam.EmptyParamVisitor2;
+import org.nullbool.api.obfuscation.dummyparam.OpaquePredicateVisitor;
 import org.nullbool.api.obfuscation.number.MultiplierHandler;
 import org.nullbool.api.obfuscation.number.MultiplierVisitor;
-import org.nullbool.api.obfuscation.rename.Refactorer;
+import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
+import org.nullbool.api.obfuscation.refactor.IRemapper;
 import org.nullbool.api.output.APIGenerator;
 import org.nullbool.api.output.OutputLogger;
 import org.nullbool.api.util.InstructionIdentifier;
@@ -34,6 +36,7 @@ import org.topdank.byteengineer.commons.data.JarContents;
 import org.topdank.byteengineer.commons.data.LocateableJarContents;
 import org.topdank.byteio.out.CompleteJarDumper;
 import org.zbot.hooks.ClassHook;
+import org.zbot.hooks.FieldHook;
 import org.zbot.hooks.HookMap;
 import org.zbot.hooks.MethodHook;
 
@@ -50,8 +53,8 @@ public abstract class AbstractAnalysisProvider {
 
 	public AbstractAnalysisProvider(Revision revision) throws IOException {
 		this.revision = revision;
-		contents = new LocateableJarContents<ClassNode>(new NodedContainer<ClassNode>(revision.parse().values()), null, null);
-		instructions = getAllInstructions();
+		contents      = new LocateableJarContents<ClassNode>(new NodedContainer<ClassNode>(revision.parse().values()), null, null);
+		instructions  = getAllInstructions();
 		Map<String, String[]> patternMap = null;
 		try {
 			patternMap = new PatternParser().getPatterns();
@@ -67,6 +70,9 @@ public abstract class AbstractAnalysisProvider {
 		deobfuscate();
 
 		dumpDeob();
+
+		if (flags.getOrDefault("justdeob", false))
+			return;
 
 		analysers = registerAnalysers();
 		if (analysers != null && analysers.size() != 0)
@@ -99,15 +105,57 @@ public abstract class AbstractAnalysisProvider {
 			folder.mkdirs();
 			File logFile = new File(folder, "log.ser");
 			FileOutputStream fos = new FileOutputStream(logFile);
-			map.write(fos);
+//			map.write(fos);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	private void dumpJar(HookMap hookMap) {
-		Refactorer refactorer = new Refactorer(contents, hookMap);
-		refactorer.run();
+//		Refactorer refactorer = new Refactorer(contents, hookMap);
+//		refactorer.run();
+		
+		Map<String, ClassHook> classes = new HashMap<String, ClassHook>();
+		Map<String, FieldHook> fields  = new HashMap<String, FieldHook>();
+		for(ClassHook h : hookMap.getClasses()){
+			classes.put(h.getObfuscated(), h);
+
+			for(FieldHook f : h.getFields()){
+				fields.put(f.getOwner().getObfuscated() + "." + f.getName().getObfuscated() + " " + f.getDesc().getObfuscated(), f);
+			}
+		}
+		
+//		for(Entry<String, FieldHook> e : fields.entrySet()){
+//			System.out.println(e.getKey() + " = " + e.getValue().getName().getRefactored());
+//		}
+		
+		IRemapper remapper = new IRemapper() {
+			@Override
+			public String resolveMethodName(String owner, String name, String desc) {
+				return name;
+			}
+			
+			@Override
+			public String resolveFieldName(String owner, String name, String desc) {
+				String key = owner + "." + name + " " + desc;
+				if(fields.containsKey(key)){
+					return fields.get(key).getName().getRefactored();
+				}
+				return null;
+			}
+			
+			@Override
+			public String resolveClassName(String owner) {
+				ClassHook ref = classes.get(owner);
+				if(ref != null)
+					return ref.getRefactored();
+				return owner;
+			}
+		};
+		
+		BytecodeRefactorer refactorer = new BytecodeRefactorer((Collection<ClassNode>) contents.getClassContents(), remapper);
+		refactorer.start();
+		
 		CompleteJarDumper dumper = new CompleteJarDumper(contents);
 		String name = getRevision().getName();
 		File file = new File("out/" + name + "/refactor" + name + ".jar");
@@ -163,27 +211,47 @@ public abstract class AbstractAnalysisProvider {
 		JarContents<ClassNode> contents = new LocateableJarContents<ClassNode>(new NodedContainer<ClassNode>(this.contents.getClassContents()), null, null);
 		analyseMultipliers();
 		removeDummyMethods(contents);
+		// runEmptyParamVisitor2(contents);
 		// checkRecursion(contents);
-		removeUnusedParams(contents);
-		removeDummyParameters(contents);
-		this.contents.getClassContents().clear();
-		this.contents.getClassContents().addAll(contents.getClassContents());
-		this.contents.getClassContents().namedMap();
+		// removeUnusedParams(contents);
+		// removeOpaquePredicates(contents);
+		// // run again after and see if any more methods are swept after opaques are removed
+		// int[] last = new int[4];
+		// EmptyParamVisitor k = null;
+		// do {
+		// k = quiet_removeUnusedParams(contents);
+		// int[] j = k.getCounts();
+		// last[0] += j[0];
+		// last[1] += j[1];
+		// last[2] += j[2];
+		// last[3] += j[3];
+		// } while (k != null && k.getCounts() != null && k.getCounts()[3] != 0);
+		//
+		// EmptyParamVisitor.print(last, " #2");
+		//
+		// this.contents.getClassContents().clear();
+		// this.contents.getClassContents().addAll(contents.getClassContents());
+		// this.contents.getClassContents().namedMap();
 	}
 
-	private void removeUnusedParams(JarContents<? extends ClassNode> contents) {
-		new EmptyParamVisitor().accept(contents);
+	private void runEmptyParamVisitor2(JarContents<? extends ClassNode> contents) {
+		new EmptyParamVisitor2().accept(contents);
 	}
 
-	private void checkRecursion(JarContents<? extends ClassNode> contents) {
-		new DummyParameterVisitor().accept(contents);
+	private int[] removeUnusedParams(JarContents<? extends ClassNode> contents) {
+		return new EmptyParamVisitor(false).countRemoval(contents);
 	}
 
-	private void removeDummyParameters(JarContents<? extends ClassNode> contents) {
-		new DummyVisitor().accept(contents);
+	private EmptyParamVisitor quiet_removeUnusedParams(JarContents<? extends ClassNode> contents) {
+		EmptyParamVisitor visitor = new EmptyParamVisitor(true);
+		visitor.countRemoval(contents);
+		return visitor;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void removeOpaquePredicates(JarContents<? extends ClassNode> contents) {
+		new OpaquePredicateVisitor().accept(contents);
+	}
+
 	private void removeDummyMethods(JarContents<? extends ClassNode> contents) {
 		new HierarchyVisitor().accept(contents);
 		new CallVisitor().accept(contents);

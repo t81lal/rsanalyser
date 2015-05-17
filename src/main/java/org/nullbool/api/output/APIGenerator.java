@@ -1,7 +1,10 @@
 package org.nullbool.api.output;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -9,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.nullbool.api.Context;
 import org.objectweb.asm.Opcodes;
@@ -139,15 +144,76 @@ public class APIGenerator {
 
 		CompleteJarDumper dumper = new CompleteJarDumper(contents);
 		String name = Context.current().getRevision().getName();
-		File file = new File("out/" + name + "/api" + name + ".jar");
+		File baseDir = new File(String.format("out/%s/", name));
+		File file = new File(baseDir, String.format("api%s.jar", name));
 		if (file.exists())
 			file.delete();
 		file.mkdirs();
+
+		runFern(file, new File(baseDir, "apisrc"));
 		try {
 			dumper.dump(file);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static void runFern(File inJar, File outDir) {
+		if (outDir.exists())
+			outDir.delete();
+		outDir.mkdirs();
+
+		new Thread() {
+			@Override
+			public void run() {
+				List<String> list = new ArrayList<String>();
+				try {
+					list.add("Decompiling api sourcecode to " + outDir.getAbsolutePath() + "...");
+					File fern = new File("out", "fernflower.jar");
+					ProcessBuilder pb = new ProcessBuilder("java", "-jar", quote(fern.getAbsolutePath()), quote(inJar.getAbsolutePath()),
+							quote(outDir.getAbsolutePath()));
+					// pb = pb.inheritIO();
+					Process p = pb.start();
+					p.waitFor();
+					list.add("   ... done. (" + p.exitValue() + ")");
+					list.add("Unpacking...");
+					unpack(new File(outDir, inJar.getName()), outDir);
+					list.add("   ... done. ");
+					// new File(outDir, inJar.getName()).delete();
+				} catch (IOException | InterruptedException e) {
+					list.add("   ... failed. (" + e.getMessage() + ")");
+					e.printStackTrace();
+				}
+
+				for (String s : list) {
+					System.err.println(s);
+				}
+			}
+		}.start();
+	}
+
+	private static void unpack(File zip, File outDir) throws IOException {
+		ZipInputStream zis = new ZipInputStream(new FileInputStream(zip));
+		ZipEntry entry;
+		byte[] buffer = new byte[1024];
+		while ((entry = zis.getNextEntry()) != null) {
+			File newFile = new File(outDir, entry.getName());
+			File parent = newFile.getParentFile();
+			parent.mkdirs();
+			FileOutputStream fos = new FileOutputStream(newFile);
+
+			int len;
+			while ((len = zis.read(buffer)) > 0) {
+				fos.write(buffer, 0, len);
+			}
+
+			fos.close();
+		}
+		zis.close();
+	}
+
+	private static String quote(String s) {
+		return "\"" + s.replace("\\", "/") + "\"";
 	}
 
 	private static int array(String desc) {

@@ -71,9 +71,9 @@ public class ActorAnalyser extends AbstractClassAnalyser {
 			healthbarcycle: for (MethodNode mn : cn.methods) {
 				if (mn.name.equals("<init>")) {
 					for (AbstractInsnNode ain : mn.instructions.toArray()) {
-						if (ain.getOpcode() == PUTFIELD) {
+						if (ain.opcode() == PUTFIELD) {
 							AbstractInsnNode prev = ain.getPrevious();
-							if (prev.getOpcode() == LDC) {
+							if (prev.opcode() == LDC) {
 								LdcInsnNode lin = (LdcInsnNode) prev;
 								if (lin.cst instanceof Number) {
 									FieldInsnNode fin = (FieldInsnNode) ain;

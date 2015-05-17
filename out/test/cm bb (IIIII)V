@@ -14,7 +14,14 @@ L4
     iadd
     iload 1
     if_icmple L5
-L6
+    iload 4
+    ldc 1587954481 (java.lang.Integer)
+    if_icmplt L6
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
     getstatic client lv:[I
     iload 5
     iaload
@@ -22,13 +29,27 @@ L6
     iload 2
     iadd
     if_icmpge L5
+    iload 4
+    ldc 1587954481 (java.lang.Integer)
+    if_icmplt L4
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
 L2
     iload 5
     ldc 1502806549 (java.lang.Integer)
     getstatic client lp:I
     imul
     if_icmpge L3
-L7
+    iload 4
+    ldc 1587954481 (java.lang.Integer)
+    if_icmplt L8
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L6
     getstatic client lu:[I
     iload 5
     iaload
@@ -53,6 +74,13 @@ L8
     iadd
     iload 0
     if_icmple L5
+    iload 4
+    ldc 1587954481 (java.lang.Integer)
+    if_icmplt L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
 L9
     new java/lang/StringBuilder
     dup

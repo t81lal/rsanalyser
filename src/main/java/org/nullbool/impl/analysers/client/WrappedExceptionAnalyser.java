@@ -46,10 +46,10 @@ public class WrappedExceptionAnalyser extends AbstractClassAnalyser {
 			for (MethodNode m : cn.methods) {
 				if (m.name.equals("<init>") && m.desc.equals("(Ljava/lang/Throwable;Ljava/lang/String;)V")) {
 					for (AbstractInsnNode ain : m.instructions.toArray()) {
-						if (ain.getOpcode() == PUTFIELD) {
+						if (ain.opcode() == PUTFIELD) {
 							FieldInsnNode fin = (FieldInsnNode) ain;
 							if (fin.desc.equals("Ljava/lang/String;")) {
-								hooks.add(asFieldHook(fin.owner + "." + fin.name, "getReason"));
+								hooks.add(asFieldHook(fin.owner + "." + fin.name, "getReason_"));
 							} else if (fin.desc.equals("Ljava/lang/Throwable;")) {
 								hooks.add(asFieldHook(fin.owner + "." + fin.name, "getThrowable"));
 							}

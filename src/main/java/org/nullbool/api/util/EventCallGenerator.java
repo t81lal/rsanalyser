@@ -2,6 +2,7 @@ package org.nullbool.api.util;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
@@ -90,6 +91,16 @@ public class EventCallGenerator implements Opcodes {
 			list.add(ain);
 		}
 		list.add(new MethodInsnNode(INVOKESPECIAL, eventClass, "<init>", constructorDesc, false));
+		return list;
+	}
+
+	public static InsnList generatePrintLn(AbstractInsnNode... loadInsns) {
+		InsnList list = new InsnList();
+		list.add(new FieldInsnNode(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"));
+		for (AbstractInsnNode ain : loadInsns) {
+			list.add(ain);
+		}
+		list.add(new MethodInsnNode(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/Object;)V", false));
 		return list;
 	}
 

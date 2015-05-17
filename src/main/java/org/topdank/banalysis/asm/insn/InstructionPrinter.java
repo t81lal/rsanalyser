@@ -23,6 +23,7 @@ import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.LookupSwitchInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.MultiANewArrayInsnNode;
 import org.objectweb.asm.tree.TableSwitchInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
@@ -97,15 +98,17 @@ public class InstructionPrinter {
 			} else if (ain instanceof TypeInsnNode) {
 				line = printTypeInsnNode((TypeInsnNode) ain);
 			} else if (ain instanceof FrameNode) {
-				line = "";
+				line = printFrameNode((FrameNode) ain);
 			} else if (ain instanceof IincInsnNode) {
 				line = printIincInsnNode((IincInsnNode) ain);
 			} else if (ain instanceof TableSwitchInsnNode) {
 				line = printTableSwitchInsnNode((TableSwitchInsnNode) ain);
 			} else if (ain instanceof LookupSwitchInsnNode) {
 				line = printLookupSwitchInsnNode((LookupSwitchInsnNode) ain);
+			} else if (ain instanceof MultiANewArrayInsnNode) {
+				line = printMultiANewArrayInsnNode((MultiANewArrayInsnNode) ain);
 			} else {
-				line += "UNKNOWN-NODE: " + nameOpcode(ain.getOpcode()) + " " + ain.toString();
+				line += "UNKNOWN-NODE: " + nameOpcode(ain.opcode()) + " " + ain.toString();
 			}
 			if (!line.equals("")) {
 				if (match)
@@ -118,35 +121,43 @@ public class InstructionPrinter {
 		return info;
 	}
 	
+	private String printFrameNode(FrameNode fn) {
+		return "";
+	}
+
+	private String printMultiANewArrayInsnNode(MultiANewArrayInsnNode main) {
+		return nameOpcode(main.opcode()) + " " + main.dims + "x " + main.desc;
+	}
+
 	protected String printVarInsnNode(VarInsnNode vin, ListIterator<?> it) {
-		return nameOpcode(vin.getOpcode()) + " " + vin.var;
+		return nameOpcode(vin.opcode()) + " " + vin.var;
 	}
 	
 	protected String printIntInsnNode(IntInsnNode iin, ListIterator<?> it) {
-		return nameOpcode(iin.getOpcode()) + " " + iin.operand;
+		return nameOpcode(iin.opcode()) + " " + iin.operand;
 	}
 	
 	protected String printFieldInsnNode(FieldInsnNode fin, ListIterator<?> it) {
-		return nameOpcode(fin.getOpcode()) + " " + fin.owner + " " + fin.name + ":" + fin.desc;
+		return nameOpcode(fin.opcode()) + " " + fin.owner + " " + fin.name + ":" + fin.desc;
 	}
 	
 	protected String printMethodInsnNode(MethodInsnNode min, ListIterator<?> it) {
-		return nameOpcode(min.getOpcode()) + " " + min.owner + " " + min.name + ":" + min.desc;
+		return nameOpcode(min.opcode()) + " " + min.owner + " " + min.name + ":" + min.desc;
 	}
 	
 	protected String printLdcInsnNode(LdcInsnNode ldc, ListIterator<?> it) {
 		if (ldc.cst instanceof String)
-			return nameOpcode(ldc.getOpcode()) + " \"" + ldc.cst + "\" (" + ldc.cst.getClass().getCanonicalName() + ")";
+			return nameOpcode(ldc.opcode()) + " \"" + ldc.cst + "\" (" + ldc.cst.getClass().getCanonicalName() + ")";
 		
-		return nameOpcode(ldc.getOpcode()) + " " + ldc.cst + " (" + ldc.cst.getClass().getCanonicalName() + ")";
+		return nameOpcode(ldc.opcode()) + " " + ldc.cst + " (" + ldc.cst.getClass().getCanonicalName() + ")";
 	}
 	
 	protected String printInsnNode(InsnNode in, ListIterator<?> it) {
-		return nameOpcode(in.getOpcode());
+		return nameOpcode(in.opcode());
 	}
 	
 	protected String printJumpInsnNode(JumpInsnNode jin, ListIterator<?> it) {
-		String line = nameOpcode(jin.getOpcode()) + " L" + resolveLabel(jin.label);
+		String line = nameOpcode(jin.opcode()) + " L" + resolveLabel(jin.label);
 		return line;
 	}
 	
@@ -159,15 +170,15 @@ public class InstructionPrinter {
 	}
 	
 	protected String printTypeInsnNode(TypeInsnNode tin) {
-		return nameOpcode(tin.getOpcode()) + " " + tin.desc;
+		return nameOpcode(tin.opcode()) + " " + tin.desc;
 	}
 	
 	protected String printIincInsnNode(IincInsnNode iin) {
-		return nameOpcode(iin.getOpcode()) + " " + iin.var + " " + iin.incr;
+		return nameOpcode(iin.opcode()) + " " + iin.var + " " + iin.incr;
 	}
 	
 	protected String printTableSwitchInsnNode(TableSwitchInsnNode tin) {
-		String line = nameOpcode(tin.getOpcode()) + " \n";
+		String line = nameOpcode(tin.opcode()) + " \n";
 		List<?> labels = tin.labels;
 		int count = 0;
 		for(int i = tin.min; i < tin.max; i++) {
@@ -178,7 +189,7 @@ public class InstructionPrinter {
 	}
 	
 	protected String printLookupSwitchInsnNode(LookupSwitchInsnNode lin) {
-		String line = nameOpcode(lin.getOpcode()) + ": \n";
+		String line = nameOpcode(lin.opcode()) + ": \n";
 		List<?> keys = lin.keys;
 		List<?> labels = lin.labels;
 		

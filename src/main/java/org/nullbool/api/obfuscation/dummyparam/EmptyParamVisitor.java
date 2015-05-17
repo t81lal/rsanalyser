@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.nullbool.api.Context;
 import org.nullbool.api.obfuscation.Visitor;
@@ -25,6 +24,22 @@ import org.topdank.banalysis.asm.insn.InstructionPrinter;
 import org.topdank.byteengineer.commons.data.JarContents;
 
 public class EmptyParamVisitor extends Visitor {
+
+	private final boolean quiet;
+	private int[] counts;
+
+	public EmptyParamVisitor(boolean quiet) {
+		this.quiet = quiet;
+	}
+
+	public final int[] countRemoval(JarContents<? extends ClassNode> contents) {
+		visit(contents);
+		return counts;
+	}
+
+	public int[] getCounts() {
+		return counts;
+	}
 
 	@Override
 	public void visit(JarContents<? extends ClassNode> contents) {
@@ -45,23 +60,23 @@ public class EmptyParamVisitor extends Visitor {
 					continue;
 				IntMap map = new IntMap();
 				boolean isStatic = (m.access & ACC_STATIC) == ACC_STATIC;
-				if (isStatic) {
-					map.put0(args.length - 1);
-				} else {
-					map.put0(args.length);
-				}
+				int targetVar = isStatic ? args.length - 1 : args.length;
+				map.put0(targetVar);
 
 				for (AbstractInsnNode ain : m.instructions.toArray()) {
 					if (ain instanceof VarInsnNode) {
 						int var = ((VarInsnNode) ain).var;
-						map.inc(var);
+						if (var == targetVar)
+							map.inc(var);
 					} else if (ain instanceof IincInsnNode) {
 						int var = ((IincInsnNode) ain).var;
-						map.inc(var);
+						if (var == targetVar)
+							map.inc(var);
 					}
 				}
-				Set<Integer> empty = map.findEmptyVars();
-				if (empty.size() == 1) {
+
+				int varCount = map.get(targetVar);
+				if (varCount > 0) {
 					if (!isStatic) {
 						ClassStructure cs = (ClassStructure) cn;
 						if (!cs.isInherited(m)) {
@@ -115,11 +130,22 @@ public class EmptyParamVisitor extends Visitor {
 			e.printStackTrace();
 		}
 
-		System.err.println("Unused parameter fixer");
-		System.out.printf("   %d empty parameter static methods changed.%n", count);
-		System.out.printf("   %d empty parameter uninherited virtual methods unchanged.%n", nCount);
-		System.out.printf("   %d empty parameter inherited methods changed.%n", wtfCount);
-		System.out.printf("   Replaced %d calls + pop.%n", cCount);
+		this.counts = new int[] { count, nCount, wtfCount, cCount };
+		if (!quiet) {
+			print(counts);
+		}
+	}
+
+	public static void print(int[] k) {
+		print(k, "");
+	}
+
+	public static void print(int[] k, String header) {
+		System.err.println("Unused parameter fixer" + header);
+		System.out.printf("   %d empty parameter static methods changed.%n", k[0]);
+		System.out.printf("   %d empty parameter uninherited virtual methods unchanged.%n", k[1]);
+		System.out.printf("   %d empty parameter inherited methods changed.%n", k[2]);
+		System.out.printf("   Replaced %d calls + pop.%n", k[3]);
 	}
 
 	public static int[] cleanVirtual(Collection<? extends ClassNode> classes, MethodNode m, String newDesc, StringBuilder results) {

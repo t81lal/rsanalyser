@@ -59,7 +59,7 @@ public class NodeAnalyser extends AbstractClassAnalyser {
 
 			MethodNode m = startWithBc(new String[] { "aload", "getfield", "ifnonnull" }, ms)[0];
 
-			FieldInsnNode prevFin = (FieldInsnNode) Arrays.asList(m.instructions.toArray()).stream().filter(ain -> ain.getOpcode() == GETFIELD).findFirst()
+			FieldInsnNode prevFin = (FieldInsnNode) Arrays.asList(m.instructions.toArray()).stream().filter(ain -> ain.opcode() == GETFIELD).findFirst()
 					.get();
 			list.add(asFieldHook(cn.name + "." + prevFin.name, "getPrevious"));
 

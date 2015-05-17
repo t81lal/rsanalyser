@@ -23,7 +23,8 @@ public class Boot {
 		flags.put("multis", true);
 		flags.put("logresults", true);
 		flags.put("verify", false);
-
+//		flags.put("justdeob", true);
+ 
 		Context.register(provider);
 		provider.run();
 		Context.unregister();

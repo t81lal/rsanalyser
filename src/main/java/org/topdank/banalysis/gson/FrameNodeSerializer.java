@@ -36,7 +36,7 @@ public class FrameNodeSerializer implements JsonSerializer<FrameNode>, JsonDeser
 	@Override
 	public JsonElement serialize(FrameNode src, Type typeOfSrc, JsonSerializationContext context) {
 		JsonObject object = new JsonObject();
-		object.add("opcode", context.serialize(src.getOpcode()));
+		object.add("opcode", context.serialize(src.opcode()));
 		object.add("type", context.serialize(src.type()));
 		object.add("local", context.serialize(src.local));
 		object.add("stack", context.serialize(src.stack));

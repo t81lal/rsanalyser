@@ -22,8 +22,8 @@ public class InstructionIdentifier {
 			this.instList = new LinkedList<String>();
 			this.instCleanList = new LinkedList<String>();
 			for (AbstractInsnNode instruction : instructions) {
-				if (instruction.getOpcode() != -1) {
-					nm = Printer.OPCODES[instruction.getOpcode()].toLowerCase();
+				if (instruction.opcode() != -1) {
+					nm = Printer.OPCODES[instruction.opcode()].toLowerCase();
 					if (instruction instanceof FieldInsnNode) {
 						FieldInsnNode f = ((FieldInsnNode) instruction);
 						iDesc = " " + f.owner + "." + f.name + " " + f.desc;

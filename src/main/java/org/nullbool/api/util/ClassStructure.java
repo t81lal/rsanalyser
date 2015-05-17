@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.nullbool.api.obfuscation.call.DirectedGraph;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -23,6 +24,10 @@ public class ClassStructure extends ClassNode {
 
 	private final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 	private byte[] bytes;
+	
+	public ClassStructure(){
+		super(Opcodes.ASM5);
+	}
 
 	public static ClassStructure create(final byte[] bytes) {
 		final ClassReader reader = new ClassReader(bytes);

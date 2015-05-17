@@ -18,7 +18,6 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
-import org.nullbool.api.output.APIGenerator;
 import org.nullbool.api.util.EventCallGenerator;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -362,7 +361,7 @@ public class ClientAnalyser extends AbstractClassAnalyser {
 
 		private boolean fourIaloads(MethodNode m1) {
 			for (AbstractInsnNode ain : m1.instructions.toArray()) {
-				if (ain.getOpcode() == GETSTATIC || ain.getOpcode() == PUTSTATIC) {
+				if (ain.opcode() == GETSTATIC || ain.opcode() == PUTSTATIC) {
 					FieldInsnNode fin = (FieldInsnNode) ain;
 					if (fin.name.equals("lv") || fin.name.equals("lu"))
 						return true;
@@ -502,7 +501,7 @@ public class ClientAnalyser extends AbstractClassAnalyser {
 					VarInsnNode beforeReturn = null;
 					try {
 						for (AbstractInsnNode ain : m.instructions.toArray()) {
-							if (ain.getOpcode() == ARETURN) {
+							if (ain.opcode() == ARETURN) {
 								if (beforeReturn != null)
 									System.err.println("WTF BOI");
 								beforeReturn = (VarInsnNode) ain.getPrevious();
@@ -510,12 +509,42 @@ public class ClientAnalyser extends AbstractClassAnalyser {
 						}
 						/* 1. Generate the event creation. 2. Call the dispatch method. */
 
-						InsnList objCreateList = new InsnList();
-						objCreateList.add(EventCallGenerator.generateEventCreate("org/zbot/api/event/ErrorEvent", "(Lorg/zbot/accessors/IWrappedException;)V",
-								new VarInsnNode(beforeReturn.getOpcode(), beforeReturn.var), // load the raw object
-								// cast it to an IWrappedException
-								new TypeInsnNode(CHECKCAST, APIGenerator.ACCESSOR_BASE + APIGenerator.API_CANONICAL_NAMES.get("WrappedException"))));
-						InsnList newInsns = EventCallGenerator.generateDispatch(objCreateList);
+						// InsnList objCreateList = new InsnList();
+						// objCreateList.add(EventCallGenerator.generateEventCreate("org/zbot/api/event/ErrorEvent", "(Lorg/zbot/accessors/IWrappedException;)V",
+						// new VarInsnNode(beforeReturn.getOpcode(), beforeReturn.var), // load the raw object
+						// // cast it to an IWrappedException
+						// new TypeInsnNode(CHECKCAST, APIGenerator.ACCESSOR_BASE + APIGenerator.API_CANONICAL_NAMES.get("WrappedException"))));
+						// InsnList newInsns = EventCallGenerator.generateDispatch(objCreateList);
+
+						InsnList newInsns = new InsnList();
+						newInsns.add(EventCallGenerator.generatePrintLn(new LdcInsnNode("[Client] Create error.")));
+						newInsns.add(EventCallGenerator.generatePrintLn(new VarInsnNode(ALOAD, 1)));
+
+						newInsns.add(new VarInsnNode(ALOAD, 0));
+						newInsns.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable", "printStackTrace", "()V", false));
+
+						InsnList list2 = new InsnList();
+						list2.add(new TypeInsnNode(NEW, "java/lang/StringBuilder"));
+						list2.add(new InsnNode(DUP));
+
+						list2.add(new LdcInsnNode("[Client] "));
+						list2.add(new MethodInsnNode(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false));
+
+						list2.add(new VarInsnNode(ALOAD, 0));
+						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false));
+						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Class", "getCanonicalName", "()Ljava/lang/String;", false));
+						list2.add(new MethodInsnNode(INVOKESTATIC, "java/lang/String", "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;", false));
+						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
+
+						list2.add(new LdcInsnNode(" "));
+						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
+
+						list2.add(new VarInsnNode(ALOAD, 0));
+						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable", "getMessage", "()Ljava/lang/String;", false));
+						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
+						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "valueOf", "()Ljava/lang/String;", false));
+
+						newInsns.add(EventCallGenerator.generatePrintLn(list2.toArray()));
 
 						InsnList mInsns = m.instructions;
 						mInsns.insertBefore(beforeReturn, newInsns);
@@ -609,6 +638,10 @@ public class ClientAnalyser extends AbstractClassAnalyser {
 			// int mouseX, int mouseY, xxx DUMMY
 			// )
 		}
+	}
+
+	public static void test(Throwable t) {
+		System.out.println("[Client] " + t.getClass().getCanonicalName() + " " + t.getMessage());
 	}
 
 	static final void processAction(int arg1, int arg2, int opcode, int arg0, String action, String target, int mouseX, int mouseY, int DUMMY) {
