@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.nullbool.api.util.NodedContainer;
 import org.nullbool.api.util.PatternParser;
 import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 import org.topdank.byteengineer.commons.data.JarContents;
@@ -112,26 +114,28 @@ public abstract class AbstractAnalysisProvider {
 	}
 
 	private void dumpJar(HookMap hookMap) {
-//		Refactorer refactorer = new Refactorer(contents, hookMap);
-//		refactorer.run();
+		Map<String, ClassHook>  classes = new HashMap<String, ClassHook>();
+		Map<String, FieldHook>  fields  = new HashMap<String, FieldHook>();
+		/*Map<String, MethodHook> methods = new HashMap<String, MethodHook>();*/
 		
-		Map<String, ClassHook> classes = new HashMap<String, ClassHook>();
-		Map<String, FieldHook> fields  = new HashMap<String, FieldHook>();
 		for(ClassHook h : hookMap.getClasses()){
 			classes.put(h.getObfuscated(), h);
-
 			for(FieldHook f : h.getFields()){
 				fields.put(f.getOwner().getObfuscated() + "." + f.getName().getObfuscated() + " " + f.getDesc().getObfuscated(), f);
 			}
+			
+			/*for(MethodHook m : h.getMethods()){
+				methods.put(m.getOwner().getObfuscated() + "." + m.getName().getObfuscated() + m.getDesc().getObfuscated(), m);
+			}*/
 		}
-		
-//		for(Entry<String, FieldHook> e : fields.entrySet()){
-//			System.out.println(e.getKey() + " = " + e.getValue().getName().getRefactored());
-//		}
 		
 		IRemapper remapper = new IRemapper() {
 			@Override
 			public String resolveMethodName(String owner, String name, String desc) {
+				/*String key = owner + "." + name + desc;
+				if(methods.containsKey(key)){
+					return methods.get(key).getName().getRefactored();
+				}*/
 				return name;
 			}
 			
@@ -141,6 +145,8 @@ public abstract class AbstractAnalysisProvider {
 				if(fields.containsKey(key)){
 					return fields.get(key).getName().getRefactored();
 				}
+				//let the refactorer do it's own thang if we can't quick-find it
+				//  ie. it will do a deep search.
 				return null;
 			}
 			
@@ -209,6 +215,10 @@ public abstract class AbstractAnalysisProvider {
 
 	private void deobfuscate() {
 		JarContents<ClassNode> contents = new LocateableJarContents<ClassNode>(new NodedContainer<ClassNode>(this.contents.getClassContents()), null, null);
+		
+		if(flags.getOrDefault("reorderfields", true))
+			reorderFields();
+		
 		analyseMultipliers();
 		removeDummyMethods(contents);
 		// runEmptyParamVisitor2(contents);
@@ -234,6 +244,23 @@ public abstract class AbstractAnalysisProvider {
 		// this.contents.getClassContents().namedMap();
 	}
 
+	private void reorderFields(){
+		int count = 0;
+		
+		for(ClassNode cn : contents.getClassContents()){
+			List<FieldNode> fields = cn.fields;
+			Collections.sort(fields, new Comparator<FieldNode>() {
+				@Override
+				public int compare(FieldNode o1, FieldNode o2) {
+					return o1.name.compareTo(o2.name);
+				}
+			});
+			count += fields.size();
+		}
+		
+		System.err.printf("Reordered %d fields.%n", count);
+	}
+	
 	private void runEmptyParamVisitor2(JarContents<? extends ClassNode> contents) {
 		new EmptyParamVisitor2().accept(contents);
 	}
@@ -242,6 +269,7 @@ public abstract class AbstractAnalysisProvider {
 		return new EmptyParamVisitor(false).countRemoval(contents);
 	}
 
+	//just in case
 	private EmptyParamVisitor quiet_removeUnusedParams(JarContents<? extends ClassNode> contents) {
 		EmptyParamVisitor visitor = new EmptyParamVisitor(true);
 		visitor.countRemoval(contents);

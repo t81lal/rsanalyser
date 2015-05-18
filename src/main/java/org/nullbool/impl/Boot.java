@@ -20,6 +20,7 @@ public class Boot {
 				"/jars/gamepack" + revision + ".jar").toURI())));
 		Map<String, Boolean> flags = provider.getFlagsMap();
 		flags.put("debug", false);
+		flags.put("reorderfields", true);
 		flags.put("multis", true);
 		flags.put("logresults", true);
 		flags.put("verify", false);

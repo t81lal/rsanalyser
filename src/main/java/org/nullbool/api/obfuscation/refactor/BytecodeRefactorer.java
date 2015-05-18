@@ -3,18 +3,12 @@ package org.nullbool.api.obfuscation.refactor;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.nullbool.api.obfuscation.refactor.test.RefactorTestClass;
-import org.nullbool.api.util.map.NullPermeableMap;
-import org.nullbool.api.util.map.ValueCreator;
-import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -26,11 +20,12 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.MultiANewArrayInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
  
-public class BytecodeRefactorer implements Opcodes{
+public class BytecodeRefactorer implements Opcodes {
 
 	private final Collection<ClassNode> classes;
 	private final IRemapper             remapper;
 	private final ClassTree             classTree;
+	private final MethodCache           methodCache;
 	private final InheritedMethodMap    methodChain;
 	private final Map<String, String>   classMappings;
 	private final Map<String, String>   fieldMappings;
@@ -41,6 +36,7 @@ public class BytecodeRefactorer implements Opcodes{
 		this.classes    = classes;
 		this.remapper   = remapper;
 		classTree       = new ClassTree(classes);
+		methodCache     = new MethodCache(classes);
 		methodChain     = new InheritedMethodMap(classTree);
 		classMappings   = new HashMap<String, String>();
 		fieldMappings   = new HashMap<String, String>();
@@ -173,79 +169,6 @@ public class BytecodeRefactorer implements Opcodes{
 		System.out.printf("   %d methods and %d method calls. %n", methodNodes, methodCalls);
 		System.out.printf("   %d news, %d anewarrays, %d checkcasts, %d instancofs, %d mnewarrays. %n", newCalls, newArray, checkcasts, instances, mArrray);
 	}
-    
-	public static void main1(String[] args) throws Exception {
-		ClassReader cr = new ClassReader(RefactorTestClass.class.getCanonicalName());
-		ClassNode cn = new ClassNode();
-		cr.accept(cn, 0);
-		
-		List<ClassNode> classes = new ArrayList<ClassNode>();
-		classes.add(cn);
-				
-		IRemapper remapper = new IRemapper() {
-			
-			@Override
-			public String resolveMethodName(String owner, String name, String desc) {
-				return name;
-			}
-			
-			@Override
-			public String resolveFieldName(String owner, String name, String desc) {
-				return name;
-			}
-			
-			@Override
-			public String resolveClassName(String oldName) {
-				return oldName;
-			}
-		};
-		
-		BytecodeRefactorer refactorer = new BytecodeRefactorer(classes, remapper);
-		refactorer.start();
-		
-		System.out.println();
-		System.out.println(ClassPrinter.print(cn));
-//		
-//		@SuppressWarnings("deprecation")
-//		ClassLoader cl = new ClassLoader() {
-//			{
-//				ClassWriter cw = new ClassWriter(0);
-//				cn.accept(cw);
-//				byte[] b = cw.toByteArray();
-//				defineClass(b, 0, b.length);
-//			}
-//		};
-//		
-//		Class<?> c = cl.loadClass(cn.name.replace("/", "."));
-//		
-//		Object o = c.newInstance();
-//		call(c, o, "voidMethod", null);
-//		call(c, o, "primitiveMethod", null);
-//		call(c, o, "voidWithPrimitive", 1L);
-//		call(c, o, "doubleParam", 1F);
-//		call(c, o, "stringMethod", null);
-//		call(c, o, "stringss", 1F);
-//		call(c, o, "stirngsss", null);
-//		call(c, o, "objjssss", null);
-//		call(c, o, "intsss", null);
-//		call(c, o, "castTest", new String("taslkdasd"));
-//		call(c, o, "arrCast", new String[]{"asd", "fsdf"});
-//		call(c, o, "intCastTest", 1);
-//		call(c, o, "intsCastTest", new String[1][1]);
-	}
-	
-//	private static void call(Class<?> c, Object o, String name, Object... args){
-//		for(Method m : c.getDeclaredMethods()){
-//			if(m.getName().equals(name)){
-//				try {
-//					System.out.println("Calling " + name);
-//					m.invoke(o, args);
-//				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-//					System.out.println("err calling " + name +"  " + e.getMessage());
-//				}
-//			}
-//		}
-//	}
 	
 	public String transformMethodDesc(String desc){
 		if(descMappings.containsKey(desc))
@@ -323,6 +246,7 @@ public class BytecodeRefactorer implements Opcodes{
 	public String getMappedClassName(String oldName) {
 		if (classMappings.containsKey(oldName))
 			return classMappings.get(oldName);
+		
 		String newName = remapper.resolveClassName(oldName);
 		
 		if(newName == null)
@@ -339,7 +263,6 @@ public class BytecodeRefactorer implements Opcodes{
 	}
 	
 	public String getMappedFieldName(String owner, String name, String desc) {
-		
 		String fullKey = String.format("%s.%s %s", owner, name, desc);
 		
 		if(fieldMappings.containsKey(fullKey)){
@@ -391,13 +314,15 @@ public class BytecodeRefactorer implements Opcodes{
 
 	public String getMappedMethodName(String owner, String name, String desc){
 		MethodNode m = findMethod(owner, name, desc);
-		if(m == null)
+		if(m == null){
+//			System.out.printf("Can't find %s.%s %s.%n", owner, name, desc);
 			return name;
+		}
 		return getMappedMethodName(m);
 	}
 	
 	private MethodNode findMethod(String owner, String name, String desc){
-		ClassNode cn = classTree.getClasses().get(owner);
+		/*ClassNode cn = classTree.getClasses().get(owner);
 		if(cn == null)
 			return null;
 		//throw new IllegalStateException(String.format("Class %s is not present in the cache. (%s.%s %s)", owner, owner, name, desc));
@@ -406,14 +331,23 @@ public class BytecodeRefactorer implements Opcodes{
 			if(m.halfKey().equals(halfKey))
 				return m;
 		}
-		return null;
+		return null;*/
+
+		/*Data is cached and recalled when needed because of a runtime issue.
+		 *Take class K with a method M. When the method K.M is renamed, if we
+		 *attempt to do a deep search to find the MethodNode it will fail, since
+		 *the key K.M will actually be be looking for Kn.M where Kn is the new name
+		 *of class K.*/
+		return methodCache.get(owner, name, desc);
 	}
 	
 	public String getMappedMethodName(MethodNode m) {
 		/*step 1. check already mapped ones*/
-		String fullKey = m.key();
+		String fullKey = m.cachedKey();
 		if(methodMappings.containsKey(fullKey))
 			return methodMappings.get(fullKey);
+		
+		String newName = null;
 		
 		/*step 2. check the tree to see if any of the ones in the
 		 *        chain have already been changed (essentially
@@ -429,293 +363,18 @@ public class BytecodeRefactorer implements Opcodes{
 			}
 			for(MethodNode mn : cd.getAggregates()){
 				if(!mn.name.equals(m.name)) {
-					String newName = mn.name;
-					methodMappings.put(fullKey, newName);
-					return newName;
+					newName = mn.name;
+					break;
+//					methodMappings.put(fullKey, newName);
+//					return newName;
 				}
 			}
 		}
 		
 		/*step 3. ask the remapper*/		
-		String newName = remapper.resolveMethodName(m.owner.name, m.name, m.desc);
+		newName = remapper.resolveMethodName(m.owner.name, m.name, m.desc);
 		methodMappings.put(fullKey, newName);
-		return newName;
-	}
-
-	public static class ClassTree {
-		private static final SetCreator<ClassNode> SET_CREATOR = new SetCreator<ClassNode>();
-
-		private final Map<String, ClassNode>                      classes;
-		private final NullPermeableMap<ClassNode, Set<ClassNode>> supers;
-		private final NullPermeableMap<ClassNode, Set<ClassNode>> delgates;
-
-		public ClassTree(Collection<ClassNode> classes) {
-			this(convertToMap(classes));
-		}
-
-		public ClassTree(Map<String, ClassNode> classes_) {
-			classes  = classes_;
-			supers   = new NullPermeableMap<ClassNode, Set<ClassNode>>(SET_CREATOR);
-			delgates = new NullPermeableMap<ClassNode, Set<ClassNode>>(SET_CREATOR);
-
-			build(classes);
-		}
-
-		private static Map<String, ClassNode> convertToMap(Collection<ClassNode> classes) {
-			Map<String, ClassNode> map = new HashMap<String, ClassNode>();
-			for (ClassNode cn : classes) {
-				map.put(cn.name, cn);
-			}
-			return map;
-		}
-
-		// TODO: optimise
-		private void build(Map<String, ClassNode> classes) {
-			for (ClassNode node : classes.values()) {
-				for (String iface : node.interfaces) {
-					ClassNode ifacecs = classes.get(iface);
-					if (ifacecs == null)
-						continue;
-
-					getDelegates0(ifacecs).add(node);
-
-					Set<ClassNode> superinterfaces = new HashSet<ClassNode>();
-					buildSubTree(classes, superinterfaces, ifacecs);
-
-					getSupers0(node).addAll(superinterfaces);
-				}
-				ClassNode currentSuper = classes.get(node.superName);
-				while (currentSuper != null) {
-					getDelegates0(currentSuper).add(node);
-					getSupers0(node).add(currentSuper);
-					for (String iface : currentSuper.interfaces) {
-						ClassNode ifacecs = classes.get(iface);
-						if (ifacecs == null)
-							continue;
-						getDelegates0(ifacecs).add(currentSuper);
-						Set<ClassNode> superinterfaces = new HashSet<ClassNode>();
-						buildSubTree(classes, superinterfaces, ifacecs);
-						getSupers0(currentSuper).addAll(superinterfaces);
-						getSupers0(node).addAll(superinterfaces);
-					}
-					currentSuper = classes.get(currentSuper.superName);
-				}
-
-				getSupers0(node);
-				getDelegates0(node);
-			}
-
-			if (classes.size() == delgates.size() && classes.size() == supers.size() && delgates.size() == supers.size()) {
-				System.out.println(String.format("Built tree for %d classes (%d del, %d sup).", classes.size(), delgates.size(), supers.size()));
-			} else {
-				System.out.println(String.format("WARNING: Built tree for %d classes (%d del, %d sup), may be erroneous.", classes.size(), delgates.size(),
-						supers.size()));
-				
-			}
-		}
-
-		private void buildSubTree(Map<String, ClassNode> classes, Collection<ClassNode> superinterfaces, ClassNode current) {
-			superinterfaces.add(current);
-			for (String iface : current.interfaces) {
-				ClassNode cs = classes.get(iface);
-				if(cs != null){
-					getDelegates0(cs).add(current);
-					buildSubTree(classes, superinterfaces, cs);
-				}else{
-					System.out.println("Null interface -> " + iface);
-				}
-			}
-		}
-
-		public Set<MethodNode> getMethodsFromSuper(MethodNode m) {
-			return getMethodsFromSuper(m.owner, m.name, m.desc);
-		}
-
-		public Set<MethodNode> getMethodsFromSuper(ClassNode node, String name, String desc) {
-			Set<MethodNode> methods = new HashSet<MethodNode>();
-			for (ClassNode super_ : getSupers(node)) {
-				for (MethodNode mn : super_.methods) {
-					if (mn.name.equals(name) && mn.desc.equals(desc)) {
-						methods.add(mn);
-					}
-				}
-			}
-			return methods;
-		}
-
-		public Set<MethodNode> getMethodsFromDelegates(MethodNode m) {
-			return getMethodsFromDelegates(m.owner, m.name, m.desc);
-		}
-
-		public Set<MethodNode> getMethodsFromDelegates(ClassNode node, String name, String desc) {
-			Set<MethodNode> methods = new HashSet<MethodNode>();
-			for (ClassNode delegate : getDelegates(node)) {
-				for (MethodNode mn : delegate.methods) {
-					if (mn.name.equals(name) && mn.desc.equals(desc)) {
-						methods.add(mn);
-					}
-				}
-			}
-			return methods;
-		}
-
-		public MethodNode getFirstMethodFromSuper(ClassNode node, String name, String desc) {
-			for (ClassNode super_ : getSupers(node)) {
-				for (MethodNode mn : super_.methods) {
-					if (mn.name.equals(name) && mn.desc.equals(desc)) {
-						return mn;
-					}
-				}
-			}
-			return null;
-		}
-
-		public ClassNode getClass(String name) {
-			return classes.get(name);
-		}
-
-		public boolean isInherited(ClassNode cn, String name, String desc) {
-			return getFirstMethodFromSuper(cn, name, desc) != null;
-		}
-
-		public boolean isInherited(ClassNode first, MethodNode mn) {
-			return mn.owner.name.equals(first.name) && isInherited(mn.owner, mn.name, mn.desc);
-		}
-
-		private Set<ClassNode> getSupers0(ClassNode cn) {
-			return supers.getNotNull(cn);
-		}
-
-		private Set<ClassNode> getDelegates0(ClassNode cn) {
-			return delgates.getNotNull(cn);
-		}
-
-		public Map<String, ClassNode> getClasses() {
-			return classes;
-		}
-
-		public Set<ClassNode> getSupers(ClassNode cn) {
-			return Collections.unmodifiableSet(supers.get(cn));
-			// return supers.get(cn);
-		}
-
-		public Set<ClassNode> getDelegates(ClassNode cn) {
-			return Collections.unmodifiableSet(delgates.get(cn));
-			// return delgates.get(cn);
-		}
-	}
-
-	public static class InheritedMethodMap {
-		private final Map<MethodNode, ChainData> methods;
-
-		public InheritedMethodMap(ClassTree tree) {
-			methods = new HashMap<MethodNode, ChainData>();
-
-			build(tree);
-		}
-
-		private void build(ClassTree tree) {
-			int mCount = 0;
-			int aCount = 0;
-			for (ClassNode node : tree.getClasses().values()) {
-				for (MethodNode m : node.methods) {
-					if (!Modifier.isStatic(m.access)) {
-						Set<MethodNode> supers    = tree.getMethodsFromSuper(node, m.name, m.desc);
-						Set<MethodNode> delegates = tree.getMethodsFromDelegates(node, m.name, m.desc);
-						ChainData data            = new ChainData(m, supers, delegates);
-						this.methods.put(m, data);
-
-						mCount ++;
-						aCount += data.getAggregates().size();
-					}
-				}
-			}
-
-			System.out.println(String.format("Built map with %d methods connected with %d others.", mCount, aCount));
-			
-			//for(ChainData data : methods.values()){
-			//	System.out.println(data);
-			//}
-		}
-
-		public ChainData getData(MethodNode m) {
-			return methods.get(m);
-		}
-	}
-
-	public static class ChainData {
-		private final MethodNode centre;
-		private final Set<MethodNode> supers;
-		private final Set<MethodNode> delegates;
-		private final Set<MethodNode> aggregates;
-
-		public ChainData(MethodNode m, Set<MethodNode> supers, Set<MethodNode> delegates) {
-			this.centre    = m;
-			this.supers    = supers;
-			this.delegates = delegates;
-			
-			this.supers.remove(m);
-			this.delegates.remove(m);
-			
-			aggregates     = new HashSet<MethodNode>();
-			aggregates.addAll(supers);
-			aggregates.addAll(delegates);
-		}
-
-		public Set<MethodNode> getSupers() {
-			return supers;
-		}
-
-		public Set<MethodNode> getDelegates() {
-			return delegates;
-		}
-
-		public Set<MethodNode> getAggregates() {
-			return aggregates;
-		}
 		
-		@Override
-		public String toString(){
-			StringBuilder sb = new StringBuilder();
-			sb.append("Centre: ").append(centre.key()).append("   (").append(supers.size()).append(", ").append(delegates.size()).append(")");
-			
-			boolean sups = supers.size() > 0;
-			boolean dels = delegates.size() > 0;
-			if(sups || dels){
-				sb.append("\n");
-			}
-			
-			if(sups){
-				sb.append("   >S>U>P>E>R>S>\n");
-				Iterator<MethodNode> it = supers.iterator();
-				while(it.hasNext()){
-					MethodNode sup = it.next();
-					sb.append("    ").append(sup.key());
-					if(it.hasNext() || dels)
-						sb.append("\n");
-				}
-			}
-			
-			if(dels){
-				sb.append("   >D>E>L>E>G>A>T>E>S>\n");
-				Iterator<MethodNode> it = delegates.iterator();
-				while(it.hasNext()){
-					MethodNode del = it.next();
-					sb.append("    ").append(del.key());
-					if(it.hasNext())
-						sb.append("\n");
-				}
-			}
-			
-			return sb.toString();
-		}
-	}
-
-	public static class SetCreator<T> implements ValueCreator<Set<T>> {
-
-		@Override
-		public Set<T> create() {
-			return new HashSet<T>();
-		}
+		return newName;
 	}
 }

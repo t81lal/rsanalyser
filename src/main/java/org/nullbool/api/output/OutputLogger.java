@@ -223,11 +223,25 @@ public class OutputLogger {
 		System.out.printf("Results for rev %s%n", provider.getRevision().getName());
 		System.out.printf("(%d/%d) fields.%n", fieldTotalFound, fieldTotalSupported);
 		System.out.printf("(%d/%d) methods.%n", methodTotalFound, methodTotalSupported);
-
+		
+		printDetails(classes);
 		if (debug)
 			System.out.println("Longest: " + longestLine);
 
 		return new HookMap(classes);
+	}
+
+	private static void printDetails(List<ClassHook> classes) {
+		System.out.printf("%d class hooks.%n", classes.size());
+		int fCount = 0;
+		int mCount = 0;
+		for(ClassHook c : classes){
+			fCount += c.getFields().size();
+			mCount += c.getMethods().size();
+		}
+
+		System.out.printf("%d field hooks.%n", fCount);
+		System.out.printf("%d method hooks.%n", mCount);
 	}
 
 	private static String longstring(String s, int l) {

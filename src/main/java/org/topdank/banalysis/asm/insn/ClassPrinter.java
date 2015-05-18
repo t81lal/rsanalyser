@@ -1,4 +1,4 @@
-package org.nullbool.api.obfuscation.refactor;
+package org.topdank.banalysis.asm.insn;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -10,7 +10,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.topdank.banalysis.asm.insn.InstructionPrinter;
 
 public class ClassPrinter {
 
