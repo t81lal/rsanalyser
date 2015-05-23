@@ -148,7 +148,7 @@ public class IsaacCipherAnalyser extends ClassAnalyser {
 				list.add(asMethodHook(MethodType.CALLBACK, isaacMethod, "isaac"));
 			}
 	             
-			return list;
+			return list;   
 		}
 	}
 	
