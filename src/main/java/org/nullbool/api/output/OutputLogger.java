@@ -246,9 +246,9 @@ public class OutputLogger {
 		}
 
 		System.out.printf("Results for rev %s%n", provider.getRevision().getName());
-		System.out.printf("(%d/%d) methods.%n", classes.size(), analysers.size());
-		System.out.printf("(%d/%d) fields.%n", fhf, fieldTotalSupported);
-		System.out.printf("(%d/%d) methods.%n", mhf, methodTotalSupported);
+		System.out.printf("(%d/%d) classes (%d hooks).%n", classes.size(), analysers.size(), classes.size());
+		System.out.printf("(%d/%d) fields (%d hooks).%n", fhf, fieldTotalSupported, f_collect(classes).size());
+		System.out.printf("(%d/%d) methods (%d hooks).%n", mhf, methodTotalSupported, m_collect(classes).size());
 		
 		if(logResults)
 			printDetails(classes);

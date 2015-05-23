@@ -22,7 +22,8 @@ public class Boot {
 	public static void main(String[] args) throws Exception {
 //		runLatest(71);
 //		run(70, revision, 4);
-		runLast10();
+//		runLast10();
+		runTest(revision);
 	}
 	
 	private static void runLast10() {

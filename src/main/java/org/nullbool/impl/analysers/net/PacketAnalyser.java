@@ -24,6 +24,16 @@ import org.zbot.hooks.MethodHook.MethodType;
 @SupportedHooks(fields = { "getCipher&IsaacCipher", "getBitCaret&I"}, methods = { "initCipher&([I)V", "initBitAccess&()V", "finishBitAccess&()V", "readableBytes&(I)I", "readBits&(I)I"})
 public class PacketAnalyser extends ClassAnalyser {
 
+	private static final int[] INIT_CIPHER_PATTERN = new int[]{INVOKESPECIAL, PUTFIELD};
+	private static final int[] INIT_BIT_ACCESS_PATTERN1 = new int[]{GETFIELD, IMUL, PUTFIELD};
+	private static final int[] INIT_BIT_ACCESS_PATTERN2 = new int[]{GETFIELD, LDC, IMUL, PUTFIELD};
+	private static final int[] FINISH_BIT_ACCESS_PATTERN = new int[]{BIPUSH, IDIV};
+	private static final int[] READABLE_BEATS_PATTERN1 = new int[]{GETFIELD, IMUL, ISUB, IRETURN};
+	private static final int[] READABLE_BEATS_PATTERN2 = new int[]{GETFIELD, LDC, IMUL, ISUB, IRETURN};
+	private static final int[] READ_BITS_PATTERN = new int[]{ICONST_3, ISHR, ISTORE};
+	
+	private static final int[] GETFIELD_PATTERN = new int[]{GETFIELD};
+	
 	public PacketAnalyser() {
 		super("Packet");
 	}
@@ -53,35 +63,51 @@ public class PacketAnalyser extends ClassAnalyser {
 
 			for(MethodNode m : cn.methods) {
 				if(m.desc.startsWith("([I") && m.desc.endsWith("V")) {
-					MethodInsnNode min = (MethodInsnNode) findOpcodePattern(m, new int[]{INVOKESPECIAL, PUTFIELD});
+					MethodInsnNode min = (MethodInsnNode) findOpcodePattern(m, INIT_CIPHER_PATTERN);
 					if(min != null) {
 						list.add(asMethodHook(MethodType.CALLBACK, m, "initCipher"));
 					}
 				} else if(m.desc.endsWith("V")) {
-					FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, new int[]{GETFIELD, IMUL, PUTFIELD});
+					FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, INIT_BIT_ACCESS_PATTERN1);
 					if(fin != null) {
 						list.add(asMethodHook(MethodType.CALLBACK, m, "initBitAccess"));
 					} else {
-						IntInsnNode iin = (IntInsnNode) findOpcodePattern(m, new int[]{BIPUSH, IDIV});
-						if(iin != null) {
-							if(InstructionUtil.resolve(iin) == 8) {
-								list.add(asMethodHook(MethodType.CALLBACK, m, "finishBitAccess"));
+						fin = (FieldInsnNode) findOpcodePattern(m, INIT_BIT_ACCESS_PATTERN2);
+						if(fin != null) {
+							list.add(asMethodHook(MethodType.CALLBACK, m, "initBitAccess"));
+						} else {
+							IntInsnNode iin = (IntInsnNode) findOpcodePattern(m, FINISH_BIT_ACCESS_PATTERN);
+							if(iin != null) {
+								if(InstructionUtil.resolve(iin) == 8) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "finishBitAccess"));
+								}
 							}
 						}
 					}
 				} else if(m.desc.endsWith(")I")) {
-					FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, new int[]{GETFIELD, IMUL, ISUB, IRETURN});
+					FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, READABLE_BEATS_PATTERN1);
+					if(fin == null) 
+						fin = (FieldInsnNode) findOpcodePattern(m, READABLE_BEATS_PATTERN2);
+					
 					if(fin != null) {
 						list.add(asMethodHook(MethodType.CALLBACK, m, "readableBytes"));
 					} else {
-						AbstractInsnNode a1 = findOpcodePattern(m, new int[]{ICONST_3, ISHR, ISTORE});
+						AbstractInsnNode a1 = findOpcodePattern(m, READ_BITS_PATTERN);
 						if(a1 != null) {
 							list.add(asMethodHook(MethodType.CALLBACK, m, "readBits"));
 						}
 					}
 				}
 			}
-			
+
+//            aload0 // reference to self
+//            aload0 // reference to self
+//            getfield Packet.getCaret:int
+//            ldc -619618920 (java.lang.Integer)
+//            imul
+//            putfield Packet.getBitCaret:int
+
+            
 //            aload0 // reference to self
 //            aload0 // reference to self
 //            getfield Packet.getCaret:int
@@ -107,19 +133,19 @@ public class PacketAnalyser extends ClassAnalyser {
 //			String h = findField(cipherMethod, true, true, 1, 'f', "isub");
 			for(MethodNode m : cn.methods) {
 				if(m.desc.startsWith("([I") && m.desc.endsWith(")V")) {
-					AbstractInsnNode ain = findOpcodePattern(m, new int[]{INVOKESPECIAL, PUTFIELD});
+					AbstractInsnNode ain = findOpcodePattern(m, INIT_CIPHER_PATTERN);
 					if(ain != null) {
 						FieldInsnNode fin = (FieldInsnNode) ain.getNext();
 						list.add(asFieldHook(fin, "getCipher", findMultiplier(source(fin), false)));
 					}
 				} else if(m.desc.endsWith("V")) {
-					FieldInsnNode f1 = (FieldInsnNode) findOpcodePattern(m, new int[]{GETFIELD, IMUL, PUTFIELD});
+					FieldInsnNode f1 = (FieldInsnNode) findOpcodePattern(m, INIT_BIT_ACCESS_PATTERN1);
 					if(f1 == null) {
-						IntInsnNode iin = (IntInsnNode) findOpcodePattern(m, new int[]{BIPUSH, IDIV});
+						IntInsnNode iin = (IntInsnNode) findOpcodePattern(m, FINISH_BIT_ACCESS_PATTERN);
 						if(iin != null) {
 							if(InstructionUtil.resolve(iin) == 8) {
 								//finishBitAccess
-								FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, new int[]{GETFIELD});
+								FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, GETFIELD_PATTERN);
 								if(fin != null) {
 									list.add(asFieldHook(fin, "getBitCaret", findMultiplier(source(fin), false)));
 								}

@@ -27,6 +27,7 @@ import org.nullbool.impl.analysers.entity.NPCAnalyser;
 import org.nullbool.impl.analysers.entity.PlayerAnalyser;
 import org.nullbool.impl.analysers.entity.RenderableAnalyser;
 import org.nullbool.impl.analysers.net.BufferAnalyser;
+import org.nullbool.impl.analysers.net.IsaacCipherAnalyser;
 import org.nullbool.impl.analysers.net.PacketAnalyser;
 import org.nullbool.impl.analysers.world.GameObjectAnalyser;
 import org.nullbool.impl.analysers.world.GroundDecorationAnalyser;
@@ -46,7 +47,7 @@ public class AnalysisProviderImpl extends AbstractAnalysisProvider {
 	@Override
 	protected List<ClassAnalyser> registerAnalysers() throws AnalysisException {
 		return Arrays.asList(new WrappedExceptionAnalyser(), new ExceptionReporterAnalyser(), new CanvasAnalyser(), new NodeAnalyser(), new DualNodeAnalyser(),
-				new RenderableAnalyser(), new ActorAnalyser(), new DequeAnalyser(), new NPCAnalyser(), new BufferAnalyser(), new PacketAnalyser(), new HashtableAnalyser(), new GroundItemAnalyser(),
+				new RenderableAnalyser(), new ActorAnalyser(), new DequeAnalyser(), new NPCAnalyser(), new IsaacCipherAnalyser(), new BufferAnalyser(), new PacketAnalyser(), new HashtableAnalyser(), new GroundItemAnalyser(),
 				new RegionAnalyser(), new NPCDefinitionAnalyser(), new ObjectDefinitionAnalyser(), new ItemDefinitionAnalyser(), new ModelAnalyser(),
 				new PlayerAnalyser(), new TileAnalyser(), new WidgetNodeAnalyser(), new GameObjectAnalyser(), new WallObjectAnalyser(), new WidgetAnalyser(),
 				new WallDecorationAnalyser(), new GroundObjectAnalyser(), new GroundDecorationAnalyser(), new ClientAnalyser());

@@ -1,5 +1,8 @@
 package org.nullbool.api.util;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
@@ -8,6 +11,12 @@ import org.objectweb.asm.tree.LdcInsnNode;
 
 public class InstructionUtil implements Opcodes {
 
+	public static void print(Collection<AbstractInsnNode[]> coll) {
+		for (AbstractInsnNode[] ains : coll) {
+		    System.out.println(Arrays.toString(ains));
+		}
+	}
+	
 	public static AbstractInsnNode next(AbstractInsnNode ain) {
 		if (!(ain instanceof LabelNode))
 			return ain;
