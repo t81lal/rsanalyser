@@ -20,17 +20,28 @@ public class Boot {
 	private static int revision = 78;
 
 	public static void main(String[] args) throws Exception {
-		runLatest(revision);
+//		runLatest(71);
 //		run(70, revision, 4);
-//		runTest(revision);
+		runLast10();
 	}
 	
+	private static void runLast10() {
+		for(int i=70; i <= revision; i++) {			
+			System.out.println("=====================START===================");
+			try {
+				runTest(i);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			System.out.println("=====================END=====================\n");
+		}
+	}
+
 	private static void runTest(int j) throws Exception {
 		Debug.debugging  = true;
 		APIGenerator.log = false;
 		
-		AbstractAnalysisProvider provider = new AnalysisProviderImpl(new Revision(Integer.toString(j), new File(Boot.class.getResource(
-				"/jars/gamepack" + j + ".jar").toURI())));
+		AbstractAnalysisProvider provider = new AnalysisProviderImpl(new Revision(Integer.toString(j), new File(Boot.class.getResource("/jars/gamepack" + j + ".jar").toURI())));
 		Map<String, Boolean> flags = provider.getFlags();
 		flags.put("debug", false);
 		flags.put("reorderfields", true);

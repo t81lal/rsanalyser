@@ -83,7 +83,11 @@ public abstract class AbstractAnalysisProvider {
 			if (analysers != null && analysers.size() != 0)
 				analyse();
 
-			output();
+			try {
+				output();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		Context.unbind();

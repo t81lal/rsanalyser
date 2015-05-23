@@ -315,6 +315,10 @@ public abstract class ClassAnalyser implements Opcodes {
 		return null;
 	}
 	
+	public FieldHook asFieldHook(FieldInsnNode f, String realName, long multiplier) {
+		return asFieldHook(f, realName, f.opcode() == PUTSTATIC || f.opcode() == GETSTATIC, multiplier);
+	}
+	
 	public FieldHook asFieldHook(FieldInsnNode f, String realName, boolean isStatic, long multiplier) {
 		return new FieldHook(foundHook, new ObfuscatedData(f.name, realName), new DynamicDesc(f.desc, false), isStatic, multiplier);
 	}
@@ -504,6 +508,10 @@ public abstract class ClassAnalyser implements Opcodes {
 		}
 		
 		return null;
+	}
+	
+	public String source(FieldInsnNode fin) {
+		return String.format("%s.%s", fin.owner, fin.name);
 	}
 
 	public String getName() {

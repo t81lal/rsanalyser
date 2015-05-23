@@ -41,14 +41,19 @@ public class OutputLogger {
 		if (logResults)
 			System.out.println();
 
-		Set<FieldHook> fhooksFound = new HashSet<FieldHook>();
 		int fieldTotalSupported = 0;
-		Set<MethodHook> mhooksFound = new HashSet<MethodHook>();
 		int methodTotalSupported = 0;
+		
+		int fhf = 0;
+		int mhf = 0;
 
 		final int maxLength = 40;
 
 		for (ClassAnalyser analyser : analysers) {
+			
+			List<String> unidf = new ArrayList<String>();
+			List<String> unidm = new ArrayList<String>();
+			
 			ClassHook classHook = analyser.getFoundHook();
 			StringBuilder nameSb = new StringBuilder();
 			StringBuilder sb = new StringBuilder();
@@ -122,10 +127,12 @@ public class OutputLogger {
 					sb1.append(") couldn't be identified.");
 					sb.append(sb1.toString());
 					sb.append("\n");
+					
+					unidf.add(s);
 					System.out.printf("%s %s broke!%n", parts[0], parts[1]);
 				} else {
 					fieldsFound++;
-					fhooksFound.add(hook);
+					fhf++;
 					StringBuilder sb1 = new StringBuilder();
 					sb1.append(" ^  ");
 					sb1.append(longstring(parts[0], maxLength));
@@ -174,15 +181,17 @@ public class OutputLogger {
 				MethodHook hook = foundMethod(verify, parts[0], parts[1], classHook.getMethods(), classes);
 				if (hook == null) {
 					StringBuilder sb1 = new StringBuilder();
-					sb1.append(" ยบ  ");
+					sb1.append(" บ  ");
 					sb1.append(parts[0]);
 					sb1.append(parts[1]);
 					sb1.append(" couldn't be identified.");
 					sb.append(sb1.toString());
 					sb.append("\n");
+					
+					unidm.add(s);
 				} else {
-					mhooksFound.add(hook);
 					methodsFound++;
+					mhf++;
 					StringBuilder sb1 = new StringBuilder();
 					sb1.append(" บ  ");
 					sb1.append(longstring(parts[0], maxLength));
@@ -222,14 +231,24 @@ public class OutputLogger {
 				System.out.println(nameSb.toString());
 				System.out.println(sb.toString());
 			} else if (broke) {
-				System.out.printf("%s broke.%n", classHook.getRefactored());
+				System.err.printf("%s broke.%n", classHook.getRefactored());
+				
+				for(String uf : unidf) {
+					String[] parts = uf.split("&");
+					System.err.printf("  ^ %s %s broke.%n", parts[0], parts[1]);
+				}
+				
+				for(String um : unidm) {
+					String[] parts = um.split("&");
+					System.err.printf("  ^ %s %s broke.%n", parts[0], parts[1]);
+				}
 			}
 		}
 
 		System.out.printf("Results for rev %s%n", provider.getRevision().getName());
 		System.out.printf("(%d/%d) methods.%n", classes.size(), analysers.size());
-		System.out.printf("(%d/%d) fields.%n", fhooksFound.size(), fieldTotalSupported);
-		System.out.printf("(%d/%d) methods.%n", mhooksFound.size(), methodTotalSupported);
+		System.out.printf("(%d/%d) fields.%n", fhf, fieldTotalSupported);
+		System.out.printf("(%d/%d) methods.%n", mhf, methodTotalSupported);
 		
 		if(logResults)
 			printDetails(classes);

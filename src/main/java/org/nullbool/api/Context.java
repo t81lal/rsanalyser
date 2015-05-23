@@ -16,7 +16,7 @@ public class Context {
 			
 			long now = System.currentTimeMillis();
 			long d   = now - startTime;
-			if(d >= 1500) {
+			if(d >= 2500) {
 				throw new RuntimeException("Timed out.");
 			}
 		}

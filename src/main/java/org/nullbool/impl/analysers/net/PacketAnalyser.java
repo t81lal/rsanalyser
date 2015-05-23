@@ -82,6 +82,14 @@ public class PacketAnalyser extends ClassAnalyser {
 				}
 			}
 			
+//            aload0 // reference to self
+//            aload0 // reference to self
+//            getfield Packet.getCaret:int
+//            ldc -960061224 (java.lang.Integer)
+//            imul
+//            putfield Packet.n:int
+
+			
 			return list;
 		}
 	}
@@ -92,15 +100,38 @@ public class PacketAnalyser extends ClassAnalyser {
 		public List<FieldHook> find(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
-			MethodNode[] classMethods = getMethodNodes(cn.methods.toArray());
-			final MethodNode caretMethod = startWithBc(new String[] { "bipush","iload" }, classMethods)[0];
-			final MethodNode cipherMethod = startWithBc(new String[] { "aload","getfield", "aload" }, classMethods)[0];
+//			MethodNode[] classMethods = getMethodNodes(cn.methods.toArray());
+//			final MethodNode caretMethod = startWithBc(new String[] { "bipush","iload" }, classMethods)[0];
+//			final MethodNode cipherMethod = startWithBc(new String[] { "aload","getfield", "aload" }, classMethods)[0];
 			
-			String h = findField(cipherMethod, true, true, 1, 'f', "isub");
-			list.add(asFieldHook(h, "getCipher"));
-
-			h = findField(caretMethod, true, true, 1, 'f', "iload 1");
-			list.add(asFieldHook(h, "getBitCaret", findMultiplier(h, false)));
+//			String h = findField(cipherMethod, true, true, 1, 'f', "isub");
+			for(MethodNode m : cn.methods) {
+				if(m.desc.startsWith("([I") && m.desc.endsWith(")V")) {
+					AbstractInsnNode ain = findOpcodePattern(m, new int[]{INVOKESPECIAL, PUTFIELD});
+					if(ain != null) {
+						FieldInsnNode fin = (FieldInsnNode) ain.getNext();
+						list.add(asFieldHook(fin, "getCipher", findMultiplier(source(fin), false)));
+					}
+				} else if(m.desc.endsWith("V")) {
+					FieldInsnNode f1 = (FieldInsnNode) findOpcodePattern(m, new int[]{GETFIELD, IMUL, PUTFIELD});
+					if(f1 == null) {
+						IntInsnNode iin = (IntInsnNode) findOpcodePattern(m, new int[]{BIPUSH, IDIV});
+						if(iin != null) {
+							if(InstructionUtil.resolve(iin) == 8) {
+								//finishBitAccess
+								FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, new int[]{GETFIELD});
+								if(fin != null) {
+									list.add(asFieldHook(fin, "getBitCaret", findMultiplier(source(fin), false)));
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			
+//			String h = findField(caretMethod, true, true, 1, 'f', "iload 1");
+//			list.add(asFieldHook(h, "getBitCaret", findMultiplier(h, false)));
 			
 			return list;
 		}
