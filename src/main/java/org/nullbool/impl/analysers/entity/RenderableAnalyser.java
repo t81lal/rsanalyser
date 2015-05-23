@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.nullbool.api.Context;
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -18,7 +18,7 @@ import org.zbot.hooks.FieldHook;
  * @author MalikDz
  */
 @SupportedHooks(fields = { "getModelHeight&I" }, methods = {})
-public class RenderableAnalyser extends AbstractClassAnalyser {
+public class RenderableAnalyser extends ClassAnalyser {
 
 	public RenderableAnalyser() throws AnalysisException {
 		super("Renderable");

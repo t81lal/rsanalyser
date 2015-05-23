@@ -13,16 +13,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.obfuscation.call.CallVisitor;
 import org.nullbool.api.obfuscation.call.HierarchyVisitor;
 import org.nullbool.api.obfuscation.dummyparam.EmptyParamVisitor;
 import org.nullbool.api.obfuscation.dummyparam.EmptyParamVisitor2;
 import org.nullbool.api.obfuscation.dummyparam.OpaquePredicateVisitor;
+import org.nullbool.api.obfuscation.field.FieldOpener;
+import org.nullbool.api.obfuscation.field.UnusedFieldRemover;
 import org.nullbool.api.obfuscation.number.MultiplierHandler;
 import org.nullbool.api.obfuscation.number.MultiplierVisitor;
 import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
+import org.nullbool.api.obfuscation.refactor.ClassTree;
 import org.nullbool.api.obfuscation.refactor.IRemapper;
 import org.nullbool.api.output.APIGenerator;
 import org.nullbool.api.output.OutputLogger;
@@ -49,9 +52,10 @@ public abstract class AbstractAnalysisProvider {
 	private final LocateableJarContents<ClassNode> contents;
 	private final String[] instructions;
 	private final Map<String, String[]> patternMap;
-	private List<AbstractClassAnalyser> analysers;
-	private MultiplierHandler multiplierHandler;
 	private final Map<String, Boolean> flags;
+	private ClassTree classTree;
+	private List<ClassAnalyser> analysers;
+	private MultiplierHandler multiplierHandler;
 
 	public AbstractAnalysisProvider(Revision revision) throws IOException {
 		this.revision = revision;
@@ -68,22 +72,24 @@ public abstract class AbstractAnalysisProvider {
 	}
 
 	public void run() throws AnalysisException {
+		classTree         = new ClassTree(contents.getClassContents());
 		multiplierHandler = new MultiplierHandler();
 		deobfuscate();
 
 		dumpDeob();
 
-		if (flags.getOrDefault("justdeob", false))
-			return;
+		if (!flags.getOrDefault("justdeob", false)) {
+			analysers = registerAnalysers();
+			if (analysers != null && analysers.size() != 0)
+				analyse();
 
-		analysers = registerAnalysers();
-		if (analysers != null && analysers.size() != 0)
-			analyse();
-
-		output();
+			output();
+		}
+		
+		Context.unbind();
 	}
 
-	private void output() {
+	private void output() {		
 		HookMap hookMap = OutputLogger.output();
 
 		for (ClassHook h : hookMap.getClasses()) {
@@ -93,9 +99,12 @@ public abstract class AbstractAnalysisProvider {
 			}
 		}
 
-		APIGenerator.createAPI(hookMap);
-		writeLog(hookMap);
-		// HookMap map = new HookMap();
+		if(flags.getOrDefault("basicout", true)) {
+			APIGenerator.createAPI(hookMap);
+			writeLog(hookMap);
+			// HookMap map = new HookMap();
+		}
+		
 		dumpJar(hookMap);
 	}
 
@@ -116,7 +125,7 @@ public abstract class AbstractAnalysisProvider {
 	private void dumpJar(HookMap hookMap) {
 		Map<String, ClassHook>  classes = new HashMap<String, ClassHook>();
 		Map<String, FieldHook>  fields  = new HashMap<String, FieldHook>();
-		/*Map<String, MethodHook> methods = new HashMap<String, MethodHook>();*/
+		Map<String, MethodHook> methods = new HashMap<String, MethodHook>();
 		
 		for(ClassHook h : hookMap.getClasses()){
 			classes.put(h.getObfuscated(), h);
@@ -124,18 +133,18 @@ public abstract class AbstractAnalysisProvider {
 				fields.put(f.getOwner().getObfuscated() + "." + f.getName().getObfuscated() + " " + f.getDesc().getObfuscated(), f);
 			}
 			
-			/*for(MethodHook m : h.getMethods()){
+			for(MethodHook m : h.getMethods()){
 				methods.put(m.getOwner().getObfuscated() + "." + m.getName().getObfuscated() + m.getDesc().getObfuscated(), m);
-			}*/
+			}
 		}
 		
 		IRemapper remapper = new IRemapper() {
 			@Override
 			public String resolveMethodName(String owner, String name, String desc) {
-				/*String key = owner + "." + name + desc;
+				String key = owner + "." + name + desc;
 				if(methods.containsKey(key)){
 					return methods.get(key).getName().getRefactored();
-				}*/
+				}
 				return name;
 			}
 			
@@ -161,6 +170,10 @@ public abstract class AbstractAnalysisProvider {
 		
 		BytecodeRefactorer refactorer = new BytecodeRefactorer((Collection<ClassNode>) contents.getClassContents(), remapper);
 		refactorer.start();
+		
+		//TODO: reorder
+		if(flags.getOrDefault("reorderfields", true))
+			reorderFields();
 		
 		CompleteJarDumper dumper = new CompleteJarDumper(contents);
 		String name = getRevision().getName();
@@ -193,7 +206,7 @@ public abstract class AbstractAnalysisProvider {
 
 	private void analyse() throws AnalysisException {
 		Map<String, ClassNode> classNodes = contents.getClassContents().namedMap();
-		for (AbstractClassAnalyser a : analysers) {
+		for (ClassAnalyser a : analysers) {
 			try {
 				a.preRun(classNodes);
 			} catch (Exception e) {
@@ -204,11 +217,11 @@ public abstract class AbstractAnalysisProvider {
 				throw new AnalysisException("Couldn't find " + a.getName());
 		}
 
-		for (AbstractClassAnalyser a : analysers) {
+		for (ClassAnalyser a : analysers) {
 			try {
 				a.runSubs();
 			} catch (Exception e) {
-				System.err.println(a.getName() + " -> " + e.getClass().getSimpleName());
+				System.err.println(a.getClass().getCanonicalName() + " -> " + e.getClass().getSimpleName());
 			}
 		}
 	}
@@ -218,9 +231,12 @@ public abstract class AbstractAnalysisProvider {
 		
 		if(flags.getOrDefault("reorderfields", true))
 			reorderFields();
+		openfields();
 		
 		analyseMultipliers();
 		removeDummyMethods(contents);
+		removeUnusedFields();
+		
 		// runEmptyParamVisitor2(contents);
 		// checkRecursion(contents);
 		// removeUnusedParams(contents);
@@ -243,7 +259,17 @@ public abstract class AbstractAnalysisProvider {
 		// this.contents.getClassContents().addAll(contents.getClassContents());
 		// this.contents.getClassContents().namedMap();
 	}
+	
+	private void removeUnusedFields() {
+		new UnusedFieldRemover().visit(contents);
+	}
 
+	private void openfields() {
+		new FieldOpener().visit(contents);
+		if(flags.getOrDefault("basicout", true))
+			System.err.printf("Opened fields.%n");
+	}
+	
 	private void reorderFields(){
 		int count = 0;
 		
@@ -258,7 +284,8 @@ public abstract class AbstractAnalysisProvider {
 			count += fields.size();
 		}
 		
-		System.err.printf("Reordered %d fields.%n", count);
+		if(flags.getOrDefault("basicout", true))
+			System.err.printf("Reordered %d fields.%n", count);
 	}
 	
 	private void runEmptyParamVisitor2(JarContents<? extends ClassNode> contents) {
@@ -289,13 +316,13 @@ public abstract class AbstractAnalysisProvider {
 		MultiplierVisitor mutliVisitor = new MultiplierVisitor(multiplierHandler);
 		for (ClassNode cn : contents.getClassContents()) {
 			for (MethodNode m : cn.methods) {
-				TreeBuilder.build(m).accept(mutliVisitor);
+				new TreeBuilder().build(m).accept(mutliVisitor);
 			}
 		}
 		mutliVisitor.log();
 	}
 
-	protected abstract List<AbstractClassAnalyser> registerAnalysers() throws AnalysisException;
+	protected abstract List<ClassAnalyser> registerAnalysers() throws AnalysisException;
 
 	public Revision getRevision() {
 		return revision;
@@ -305,7 +332,7 @@ public abstract class AbstractAnalysisProvider {
 		return contents.getClassContents().namedMap();
 	}
 
-	public List<AbstractClassAnalyser> getAnalysers() {
+	public List<ClassAnalyser> getAnalysers() {
 		return analysers;
 	}
 
@@ -313,7 +340,7 @@ public abstract class AbstractAnalysisProvider {
 		return multiplierHandler;
 	}
 
-	public Map<String, Boolean> getFlagsMap() {
+	public Map<String, Boolean> getFlags() {
 		return flags;
 	}
 
@@ -323,6 +350,10 @@ public abstract class AbstractAnalysisProvider {
 
 	public String[] getPattern(String key) {
 		return patternMap.get(key);
+	}
+	
+	public ClassTree getClassTree() {
+		return classTree;
 	}
 
 	private String[] getAllInstructions() {

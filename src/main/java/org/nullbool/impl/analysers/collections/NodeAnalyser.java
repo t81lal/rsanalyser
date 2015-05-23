@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -21,7 +21,7 @@ import org.zbot.hooks.FieldHook;
  * @author MalikDz
  */
 @SupportedHooks(fields = { "getKey&J", "getPrevious&Node", "getNext&Node", }, methods = {})
-public class NodeAnalyser extends AbstractClassAnalyser {
+public class NodeAnalyser extends ClassAnalyser {
 
 	public NodeAnalyser() throws AnalysisException {
 		super("Node");

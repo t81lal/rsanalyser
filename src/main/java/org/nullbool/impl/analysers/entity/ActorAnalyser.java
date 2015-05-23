@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.nullbool.api.Context;
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -22,7 +22,7 @@ import org.zbot.hooks.FieldHook;
  */
 @SupportedHooks(fields = { "getLocalX&I", "getLocalY&I", "getAnimationId&I", "getInteractingId&I", "getHealth&I", "getMaxHealth&I", "getHitTypes&[I",
 		"getMessage&Ljava/lang/String;", "getHitDamages&[I", "getHealthBarCycle&I" }, methods = {})
-public class ActorAnalyser extends AbstractClassAnalyser {
+public class ActorAnalyser extends ClassAnalyser {
 
 	public ActorAnalyser() throws AnalysisException {
 		super("Actor");

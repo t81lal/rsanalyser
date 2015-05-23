@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -20,7 +20,7 @@ import org.zbot.hooks.FieldHook;
  */
 @SupportedHooks(fields = { "getMarkerRenderable1&Renderable", "getMarkerRenderable2&Renderable", "getStrictX&I", "getStrictY&I", "getPlane&I", "getHash&I",
 		"getUID&I", "getOrientation1&I", "getOrientation2&I", }, methods = {})
-public class WallDecorationAnalyser extends AbstractClassAnalyser {
+public class WallDecorationAnalyser extends ClassAnalyser {
 
 	public WallDecorationAnalyser() throws AnalysisException {
 		super("WallDecoration");

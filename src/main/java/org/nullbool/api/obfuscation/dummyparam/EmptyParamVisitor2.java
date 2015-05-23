@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.nullbool.api.Context;
 import org.nullbool.api.obfuscation.Visitor;
 import org.nullbool.api.util.ClassStructure;
 import org.nullbool.api.util.InstructionUtil;
@@ -81,12 +82,13 @@ public class EmptyParamVisitor2 extends Visitor {
 			}
 		}
 
-		System.err.printf("Unused parameter fixer%n");
-		System.out.printf("   %d empty parameter methods (%d of which are inherited).%n", delegatesCount, inheritedFixCount);
-		System.out.printf("   %d descriptors fixed.%n", descFixCount);
-		// System.out.printf("   %d var shifts.%n", mergeFixCount);
-		System.out.printf("   Fixed %d calls.%n", callFixCount);
-
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.err.printf("Unused parameter fixer%n");
+			System.out.printf("   %d empty parameter methods (%d of which are inherited).%n", delegatesCount, inheritedFixCount);
+			System.out.printf("   %d descriptors fixed.%n", descFixCount);
+			// System.out.printf("   %d var shifts.%n", mergeFixCount);
+			System.out.printf("   Fixed %d calls.%n", callFixCount);
+		}
 	}
 
 	private static Set<String> keysAsSet(Set<MethodNode> methods) {

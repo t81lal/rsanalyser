@@ -9,5 +9,10 @@ public abstract interface Filter<T> {
 		}
 	};
 	
+	@SuppressWarnings("unchecked")
+	public static <T> Filter<T> acceptAll(){
+		return (Filter<T>) ACCEPT_ALL;
+	}
+	
 	public abstract boolean accept(T t);
 }

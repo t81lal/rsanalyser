@@ -6,15 +6,24 @@ import java.util.Map;
 
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.topdank.banalysis.filter.Filter;
 
 public class MethodCache {
+	private final Filter<MethodNode> filter;
 	private final Map<String, MethodNode> methodMap;
 	
-	public MethodCache() {
+	public MethodCache(Filter<MethodNode> filter) {
+		this.filter = filter;
 		methodMap = new HashMap<String, MethodNode>();
 	}
+	
+	public MethodCache(Filter<MethodNode> filter,Collection<ClassNode> classes) {
+		this(filter);
+		put(classes);
+	}
+	
 	public MethodCache(Collection<ClassNode> classes) {
-		this();
+		this(Filter.acceptAll());
 		put(classes);
 	}
 	
@@ -33,7 +42,10 @@ public class MethodCache {
 	}
 	
 	public void put(MethodNode m) {
-		methodMap.put(makeKey(m.owner.name, m.name, m.desc), m);
+		if(filter.accept(m)){
+			methodMap.put(makeKey(m.owner.name, m.name, m.desc), m);
+			m.cacheKey();
+		}
 	}
 	
 	public void reset() {

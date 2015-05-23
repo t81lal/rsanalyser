@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -19,7 +19,7 @@ import org.zbot.hooks.FieldHook;
  * @author MalikDz
  */
 @SupportedHooks(fields = { "getMarkedRenderable&Renderable", "getStrictX&I", "getStrictY&I", "getPlane&I", "getUID&I", "getFlags&I", }, methods = {})
-public class GroundObjectAnalyser extends AbstractClassAnalyser {
+public class GroundObjectAnalyser extends ClassAnalyser {
 
 	public GroundObjectAnalyser() throws AnalysisException {
 		super("GroundObject");

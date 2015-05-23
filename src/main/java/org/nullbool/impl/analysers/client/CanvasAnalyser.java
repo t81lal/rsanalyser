@@ -4,7 +4,7 @@ import java.awt.Canvas;
 import java.util.List;
 import java.util.Map;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -15,7 +15,7 @@ import org.objectweb.asm.tree.ClassNode;
  * @author : MalikDz
  */
 @SupportedHooks(fields = {}, methods = {})
-public class CanvasAnalyser extends AbstractClassAnalyser {
+public class CanvasAnalyser extends ClassAnalyser {
 
 	public CanvasAnalyser() throws AnalysisException {
 		super("Canvas");

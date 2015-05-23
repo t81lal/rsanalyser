@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -20,7 +20,7 @@ import org.zbot.hooks.FieldHook;
  * @author MalikDz
  */
 @SupportedHooks(fields = { "getBuckets&[Node", "getHead&Node", "getTail&Node", }, methods = {})
-public class HashtableAnalyser extends AbstractClassAnalyser {
+public class HashtableAnalyser extends ClassAnalyser {
 
 	public HashtableAnalyser() throws AnalysisException {
 		super("Hashtable");

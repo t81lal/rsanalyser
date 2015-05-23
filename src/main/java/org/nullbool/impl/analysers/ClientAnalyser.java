@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.nullbool.api.Context;
-import org.nullbool.api.analysis.AbstractClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
@@ -37,15 +37,18 @@ import org.zbot.hooks.MethodHook.MethodType;
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getNPCs&[NPC", "getPlayers&[Player", "getRegion&Region", "getWidgetPositionsX&[I", "getWidgetPositionsY&[I",
+@SupportedHooks(
+		fields = { "getNPCs&[NPC", "getPlayers&[Player", "getRegion&Region", /*"getWidgetPositionsX&[I", "getWidgetPositionsY&[I",*/
 		"getCanvas&Ljava/awt/Canvas;", "getLocalPlayer&Player", "getWidgetNodes&Hashtable", "getMenuActions&[Ljava/lang/String;", "isSpellSelected&Z",
 		"getSelectionState&I", "getMenuOptions&[Ljava/lang/String;", "getLoopCycle&I", "getCurrentWorld&I", "getGameState&I", "getCurrentLevels&[I",
 		"getRealLevels&[I", "getSkillsExp&[I", "getSelectedItem&I", "isMenuOpen&Z", "getMenuX&I", "getMenuY&I", "getMenuWidth&I", "getMenuHeight&I",
 		"getMenuSize&I", "getGroundItems&[[[Deque", "getTileSettings&[[[B", "getTileHeights&[[[I", "getMapScale&I", "getMapOffset&I", "getMapAngle&I",
 		"getPlane&I", "getCameraX&I", "getCameraY&I", "getCameraZ&I", "getCameraYaw&I", "getCameraPitch&I", "getBaseX&I", "getBaseY&I", "getWidgets&[[Widget",
-		"getClientSettings&[I", "getWidgetsSettings&[I", }, methods = { "loadObjDefinition&(II)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
+		"getClientSettings&[I", "getWidgetsSettings&[I", }, 
+		
+		methods = { "loadObjDefinition&(II)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
 		"getPlayerModel&(I)LModel;", "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&?" })
-public class ClientAnalyser extends AbstractClassAnalyser {
+public class ClientAnalyser extends ClassAnalyser {
 
 	public ClientAnalyser() throws AnalysisException {
 		super("Client");

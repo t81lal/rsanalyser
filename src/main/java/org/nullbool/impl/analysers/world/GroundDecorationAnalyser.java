@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -19,7 +19,7 @@ import org.zbot.hooks.FieldHook;
  */
 @SupportedHooks(fields = { "getBottomRenderable&Renderable", "getMiddleRenderable&Renderable", "getTopRenderable&Renderable", "getRegionX&I", "getRegionY&I",
 		"getPlane&I", "getUID&I", }, methods = {})
-public class GroundDecorationAnalyser extends AbstractClassAnalyser {
+public class GroundDecorationAnalyser extends ClassAnalyser {
 
 	public GroundDecorationAnalyser() throws AnalysisException {
 		super("GroundDecoration");

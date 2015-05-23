@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -21,7 +21,7 @@ import org.zbot.hooks.FieldHook;
  * @author MalikDz
  */
 @SupportedHooks(fields = { "getHead&Node", "getTail&Node", }, methods = {})
-public class DequeAnalyser extends AbstractClassAnalyser {
+public class DequeAnalyser extends ClassAnalyser {
 
 	public DequeAnalyser() throws AnalysisException {
 		super("Deque");

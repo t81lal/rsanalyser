@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -20,7 +20,7 @@ import org.zbot.hooks.FieldHook;
  */
 @SupportedHooks(fields = { "getVertexCount&I", "getIndicesCount&I", "getTriangleCount&I", "getVerticesX&[I", "getVerticesY&[I", "getVerticesZ&[I",
 		"getIndicesX&[I", "getIndicesY&[I", "getIndicesZ&[I", }, methods = {})
-public class ModelAnalyser extends AbstractClassAnalyser {
+public class ModelAnalyser extends ClassAnalyser {
 
 	public ModelAnalyser() throws AnalysisException {
 		super("Model");

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
@@ -14,8 +14,8 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.zbot.hooks.FieldHook;
 
-@SupportedHooks(fields = { "getReason&Ljava/lang/String;", "getThrowable&Ljava/lang/Throwable;" }, methods = {})
-public class WrappedExceptionAnalyser extends AbstractClassAnalyser {
+@SupportedHooks(fields = { "getReason_&Ljava/lang/String;", "getThrowable&Ljava/lang/Throwable;" }, methods = {})
+public class WrappedExceptionAnalyser extends ClassAnalyser {
 
 	public WrappedExceptionAnalyser() {
 		super("WrappedException");

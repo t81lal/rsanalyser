@@ -34,6 +34,7 @@ import org.zbot.hooks.MethodHook;
  */
 public class APIGenerator {
 
+	public static boolean log = true;
 	public static final String ACCESSOR_BASE = "org/zbot/accessors/";
 	public static final Map<String, String> SUPER_INTERFACES = new HashMap<String, String>();
 	public static final Map<String, String> API_CANONICAL_NAMES = new HashMap<String, String>();
@@ -185,8 +186,10 @@ public class APIGenerator {
 					e.printStackTrace();
 				}
 
-				for (String s : list) {
-					System.err.println(s);
+				if(log) {
+					for (String s : list) {
+						System.err.println(s);
+					}
 				}
 			}
 		}.start();

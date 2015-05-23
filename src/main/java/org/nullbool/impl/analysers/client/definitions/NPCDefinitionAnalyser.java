@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -21,7 +21,7 @@ import org.zbot.hooks.FieldHook;
 @SupportedHooks(fields = { "getActions&[Ljava/lang/String;", "isOnMap&Z", "isVisible&Z", "isClickable&Z", "getName&Ljava/lang/String;", "getCombatLevel&I",
 		"getWidth&I", "getHeight&I", "getBrightness&I", "getContrast&I", "getHeadIcon&I", "getNpcDegToTurn&I", "getVarpId&I", "getSettingId&I",
 		"getNpcBoundDim&I", "getIdleAnimationId&I", "getWalkAnimationId&I", "getNpcTurnAround&I", "getNpcTurnRight&I", "getNpcTurnLeft&I", }, methods = {})
-public class NPCDefinitionAnalyser extends AbstractClassAnalyser {
+public class NPCDefinitionAnalyser extends ClassAnalyser {
 
 	public NPCDefinitionAnalyser() throws AnalysisException {
 		super("NPCDefinition");

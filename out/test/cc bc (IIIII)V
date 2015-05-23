@@ -1,0 +1,77 @@
+cc bc (IIIII)VL1
+    iconst_0
+    istore 5
+    goto L2
+L3
+    getstatic client lq:[I
+    iload 5
+    iaload
+    getstatic client lu:[I
+    iload 5
+    iaload
+    iadd
+    iload 0
+    if_icmple L4
+    iload 4
+    ldc 697443259 (java.lang.Integer)
+    if_icmpeq L5
+    return
+L5
+    getstatic client lu:[I
+    iload 5
+    iaload
+    iload 2
+    iload 0
+    iadd
+    if_icmpge L4
+    iload 4
+    ldc 697443259 (java.lang.Integer)
+    if_icmpeq L6
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L2
+    iload 5
+    getstatic client lj:I
+    ldc -1726837317 (java.lang.Integer)
+    imul
+    if_icmpge L7
+    goto L3
+L6
+    getstatic client la:[I
+    iload 5
+    iaload
+    getstatic client lf:[I
+    iload 5
+    iaload
+    iadd
+    iload 1
+    if_icmple L4
+    getstatic client la:[I
+    iload 5
+    iaload
+    iload 3
+    iload 1
+    iadd
+    if_icmpge L4
+    getstatic client lp:[Z
+    iload 5
+    iconst_1
+    bastore
+L4
+    iinc 5 1
+    goto L2
+L7
+    return
+L8
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "cc.bc(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic y v:(Ljava/lang/Throwable;Ljava/lang/String;)Leh;
+    athrow

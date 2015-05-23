@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.nullbool.api.Context;
 import org.nullbool.api.util.map.NullPermeableMap;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -68,7 +69,8 @@ public class ClassTree {
 		}
 
 		if (classes.size() == delgates.size() && classes.size() == supers.size() && delgates.size() == supers.size()) {
-			System.out.println(String.format("Built tree for %d classes (%d del, %d sup).", classes.size(), delgates.size(), supers.size()));
+			if(Context.current().getFlags().getOrDefault("basicout", true)) 
+				System.out.println(String.format("Built tree for %d classes (%d del, %d sup).", classes.size(), delgates.size(), supers.size()));
 		} else {
 			System.out.println(String.format("WARNING: Built tree for %d classes (%d del, %d sup), may be erroneous.", classes.size(), delgates.size(),
 					supers.size()));

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nullbool.api.Context;
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -18,7 +18,7 @@ import org.zbot.hooks.FieldHook;
  * @author MalikDz
  */
 @SupportedHooks(fields = { "getNpcDefinition&NPCDefinition", }, methods = {})
-public class NPCAnalyser extends AbstractClassAnalyser {
+public class NPCAnalyser extends ClassAnalyser {
 
 	public NPCAnalyser() throws AnalysisException {
 		super("NPC");

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.nullbool.api.Context;
 import org.nullbool.api.obfuscation.Visitor;
 import org.nullbool.api.util.ClassStructure;
 import org.nullbool.api.util.IntMap;
@@ -96,9 +97,11 @@ public class OpaquePredicateVisitor extends Visitor {
 		// IF_ICMPGE
 		// IF_ICMPLE
 
-		System.err.println("Opaque predicate remover");
-		for (Entry<Integer, Integer> e : counter.entrySet()) {
-			System.out.println("   Removed " + e.getValue() + " " + Printer.OPCODES[e.getKey()] + " types.");
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.err.println("Opaque predicate remover");
+			for (Entry<Integer, Integer> e : counter.entrySet()) {
+				System.out.println("   Removed " + e.getValue() + " " + Printer.OPCODES[e.getKey()] + " types.");
+			}
 		}
 	}
 

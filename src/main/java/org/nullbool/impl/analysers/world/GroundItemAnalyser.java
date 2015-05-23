@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -19,7 +19,7 @@ import org.zbot.hooks.FieldHook;
  * @author MalikDz
  */
 @SupportedHooks(fields = { "getId&I", "getStackSize&I", }, methods = {})
-public class GroundItemAnalyser extends AbstractClassAnalyser {
+public class GroundItemAnalyser extends ClassAnalyser {
 
 	public GroundItemAnalyser() throws AnalysisException {
 		super("GroundItem");

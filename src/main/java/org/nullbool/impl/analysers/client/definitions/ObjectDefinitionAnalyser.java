@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -21,7 +21,7 @@ import org.zbot.hooks.FieldHook;
 @SupportedHooks(fields = { "getName&Ljava/lang/String;", "getWidth&I", "getHeight&I", "getAnimationId&I", "getObjMapScene&I", "getModelWidth&I",
 		"getModelHeight&I", "getModelBreadth&I", "getTranslationX&I", "getTranslationY&I", "getTranslationZ&I", "isWalkable&Z",
 		"getActions&[Ljava/lang/String;", "getIcon&I", "isRotated&Z", "hasCastedShadow&Z", }, methods = {})
-public class ObjectDefinitionAnalyser extends AbstractClassAnalyser {
+public class ObjectDefinitionAnalyser extends ClassAnalyser {
 
 	public ObjectDefinitionAnalyser() throws AnalysisException {
 		super("ObjectDefinition");

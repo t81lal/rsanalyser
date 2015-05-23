@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.nullbool.api.Context;
 import org.nullbool.api.obfuscation.Visitor;
 import org.nullbool.api.util.ClassStructure;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -23,17 +24,23 @@ public class CallVisitor extends Visitor {
 		Map<String, ClassStructure> classesMap = (Map<String, ClassStructure>) contents.getClassContents().namedMap();
 		for (ClassNode cs : classesMap.values())
 			total += cs.methods.size();
-		System.err.println("Dummy method remover");
-		System.out.printf("   %d  total methods.%n", total);
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.err.println("Dummy method remover");
+			System.out.printf("   %d  total methods.%n", total);
+		}
 		List<MethodNode> entries = new ArrayList<>();
 		for (ClassStructure cs : classesMap.values()) {
 			entries.addAll(cs.getMethods(m -> m.name.length() > 2)); // need to do this to check methods inherited from jdk
 			entries.addAll(cs.getMethods(cs::isInherited)); // inherited methods from within the client
 		}
-		System.out.printf("   %d prospect methods.%n", entries.size());
+		if(Context.current().getFlags().getOrDefault("basicout", true))
+			System.out.printf("   %d prospect methods.%n", entries.size());
+		
 		entries.forEach(e -> search(classesMap, e));
 		classesMap.values().forEach(cs -> cs.getMethods(mn -> !cs.callGraph.containsVertex(mn)).forEach(cs.methods::remove));
-		System.out.printf("   Found %d/%d used methods (removed %d dummy methods).%n", used, total, total - used);
+		
+		if(Context.current().getFlags().getOrDefault("basicout", true))
+			System.out.printf("   Found %d/%d used methods (removed %d dummy methods).%n", used, total, total - used);
 	}
 
 	private void search(Map<String, ClassStructure> tree, MethodNode vertex) {

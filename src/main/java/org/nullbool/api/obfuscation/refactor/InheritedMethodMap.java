@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.nullbool.api.Context;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -34,7 +35,8 @@ public class InheritedMethodMap {
 			}
 		}
 
-		System.out.println(String.format("Built map with %d methods connected with %d others.", mCount, aCount));
+		if(Context.current().getFlags().getOrDefault("basicout", true))
+			System.out.println(String.format("Built map with %d methods connected with %d others.", mCount, aCount));
 		
 		//for(ChainData data : methods.values()){
 		//	System.out.println(data);

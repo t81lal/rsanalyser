@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -20,7 +20,7 @@ import org.zbot.hooks.FieldHook;
  */
 @SupportedHooks(fields = { "getHash&I", "getPlane&I", "getStrictX&I", "getStrictY&I", "getLocalX&I", "getLocalY&I", "getWidth&I", "getHeight&I",
 		"getOrientation&I", "getFlags&I", "getMarkedRenderable&Renderable", }, methods = {})
-public class GameObjectAnalyser extends AbstractClassAnalyser {
+public class GameObjectAnalyser extends ClassAnalyser {
 
 	public GameObjectAnalyser() throws AnalysisException {
 		super("GameObject");

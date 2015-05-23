@@ -141,11 +141,13 @@ public class EmptyParamVisitor extends Visitor {
 	}
 
 	public static void print(int[] k, String header) {
-		System.err.println("Unused parameter fixer" + header);
-		System.out.printf("   %d empty parameter static methods changed.%n", k[0]);
-		System.out.printf("   %d empty parameter uninherited virtual methods unchanged.%n", k[1]);
-		System.out.printf("   %d empty parameter inherited methods changed.%n", k[2]);
-		System.out.printf("   Replaced %d calls + pop.%n", k[3]);
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.err.println("Unused parameter fixer" + header);
+			System.out.printf("   %d empty parameter static methods changed.%n", k[0]);
+			System.out.printf("   %d empty parameter uninherited virtual methods unchanged.%n", k[1]);
+			System.out.printf("   %d empty parameter inherited methods changed.%n", k[2]);
+			System.out.printf("   Replaced %d calls + pop.%n", k[3]);
+		}
 	}
 
 	public static int[] cleanVirtual(Collection<? extends ClassNode> classes, MethodNode m, String newDesc, StringBuilder results) {

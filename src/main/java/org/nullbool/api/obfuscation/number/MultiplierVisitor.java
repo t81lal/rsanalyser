@@ -1,5 +1,6 @@
 package org.nullbool.api.obfuscation.number;
 
+import org.nullbool.api.Context;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
 import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
@@ -20,7 +21,8 @@ public class MultiplierVisitor extends NodeVisitor {
 	}
 
 	public void log() {
-		System.err.printf("Found %d encoders and %d decoders.%n", eCount, dCount);
+		if(Context.current().getFlags().getOrDefault("basicout", true))
+			System.err.printf("Found %d encoders and %d decoders.%n", eCount, dCount);
 	}
 
 	public MultiplierHandler getHandler() {

@@ -15,9 +15,11 @@ import org.nullbool.api.util.InstructionIdentifier;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.topdank.banalysis.filter.Filter;
 import org.zbot.hooks.ClassHook;
 import org.zbot.hooks.DynamicDesc;
 import org.zbot.hooks.FieldHook;
@@ -29,13 +31,13 @@ import org.zbot.hooks.ObfuscatedData;
  * @author Bibl (don't ban me pls)
  * @created 4 May 2015
  */
-public abstract class AbstractClassAnalyser implements Opcodes {
+public abstract class ClassAnalyser implements Opcodes {
 
 	private final String name;
 	private ClassNode foundClass;
 	private ClassHook foundHook;
 
-	public AbstractClassAnalyser(String name) {
+	public ClassAnalyser(String name) {
 		this.name = name;
 	}
 
@@ -59,7 +61,8 @@ public abstract class AbstractClassAnalyser implements Opcodes {
 				try {
 					foundHook.getFields().addAll(f.find(foundClass));
 				} catch (Exception e) {
-					System.err.println(f.getClass().getSimpleName() + " -> " + e.getClass().getSimpleName());
+					System.err.println(f.getClass().getCanonicalName() + " -> " + e.getClass().getSimpleName());
+					e.printStackTrace();
 				}
 			}
 		}
@@ -70,7 +73,8 @@ public abstract class AbstractClassAnalyser implements Opcodes {
 				try {
 					foundHook.getMethods().addAll(m.find(foundClass));
 				} catch (Exception e) {
-					System.err.println(m.getClass().getSimpleName() + " -> " + e.getClass().getSimpleName());
+					System.err.println(m.getClass().getCanonicalName() + " -> " + e.getClass().getSimpleName());
+					e.printStackTrace();
 				}
 			}
 		}
@@ -130,14 +134,14 @@ public abstract class AbstractClassAnalyser implements Opcodes {
 	public String findObfClassName(String n) {
 		AbstractAnalysisProvider provider = Context.current();
 		// System.out.println(provider.getAnalysers());
-		Stream<AbstractClassAnalyser> stream = provider.getAnalysers().stream();
+		Stream<ClassAnalyser> stream = provider.getAnalysers().stream();
 		stream = stream.filter(a -> a.foundHook.getRefactored().equals(n));
-		AbstractClassAnalyser a = stream.findFirst().orElse(null);
+		ClassAnalyser a = stream.findFirst().orElse(null);
 		return a != null ? a.foundHook.getObfuscated() : null;
 	}
 
-	public AbstractClassAnalyser getAnalyser(String name) {
-		for (AbstractClassAnalyser a : Context.current().getAnalysers()) {
+	public ClassAnalyser getAnalyser(String name) {
+		for (ClassAnalyser a : Context.current().getAnalysers()) {
 			if (a.getName().equals(name))
 				return a;
 		}
@@ -146,9 +150,9 @@ public abstract class AbstractClassAnalyser implements Opcodes {
 
 	public ClassNode getClassNodeByRefactoredName(String name) {
 		AbstractAnalysisProvider provider = Context.current();
-		Stream<AbstractClassAnalyser> stream = provider.getAnalysers().stream();
+		Stream<ClassAnalyser> stream = provider.getAnalysers().stream();
 		stream = stream.filter(a -> a.foundHook.getRefactored().equals(name));
-		AbstractClassAnalyser a = stream.findFirst().orElse(null);
+		ClassAnalyser a = stream.findFirst().orElse(null);
 		return provider.getClassNodes().get(a.foundHook.getObfuscated());
 	}
 
@@ -167,6 +171,16 @@ public abstract class AbstractClassAnalyser implements Opcodes {
 		s = s.filter(m -> ((FieldNode) m).desc.matches((t)));
 		s = s.filter(f -> Modifier.isStatic(((FieldNode) f).access) == is);
 		return s.count();
+	}
+	
+	public int getFieldCount(ClassNode cn, Filter<FieldNode> filter) {
+		int count = 0;
+		for(FieldNode f : cn.fields) {
+			if(filter.accept(f)) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	public boolean hasFieldValue(ClassNode classnode, Object v) {
@@ -300,6 +314,10 @@ public abstract class AbstractClassAnalyser implements Opcodes {
 		}
 		return null;
 	}
+	
+	public FieldHook asFieldHook(FieldInsnNode f, String realName, boolean isStatic, long multiplier) {
+		return new FieldHook(foundHook, new ObfuscatedData(f.name, realName), new DynamicDesc(f.desc, false), isStatic, multiplier);
+	}
 
 	// TODO:
 	public MethodHook asMethodHook(MethodType type, String classAndName, String realName) {
@@ -323,7 +341,7 @@ public abstract class AbstractClassAnalyser implements Opcodes {
 	}
 
 	public ClassHook getNew(String k) {
-		for (AbstractClassAnalyser analyser : Context.current().getAnalysers()) {
+		for (ClassAnalyser analyser : Context.current().getAnalysers()) {
 			ClassHook c = analyser.getFoundHook();
 			if (c != null) {
 				if (c.getObfuscated().equals(k))
@@ -470,6 +488,22 @@ public abstract class AbstractClassAnalyser implements Opcodes {
 
 	public long findMultiplier(String source, boolean isStatic) {
 		return Context.current().getMultiplierHandler().getDecoder(source);
+	}
+	
+	public AbstractInsnNode findOpcodePattern(MethodNode m, int[] opcodes) {
+		AbstractInsnNode[] insns = m.instructions.toArray();
+		int j = 0;
+		for(int i=0; i < insns.length; i++) {
+			AbstractInsnNode ain = insns[i];
+			if(ain.opcode() == opcodes[j++]) {
+				if(j == opcodes.length)
+					return insns[i - j + 1];
+			} else {
+				j = 0;
+			}
+		}
+		
+		return null;
 	}
 
 	public String getName() {

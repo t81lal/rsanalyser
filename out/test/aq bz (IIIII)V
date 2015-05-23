@@ -1,0 +1,93 @@
+aq bz (IIIII)VL1
+    iconst_0
+    istore 5
+    goto L2
+L3
+    getstatic client lv:[I
+    iload 5
+    iaload
+    getstatic client la:[I
+    iload 5
+    iaload
+    iadd
+    iload 1
+    if_icmple L4
+    goto L5
+L6
+    getstatic client lj:[I
+    iload 5
+    iaload
+    getstatic client lq:[I
+    iload 5
+    iaload
+    iadd
+    iload 0
+    if_icmple L4
+    iload 4
+    ldc 405069353 (java.lang.Integer)
+    if_icmpgt L7
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L7
+    getstatic client lj:[I
+    iload 5
+    iaload
+    iload 2
+    iload 0
+    iadd
+    if_icmpge L4
+    iload 4
+    ldc 405069353 (java.lang.Integer)
+    if_icmpgt L3
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L8
+    return
+L5
+    getstatic client la:[I
+    iload 5
+    iaload
+    iload 1
+    iload 3
+    iadd
+    if_icmpge L4
+    iload 4
+    ldc 405069353 (java.lang.Integer)
+    if_icmpgt L9
+    return
+L2
+    iload 5
+    ldc -1585186025 (java.lang.Integer)
+    getstatic client lt:I
+    imul
+    if_icmpge L8
+    iload 4
+    ldc 405069353 (java.lang.Integer)
+    if_icmpgt L6
+    new java/lang/IllegalStateException
+    dup
+    invokespecial java/lang/IllegalStateException <init>:()V
+    athrow
+L9
+    getstatic client li:[Z
+    iload 5
+    iconst_1
+    bastore
+L4
+    iinc 5 1
+    goto L2
+L10
+    new java/lang/StringBuilder
+    dup
+    invokespecial java/lang/StringBuilder <init>:()V
+    ldc "aq.bz(" (java.lang.String)
+    invokevirtual java/lang/StringBuilder append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    ldc 41 (java.lang.Integer)
+    invokevirtual java/lang/StringBuilder append:(C)Ljava/lang/StringBuilder;
+    invokevirtual java/lang/StringBuilder toString:()Ljava/lang/String;
+    invokestatic client v:(Ljava/lang/Throwable;Ljava/lang/String;)Leb;
+    athrow

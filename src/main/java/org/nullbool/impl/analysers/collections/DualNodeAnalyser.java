@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -19,7 +19,7 @@ import org.zbot.hooks.FieldHook;
  * @author MalikDz
  */
 @SupportedHooks(fields = { "getNextDualNode&DualNode", "getPreviousDualNode&DualNode", }, methods = {})
-public class DualNodeAnalyser extends AbstractClassAnalyser {
+public class DualNodeAnalyser extends ClassAnalyser {
 
 	public DualNodeAnalyser() throws AnalysisException {
 		super("DualNode");

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -24,7 +24,7 @@ import org.zbot.hooks.FieldHook;
 		"getMaleEmblem&I", "getFemaleEmblem&I", "getMaleDialog&I", "getMaleDialogHat&I", "getFemaleDialog&I", "getFemaleDialogHat&I", "getNoteIndex&I",
 		"getNoteTemplateIndex&I", "getModelWidth&I", "getModelHeight&I", "getModelBreadth&I", "getStackedModelLightModifier&I",
 		"getStackedModelShadowModifier&I", "getTeamIndex&I", }, methods = {})
-public class ItemDefinitionAnalyser extends AbstractClassAnalyser {
+public class ItemDefinitionAnalyser extends ClassAnalyser {
 
 	public ItemDefinitionAnalyser() throws AnalysisException {
 		super("ItemDefinition");

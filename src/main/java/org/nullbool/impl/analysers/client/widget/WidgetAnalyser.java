@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nullbool.api.Context;
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -23,7 +23,7 @@ import org.zbot.hooks.FieldHook;
 		"getText&Ljava/lang/String;", "getTextColor&I", "getTextAlpha&I", "getTextureId&I", "getBorderThickness&I", "getModelType&I", "getScrollX&I",
 		"getScrollY&I", "getRelativeX&I", "getRelativeY&I", "getWidth&I", "getHeight&I", "getParentId&I", "getIndex&I", "getRotationX&I", "getRotationY&I",
 		"getRotationZ&I", "getChildren&[Widget", "getWidgetType&I", "getItemId&I", "getStackSize&I", }, methods = {})
-public class WidgetAnalyser extends AbstractClassAnalyser {
+public class WidgetAnalyser extends ClassAnalyser {
 
 	public WidgetAnalyser() throws AnalysisException {
 		super("Widget");

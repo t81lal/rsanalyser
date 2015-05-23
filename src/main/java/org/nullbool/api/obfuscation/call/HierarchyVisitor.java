@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import org.nullbool.api.Context;
 import org.nullbool.api.obfuscation.Visitor;
 import org.nullbool.api.util.ClassStructure;
 import org.objectweb.asm.tree.ClassNode;
@@ -42,7 +43,9 @@ public class HierarchyVisitor extends Visitor {
 				currentSuper = classes.get(currentSuper.superName);
 			}
 		}
-		System.err.printf("Successfully built hierarchy tree for %s classes!%n", classes.size());
+		
+		if(Context.current().getFlags().getOrDefault("basicout", true))
+			System.err.printf("Successfully built hierarchy tree for %s classes!%n", classes.size());
 	}
 
 	private void visitImpl(final Map<String, ClassStructure> classes, final Collection<ClassStructure> superinterfaces, final ClassStructure current) {

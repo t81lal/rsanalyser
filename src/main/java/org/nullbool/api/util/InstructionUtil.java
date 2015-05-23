@@ -5,7 +5,6 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.util.Printer;
 
 public class InstructionUtil implements Opcodes {
 
@@ -34,7 +33,8 @@ public class InstructionUtil implements Opcodes {
 			case LDC:
 				return (int) ((LdcInsnNode) ain).cst;
 			default:
-				throw new IllegalArgumentException(Printer.OPCODES[ain.opcode()]);
+				return -1;
+//				throw new IllegalArgumentException(Printer.OPCODES[ain.opcode()]);
 		}
 	}
 

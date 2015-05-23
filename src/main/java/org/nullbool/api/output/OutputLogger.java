@@ -1,12 +1,15 @@
 package org.nullbool.api.output;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.nullbool.api.AbstractAnalysisProvider;
 import org.nullbool.api.Context;
-import org.nullbool.api.analysis.AbstractClassAnalyser;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.zbot.hooks.ClassHook;
 import org.zbot.hooks.FieldHook;
 import org.zbot.hooks.HookMap;
@@ -22,11 +25,11 @@ public class OutputLogger {
 		AbstractAnalysisProvider provider = Context.current();
 		int longestLine = 0;
 
-		List<AbstractClassAnalyser> analysers = provider.getAnalysers();
+		List<ClassAnalyser> analysers = provider.getAnalysers();
 		List<ClassHook> classes = new ArrayList<ClassHook>();
 		analysers.forEach(a -> classes.add(a.getFoundHook()));
 
-		Map<String, Boolean> flags = provider.getFlagsMap();
+		Map<String, Boolean> flags = provider.getFlags();
 		boolean logResults = flags.getOrDefault("logresults", true);
 		// if (!logResults)
 		// return new HookMap(classes);
@@ -38,14 +41,14 @@ public class OutputLogger {
 		if (logResults)
 			System.out.println();
 
-		int fieldTotalFound = 0;
+		Set<FieldHook> fhooksFound = new HashSet<FieldHook>();
 		int fieldTotalSupported = 0;
-		int methodTotalFound = 0;
+		Set<MethodHook> mhooksFound = new HashSet<MethodHook>();
 		int methodTotalSupported = 0;
 
 		final int maxLength = 40;
 
-		for (AbstractClassAnalyser analyser : analysers) {
+		for (ClassAnalyser analyser : analysers) {
 			ClassHook classHook = analyser.getFoundHook();
 			StringBuilder nameSb = new StringBuilder();
 			StringBuilder sb = new StringBuilder();
@@ -119,8 +122,10 @@ public class OutputLogger {
 					sb1.append(") couldn't be identified.");
 					sb.append(sb1.toString());
 					sb.append("\n");
+					System.out.printf("%s %s broke!%n", parts[0], parts[1]);
 				} else {
 					fieldsFound++;
+					fhooksFound.add(hook);
 					StringBuilder sb1 = new StringBuilder();
 					sb1.append(" ^  ");
 					sb1.append(longstring(parts[0], maxLength));
@@ -176,6 +181,7 @@ public class OutputLogger {
 					sb.append(sb1.toString());
 					sb.append("\n");
 				} else {
+					mhooksFound.add(hook);
 					methodsFound++;
 					StringBuilder sb1 = new StringBuilder();
 					sb1.append(" º  ");
@@ -210,27 +216,46 @@ public class OutputLogger {
 			if (broke) {
 				nameSb.append(" <--- BROKE");
 			}
-			fieldTotalFound += fieldsFound;
-			methodTotalFound += methodsFound;
+//			fieldTotalFound += fieldsFound;
+//			methodTotalFound += methodsFound;
 			if (logResults) {
 				System.out.println(nameSb.toString());
 				System.out.println(sb.toString());
 			} else if (broke) {
-				System.out.println("(Broke)");
+				System.out.printf("%s broke.%n", classHook.getRefactored());
 			}
 		}
 
 		System.out.printf("Results for rev %s%n", provider.getRevision().getName());
-		System.out.printf("(%d/%d) fields.%n", fieldTotalFound, fieldTotalSupported);
-		System.out.printf("(%d/%d) methods.%n", methodTotalFound, methodTotalSupported);
+		System.out.printf("(%d/%d) methods.%n", classes.size(), analysers.size());
+		System.out.printf("(%d/%d) fields.%n", fhooksFound.size(), fieldTotalSupported);
+		System.out.printf("(%d/%d) methods.%n", mhooksFound.size(), methodTotalSupported);
 		
-		printDetails(classes);
+		if(logResults)
+			printDetails(classes);
+		
 		if (debug)
 			System.out.println("Longest: " + longestLine);
 
 		return new HookMap(classes);
 	}
+	
+	private static Set<FieldHook> f_collect(Collection<ClassHook> classes) {
+		Set<FieldHook> set = new HashSet<FieldHook>();
+		for(ClassHook c : classes) {
+			set.addAll(c.getFields());
+		}
+		return set;
+	}
 
+	private static Set<MethodHook> m_collect(Collection<ClassHook> classes) {
+		Set<MethodHook> set = new HashSet<MethodHook>();
+		for(ClassHook c : classes) {
+			set.addAll(c.getMethods());
+		}
+		return set;
+	}
+	
 	private static void printDetails(List<ClassHook> classes) {
 		System.out.printf("%d class hooks.%n", classes.size());
 		int fCount = 0;
@@ -329,15 +354,23 @@ public class OutputLogger {
 
 	private static MethodHook foundMethod(boolean verify, String name, String desc, List<MethodHook> hooks, List<ClassHook> classes) {
 		MethodHook h = null;
-		for (MethodHook hook : hooks) {
-			if (hook.getName().getRefactored().equals(name)) {
-				if (h != null) {
-					throw new IllegalStateException(h + ", " + hook + " found twice.");
-				} else {
-					hook.setMarked(true);
-					h = hook;
+		MethodHook h1 = null;
+		try {
+			for (MethodHook hook : hooks) {
+				h1 = hook;
+				if (hook.getName().getRefactored().equals(name)) {
+					if (h != null) {
+						throw new IllegalStateException(h + ", " + hook + " found twice.");
+					} else {
+						hook.setMarked(true);
+						h = hook;
+					}
 				}
 			}
+		} catch(Exception e) {
+			System.out.flush();
+			System.err.flush();
+			System.err.printf("Wtf at %s.%n", name);
 		}
 		if (verify)
 			try {

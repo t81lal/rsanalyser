@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.nullbool.api.Context;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -163,11 +164,14 @@ public class BytecodeRefactorer implements Opcodes {
 			cn.interfaces = newInterfaces;
 		}
 		
-		System.out.printf("Changed: %n");
-		System.out.printf("   %d classes and %d interfaces. %n", classc, iface);
-		System.out.printf("   %d fields  and %d field calls. %n", fieldNodes, fieldCalls);
-		System.out.printf("   %d methods and %d method calls. %n", methodNodes, methodCalls);
-		System.out.printf("   %d news, %d anewarrays, %d checkcasts, %d instancofs, %d mnewarrays. %n", newCalls, newArray, checkcasts, instances, mArrray);
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.out.printf("Changed: %n");
+			System.out.printf("   %d classes and %d interfaces. %n", classc, iface);
+			System.out.printf("   %d fields  and %d field calls. %n", fieldNodes, fieldCalls);
+			System.out.printf("   %d methods and %d method calls. %n", methodNodes, methodCalls);
+			System.out.printf("   %d news, %d anewarrays, %d checkcasts, %d instancofs, %d mnewarrays. %n", newCalls, newArray, checkcasts, instances, mArrray);
+		}
+
 	}
 	
 	public String transformMethodDesc(String desc){
@@ -322,7 +326,7 @@ public class BytecodeRefactorer implements Opcodes {
 	}
 	
 	private MethodNode findMethod(String owner, String name, String desc){
-		/*ClassNode cn = classTree.getClasses().get(owner);
+		ClassNode cn = classTree.getClasses().get(owner);
 		if(cn == null)
 			return null;
 		//throw new IllegalStateException(String.format("Class %s is not present in the cache. (%s.%s %s)", owner, owner, name, desc));
@@ -331,14 +335,17 @@ public class BytecodeRefactorer implements Opcodes {
 			if(m.halfKey().equals(halfKey))
 				return m;
 		}
-		return null;*/
+		return null;
 
 		/*Data is cached and recalled when needed because of a runtime issue.
 		 *Take class K with a method M. When the method K.M is renamed, if we
 		 *attempt to do a deep search to find the MethodNode it will fail, since
 		 *the key K.M will actually be be looking for Kn.M where Kn is the new name
-		 *of class K.*/
+		 *of class K.
+		 */
+		/*
 		return methodCache.get(owner, name, desc);
+		*/
 	}
 	
 	public String getMappedMethodName(MethodNode m) {
