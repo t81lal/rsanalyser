@@ -8,7 +8,7 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
-import org.nullbool.api.obfuscation.flow.FlowDeobber;
+import org.nullbool.api.obfuscation.flow.ControlFlowGraph;
 import org.nullbool.api.util.DescFilter;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -82,11 +82,13 @@ public class BufferAnalyser extends ClassAnalyser {
 							if(subequals(visitor.shiftOrders, new int[]{8, 0, 24, 16})) {
 								list.add(asMethodHook(MethodType.CALLBACK, m, "writeInvertedLEInt"));
 								
-								FlowDeobber deobber = new FlowDeobber();
+								ControlFlowGraph.build(m);
+//								FlowBuilder.create(m);
+//								FlowDeobber deobber = new FlowDeobber();
 //								Block.PRINT_INSNS = false;
-								deobber.accept(m);
-								System.out.println(m);
-								System.err.println(deobber.graph);
+//								deobber.accept(m);
+//								System.out.println(m);
+//								System.err.println(deobber.graph);
 
 							}
 						} else if(visitor.tCount == 3) {
