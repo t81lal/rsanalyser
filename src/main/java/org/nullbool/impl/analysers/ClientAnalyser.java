@@ -58,7 +58,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	protected List<IFieldAnalyser> registerFieldAnalysers() {
 		return Arrays.asList(new ActorArrayHook(), new CurrentRegionHook(), new WidgetPositionXY(), new CanvasPlayerHook(), new ClientArrayHooks(),
 				new MenuScreenHooks(), new GroundItemsHook(), new TileInfoHooks(), new MinimapHooks(), new CameraHooks(), new BaseXYHooks(), new WidgetsHook(),
-				new SettingsHook());
+				new SettingsHook(), new CredentialAnalyser());
 	}
 
 	@Override
@@ -642,6 +642,30 @@ public class ClientAnalyser extends ClassAnalyser {
 			// )
 		}
 	}
+	
+	public class CredentialAnalyser implements IFieldAnalyser {
+		 
+		@Override
+		public List<FieldHook> find(ClassNode cn){
+			List<FieldHook> list = new ArrayList<FieldHook>();
+			
+			//TODO: FIX
+			/*
+			final String methodPattern = ";L" + findObfClassName("Gameshell") + ";.{0,1};V";
+			MethodNode[] filteredMethods = findMethods(Context.current().getClassNodes(), methodPattern, true);
+			MethodNode method = startWithBc(new String[] { "getstatic", "ifeq" }, filteredMethods)[0];
+			final String[] fieldPattern = { "iconst_0", "putstatic", "ldc", "putstatic", "ldc", "putstatic", "iconst_0" };
+ 
+			String h = findField(method, false, true, 2, 's', fieldPattern);
+			list.add(asFieldHook("getUsername()", h));
+ 
+			h = findField(method, false, true, 3, 's', fieldPattern);
+			list.add(asFieldHook("getPassword()", h));*/
+			
+			return list;
+		}
+	}
+
 
 	public static void test(Throwable t) {
 		System.out.println("[Client] " + t.getClass().getCanonicalName() + " " + t.getMessage());

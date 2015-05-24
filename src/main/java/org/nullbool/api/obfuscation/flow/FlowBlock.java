@@ -20,6 +20,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.MultiANewArrayInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
+import org.topdank.banalysis.filter.Filter;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -38,6 +39,9 @@ public class FlowBlock {
 	private final List<AbstractInsnNode> insns;
 	private final List<FlowBlock> predecessors;
 	private final List<FlowBlock> successors;
+
+	private FlowBlock prevBlock;
+	private FlowBlock nextBlock;
 
 	public FlowBlock(String id, MethodNode method, LabelNode label, Map<LabelNode, String> labels) {
 		this(true, id, method, label, labels);
@@ -92,6 +96,39 @@ public class FlowBlock {
 
 	public List<FlowBlock> successors() {
 		return successors;
+	}
+
+	public FlowBlock previous() {
+		return prevBlock;
+	}
+
+	public void setPrevious(FlowBlock prevBlock) {
+		this.prevBlock = prevBlock;
+	}
+
+	public FlowBlock next() {
+		return nextBlock;
+	}
+
+	public void setNext(FlowBlock nextBlock) {
+		this.nextBlock = nextBlock;
+	}
+
+	public BlockType type() {
+		if (BlockType.EMPTY.filter.accept(this)) {
+			return BlockType.EMPTY;
+		} else if (BlockType.END.filter.accept(this)) {
+			return BlockType.END;
+		}
+		return BlockType.IMMEDIATE;
+	}
+	
+	public boolean accept(Filter<AbstractInsnNode> filter) {
+		for (AbstractInsnNode ain : insns) {
+			if (filter.accept(ain))
+				return true;
+		}
+		return false;
 	}
 
 	@Override

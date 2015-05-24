@@ -9,6 +9,7 @@ import org.nullbool.api.Revision;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.impl.analysers.ClientAnalyser;
+import org.nullbool.impl.analysers.GameshellAnalyser;
 import org.nullbool.impl.analysers.client.CanvasAnalyser;
 import org.nullbool.impl.analysers.client.ExceptionReporterAnalyser;
 import org.nullbool.impl.analysers.client.WrappedExceptionAnalyser;
@@ -51,6 +52,6 @@ public class AnalysisProviderImpl extends AbstractAnalysisProvider {
 				new RasteriserAnalyser(), new RenderableAnalyser(), new ActorAnalyser(), new DequeAnalyser(), new NPCAnalyser(), new IsaacCipherAnalyser(), new BufferAnalyser(), new PacketAnalyser(), new HashtableAnalyser(), new GroundItemAnalyser(),
 				new RegionAnalyser(), new NPCDefinitionAnalyser(), new ObjectDefinitionAnalyser(), new ItemDefinitionAnalyser(), new ModelAnalyser(),
 				new PlayerAnalyser(), new TileAnalyser(), new WidgetNodeAnalyser(), new GameObjectAnalyser(), new WallObjectAnalyser(), new WidgetAnalyser(),
-				new WallDecorationAnalyser(), new GroundObjectAnalyser(), new GroundDecorationAnalyser(), new ClientAnalyser());
+				new WallDecorationAnalyser(), new GroundObjectAnalyser(), new GroundDecorationAnalyser(), new GameshellAnalyser(), new ClientAnalyser());
 	}
 }

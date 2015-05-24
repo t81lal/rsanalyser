@@ -1,7 +1,6 @@
 package org.nullbool.api.obfuscation.flow;
 
 import static org.nullbool.api.util.LabelHelper.createBlockName;
-import static org.nullbool.api.util.LabelHelper.numeric;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +10,6 @@ import java.util.Map;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -24,77 +22,39 @@ import org.objectweb.asm.tree.TryCatchBlockNode;
 public class ControlFlowGraph implements Opcodes {
 
 	private final List<FlowBlock> blocks;
+	private final Map<LabelNode, String> labels;
+	private final Map<String, LabelNode> reverseLabels;
+	private final List<LabelNode> handlerLabels;
+	private final Map<LabelNode, FlowBlock> labelMap;
+	private final List<FlowBlock> emptyBlocks;
+	
+	private MethodNode method;
 	
 	public ControlFlowGraph() {
-		blocks = new ArrayList<FlowBlock>();
+		blocks        = new ArrayList<FlowBlock>();
+		labels        = new HashMap<LabelNode, String>();
+		reverseLabels = new HashMap<String, LabelNode>();
+		handlerLabels = new ArrayList<LabelNode>();
+		labelMap      = new HashMap<LabelNode, FlowBlock>();
+		emptyBlocks   = new ArrayList<FlowBlock>();
 	}
 	
-	public static void build(MethodNode method) {
-		FlowBlock currentBlock = null;
-		int b_count = 0;
+	public void destroy() {
+		blocks.clear();
+		labels.clear();
+		reverseLabels.clear();
+		handlerLabels.clear();
+		labelMap.clear();
+	}
+	
+	public void create(MethodNode method) {
+		this.method = method;
 		
-		ControlFlowGraph graph        = new ControlFlowGraph();
-		Map<LabelNode, String> labels = new HashMap<LabelNode, String>();
-		Map<String, LabelNode> reverseLabels = new HashMap<String, LabelNode>();
-		List<LabelNode> handlerLabels = new ArrayList<LabelNode>();
+		captureHandlerBlocks();
+		constructBlocks();
+		mapBlockLabels();
 		
-		for(TryCatchBlockNode block : method.tryCatchBlocks) {
-			handlerLabels.add(block.handler);
-		}
-		
-		AbstractInsnNode[] ains = method.instructions.toArray();
-		for(int i=0; i < ains.length; i++) {
-			AbstractInsnNode ain = ains[i];
-			if(ain instanceof LabelNode) {
-				if(currentBlock != null) {
-					graph.blocks.add(currentBlock);
-				}
-				
-				String name  = createBlockName(++b_count);
-				LabelNode label = (LabelNode) ain;
-				currentBlock = new FlowBlock((currentBlock == null || handlerLabels.contains(label)) ? false : true, name, method, label, labels);
-				labels.put(label, name);
-				reverseLabels.put(name, label);
-			} else if(ain.opcode() != -1) {
-				currentBlock.insns().add(ain);
-			}
-		}
-		
-		/* add the last block since it wont be added until we meet a LabelNode and we can
-		 * only meet a LabelNode at the start of the block (and the start of a block
-		 * won't be at the end of the code.*/
-		if(currentBlock != null) {
-			graph.blocks.add(currentBlock);
-		}
-
-		System.out.printf("Structured %d flowblocks.%n", b_count);
-		
-		Map<LabelNode, FlowBlock> labelMap = new HashMap<LabelNode, FlowBlock>();
-		for(FlowBlock block : graph.blocks) {
-			labelMap.put(block.label(), block);
-			System.out.println("lab " + block.label());
-		}
-		
-		for(TryCatchBlockNode block : method.tryCatchBlocks) {
-			FlowBlock start = labelMap.get(block.start);
-			FlowBlock end   = labelMap.get(block.end);
-			System.out.println("end " + block.end);
-			FlowBlock handl = labelMap.get(block.handler); 
-			System.out.println(start.id());
-			System.out.println(end.id());
-			System.out.println(handl.id());
-			for(int i=numeric(start.id()); i < numeric(end.id()); i++) {
-				String name = createBlockName(i);
-				FlowBlock b = labelMap.get(reverseLabels.get(name));
-				
-				handl.predeccessors().add(b);
-				b.successors().add(handl);
-			}
-			
-			System.out.println("handler: " + labels.get(block.handler));
-			System.out.println("start: " + labels.get(block.start));
-			System.out.println("end: " + labels.get(block.end));
-		}
+		System.out.printf("Structured %d flowblocks.%n", blocks.size());
 		
 		/* now we have to go through the constructed blocks and add predecessors and
 		 * successors to each block.
@@ -114,9 +74,94 @@ public class ControlFlowGraph implements Opcodes {
 		 *  the handler block is a predecessors.
 		 * */
 		
-		//TODO: add all
-	    
-		for(FlowBlock block : graph.blocks) {
+		collateEmptyBlocks();
+		
+		System.out.printf("%d empty blocks.%n", emptyBlocks.size());
+		blocks.removeAll(emptyBlocks);
+		
+		graphExceptions();
+		graphTogether();
+		
+		merge();
+		
+		System.out.println(this);
+		
+	}
+	
+	private void captureHandlerBlocks() {
+		for(TryCatchBlockNode block : method.tryCatchBlocks) {
+			handlerLabels.add(block.handler);
+		}
+	}
+	
+	private void constructBlocks() {
+		FlowBlock currentBlock = null;
+		int b_count = 0;
+		
+		AbstractInsnNode[] ains = method.instructions.toArray();
+		for(int i=0; i < ains.length; i++) {
+			AbstractInsnNode ain = ains[i];
+			if(ain instanceof LabelNode) {
+				if(currentBlock != null) {
+					blocks.add(currentBlock);
+				}
+				
+				String name  = createBlockName(++b_count);
+				LabelNode label = (LabelNode) ain;
+				currentBlock = new FlowBlock((currentBlock == null || handlerLabels.contains(label)) ? false : true, name, method, label, labels);
+				labels.put(label, name);
+				reverseLabels.put(name, label);
+			} else if(ain.opcode() != -1) {
+				currentBlock.insns().add(ain);
+			}
+		}
+		
+		/* add the last block since it wont be added until we meet a LabelNode and we can
+		 * only meet a LabelNode at the start of the block (and the start of a block
+		 * won't be at the end of the code.*/
+		if(currentBlock != null) {
+			blocks.add(currentBlock);
+		}
+	}
+	
+	private void collateEmptyBlocks() {
+		for (FlowBlock block : blocks) {
+			if (block.type() == BlockType.EMPTY)
+				emptyBlocks.add(block);
+		}
+	}
+	
+	private void mapBlockLabels() {
+		for(FlowBlock block : blocks) {
+			labelMap.put(block.label(), block);
+		}
+	}
+	
+	private void graphExceptions() {
+		/*for(TryCatchBlockNode block : method.tryCatchBlocks) {
+		FlowBlock start = labelMap.get(block.start);
+		FlowBlock end   = labelMap.get(block.end);
+		System.out.println("end " + block.end);
+		FlowBlock handl = labelMap.get(block.handler); 
+		System.out.println(start.id());
+		System.out.println(end.id());
+		System.out.println(handl.id());
+		for(int i=numeric(start.id()); i < numeric(end.id()); i++) {
+			String name = createBlockName(i);
+			FlowBlock b = labelMap.get(reverseLabels.get(name));
+
+			handl.predeccessors().add(b);
+			b.successors().add(handl);
+		}
+
+		System.out.println("handler: " + labels.get(block.handler));
+		System.out.println("start: " + labels.get(block.start));
+		System.out.println("end: " + labels.get(block.end));
+		}*/
+	}
+	
+	private void graphTogether() {
+		for(FlowBlock block : blocks) {
 			AbstractInsnNode last = block.last();
 			switch(last.opcode()) {
 				case GOTO: {
@@ -138,10 +183,12 @@ public class ControlFlowGraph implements Opcodes {
 					continue;
 			}
 		}
-		
+	}
+	
+	private void merge() {
 		/* we can merge a block if it is movable and has 1 predecessor*/
 		
-		InsnList newInsns = new InsnList();
+		/*InsnList newInsns = new InsnList();
 		for(int i=graph.blocks.size(); i >= 1; i--) {
 			FlowBlock block = graph.blocks.get(i - 1);
 			if(block.isMovable()) {
@@ -154,9 +201,22 @@ public class ControlFlowGraph implements Opcodes {
 					newInsns.add(ain);
 				}
 			}
-		}
+		}*/
 		
-		System.out.println(graph);
+		FlowBlock previous = null;
+		for (FlowBlock block : blocks) {
+			if (previous != null) {
+				previous.setNext(block);
+				block.setPrevious(previous);
+			}
+			FlowBlock target = targetOf(block);
+			if (target != null) {
+				block.setTarget(target);
+				block.addSuccessor(target);
+				target.addPredecessor(block);
+			}
+			previous = block;
+		}
 	}
 	
 	@Override

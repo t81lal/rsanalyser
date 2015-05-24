@@ -82,7 +82,8 @@ public class BufferAnalyser extends ClassAnalyser {
 							if(subequals(visitor.shiftOrders, new int[]{8, 0, 24, 16})) {
 								list.add(asMethodHook(MethodType.CALLBACK, m, "writeInvertedLEInt"));
 								
-								ControlFlowGraph.build(m);
+								new ControlFlowGraph().create(m);
+//								ControlFlowGraph.build(m);
 //								FlowBuilder.create(m);
 //								FlowDeobber deobber = new FlowDeobber();
 //								Block.PRINT_INSNS = false;
