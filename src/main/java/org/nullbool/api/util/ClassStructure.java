@@ -49,6 +49,18 @@ public class ClassStructure extends ClassNode {
 		}
 	}
 
+	public static ClassStructure create(String name) {
+		try {
+			final ClassReader cr = new ClassReader(name);
+			final ClassStructure cs = new ClassStructure();
+			// TODO: edited to SKIP_FRAMES
+			cr.accept(cs, ClassReader.SKIP_FRAMES);
+			return cs;
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
 	public byte[] getBytes(final boolean cached) {
 		if (cached && bytes != null)
 			return bytes;

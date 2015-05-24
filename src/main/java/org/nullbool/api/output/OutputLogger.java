@@ -22,6 +22,7 @@ import org.zbot.hooks.MethodHook;
 public class OutputLogger {
 
 	public static HookMap output() {
+		long start = System.currentTimeMillis();
 		AbstractAnalysisProvider provider = Context.current();
 		int longestLine = 0;
 
@@ -129,7 +130,7 @@ public class OutputLogger {
 					sb.append("\n");
 					
 					unidf.add(s);
-					System.out.printf("%s %s broke!%n", parts[0], parts[1]);
+//					System.out.printf("%s %s broke!%n", parts[0], parts[1]);
 				} else {
 					fieldsFound++;
 					fhf++;
@@ -232,20 +233,27 @@ public class OutputLogger {
 				System.out.println(sb.toString());
 			} else if (broke) {
 				System.err.printf("%s broke.%n", classHook.getRefactored());
+				System.err.flush();
+				System.out.flush();
 				
 				for(String uf : unidf) {
 					String[] parts = uf.split("&");
+					System.err.flush();
 					System.err.printf("  ^ %s %s broke.%n", parts[0], parts[1]);
 				}
 				
 				for(String um : unidm) {
 					String[] parts = um.split("&");
+					System.err.flush();
 					System.err.printf("  ^ %s %s broke.%n", parts[0], parts[1]);
 				}
+				
+				System.err.flush();
+				System.out.flush();
 			}
 		}
 
-		System.out.printf("Results for rev %s%n", provider.getRevision().getName());
+		System.out.printf("Results for rev %s (d=%dms, a=%dms, o=%dms)%n", provider.getRevision().getName(), provider.getDeobTime(), provider.getAnalysisTime(), (System.currentTimeMillis() - start));
 		System.out.printf("(%d/%d) classes (%d hooks).%n", classes.size(), analysers.size(), classes.size());
 		System.out.printf("(%d/%d) fields (%d hooks).%n", fhf, fieldTotalSupported, f_collect(classes).size());
 		System.out.printf("(%d/%d) methods (%d hooks).%n", mhf, methodTotalSupported, m_collect(classes).size());

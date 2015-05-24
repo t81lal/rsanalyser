@@ -53,6 +53,9 @@ public abstract class AbstractAnalysisProvider {
 	private final String[] instructions;
 	private final Map<String, String[]> patternMap;
 	private final Map<String, Boolean> flags;
+	private long startTime;
+	private long deobTime;
+	private long analysisTime;
 	private ClassTree classTree;
 	private List<ClassAnalyser> analysers;
 	private MultiplierHandler multiplierHandler;
@@ -72,17 +75,26 @@ public abstract class AbstractAnalysisProvider {
 	}
 
 	public void run() throws AnalysisException {
+		startTime         = System.currentTimeMillis();
 		classTree         = new ClassTree(contents.getClassContents());
 		multiplierHandler = new MultiplierHandler();
 		deobfuscate();
+		
+		deobTime = System.currentTimeMillis() - startTime;
 
-		dumpDeob();
+		if (!flags.getOrDefault("nodump", false)) {
+			dumpDeob();
+		}
 
+		long now = System.currentTimeMillis();
+		
 		if (!flags.getOrDefault("justdeob", false)) {
 			analysers = registerAnalysers();
 			if (analysers != null && analysers.size() != 0)
 				analyse();
 
+			analysisTime = System.currentTimeMillis() - now;
+			
 			try {
 				output();
 			} catch(Exception e) {
@@ -93,7 +105,7 @@ public abstract class AbstractAnalysisProvider {
 		Context.unbind();
 	}
 
-	private void output() {		
+	private void output() {
 		HookMap hookMap = OutputLogger.output();
 
 		for (ClassHook h : hookMap.getClasses()) {
@@ -109,7 +121,9 @@ public abstract class AbstractAnalysisProvider {
 			// HookMap map = new HookMap();
 		}
 		
-		dumpJar(hookMap);
+		if (!flags.getOrDefault("nodump", false)) {
+			dumpJar(hookMap);
+		}
 	}
 
 	private void writeLog(HookMap map) {
@@ -358,6 +372,18 @@ public abstract class AbstractAnalysisProvider {
 	
 	public ClassTree getClassTree() {
 		return classTree;
+	}
+
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public long getDeobTime() {
+		return deobTime;
+	}
+
+	public long getAnalysisTime() {
+		return analysisTime;
 	}
 
 	private String[] getAllInstructions() {

@@ -22,6 +22,10 @@ import org.zbot.hooks.MethodHook;
 import org.zbot.hooks.MethodHook.MethodType;
 
 @SupportedHooks(fields = {"getResults&[I", "getMem&[I", "getCount&I"}, methods = {"init&()V", "next&()I", "isaac&()V"})
+/**
+ * @author Bibl (don't ban me pls)
+ * @created 23 May 2015
+ */
 public class IsaacCipherAnalyser extends ClassAnalyser {
 	
 	private static final int[] CREATE_ARRAY_PATTERN = new int[]{SIPUSH, NEWARRAY, PUTFIELD};
@@ -148,7 +152,7 @@ public class IsaacCipherAnalyser extends ClassAnalyser {
 				list.add(asMethodHook(MethodType.CALLBACK, isaacMethod, "isaac"));
 			}
 	             
-			return list;   
+			return list;
 		}
 	}
 	

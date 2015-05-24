@@ -8,5 +8,9 @@ public interface IBuffer {
 
     int getCaret();
 
+    void writeInvertedLEInt(int i);
+
+    void writeLE24(int i, byte b0);
+
     void enableEncryption(BigInteger biginteger, byte b0);
 }

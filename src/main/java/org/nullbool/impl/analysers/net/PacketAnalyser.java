@@ -22,6 +22,10 @@ import org.zbot.hooks.MethodHook;
 import org.zbot.hooks.MethodHook.MethodType;
 
 @SupportedHooks(fields = { "getCipher&IsaacCipher", "getBitCaret&I"}, methods = { "initCipher&([I)V", "initBitAccess&()V", "finishBitAccess&()V", "readableBytes&(I)I", "readBits&(I)I"})
+/**
+ * @author Bibl (don't ban me pls)
+ * @created 23 May 2015
+ */
 public class PacketAnalyser extends ClassAnalyser {
 
 	private static final int[] INIT_CIPHER_PATTERN = new int[]{INVOKESPECIAL, PUTFIELD};

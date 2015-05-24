@@ -3,9 +3,11 @@ package org.nullbool.api.analysis;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -504,6 +506,32 @@ public abstract class ClassAnalyser implements Opcodes {
 
 	public long findMultiplier(String source, boolean isStatic) {
 		return Context.current().getMultiplierHandler().getDecoder(source);
+	}
+	
+	public Set<MethodNode> findMethodsByPattern(MethodNode[] methods, int[] opcodes) {
+		Set<MethodNode> set = new HashSet<MethodNode>();
+		
+		for(MethodNode m : methods) {
+			for(AbstractInsnNode[] ains : findAllOpcodePatterns(m, opcodes)) {
+				AbstractInsnNode ain = ains[0];
+				set.add(ain.method);
+			}
+		}
+		
+		return set;
+	}
+	
+	public Set<MethodNode> findMethodsByPattern(ClassNode cn, int[] opcodes) {
+		Set<MethodNode> set = new HashSet<MethodNode>();
+		
+		for(MethodNode m : cn.methods) {
+			for(AbstractInsnNode[] ains : findAllOpcodePatterns(m, opcodes)) {
+				AbstractInsnNode ain = ains[0];
+				set.add(ain.method);
+			}
+		}
+		
+		return set;
 	}
 	
 	public List<AbstractInsnNode[]> findAllOpcodePatterns(MethodNode m, int[] opcodes) {

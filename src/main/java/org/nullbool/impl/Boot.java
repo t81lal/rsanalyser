@@ -21,9 +21,30 @@ public class Boot {
 
 	public static void main(String[] args) throws Exception {
 //		runLatest(71);
-//		run(70, revision, 4);
 //		runLast10();
-		runTest(revision);
+//		runTest(revision);
+		
+		runLatest(revision);
+//		run(70, revision, 2);
+		
+//		deob(revision);
+	}
+	
+	private static void deob(int revision) throws Exception {
+		AbstractAnalysisProvider provider = new AnalysisProviderImpl(new Revision(Integer.toString(revision), new File(Boot.class.getResource(
+				"/jars/gamepack" + revision + ".jar").toURI())));
+		Map<String, Boolean> flags = provider.getFlags();
+		flags.put("nodump", false);
+		flags.put("debug", false);
+		flags.put("reorderfields", true);
+		flags.put("multis", true);
+		flags.put("logresults", true);
+		flags.put("verify", false);
+		flags.put("justdeob", true);
+ 
+		Context.bind(provider);
+		provider.run();
+//		Context.unbind();
 	}
 	
 	private static void runLast10() {
@@ -44,6 +65,7 @@ public class Boot {
 		
 		AbstractAnalysisProvider provider = new AnalysisProviderImpl(new Revision(Integer.toString(j), new File(Boot.class.getResource("/jars/gamepack" + j + ".jar").toURI())));
 		Map<String, Boolean> flags = provider.getFlags();
+		flags.put("nodump", true);
 		flags.put("debug", false);
 		flags.put("reorderfields", true);
 		flags.put("multis", false);
@@ -77,6 +99,7 @@ public class Boot {
 						AbstractAnalysisProvider provider = new AnalysisProviderImpl(new Revision(Integer.toString(j), new File(Boot.class.getResource(
 								"/jars/gamepack" + j + ".jar").toURI())));
 						Map<String, Boolean> flags = provider.getFlags();
+//						flags.put("nodump", true);
 						flags.put("debug", false);
 						flags.put("reorderfields", true);
 						flags.put("multis", false);
@@ -88,8 +111,13 @@ public class Boot {
 						//flags.put("justdeob", true);
 
 						Context.bind(provider);
-						Context.block();
-						provider.run();
+						try {
+							Context.block();
+							provider.run();
+						} catch(RuntimeException e2) {
+							System.err.println("Timeout for r" + j);
+							e2.printStackTrace();
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -106,6 +134,7 @@ public class Boot {
 		AbstractAnalysisProvider provider = new AnalysisProviderImpl(new Revision(Integer.toString(revision), new File(Boot.class.getResource(
 				"/jars/gamepack" + revision + ".jar").toURI())));
 		Map<String, Boolean> flags = provider.getFlags();
+		flags.put("nodump", false);
 		flags.put("debug", false);
 		flags.put("reorderfields", true);
 		flags.put("multis", true);
