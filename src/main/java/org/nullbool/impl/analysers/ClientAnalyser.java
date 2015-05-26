@@ -38,7 +38,7 @@ import org.zbot.hooks.MethodHook.MethodType;
 		"getRealLevels&[I", "getSkillsExp&[I", "getSelectedItem&I", "isMenuOpen&Z", "getMenuX&I", "getMenuY&I", "getMenuWidth&I", "getMenuHeight&I",
 		"getMenuSize&I", "getGroundItems&[[[Deque", "getTileSettings&[[[B", "getTileHeights&[[[I", "getMapScale&I", "getMapOffset&I", "getMapAngle&I",
 		"getPlane&I", "getCameraX&I", "getCameraY&I", "getCameraZ&I", "getCameraYaw&I", "getCameraPitch&I", "getBaseX&I", "getBaseY&I", "getWidgets&[[Widget",
-		"getClientSettings&[I", "getWidgetsSettings&[I", }, 
+		"getClientSettings&[I", "getWidgetsSettings&[I","getHoveredRegionTileX&I","getHoveredRegionTileY&I"}, 
 		
 		methods = { "loadObjDefinition&(II)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
 		"getPlayerModel&(I)LModel;", "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&?" })
@@ -52,7 +52,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	protected List<IFieldAnalyser> registerFieldAnalysers() {
 		return Arrays.asList(new ActorArrayHook(), new CurrentRegionHook(), new WidgetPositionXY(), new CanvasPlayerHook(), new ClientArrayHooks(),
 				new MenuScreenHooks(), new GroundItemsHook(), new TileInfoHooks(), new MinimapHooks(), new CameraHooks(), new BaseXYHooks(), new WidgetsHook(),
-				new SettingsHook(), new CredentialAnalyser());
+				new SettingsHook(), new CredentialAnalyser() , new RegionWalkingHooks());
 	}
 
 	@Override
@@ -63,6 +63,25 @@ public class ClientAnalyser extends ClassAnalyser {
 	@Override
 	public boolean matches(ClassNode c) {
 		return c.name.equalsIgnoreCase("client");
+	}
+	
+	
+	public class RegionWalkingHooks implements IFieldAnalyser {
+ 
+		@Override
+		public List<FieldHook> find(ClassNode cn){
+			List<FieldHook> list = new ArrayList<FieldHook>();
+			MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";L.{0,3};IIIIII.{0,2};V", false);
+			final MethodNode m = identifyMethod(mn, false, "iload 7", "bipush 7", "ishl");
+ 
+			String h = findField(m, true, true, 1, 's', "iload 8","putstatic .* I");//wheres the class name?
+			list.add(asFieldHook(getNew(h.split("\\.")[0]), h,"getHoveredRegionTileX"));
+ 
+			h = findField(m, true, true, 1, 's', "iload 7","putstatic .* I");
+			list.add(asFieldHook(getNew(h.split("\\.")[0]), h,"getHoveredRegionTileY"));
+ 
+			return list;
+		}
 	}
 
 	public class CanvasPlayerHook implements IFieldAnalyser {

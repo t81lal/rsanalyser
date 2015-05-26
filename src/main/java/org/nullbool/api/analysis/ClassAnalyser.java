@@ -302,11 +302,28 @@ public abstract class ClassAnalyser implements Opcodes {
 		return null;
 	}
 
+
+	public FieldHook asFieldHook(ClassHook c, String classAndName, String realName) {
+		return asFieldHook(c, classAndName, realName, 1);
+	}
+	
 	public FieldHook asFieldHook(String classAndName, String realName) {
 		return asFieldHook(classAndName, realName, 1);
 	}
 
 	public FieldHook asFieldHook(String classAndName, String realName, long multiplier) {
+		String[] parts = classAndName.split("\\.");
+		ClassNode cn = Context.current().getClassNodes().get(parts[0]);
+		for (Object oF : cn.fields) {
+			FieldNode f = (FieldNode) oF;
+			if (parts[1].equals(f.name)) {
+				return new FieldHook(foundHook, new ObfuscatedData(f.name, realName), new DynamicDesc(f.desc, false), Modifier.isStatic(f.access), multiplier);
+			}
+		}
+		return null;
+	}
+	
+	public FieldHook asFieldHook(ClassHook foundHook, String classAndName, String realName, long multiplier) {
 		String[] parts = classAndName.split("\\.");
 		ClassNode cn = Context.current().getClassNodes().get(parts[0]);
 		for (Object oF : cn.fields) {
