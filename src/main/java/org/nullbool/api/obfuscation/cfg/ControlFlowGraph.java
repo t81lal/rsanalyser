@@ -24,6 +24,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TableSwitchInsnNode;
 import org.objectweb.asm.tree.TryCatchBlockNode;
+import org.objectweb.asm.util.Printer;
 
 
 /**
@@ -86,7 +87,8 @@ public class ControlFlowGraph implements Opcodes {
 		///* get rid of the old graph data.*/
 		//destroy();
 
-		System.out.printf("Building graph %d.%n", ++graphCount);
+		if(debug)
+			System.out.printf("Building graph %d.%n", ++graphCount);
 		
 		if(debug) {
 			System.out.println("createBlocks");
@@ -164,11 +166,15 @@ public class ControlFlowGraph implements Opcodes {
 	}
 	
 	public InsnList result() throws ControlFlowException {
+		//TODO: FIX,probably to do with this
 		InsnList insns = new InsnList();
 		
 		Map<FlowBlock, LabelNode> labels = new HashMap<FlowBlock, LabelNode>();
 		for(FlowBlock b : blocks) {
 			labels.put(b, new LabelNode());
+			if(debug) {
+				System.out.printf("Mapping block #%s.%n", b.id());
+			}
 		}
 		
 		for(FlowBlock b : blocks) {
@@ -181,6 +187,8 @@ public class ControlFlowGraph implements Opcodes {
 				if(ain instanceof JumpInsnNode) {
 					JumpInsnNode jin = (JumpInsnNode) ain;
 					
+					if(debug)
+						System.out.println("ControlFlowGraph.result() " + Printer.OPCODES[jin.opcode()]);
 					jin.label = renewLabel(labels, jin.label);
 				} else if(ain instanceof TableSwitchInsnNode) {
 					TableSwitchInsnNode tsin = (TableSwitchInsnNode) ain;
@@ -212,10 +220,15 @@ public class ControlFlowGraph implements Opcodes {
 
 	private LabelNode renewLabel(Map<FlowBlock, LabelNode> newLabels, LabelNode old) throws ControlFlowException {
 		FlowBlock targ     = labels.get(old);
+		//this is weird lol because the label points to a block
+		//and all the blocks are freshly mapped, so it should work
 		LabelNode newLabel = newLabels.get(targ);
 		
+		if(debug)
+			System.out.printf("Looking for block #%s.%n", targ.id());
+		
 		if(targ == null || newLabel ==null)
-			throw new ControlFlowException(String.format("Invalid target for LabelNode (%s)", old));
+			throw new ControlFlowException(String.format("Invalid target for LabelNode (%s, %s, %s)", old, targ, newLabel));
 		
 		return newLabel;
 	}
@@ -226,7 +239,8 @@ public class ControlFlowGraph implements Opcodes {
 
 		AbstractInsnNode[] ains = method.instructions.toArray();
 
-		System.out.printf("Method %s contains %d instructions.%n", method.key(), method.instructions.size());
+		if(debug)
+			System.out.printf("Method %s contains %d instructions.%n", method.key(), method.instructions.size());
 
 		for(int i=0; i < ains.length; i++) {
 			AbstractInsnNode ain = ains[i];
@@ -609,6 +623,7 @@ public class ControlFlowGraph implements Opcodes {
 	public void removeBlock(FlowBlock block) {
 		
 		if(debug) {
+			System.out.println("Removing " + block.id());
 			System.out.println("t1");
 		}
 		

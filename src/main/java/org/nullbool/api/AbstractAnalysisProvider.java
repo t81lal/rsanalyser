@@ -226,7 +226,7 @@ public abstract class AbstractAnalysisProvider {
 
 	private void analyse() throws AnalysisException {
 		Map<String, ClassNode> classNodes = contents.getClassContents().namedMap();
-		for (ClassAnalyser a : analysers) {
+		for (ClassAnalyser a : analysers) {			
 			try {
 				a.preRun(classNodes);
 			} catch (Exception e) {
@@ -236,7 +236,7 @@ public abstract class AbstractAnalysisProvider {
 			if (a.getFoundClass() == null || a.getFoundHook() == null)
 				throw new AnalysisException("Couldn't find " + a.getName());
 		}
-
+		
 		for (ClassAnalyser a : analysers) {
 			try {
 				a.runSubs();
@@ -256,7 +256,7 @@ public abstract class AbstractAnalysisProvider {
 		analyseMultipliers();
 		removeDummyMethods(contents);
 		removeUnusedFields();
-		fixFlow();
+		//fixFlow();
 		
 		// runEmptyParamVisitor2(contents);
 		// checkRecursion(contents);
@@ -362,22 +362,30 @@ public abstract class AbstractAnalysisProvider {
 			for(MethodNode m : cn.methods) {
 				if(m.instructions.size() > 0) {
 					
-					if(m.key().equals("fv.z(I[II)Z")) {
+					//TODO: FIX
+					/*if(m.key().equals("aa.am([II)V")) {
 						graph.debug = true;
 					} else {
 						graph.debug = false;
-					}
+					}*/
 					
 					try {
 						graph.create(m);
+						
+						InsnList list = graph.result();
+						m.instructions.clear();
+						m.instructions = list;
 					} catch (ControlFlowException e) {
-						e.printStackTrace();
+						//e.printStackTrace();
+						//System.exit(1);
 					} finally {
 						graph.destroy();
 					}
 				}
 			}
 		}
+		
+		System.out.println("Done graphing.");
 	}
 
 	protected abstract List<ClassAnalyser> registerAnalysers() throws AnalysisException;
