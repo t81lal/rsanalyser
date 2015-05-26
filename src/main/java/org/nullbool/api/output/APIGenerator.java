@@ -170,7 +170,7 @@ public class APIGenerator {
 				List<String> list = new ArrayList<String>();
 				try {
 					list.add("Decompiling api sourcecode to " + outDir.getAbsolutePath() + "...");
-					File fern = new File("out", "fernflower.jar");
+					File fern = new File(APIGenerator.class.getResource("/fernflower.jar").toURI());
 					ProcessBuilder pb = new ProcessBuilder("java", "-jar", quote(fern.getAbsolutePath()), quote(inJar.getAbsolutePath()),
 							quote(outDir.getAbsolutePath()));
 					// pb = pb.inheritIO();
@@ -181,9 +181,9 @@ public class APIGenerator {
 					unpack(new File(outDir, inJar.getName()), outDir);
 					list.add("   ... done. ");
 					// new File(outDir, inJar.getName()).delete();
-				} catch (IOException | InterruptedException e) {
-					list.add("   ... failed. (" + e.getMessage() + ")");
-					e.printStackTrace();
+				} catch (Throwable t) {
+					list.add("   ... failed. (" + t.getMessage() + ")");
+					t.printStackTrace();
 				}
 
 				if(log) {

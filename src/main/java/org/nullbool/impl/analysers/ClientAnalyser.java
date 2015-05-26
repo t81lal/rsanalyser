@@ -1,16 +1,11 @@
 package org.nullbool.impl.analysers;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.nullbool.api.Context;
 import org.nullbool.api.analysis.AnalysisException;
@@ -29,7 +24,6 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
-import org.topdank.banalysis.asm.insn.InstructionPrinter;
 import org.zbot.hooks.FieldHook;
 import org.zbot.hooks.MethodHook;
 import org.zbot.hooks.MethodHook.MethodType;
@@ -321,10 +315,12 @@ public class ClientAnalyser extends ClassAnalyser {
 
 		@Override
 		public List<FieldHook> find(ClassNode cn) {
+			//TODO: WIDGETS
+			
 			// String hook, regex = ";;V";
 			List<FieldHook> list = new ArrayList<FieldHook>();
 
-			List<MethodNode> methods = new ArrayList<MethodNode>();
+			/*List<MethodNode> methods = new ArrayList<MethodNode>();
 			Context.current()
 					.getClassNodes()
 					.values()
@@ -343,7 +339,7 @@ public class ClientAnalyser extends ClassAnalyser {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
+			}*/
 			// String[] mPattern = { "iconst_1", "putstatic" };
 			// MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
 			// MethodNode method = startWithBc(mPattern, mn)[0];
