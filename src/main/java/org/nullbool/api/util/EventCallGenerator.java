@@ -8,8 +8,8 @@ import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
-import org.zbot.topdank.eventbus.BusRegistry;
-import org.zbot.topdank.eventbus.Event;
+import org.topdank.eventbus.BusRegistry;
+import org.topdank.eventbus.Event;
 
 public class EventCallGenerator implements Opcodes {
 

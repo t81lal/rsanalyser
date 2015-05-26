@@ -20,19 +20,9 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.zbot.eventbus</groupId>
-			<artifactId>eventbus</artifactId>
-			<version>1.5.2-RELEASE</version>
-		</dependency>
-		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 			<version>2.3.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.nullbool</groupId>
-			<artifactId>pi</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
