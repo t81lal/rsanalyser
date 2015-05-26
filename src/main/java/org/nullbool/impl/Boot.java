@@ -41,7 +41,7 @@ public class Boot {
 		flags.put("logresults", true);
 		flags.put("verify", false);
 		flags.put("justdeob", true);
- 
+		
 		Context.bind(provider);
 		provider.run();
 //		Context.unbind();
@@ -141,7 +141,7 @@ public class Boot {
 		flags.put("logresults", true);
 		flags.put("verify", false);
 //		flags.put("justdeob", true);
- 
+		
 		Context.bind(provider);
 		provider.run();
 //		Context.unbind();

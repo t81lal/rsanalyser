@@ -24,7 +24,6 @@ import org.objectweb.asm.tree.MultiANewArrayInsnNode;
 import org.objectweb.asm.tree.TableSwitchInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
-import org.topdank.banalysis.filter.Filter;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -39,15 +38,19 @@ public class FlowBlock {
 	private final List<AbstractInsnNode> insns;
 	private final List<FlowBlock> predecessors;
 	private final List<FlowBlock> successors;
+	private final List<FlowBlock> excPredecessors;
+	private final List<FlowBlock> excSuccessors;
 	
 	private FlowBlock next, prev, target;
 	private boolean visited;
 
 	public FlowBlock(String id) {
-		this.id      = id;
-		insns        = new ArrayList<AbstractInsnNode>();
-		predecessors = new ArrayList<FlowBlock>();
-		successors   = new ArrayList<FlowBlock>();
+		this.id         = id;
+		insns           = new ArrayList<AbstractInsnNode>();
+		predecessors    = new ArrayList<FlowBlock>();
+		successors      = new ArrayList<FlowBlock>();
+		excPredecessors = new ArrayList<FlowBlock>();
+		excSuccessors   = new ArrayList<FlowBlock>();
 	}
 	
 	public String id() {
@@ -85,12 +88,78 @@ public class FlowBlock {
 		return null;
 	}
 	
+	public void addPredecessor(FlowBlock block) {
+		if(!predecessors.contains(block)) {
+			predecessors.add(block);
+		}
+	}
+	
+	public void removePredecessor(FlowBlock block) {
+		while (predecessors.remove(block));
+	}
+	
 	public List<FlowBlock> predecessors() {
 		return predecessors;
 	}
 	
+	public void addSuccessor(FlowBlock block) {
+		if(!successors.contains(block)) {
+			successors.add(block);
+		}
+	}
+	
+	public void removeSuccessor(FlowBlock block) {
+		while (successors.remove(block));
+	}
+	
 	public List<FlowBlock> successors() {
 		return successors;
+	}
+	
+	public void addExceptionPredecessor(FlowBlock block) {
+		if(!excPredecessors.contains(block)) {
+			excPredecessors.add(block);
+		}
+	}
+	
+	public void removeExceptionPredecessor(FlowBlock block) {
+		while (excPredecessors.remove(block));
+	}
+
+	public List<FlowBlock> exceptionPredecessors() {
+		return excPredecessors;
+	}
+	
+	public void addExceptionSuccessor(FlowBlock block) {
+		if(!excSuccessors.contains(block)) {
+			excSuccessors.add(block);
+		}
+	}
+	
+	public void removeExceptionSuccessor(FlowBlock block) {
+		while (excSuccessors.remove(block));
+	}
+	
+	public List<FlowBlock> exceptionSuccessors() {
+		return excSuccessors;
+	}
+	
+	public void replaceSuccessor(FlowBlock oldBlock, FlowBlock newBlock) {
+		for (int i = 0; i < successors.size(); i++) {
+			if (successors.get(i).id == oldBlock.id) {
+				successors.set(i, newBlock);
+				oldBlock.removePredecessor(this);
+				newBlock.addPredecessor(this);
+			}
+		}
+
+		for (int i = 0; i < excSuccessors.size(); i++) {
+			if (excSuccessors.get(i).id == oldBlock.id) {
+				excSuccessors.set(i, newBlock);
+				oldBlock.removeExceptionSuccessor(this);
+				newBlock.addExceptionPredecessor(this);
+			}
+		}
 	}
 	
 	public FlowBlock next() {
@@ -132,21 +201,12 @@ public class FlowBlock {
 		}
 	}
 	
-	public BlockType type() {
-		if (BlockType.EMPTY.filter.accept(this)) {
-			return BlockType.EMPTY;
-		} else if (BlockType.END.filter.accept(this)) {
-			return BlockType.END;
+	public void transfer(InsnList list) {
+		for(AbstractInsnNode ain : insns) {
+			if(!(ain instanceof LabelNode)) {
+				list.add(ain);
+			}
 		}
-		return BlockType.IMMEDIATE;
-	}
-	
-	public boolean accept(Filter<AbstractInsnNode> filter) {
-		for (AbstractInsnNode ain : insns) {
-			if (filter.accept(ain))
-				return true;
-		}
-		return false;
 	}
 	
 	@Override
@@ -164,15 +224,16 @@ public class FlowBlock {
 		sb.append("(").append(cleansize()).append(")");
 		sb.append(", pred=").append(predecessors.size());
 		sb.append(", succ=").append(successors.size());
-		sb.append(", ").append(type().name());
 		sb.append(")");
 		sb.append(PADDING);
 
 		if(size > 0) {
 			ListIterator<AbstractInsnNode> it = insns().listIterator();
+			int i = 0;
 			while(it.hasNext()) {
 				AbstractInsnNode ain = it.next();
-				sb.append(PREFIX).append(toString(ain, labels));
+				i++;
+				sb.append(PREFIX).append(i).append(". ").append(toString(ain, labels));
 			}
 		}
 		
@@ -182,6 +243,14 @@ public class FlowBlock {
 		
 		for(FlowBlock block : successors) {
 			sb.append(PREFIX).append("  > succ: #").append(block.id());
+		}
+		
+		for(FlowBlock block : excPredecessors) {
+			sb.append(PREFIX).append("  > epred #").append(block.id());
+		}
+		
+		for(FlowBlock block : excSuccessors) {
+			sb.append(PREFIX).append("  > esucc #").append(block.id());
 		}
 
 		return sb.toString();

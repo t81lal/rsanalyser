@@ -17,6 +17,8 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.obfuscation.call.CallVisitor;
 import org.nullbool.api.obfuscation.call.HierarchyVisitor;
+import org.nullbool.api.obfuscation.cfg.ControlFlowException;
+import org.nullbool.api.obfuscation.cfg.ControlFlowGraph;
 import org.nullbool.api.obfuscation.dummyparam.EmptyParamVisitor;
 import org.nullbool.api.obfuscation.dummyparam.EmptyParamVisitor2;
 import org.nullbool.api.obfuscation.dummyparam.OpaquePredicateVisitor;
@@ -254,6 +256,7 @@ public abstract class AbstractAnalysisProvider {
 		analyseMultipliers();
 		removeDummyMethods(contents);
 		removeUnusedFields();
+		fixFlow();
 		
 		// runEmptyParamVisitor2(contents);
 		// checkRecursion(contents);
@@ -338,6 +341,43 @@ public abstract class AbstractAnalysisProvider {
 			}
 		}
 		mutliVisitor.log();
+	}
+	
+	private void fixFlow() {
+		ControlFlowGraph graph = new ControlFlowGraph();
+		
+		int c = 0;
+		
+		for(ClassNode cn : contents.getClassContents()) {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() > 0) {
+					c++;
+				}
+			}
+		}
+		
+		System.out.printf("Can build %d graphs.%n", c);
+		
+		for(ClassNode cn : contents.getClassContents()) {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() > 0) {
+					
+					if(m.key().equals("fv.z(I[II)Z")) {
+						graph.debug = true;
+					} else {
+						graph.debug = false;
+					}
+					
+					try {
+						graph.create(m);
+					} catch (ControlFlowException e) {
+						e.printStackTrace();
+					} finally {
+						graph.destroy();
+					}
+				}
+			}
+		}
 	}
 
 	protected abstract List<ClassAnalyser> registerAnalysers() throws AnalysisException;

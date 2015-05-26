@@ -89,4 +89,9 @@ public class InsnListPrinter extends InstructionPrinter {
 		}
 		return info;
 	}
+	
+	@Override
+	protected String printLineNumberNode(LineNumberNode lin, ListIterator<?> it) {
+		return "[Line " + lin.line + "]";
+	}
 }

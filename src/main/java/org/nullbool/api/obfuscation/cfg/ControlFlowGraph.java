@@ -1,13 +1,12 @@
 package org.nullbool.api.obfuscation.cfg;
 
 import static org.nullbool.api.util.InstructionUtil.*;
-import static org.objectweb.asm.Opcodes.LOOKUPSWITCH;
-import static org.objectweb.asm.Opcodes.TABLESWITCH;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -15,6 +14,7 @@ import java.util.Set;
 
 import org.nullbool.api.util.ClassStructure;
 import org.nullbool.api.util.LabelHelper;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.JumpInsnNode;
@@ -23,6 +23,7 @@ import org.objectweb.asm.tree.LookupSwitchInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TableSwitchInsnNode;
+import org.objectweb.asm.tree.TryCatchBlockNode;
 
 
 /**
@@ -46,22 +47,34 @@ import org.objectweb.asm.tree.TableSwitchInsnNode;
  * @author Bibl (don't ban me pls)
  * @created 25 May 2015
  */
-public class ControlFlowGraph {
-
+public class ControlFlowGraph implements Opcodes {
+	
+	private static int graphCount = 0;
+	
+	public boolean debug = false;
+	
 	private final List<FlowBlock> blocks;
 	private final Map<AbstractInsnNode, FlowBlock> blockStarts;
 	private final Map<LabelNode, FlowBlock> labels;
+	private final Map<String, FlowBlock> blockNames;
+	private final List<ExceptionData> exceptions;
+	
+	private FlowBlock entry, exit;
 
 	public ControlFlowGraph() {
 		blocks      = new ArrayList<FlowBlock>();
 		blockStarts = new HashMap<AbstractInsnNode, FlowBlock>();
 		labels      = new HashMap<LabelNode, FlowBlock>();
+		blockNames  = new HashMap<String, FlowBlock>();
+		exceptions  = new ArrayList<ExceptionData>();
 	}
 
 	public void destroy() {
 		blocks.clear();
 		blockStarts.clear();
 		labels.clear();
+		blockNames.clear();
+		exceptions.clear();
 	}
 
 	/**
@@ -70,50 +83,143 @@ public class ControlFlowGraph {
 	 * @throws ControlFlowException If there is a graphing error.
 	 */
 	public void create(MethodNode method) throws ControlFlowException {
-		/* get rid of the old graph data.*/
-		destroy();
+		///* get rid of the old graph data.*/
+		//destroy();
 
+		System.out.printf("Building graph %d.%n", ++graphCount);
+		
+		if(debug) {
+			System.out.println("createBlocks");
+		}
+		
 		createBlocks(method);
-		System.out.printf("Constructed %d flowblocks.%n", blocks.size());
-
-//		for(String s : new InsnListPrinter(method.instructions).createPrint()) {
-//			System.out.println(s);
-//		}
+		//System.out.printf("Constructed %d flowblocks.%n", blocks.size());
+		
+		if(debug) {
+			System.out.println("mapBlockNames");
+		}
+		
+		mapBlockNames();
 
 		/* 25/05/15, 21:17 mapped blocks with their starting instruction. */
+		
+		if(debug) {
+			System.out.println("mapPositions");
+		}
+		
 		mapPositions();
+		
+		if(debug) {
+			System.out.println("calculateBranchTargets");
+		}
+		
 		calculateBranchTargets(method);
+		
+		if(debug) {
+			System.out.println("associateBlocks");
+		}
 		
 		associateBlocks();
 		
-		for(FlowBlock block : blocks) {
-			System.out.println(block.toVerboseString(labels));
+		if(debug) {
+			System.out.println("associateExceptions");
 		}
 		
-//		method.instructions.clear();
-//		
-//		visit(blocks.get(0), method.instructions, true);
-//		
-//		for(AbstractInsnNode ain : method.instructions.toArray()) {
-//			MarkerInsnNode marker = (MarkerInsnNode) ain;
-//			FlowBlock block = marker.block;
-//			
-//			block.transfer(method.instructions, marker);
-//			for(Entry<LabelNode, FlowBlock> e : labels.entrySet()) {
-//				if(e.getValue().equals(block))
-//					method.instructions.insertBefore(marker, e.getKey());
-//			}
-//			method.instructions.remove(marker);
-//		}
-//
-//		for(String s : new InsnListPrinter(method.instructions).createPrint()) {
-//			System.out.println(s);
-//		}
-//		for(FlowBlock block : blocks) {
-//			System.out.println(block.toVerboseString(labels));
-//		}
+		associateExceptions(method);
+		
+		if(debug) {
+			System.out.println("captureEntryAndExit");
+		}
+		
+		captureEntryAndExit();
+		
+		if(debug) {
+			System.out.println("removeDeadBlocks");
+		}
+		
+		removeDeadBlocks();
+		
+		if(debug) {
+			System.out.println("removeGotos");
+		}
+		
+		removeGotos();
+		
+		if(debug) {
+			System.out.println("removeEmptyBlocks");
+		}
+		
+		removeEmptyBlocks();
+		
+		if(debug) {
+			System.out.println("mergeBlocks");
+		}
+		
+		mergeBlocks();
+		
+		//System.out.println(this);
+		//for(String s : new InsnListPrinter(result()).createPrint()) {
+		//	System.err.println(s);
+		//}
+	}
+	
+	public InsnList result() throws ControlFlowException {
+		InsnList insns = new InsnList();
+		
+		Map<FlowBlock, LabelNode> labels = new HashMap<FlowBlock, LabelNode>();
+		for(FlowBlock b : blocks) {
+			labels.put(b, new LabelNode());
+		}
+		
+		for(FlowBlock b : blocks) {
+			insns.add(labels.get(b));
+			b.transfer(insns);
+			
+			/* Fix the labels by replacing them with
+			 * the new ones. */
+			for(AbstractInsnNode ain : b.insns()) {
+				if(ain instanceof JumpInsnNode) {
+					JumpInsnNode jin = (JumpInsnNode) ain;
+					
+					jin.label = renewLabel(labels, jin.label);
+				} else if(ain instanceof TableSwitchInsnNode) {
+					TableSwitchInsnNode tsin = (TableSwitchInsnNode) ain;
+					tsin.dflt = renewLabel(labels, tsin.dflt);
+					
+					List<LabelNode> ls = new ArrayList<LabelNode>(tsin.labels.size());
+					
+					for(int i=0; i < ls.size(); i++) {
+						ls.add(renewLabel(labels, tsin.labels.get(i)));
+					}
+					tsin.labels = ls;
+					
+				} else if(ain instanceof LookupSwitchInsnNode) {
+					LookupSwitchInsnNode lsin = (LookupSwitchInsnNode) ain;
+					lsin.dflt = renewLabel(labels, lsin.dflt);
+					
+					List<LabelNode> ls = new ArrayList<LabelNode>(lsin.labels.size());
+					
+					for(int i=0; i < ls.size(); i++) {
+						ls.add(renewLabel(labels, lsin.labels.get(i)));
+					}
+					lsin.labels = ls;
+				}
+			}
+		}
+		
+		return insns;
 	}
 
+	private LabelNode renewLabel(Map<FlowBlock, LabelNode> newLabels, LabelNode old) throws ControlFlowException {
+		FlowBlock targ     = labels.get(old);
+		LabelNode newLabel = newLabels.get(targ);
+		
+		if(targ == null || newLabel ==null)
+			throw new ControlFlowException(String.format("Invalid target for LabelNode (%s)", old));
+		
+		return newLabel;
+	}
+	
 	private void createBlocks(MethodNode method) {
 		FlowBlock block = null;
 		int b_count = 1;
@@ -226,6 +332,12 @@ public class ControlFlowGraph {
 		}
 	}
 
+	private void mapBlockNames() {
+		for(FlowBlock b : blocks) {
+			blockNames.put(b.id(), b);
+		}
+	}
+	
 	private void mapPositions() {
 		for(FlowBlock b : blocks) {
 			AbstractInsnNode bs = b.first();
@@ -249,8 +361,8 @@ public class ControlFlowGraph {
 			FlowBlock target = findTarget(block);
 			if (target != null) {
 				block.setTarget(target);
-				block.successors().add(target);
-				target.predecessors().add(block);
+				block.addSuccessor(target);
+				target.addPredecessor(block);
 			}
 			
 			AbstractInsnNode last = block.last();
@@ -283,8 +395,8 @@ public class ControlFlowGraph {
 					/* Moves the iterators pointer backwards to
 					 * undo the it.next() call.*/
 					it.previous();
-					block.successors().add(next);
-					next.predecessors().add(block);
+					block.addSuccessor(next);
+					next.addPredecessor(block);
 				}
 			}
 			
@@ -322,10 +434,316 @@ public class ControlFlowGraph {
 		for(LabelNode label : lset) {
 			FlowBlock dest = labels.get(label);
 			if(dest != null) {
-				block.successors().add(dest);
-				dest.predecessors().add(block);
+				block.addSuccessor(dest);
+				dest.addPredecessor(block);
 			} else {
 				throw new ControlFlowException(String.format("Couldn't find block for switch destination: %s", label));
+			}
+		}
+	}
+	
+	private void associateExceptions(MethodNode method) throws ControlFlowException {
+		for(TryCatchBlockNode tcbn : method.tryCatchBlocks) {
+			FlowBlock dest = labels.get(tcbn.end);
+			FlowBlock from = labels.get(tcbn.start);
+			FlowBlock handler = labels.get(tcbn.handler);
+			
+			if(dest == null || from == null || handler == null)
+				throw new ControlFlowException(String.format("Couldn't find block for TryCatch label."));
+			
+			int i_to   = LabelHelper.numeric(dest.id());
+			int i_from = LabelHelper.numeric(from.id());
+			
+			List<FlowBlock> range = new ArrayList<FlowBlock>();
+			
+			for(int i=i_from; i < i_to; i++) {
+				String id = LabelHelper.createBlockName(i);
+				FlowBlock block = blockNames.get(id);
+				if(block == null) 
+					throw new ControlFlowException(String.format("Block #%s (%d) is not mapped.", id, i));
+				range.add(block);
+				handler.addExceptionPredecessor(block);
+				block.addExceptionSuccessor(handler);
+				
+				ExceptionData ed = new ExceptionData(handler, range);
+				exceptions.add(ed);
+			}
+		}
+	}
+	
+	private void captureEntryAndExit() {
+		entry = blocks.get(0);
+		
+		/* Here we create a fake exit node so that every node that was previously graphed
+		 * leads into this one (even though the node isn't really present in the code). 
+		 * This allows us to have a definite exit block for the method rather than the
+		 * multiple possible ones there could be in natural code. 
+		 * Note that we probably shouldn't save this in the blocks list as it is not
+		 * a real block. */
+		FlowBlock dummyExit = new FlowBlock(LabelHelper.createBlockName(blocks.size() + 1));
+		
+		for (FlowBlock b : blocks) {
+			if (b.successors().isEmpty()) {
+				b.addSuccessor(dummyExit);
+				dummyExit.addPredecessor(b);
+			}
+		}
+		
+		exit = dummyExit;
+	}
+	
+	private void removeGotos() throws ControlFlowException {		
+		for (FlowBlock block : blocks) {
+			AbstractInsnNode last = block.last();
+			if (last != null && last.opcode() == GOTO) {
+				block.insns().remove(last);
+			}
+		}
+	}
+	
+	private void removeEmptyBlocks() throws ControlFlowException {
+		boolean cont;
+		do {
+			cont = false;
+			for (int i = blocks.size() - 1; i >= 0; i--) {
+				FlowBlock block = blocks.get(i);
+				if (removeEmptyBlock(block, false)) {
+					cont = true;
+					break;
+				}
+			}
+		}
+		while (cont);
+	}
+	
+	private boolean removeEmptyBlock(FlowBlock block, boolean merging) throws ControlFlowException {
+		boolean deletedRanges = false;
+		if (block.cleansize() == 0) {
+			if (block.successors().size() > 1) {
+				if (block.predecessors().size() > 1) {
+					throw new ControlFlowException(String.format("Empty block (%s) with multiple predecessors and successors.", block.id()));
+				} else if (!merging) {
+					throw new ControlFlowException(String.format("Empty block (%s) with multiple successors found.", block.id()));
+				}
+			}
+
+			Set<FlowBlock> setExits = new HashSet<FlowBlock>(exit.predecessors());
+			if (block.exceptionPredecessors().isEmpty() && (!setExits.contains(block) || block.predecessors().size() == 1)) {
+				if (setExits.contains(block)) {
+					FlowBlock pred = block.predecessors().get(0);
+					if (pred.successors().size() != 1 || (pred.cleansize() != 0 && isSwitch(pred.last().opcode()))) {
+						return false;
+					}
+				}
+
+				Set<FlowBlock> preds = new HashSet<FlowBlock>(block.predecessors());
+				Set<FlowBlock> succs = new HashSet<FlowBlock>(block.successors());
+
+				/* Collate the common exception rangers of the 
+				 * predecessors and successors of the block. */
+				Set<FlowBlock> commonHandlers = null;
+				for (int i = 0; i < 2; ++i) {
+					for (FlowBlock pred : i == 0 ? preds : succs) {
+						if (commonHandlers == null) {
+							commonHandlers = new HashSet<FlowBlock>(pred.exceptionSuccessors());
+						} else {
+							commonHandlers.retainAll(pred.exceptionSuccessors());
+						}
+					}
+				}
+				if (commonHandlers != null && !commonHandlers.isEmpty()) {
+					for (FlowBlock handler : commonHandlers) {
+						if (!block.exceptionSuccessors().contains(handler)) {
+							return false;
+						}
+					}
+				}
+				for (int i = exceptions.size() - 1; i >= 0; i--) {
+					ExceptionData range = exceptions.get(i);
+					List<FlowBlock> lst = range.range();
+					if (lst.size() == 1 && lst.get(0) == block) {
+						FlowBlock handler = range.handler();
+						block.removeExceptionSuccessor(handler);
+						handler.removeExceptionSuccessor(handler);
+						exceptions.remove(i);
+					}
+				}
+				if (merging) {
+					FlowBlock pred = block.predecessors().get(0);
+					pred.removeSuccessor(block);
+					block.removePredecessor(pred);
+
+					List<FlowBlock> lstSuccs = new ArrayList<FlowBlock>(block.successors());
+					for (FlowBlock succ : lstSuccs) {
+						block.removeSuccessor(succ);
+						succ.removePredecessor(block);
+
+						pred.addSuccessor(succ);
+						succ.addPredecessor(pred);
+					}
+				} else {
+					for (FlowBlock pred : preds) {
+						for (FlowBlock succ : succs) {
+							pred.replaceSuccessor(block, succ);
+						}
+					}
+				}
+
+				if (entry == block) {
+					if (succs.size() != 1) {
+						throw new ControlFlowException(String.format("Invalid number of entry blocks (%d).", succs.size()));
+					} else {
+						entry = succs.iterator().next();
+					}
+				}
+				removeBlock(block);
+				if (deletedRanges) {
+					removeDeadBlocks();
+				}
+			}
+		}
+
+		return deletedRanges;
+	}
+	
+	public void removeBlock(FlowBlock block) {
+		
+		if(debug) {
+			System.out.println("t1");
+		}
+		
+		while (block.successors().size() > 0) {
+			FlowBlock b2 = block.successors().get(0);
+			block.removeSuccessor(b2);
+			b2.removePredecessor(block);
+		}
+
+		if(debug) {
+			System.out.println("t2");
+		}
+		
+		while (block.exceptionSuccessors().size() > 0) {
+			FlowBlock b2 = block.exceptionSuccessors().get(0);
+			block.removeExceptionSuccessor(b2);
+			b2.removeExceptionPredecessor(block);
+		}
+		
+		if(debug) {
+			System.out.println("t3");
+			
+			System.out.printf("block has %d and %d.%n", block.predecessors().size(), block.successors().size());
+		}
+
+		while (block.predecessors().size() > 0) {
+			FlowBlock b2 = block.predecessors().get(0);
+			b2.removeSuccessor(block);
+			block.removePredecessor(b2);
+		}
+
+		if(debug) {
+			System.out.println("t4");
+		}
+		
+		while (block.exceptionPredecessors().size() > 0) {
+			FlowBlock b2 = block.exceptionPredecessors().get(0);
+			block.removeExceptionSuccessor(b2);
+			b2.removeExceptionPredecessor(block);
+		}
+		
+		if(debug) {
+			System.out.println("t5");
+		}
+
+		exit.removePredecessor(block);
+		blocks.remove(block);
+		
+		if(debug) {
+			System.out.println("t6");
+		}
+
+		for (int i = exceptions.size() - 1; i >= 0; i--) {
+			ExceptionData range = exceptions.get(i);
+			if (range.handler() == block) {
+				exceptions.remove(i);
+			} else {
+				List<FlowBlock> lstRange = range.range();
+				lstRange.remove(block);
+
+				if (lstRange.isEmpty()) {
+					exceptions.remove(i);
+				}
+			}
+		}
+
+		/* Jagex's obfuscator doesn't create subroutines (thank god).*/
+	}
+	
+	private void removeDeadBlocks() {
+		LinkedList<FlowBlock> stack = new LinkedList<FlowBlock>();
+		Set<FlowBlock> set = new HashSet<FlowBlock>();
+
+		stack.add(entry);
+		set.add(entry);
+
+		while (!stack.isEmpty()) {
+			FlowBlock block = stack.removeFirst();
+
+			List<FlowBlock> lstSuccs = new ArrayList<FlowBlock>(block.successors());
+			lstSuccs.addAll(block.exceptionSuccessors());
+
+			for (FlowBlock succ : lstSuccs) {
+				if (!set.contains(succ)) {
+					stack.add(succ);
+					set.add(succ);
+				}
+			}
+		}
+
+		Set<FlowBlock> setAllBlocks = new HashSet<FlowBlock>(blocks);
+		setAllBlocks.removeAll(set);
+
+		for (FlowBlock block : setAllBlocks) {
+			
+			if(debug) {
+				System.out.println("ControlFlowGraph.removeDeadBlocks()");
+			}
+			removeBlock(block);
+		}
+		
+		if(debug) {
+			System.err.println("end");
+		}
+	}
+
+	private void mergeBlocks() throws ControlFlowException {
+		while (true) {
+			boolean merged = false;
+			for (FlowBlock block : blocks) {
+				if (block.successors().size() == 1) {
+					FlowBlock next = block.successors().get(0);
+					if (next != exit && (block.insns().isEmpty() || !isSwitch(block.last().opcode()))) {
+						if (next.predecessors().size() == 1 && next.exceptionPredecessors().isEmpty() && next != entry) {
+							boolean sameRanges = true;
+							for (ExceptionData range : exceptions) {
+								if (range.range().contains(block) ^ range.range().contains(next)) {
+									sameRanges = false;
+									break;
+								}
+							}
+							if (sameRanges) {
+								block.insns().addAll(next.insns());
+								next.insns().clear();
+								removeEmptyBlock(next, true);
+								merged = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			if (!merged) {
+				break;
 			}
 		}
 	}
@@ -357,47 +775,39 @@ public class ControlFlowGraph {
 	public FlowBlock findTarget(LabelNode label) {
 		return labels.get(label);
 	}
-	
-	private void visit(FlowBlock block, InsnList insns, boolean b) {
-		block.setVisited(true);
-		
-		if(b)
-			insns.add(new MarkerInsnNode(block));
-
-
-		for(FlowBlock succ : block.successors()) {
-			if(!succ.visited()) {
-				insns.add(new MarkerInsnNode(succ));
-				visit(succ, insns, false);
-			}
-		}
-	}
 
 	private boolean isBoundary(AbstractInsnNode ain) {
 		if(ain == null)
 			return false;
 		
-		/*if(ain instanceof MethodInsnNode) {
-			if(((MethodInsnNode) ain).desc.endsWith("V"))
-				return true;
-			else
-				return false;
-		}*/
-		
 		int opcode = ain.opcode();
 		return isConditional(opcode) || isUnconditional(opcode) || isExit(opcode) || isSwitch(opcode);
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for(FlowBlock b : blocks) {
+			sb.append(b.toVerboseString(labels)).append(System.lineSeparator());
+		}
+		
+		sb.append(System.lineSeparator());
+		sb.append("Exit> ");
+		sb.append(exit.toVerboseString(labels));
+		
+		return sb.toString();
+	}
+	
 	public static void main(String[] args) throws ControlFlowException, IOException {
 		
 		ControlFlowGraph graph = new ControlFlowGraph();
 
-		ClassStructure cs = ClassStructure.create(SwitchTest.class.getCanonicalName());
-		for(MethodNode m : cs.methods) {
-			if(m.name.equals("test")) {
-				graph.create(m);
-			}
-		}
+//		ClassStructure cs = ClassStructure.create(SwitchTest.class.getCanonicalName());
+//		for(MethodNode m : cs.methods) {
+//			if(m.name.equals("test")) {
+//				graph.create(m);
+//			}
+//		}
 		
 //		ControlFlowGraph graph = new ControlFlowGraph();
 //
@@ -414,13 +824,13 @@ public class ControlFlowGraph {
 //			System.out.println();
 //		}
 //		
-//		cs = ClassStructure.create(new File("res/Buffer.class").toURI().toURL().openStream());
-//
-//		
-//		for(MethodNode m : cs.methods) {
-//			if(m.name.equals("writeInvertedLEInt")) {
-//				graph.create(m);
-//			}
-//		}
+//		ClassStructure cs = ClassStructure.create(new File("res/Buffer.class").toURI().toURL().openStream());
+		ClassStructure cs = ClassStructure.create(ControlFlowGraph.class.getResourceAsStream("/Buffer.class"));
+		
+		for(MethodNode m : cs.methods) {
+			if(m.name.equals("writeInvertedLEInt")) {
+				graph.create(m);
+			}
+		}
 	}
 }
