@@ -8,6 +8,10 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.topdank.banalysis.filter.Filter;
 
+/**
+ * @author Bibl (don't ban me pls)
+ * @created 25 May 2015 (actually before this)
+ */
 public class MethodCache {
 	private final Filter<MethodNode> filter;
 	private final Map<String, MethodNode> methodMap;

@@ -1,4 +1,4 @@
-package org.nullbool.api.obfuscation.flow;
+package org.nullbool.api.obfuscation.cfg;
 
 import org.topdank.banalysis.filter.Filter;
 

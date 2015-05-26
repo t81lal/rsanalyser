@@ -9,6 +9,10 @@ import org.nullbool.api.Context;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
+/**
+ * @author Bibl (don't ban me pls)
+ * @created 25 May 2015 (actually before this)
+ */
 public class InheritedMethodMap {
 	private final Map<MethodNode, ChainData> methods;
 

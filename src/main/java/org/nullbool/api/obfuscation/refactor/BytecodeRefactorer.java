@@ -20,7 +20,11 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.MultiANewArrayInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
- 
+
+/**
+ * @author Bibl (don't ban me pls)
+ * @created 25 May 2015 (actually before this)
+ */
 public class BytecodeRefactorer implements Opcodes {
 
 	private final Collection<ClassNode> classes;

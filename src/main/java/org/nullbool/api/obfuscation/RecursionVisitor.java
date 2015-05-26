@@ -4,6 +4,10 @@ import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.MethodMemberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 
+/**
+ * @author Bibl (don't ban me pls)
+ * @created 25 May 2015 (actually before this)
+ */
 public class RecursionVisitor extends NodeVisitor {
 
 	@Override

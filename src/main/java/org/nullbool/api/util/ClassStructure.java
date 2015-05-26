@@ -54,7 +54,7 @@ public class ClassStructure extends ClassNode {
 			final ClassReader cr = new ClassReader(name);
 			final ClassStructure cs = new ClassStructure();
 			// TODO: edited to SKIP_FRAMES
-			cr.accept(cs, ClassReader.SKIP_FRAMES);
+			cr.accept(cs, ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
 			return cs;
 		} catch (IOException e) {
 			return null;

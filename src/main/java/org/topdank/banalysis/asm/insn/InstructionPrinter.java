@@ -121,11 +121,11 @@ public class InstructionPrinter {
 		return info;
 	}
 	
-	private String printFrameNode(FrameNode fn) {
+	protected String printFrameNode(FrameNode fn) {
 		return "";
 	}
 
-	private String printMultiANewArrayInsnNode(MultiANewArrayInsnNode main) {
+	protected String printMultiANewArrayInsnNode(MultiANewArrayInsnNode main) {
 		return nameOpcode(main.opcode()) + " " + main.dims + "x " + main.desc;
 	}
 

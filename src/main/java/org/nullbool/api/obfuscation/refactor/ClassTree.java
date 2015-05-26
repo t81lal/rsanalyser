@@ -13,6 +13,10 @@ import org.nullbool.api.util.map.NullPermeableMap;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
+/**
+ * @author Bibl (don't ban me pls)
+ * @created 25 May 2015 (actually before this)
+ */
 public class ClassTree {
 	private static final SetCreator<ClassNode> SET_CREATOR = new SetCreator<ClassNode>();
 

@@ -1,4 +1,4 @@
-package org.nullbool.api.obfuscation.flow;
+package org.nullbool.api.obfuscation.cfg;
 public class Test {
 	
 	static int[] anIntArray1 = new int[64];
@@ -10,6 +10,10 @@ public class Test {
 			System.out.println("yay");
 		} else {
 			System.out.println("noo");
+		}
+		
+		for(int j = 0; j < 10; j++) {
+			System.out.println("test ");
 		}
 	}
 }

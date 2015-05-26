@@ -1,5 +1,9 @@
 package org.nullbool.api.obfuscation.refactor;
 
+/**
+ * @author Bibl (don't ban me pls)
+ * @created 25 May 2015 (actually before this)
+ */
 public abstract interface IRemapper {
 
 	public abstract String resolveClassName(String oldName);

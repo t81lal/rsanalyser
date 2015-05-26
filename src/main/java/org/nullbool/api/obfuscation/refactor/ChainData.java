@@ -6,6 +6,10 @@ import java.util.Set;
 
 import org.objectweb.asm.tree.MethodNode;
 
+/**
+ * @author Bibl (don't ban me pls)
+ * @created 25 May 2015 (actually before this)
+ */
 public class ChainData {
 	
 	private final MethodNode centre;
