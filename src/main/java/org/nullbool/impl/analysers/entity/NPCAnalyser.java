@@ -1,17 +1,20 @@
 package org.nullbool.impl.analysers.entity;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.nullbool.api.Context;
-import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.topdank.banalysis.asm.desc.Desciption;
 import org.zbot.hooks.FieldHook;
 
 /**
@@ -26,12 +29,37 @@ public class NPCAnalyser extends ClassAnalyser {
 
 	@Override
 	protected boolean matches(ClassNode c) {
-		String[] pattern = Context.current().getPattern("NPC");
+		
+		Set<ClassNode> supers = Context.current().getClassTree().getSupers(c);
+		ClassNode actorClass = getClassNodeByRefactoredName("Actor");
+		if(!supers.contains(actorClass))
+			return false;
+		
+		int[] count = count(c);
+		if(count[0] != 0 || count[1] != 1)
+			return false;
+		
+		return true;
+		
+		/*String[] pattern = Context.current().getPattern("NPC");
 		String superClassName = findObfClassName("Actor");
 		boolean rightSuperClass = c.superName.equals(superClassName);
 		boolean goodPattern = findMethod(c, "init", pattern);
-
-		return goodPattern && rightSuperClass;
+		return goodPattern && rightSuperClass;*/
+	}
+	
+	private static int[] count(ClassNode cn) {
+		int[] arr = new int[2];
+		for(FieldNode f : cn.fields) {
+			if(!Modifier.isStatic(f.access)) {
+				if(Desciption.isPrimitive(f.desc)) {
+					arr[0]++;
+				} else {
+					arr[1]++;
+				}
+			}
+		}
+		return arr;
 	}
 
 	@Override

@@ -269,9 +269,9 @@ public abstract class ClassAnalyser implements Opcodes {
 		List<String> opcodeList;
 		int size = pattern.length;
 
-		for (Object node : cn.methods.toArray()) {
-			if (((MethodNode) node).name.toLowerCase().contains(mName)) {
-				opcodeList = getCleanList(((MethodNode) node));
+		for (MethodNode method : cn.methods) {
+			if (method.name.toLowerCase().contains(mName)) {
+				opcodeList = getCleanList(method);
 				if ((opcodeList.size() > 0) && ((opcodeList.size() - size) >= 0)) {
 					for (int x = 0; x <= (opcodeList.size() - size); x++) {
 						for (int index = 0; index < size; index++) {

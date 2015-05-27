@@ -3,10 +3,11 @@ package org.nullbool.impl.analysers.entity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.nullbool.api.Context;
-import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
@@ -31,12 +32,25 @@ public class ActorAnalyser extends ClassAnalyser {
 
 	@Override
 	protected boolean matches(ClassNode cn) {
-		String[] pattern = Context.current().getPattern("Actor");
+		Set<ClassNode> supers = Context.current().getClassTree().getSupers(cn);
+		ClassNode actorClass = getClassNodeByRefactoredName("Renderable");
+		if(!supers.contains(actorClass))
+			return false;
+		
+		if(getFieldOfTypeCount(cn, "\\[Z") != 1)
+			return false;
+		
+		if(getFieldOfTypeCount(cn, "\\[I") < 3)
+			return false;
+		
+		return true;
+		
+		/*String[] pattern = Context.current().getPattern("Actor");
 		String superClassName = findObfClassName("Renderable");
 		boolean rightSuperClass = cn.superName.equals(superClassName);
 		boolean rightFields = getFieldOfTypeCount(cn, "\\[Z") == 1;
 		boolean goodPattern = findMethod(cn, "init", pattern);
-		return goodPattern && rightSuperClass && rightFields;
+		return goodPattern && rightSuperClass && rightFields;*/
 	}
 
 	@Override

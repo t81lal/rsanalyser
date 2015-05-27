@@ -151,7 +151,9 @@ public class ControlFlowGraph implements Opcodes {
 			b.transfer(insns);
 		}
 		
-		InsnList list = new InsnList();
+//		InsnList list = new InsnList();
+		InsnList list = method.instructions;
+		list.removeAll(true);
 		
 		for(int i=0; i < insns.size(); i++) {
 			AbstractInsnNode ain = insns.get(i);
@@ -165,8 +167,8 @@ public class ControlFlowGraph implements Opcodes {
 			method.instructions.add(ain);
 		}
 		
-		method.instructions.removeAll(true);
-		method.instructions = list;
+//		method.instructions.removeAll(true);
+//		method.instructions = list;
 		
 		if(debug) {
 			ControlFlowGraph graph = new ControlFlowGraph();

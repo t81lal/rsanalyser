@@ -3,10 +3,11 @@ package org.nullbool.impl.analysers.world;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
-import org.nullbool.api.analysis.ClassAnalyser;
+import org.nullbool.api.Context;
 import org.nullbool.api.analysis.AnalysisException;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
@@ -27,11 +28,18 @@ public class GroundItemAnalyser extends ClassAnalyser {
 
 	@Override
 	protected boolean matches(ClassNode c) {
-		String[] pat = { "aload", "invokespecial", "return", "new", "dup" };
+		ClassNode renderableNode = getClassNodeByRefactoredName("Renderable");
+		Set<ClassNode> supers = Context.current().getClassTree().getSupers(c);
+		if(!supers.contains(renderableNode))
+			return false;
+		
+		int ints = (int) getFieldOfTypeCount(c, "I", false);
+		return ints == 2;
+		/*String[] pat = { "aload", "invokespecial", "return", "new", "dup" };
 		String renderable = findObfClassName("Renderable");
 		boolean rightSuperClass = c.superName.equals(renderable);
 		boolean findMethod = findMethod(c, "<init>", pat);
-		return rightSuperClass && findMethod;
+		return rightSuperClass && findMethod;*/
 	}
 
 	@Override

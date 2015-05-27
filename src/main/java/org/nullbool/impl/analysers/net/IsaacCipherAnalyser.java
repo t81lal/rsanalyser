@@ -60,6 +60,17 @@ public class IsaacCipherAnalyser extends ClassAnalyser {
 		}
 		
 		return false;
+		
+//		if(!cn.superName.equals("java/lang/Object"))
+//			return false;
+//		
+//		int ints = (int) getFieldOfTypeCount(cn, "I", false);
+//		int intarrs = (int) getFieldOfTypeCount(cn, "\\[I", false);
+//		
+//		if((ints + intarrs) != cn.fields.size())
+//			return false;
+//	
+//		return ints == 4 && intarrs == 2;
 	}
 	
 	private static FieldInsnNode getOther(List<AbstractInsnNode[]> set, FieldInsnNode a) {
