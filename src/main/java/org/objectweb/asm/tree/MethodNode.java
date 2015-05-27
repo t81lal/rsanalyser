@@ -842,9 +842,11 @@ public class MethodNode extends MethodVisitor {
                 an.accept(mv.visitParameterAnnotation(i, an.desc, false));
             }
         }
+        
         if (visited) {
             instructions.resetLabels();
         }
+        
         n = attrs == null ? 0 : attrs.size();
         for (i = 0; i < n; ++i) {
             mv.visitAttribute(attrs.get(i));

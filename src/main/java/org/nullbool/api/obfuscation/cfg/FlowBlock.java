@@ -209,6 +209,10 @@ public class FlowBlock {
 		}
 	}
 	
+	public void transfer(List<AbstractInsnNode> ains) {
+		ains.addAll(insns);
+	}
+	
 	@Override
 	public String toString() {
 		return String.format("Block %s", id);

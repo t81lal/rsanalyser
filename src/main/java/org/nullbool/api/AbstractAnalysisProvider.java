@@ -256,7 +256,7 @@ public abstract class AbstractAnalysisProvider {
 		analyseMultipliers();
 		removeDummyMethods(contents);
 		removeUnusedFields();
-		//fixFlow();
+		fixFlow();
 		
 		// runEmptyParamVisitor2(contents);
 		// checkRecursion(contents);
@@ -363,6 +363,7 @@ public abstract class AbstractAnalysisProvider {
 				if(m.instructions.size() > 0) {
 					
 					//TODO: FIX
+					//UPDATE: fixed
 					/*if(m.key().equals("aa.am([II)V")) {
 						graph.debug = true;
 					} else {
@@ -371,15 +372,15 @@ public abstract class AbstractAnalysisProvider {
 					
 					try {
 						graph.create(m);
-						
-						InsnList list = graph.result();
-						m.instructions.clear();
-						m.instructions = list;
+						graph.fix();
+						graph.result(m);
 					} catch (ControlFlowException e) {
-						//e.printStackTrace();
-						//System.exit(1);
+						e.printStackTrace();
 					} finally {
 						graph.destroy();
+						
+						if(graph.debug)
+							System.exit(1);
 					}
 				}
 			}

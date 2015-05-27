@@ -481,7 +481,7 @@ public class InsnList {
      *            if the instructions must be marked as no longer belonging to
      *            any {@link InsnList}.
      */
-    void removeAll(final boolean mark) {
+    public void removeAll(final boolean mark) {
         if (mark) {
             AbstractInsnNode insn = first;
             while (insn != null) {

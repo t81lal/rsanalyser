@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.nullbool.api.util.ClassStructure;
+import org.nullbool.api.util.InsnListPrinter;
 import org.nullbool.api.util.LabelHelper;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -24,7 +25,6 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TableSwitchInsnNode;
 import org.objectweb.asm.tree.TryCatchBlockNode;
-import org.objectweb.asm.util.Printer;
 
 
 /**
@@ -90,134 +90,105 @@ public class ControlFlowGraph implements Opcodes {
 		if(debug)
 			System.out.printf("Building graph %d.%n", ++graphCount);
 		
-		if(debug) {
+		if(debug) 
 			System.out.println("createBlocks");
-		}
 		
 		createBlocks(method);
 		//System.out.printf("Constructed %d flowblocks.%n", blocks.size());
-		
-		if(debug) {
-			System.out.println("mapBlockNames");
-		}
-		
-		mapBlockNames();
 
-		/* 25/05/15, 21:17 mapped blocks with their starting instruction. */
+		if(debug) 
+			System.out.println("mapBlockNames");
+		mapBlockNames();
 		
-		if(debug) {
+		if(debug) 
 			System.out.println("mapPositions");
-		}
-		
+		/* 25/05/15, 21:17 mapped blocks with their starting instruction. */
 		mapPositions();
 		
-		if(debug) {
+		if(debug) 
 			System.out.println("calculateBranchTargets");
-		}
-		
 		calculateBranchTargets(method);
 		
-		if(debug) {
+		if(debug) 
 			System.out.println("associateBlocks");
-		}
-		
 		associateBlocks();
 		
-		if(debug) {
+		if(debug) 
 			System.out.println("associateExceptions");
-		}
-		
 		associateExceptions(method);
 		
-		if(debug) {
+		if(debug) 
 			System.out.println("captureEntryAndExit");
-		}
-		
 		captureEntryAndExit();
 		
-		if(debug) {
-			System.out.println("removeDeadBlocks");
-		}
-		
-		removeDeadBlocks();
-		
-		if(debug) {
-			System.out.println("removeGotos");
-		}
-		
-		removeGotos();
-		
-		if(debug) {
-			System.out.println("removeEmptyBlocks");
-		}
-		
-		removeEmptyBlocks();
-		
-		if(debug) {
-			System.out.println("mergeBlocks");
-		}
-		
-		mergeBlocks();
-		
-		//System.out.println(this);
-		//for(String s : new InsnListPrinter(result()).createPrint()) {
-		//	System.err.println(s);
-		//}
+		if(debug) 
+			System.out.println(this);
 	}
 	
-	public InsnList result() throws ControlFlowException {
-		//TODO: FIX,probably to do with this
-		InsnList insns = new InsnList();
+	public void fix() throws ControlFlowException {
+		if(debug) 
+			System.out.println("removeDeadBlocks");
+		removeDeadBlocks();
 		
-		Map<FlowBlock, LabelNode> labels = new HashMap<FlowBlock, LabelNode>();
+		if(debug) 
+			System.out.println("removeGotos");
+		removeGotos();
+		
+		if(debug) 
+			System.out.println("removeEmptyBlocks");
+		removeEmptyBlocks();
+		
+		if(debug) 
+			System.out.println("mergeBlocks");
+		mergeBlocks();
+	}
+	
+	public void result(MethodNode method) throws ControlFlowException {
+		//TODO: FIX,probably to do with this
+		List<AbstractInsnNode> insns = new ArrayList<AbstractInsnNode>();
+		
 		for(FlowBlock b : blocks) {
-			labels.put(b, new LabelNode());
-			if(debug) {
-				System.out.printf("Mapping block #%s.%n", b.id());
-			}
+			b.transfer(insns);
 		}
 		
-		for(FlowBlock b : blocks) {
-			insns.add(labels.get(b));
-			b.transfer(insns);
+		InsnList list = new InsnList();
+		
+		for(int i=0; i < insns.size(); i++) {
+			AbstractInsnNode ain = insns.get(i);
 			
-			/* Fix the labels by replacing them with
-			 * the new ones. */
-			for(AbstractInsnNode ain : b.insns()) {
-				if(ain instanceof JumpInsnNode) {
-					JumpInsnNode jin = (JumpInsnNode) ain;
-					
-					if(debug)
-						System.out.println("ControlFlowGraph.result() " + Printer.OPCODES[jin.opcode()]);
-					jin.label = renewLabel(labels, jin.label);
-				} else if(ain instanceof TableSwitchInsnNode) {
-					TableSwitchInsnNode tsin = (TableSwitchInsnNode) ain;
-					tsin.dflt = renewLabel(labels, tsin.dflt);
-					
-					List<LabelNode> ls = new ArrayList<LabelNode>(tsin.labels.size());
-					
-					for(int i=0; i < ls.size(); i++) {
-						ls.add(renewLabel(labels, tsin.labels.get(i)));
-					}
-					tsin.labels = ls;
-					
-				} else if(ain instanceof LookupSwitchInsnNode) {
-					LookupSwitchInsnNode lsin = (LookupSwitchInsnNode) ain;
-					lsin.dflt = renewLabel(labels, lsin.dflt);
-					
-					List<LabelNode> ls = new ArrayList<LabelNode>(lsin.labels.size());
-					
-					for(int i=0; i < ls.size(); i++) {
-						ls.add(renewLabel(labels, lsin.labels.get(i)));
-					}
-					lsin.labels = ls;
+			if(debug) {
+				if(method.instructions.contains(ain)) {
+					System.out.println("ControlFlowGraph.result() " + method + " " + ain + " " + i);
 				}
 			}
+			
+			method.instructions.add(ain);
 		}
 		
-		return insns;
+		method.instructions.removeAll(true);
+		method.instructions = list;
+		
+		if(debug) {
+			ControlFlowGraph graph = new ControlFlowGraph();
+			graph.create(method);
+			for(String s : new InsnListPrinter(method.instructions).createPrint()) {
+				System.out.println(s);
+			}
+//			System.out.println(graph);
+		}
 	}
-
+	
+	private LabelNode getLabel(Map<String, LabelNode> labels, LabelNode old) throws ControlFlowException {
+		FlowBlock block = this.labels.get(old);
+		return getLabel(labels, block.id());
+	}
+	
+	private LabelNode getLabel(Map<String, LabelNode> labels, String id) throws ControlFlowException {
+		if(!labels.containsKey(id))
+			throw new ControlFlowException(String.format("Couldn't find block #%s.", id));
+		return labels.get(id);
+	}
+	
 	private LabelNode renewLabel(Map<FlowBlock, LabelNode> newLabels, LabelNode old) throws ControlFlowException {
 		FlowBlock targ     = labels.get(old);
 		//this is weird lol because the label points to a block

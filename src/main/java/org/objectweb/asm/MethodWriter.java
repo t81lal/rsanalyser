@@ -1437,6 +1437,7 @@ class MethodWriter extends MethodVisitor {
                 handler = handler.next;
             }
 
+            
             // creates and visits the first (implicit) frame
             Frame f = labels.frame;
             Type[] args = Type.getArgumentTypes(descriptor);
