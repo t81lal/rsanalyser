@@ -6,3 +6,5 @@
 /lib
 **/out/**
 /out/**
+.classpath
+.project
