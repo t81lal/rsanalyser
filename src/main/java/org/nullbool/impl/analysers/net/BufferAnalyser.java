@@ -4,19 +4,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.api.obfuscation.cfg.ControlFlowException;
+import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.nullbool.api.util.DescFilter;
+import org.nullbool.api.util.InstructionUtil;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.topdank.banalysis.filter.Filter;
@@ -26,8 +27,8 @@ import org.zbot.hooks.MethodHook;
 import org.zbot.hooks.MethodHook.MethodType;
 
 @SupportedHooks(fields  = { "getPayload&[B", "getCaret&I", }, 
-				methods = { "enableEncryption&(Ljava/math/BigInteger;Ljava/math/BigInteger;)V", 
-							"writeInvertedLEInt&(I)V", "writeLE24&(I)V"})
+methods = { "enableEncryption&(Ljava/math/BigInteger;Ljava/math/BigInteger;)V", 
+		"writeInvertedLEInt&(I)V", "writeLE24&(I)V", "writeInt&(I)V", "writeLEInt&(I)V", "write24Int&(I)V"})
 /**
  * @author Bibl (don't ban me pls)
  * @created 23 May 2015
@@ -74,17 +75,37 @@ public class BufferAnalyser extends ClassAnalyser {
 				if(m.desc.startsWith("(Ljava/math/BigInteger;Ljava/math/BigInteger;")) {
 					list.add(asMethodHook(MethodType.CALLBACK, m, "enableEncryption"));
 				} else {
-					if(visitor.preVisit(m, BASTORE)) {
+					if(visitor.preVisit(m, ReadWriteMethodVisitor.MARK_SHIFTS | ReadWriteMethodVisitor.MARK_SUBS | ReadWriteMethodVisitor.MARK_ANDS, BASTORE)) {
 						visitor.run();
 
-						if(visitor.tCount == 4) {
+						boolean b = false;
+
+						int tCount = visitor.shiftOrders.size();
+						if(tCount == 4) {
 							if(subequals(visitor.shiftOrders, new int[]{8, 0, 24, 16})) {
 								list.add(asMethodHook(MethodType.CALLBACK, m, "writeInvertedLEInt"));
+								b = true;
+							} else if(subequals(visitor.shiftOrders, new int[]{24, 16, 8, 0})) {
+								if(subequals(visitor.subOrders, new int[]{1, 1, 1, 1})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "writeInt"));
+									b = true;
+								} else if(subequals(visitor.subOrders, new int[]{4, 3, 2, 1})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "writeLEInt"));
+									b = true;
+								}
 							}
-						} else if(visitor.tCount == 3) {
+						} else if(tCount == 3) {
 							if(subequals(visitor.shiftOrders, new int[]{16, 8, 0})) {
-								list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE24"));
+								list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE24Int"));
+								b = true;
+							} else if(subequals(visitor.shiftOrders, new int[]{8, 16, 0})) {
+								list.add(asMethodHook(MethodType.CALLBACK, m, "write24Int"));
+								b = true;
 							}
+						}
+
+						if(!b) {
+							System.err.printf("%s: %s, %s, %s.%n", m, visitor.shiftOrders, visitor.subOrders, visitor.andOrders);
 						}
 					}
 				}
@@ -104,70 +125,112 @@ public class BufferAnalyser extends ClassAnalyser {
 
 	private static class ReadWriteMethodVisitor {
 
+		public static final int MARK_SHIFTS = 0x01, MARK_SUBS = 0x02, MARK_ANDS = 0x04;
+
 		private MethodNode method;
+		private int flags;
 		private int target;
 
 		private List<Integer> shiftOrders;
-		private int tCount;
+		private List<Integer> subOrders;
+		private List<Integer>  andOrders;
 
-		public boolean preVisit(MethodNode m, int target) {
+		private ReadWriteMethodVisitor() {
+			shiftOrders = new ArrayList<Integer>();
+			subOrders   = new ArrayList<Integer>();
+			andOrders   = new ArrayList<Integer>();
+		}
+
+		public boolean preVisit(MethodNode m, int flags, int target) {
 			if(m.desc.endsWith(")V")) {
 				this.method = m;
+				this.flags  = flags;
 				this.target = target;
-				shiftOrders = new ArrayList<Integer>();
-				tCount      = 0;
-
+				shiftOrders.clear();
+				subOrders.clear();
 				return true;
 			} else {
 				return false;
 			}
 		}
 
+		//TODO: Iterate through the (obfuscated) cfg to find the order
+		//      instead of following gotos.
 		public void run() {
-			List<LabelNode> visited = new ArrayList<LabelNode>();
-			InsnList list = method.instructions;
-			AbstractInsnNode ain = list.getFirst();
-			while(ain != null) {
-				if(ain.opcode() == target) {
-					//					tCount++;
+			boolean shifts = (flags & MARK_SHIFTS) == MARK_SHIFTS;
+			boolean subs   = (flags & MARK_SUBS)   == MARK_SUBS;
+			boolean ands   = (flags & MARK_ANDS)   == MARK_ANDS;
 
-					follow(ain);
-				} else if(ain.opcode() == GOTO) {
-					JumpInsnNode jin = (JumpInsnNode) ain;
-					LabelNode label = jin.label;
-					if(!visited.contains(label)) {
-						visited.add(label);
-						AbstractInsnNode after = label.getNext();
-						ain = after;
+			int tCount = 0;
+			int sCount = 0;
+			int aCount = 0;
+
+			try {
+				for(FlowBlock block : Context.current().getCFGCache().get(method)) {
+					/*InsnList list = method.instructions;
+					AbstractInsnNode ain = list.getFirst();*/
+					AbstractInsnNode ain = block.first();
+					while(ain != null && !ain.equals(block.last())) {
+						if(shifts && ain.opcode() == target) {
+							tCount++;
+							followShift(ain);
+						}
+
+						if(subs && ain.opcode() == ISUB) {
+							sCount++;
+							followSub(ain);
+						}
+
+						if(ands && ain.opcode() == IAND) {
+							aCount++;
+							followAnd(ain);
+						}
+
+						/* 27/05/15, 18:07  We fix the execution path of the code now so the
+						 * 					natural order of the code should be correct.
+						else if(ain.opcode() == GOTO) {
+							JumpInsnNode jin = (JumpInsnNode) ain;
+							LabelNode label = jin.label;
+							if(!visited.contains(label)) {
+								visited.add(label);
+								AbstractInsnNode after = label.getNext();
+								ain = after;
+							}
+						}*/
+
+						ain = ain.getNext();
 					}
 				}
-
-				ain = ain.getNext();
+			} catch(ControlFlowException e) {
+				e.printStackTrace();
 			}
 
-			for(AbstractInsnNode ain1 : method.instructions.toArray()) {
-				if(ain1.opcode() == target)
-					tCount++;
-			}
+			if(shifts && tCount != shiftOrders.size()) 
+				trim(shiftOrders, tCount);
 
-			if(tCount != shiftOrders.size()) {
-				//				System.out.println(method + " for " + tCount + " " + shiftOrders);
-				trim();
-			}
+			if(subs && sCount != subOrders.size()) 
+				trim(subOrders, sCount);
+
+			if(ands && aCount != andOrders.size()) 
+				trim(andOrders, aCount);
+
+			//System.out.println(method + " " + shiftOrders);
+			//System.out.println(method + " " + subOrders);
+			//System.out.println(method + " " + andOrders);
 		}
 
-		private void trim() {
-			int diff = shiftOrders.size() - tCount;
+		private void trim(List<Integer> list, int count) {
+			int diff = list.size() - count;
 			if(diff <= 0) {
 				return;
 			}
 
-			for(int i=shiftOrders.size() - 1; i >= tCount; i--) {
-				shiftOrders.remove(i);
+			for(int i=list.size() - 1; i >= count; i--) {
+				list.remove(i);
 			}
 		}
 
-		private void follow(AbstractInsnNode ain) {			
+		private void followShift(AbstractInsnNode ain) {			
 			/*go backwards to find the iload 1 (the value we're writing)*/
 			while(ain != null) {
 				if(ain.opcode() == -1) {
@@ -181,7 +244,7 @@ public class BufferAnalyser extends ClassAnalyser {
 
 						int shift = 0;
 
-						/*now that it's been found, go forward to find either the cst shift or 
+						/* now that it's been found, go forward to find either the cst shift or 
 						 * if it has no shift, then just the cast.
 						 * 
 						 * since all shifts are done as integers using ishr or ishl, the value has
@@ -212,10 +275,24 @@ public class BufferAnalyser extends ClassAnalyser {
 				}
 
 				ain = ain.getPrevious();
+			}
+		}
 
-				if(ain.opcode() == GOTO) {
+		private void followSub(AbstractInsnNode ain) {
+			AbstractInsnNode prev = ain.getPrevious();
+			if(prev != null) {
+				int number = InstructionUtil.resolve(prev);
+				if(number != -1) 
+					subOrders.add(number);
+			}
+		}
 
-				}
+		private void followAnd(AbstractInsnNode ain) {
+			AbstractInsnNode prev = ain.getPrevious();
+			if(prev != null) {
+				int number = InstructionUtil.resolve(prev);
+				if(number != -1) 
+					andOrders.add(number);
 			}
 		}
 	}

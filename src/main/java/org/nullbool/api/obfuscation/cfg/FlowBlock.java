@@ -21,7 +21,6 @@ import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.LookupSwitchInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MultiANewArrayInsnNode;
-import org.objectweb.asm.tree.TableSwitchInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
@@ -160,6 +159,23 @@ public class FlowBlock {
 				newBlock.addExceptionPredecessor(this);
 			}
 		}
+	}
+	
+	public boolean isSuccessor(FlowBlock block) {
+		for (FlowBlock succ : successors) {
+			if (succ.id == block.id) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isPredecessor(FlowBlock block) {
+		for(FlowBlock pred : predecessors) {
+			if(pred.id == block.id)
+				return true;
+		}
+		return false;
 	}
 	
 	public FlowBlock next() {
@@ -312,7 +328,7 @@ public class FlowBlock {
 				sb.append('#').append(iin.var).append(' ').append(iin.incr);
 				break;
 			case TABLESWITCH_INSN: {
-				TableSwitchInsnNode tsin = (TableSwitchInsnNode) insn;
+//				TableSwitchInsnNode tsin = (TableSwitchInsnNode) insn;
 				sb.append("TODO: implement");
 //				sb.append("def: #").append(labels.get(tsin.dflt).id);
 				

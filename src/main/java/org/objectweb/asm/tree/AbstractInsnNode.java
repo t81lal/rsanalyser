@@ -180,6 +180,10 @@ public abstract class AbstractInsnNode {
         this.index = -1;
     }
 
+    public void setOpcode(int op) {
+    	opcode = op;
+    }
+    
     /**
      * Returns the opcode of this instruction.
      * 

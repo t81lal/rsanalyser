@@ -32,6 +32,7 @@ package org.objectweb.asm.tree;
 import java.util.Map;
 
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.util.Printer;
 
 /**
  * A node that represents an instruction with a single int operand.
@@ -66,7 +67,8 @@ public class IntInsnNode extends AbstractInsnNode {
      *            the new instruction opcode. This opcode must be BIPUSH, SIPUSH
      *            or NEWARRAY.
      */
-    public void setOpcode(final int opcode) {
+    @Override
+	public void setOpcode(final int opcode) {
         this.opcode = opcode;
     }
 
@@ -84,5 +86,10 @@ public class IntInsnNode extends AbstractInsnNode {
     @Override
     public AbstractInsnNode clone(final Map<LabelNode, LabelNode> labels) {
         return new IntInsnNode(opcode, operand).cloneAnnotations(this);
+    }
+    
+    @Override
+	public String toString() {
+    	return Printer.OPCODES[opcode()] + ", " + operand;
     }
 }

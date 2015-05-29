@@ -1,13 +1,13 @@
 package org.objectweb.asm.commons.cfg.tree;
 
+import static org.objectweb.asm.tree.AbstractInsnNode.LABEL;
+
+import java.util.Arrays;
+
 import org.objectweb.asm.commons.cfg.Block;
 import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-
-import java.util.Arrays;
-
-import static org.objectweb.asm.tree.AbstractInsnNode.LABEL;
 
 /**
  * @author Tyler Sedlar
@@ -25,11 +25,13 @@ public class NodeTree extends AbstractNode {
         this(block.owner);
     }
 
-    public MethodNode method() {
+    @Override
+	public MethodNode method() {
         return mn;
     }
 
-    public void accept(NodeVisitor nv) {
+    @Override
+	public void accept(NodeVisitor nv) {
         if (!nv.validate()) return;
         nv.visitCode();
         for (AbstractNode node : this)
@@ -44,7 +46,8 @@ public class NodeTree extends AbstractNode {
             accept(nv, node);
     }
 
-    public AbstractInsnNode[] collapse() {
+    @Override
+	public AbstractInsnNode[] collapse() {
         AbstractInsnNode[] instructions = super.collapse();
         int i = instructions.length > 1 && instructions[instructions.length - 2].type() == LABEL ? 2 : 1;
         return Arrays.copyOf(instructions, instructions.length - i);

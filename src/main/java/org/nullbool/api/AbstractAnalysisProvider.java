@@ -17,13 +17,14 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.obfuscation.call.CallVisitor;
 import org.nullbool.api.obfuscation.call.HierarchyVisitor;
+import org.nullbool.api.obfuscation.cfg.CFGCache;
 import org.nullbool.api.obfuscation.cfg.ControlFlowException;
-import org.nullbool.api.obfuscation.cfg.ControlFlowGraph;
 import org.nullbool.api.obfuscation.dummyparam.EmptyParamVisitor;
 import org.nullbool.api.obfuscation.dummyparam.EmptyParamVisitor2;
 import org.nullbool.api.obfuscation.dummyparam.OpaquePredicateVisitor;
 import org.nullbool.api.obfuscation.field.FieldOpener;
 import org.nullbool.api.obfuscation.field.UnusedFieldRemover;
+import org.nullbool.api.obfuscation.number.ArithmeticFixer;
 import org.nullbool.api.obfuscation.number.MultiplierHandler;
 import org.nullbool.api.obfuscation.number.MultiplierVisitor;
 import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
@@ -61,6 +62,7 @@ public abstract class AbstractAnalysisProvider {
 	private ClassTree classTree;
 	private List<ClassAnalyser> analysers;
 	private MultiplierHandler multiplierHandler;
+	private CFGCache cfgCache;
 
 	public AbstractAnalysisProvider(Revision revision) throws IOException {
 		this.revision = revision;
@@ -256,7 +258,11 @@ public abstract class AbstractAnalysisProvider {
 		analyseMultipliers();
 		removeDummyMethods(contents);
 		removeUnusedFields();
-		fixFlow();
+		//TODO: fix flow
+		//fixFlow();
+		
+		reorderOperations();
+		buildCfgs();
 		
 		// runEmptyParamVisitor2(contents);
 		// checkRecursion(contents);
@@ -279,6 +285,40 @@ public abstract class AbstractAnalysisProvider {
 		// this.contents.getClassContents().clear();
 		// this.contents.getClassContents().addAll(contents.getClassContents());
 		// this.contents.getClassContents().namedMap();
+	}
+	
+	private void buildCfgs() {
+		cfgCache = new CFGCache();
+		for(ClassNode cn : contents.getClassContents()) {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() > 0) {
+					try {
+						cfgCache.get(m);
+					} catch (ControlFlowException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		System.err.printf("Built %d control flow graphs.%n", cfgCache.size());
+	}
+	
+	private void reorderOperations() {
+		ArithmeticFixer fixer = new ArithmeticFixer();
+		//		ArithmeticFixer fixer = new ArithmeticFixer();
+		//		FieldArithmeticFixer fixer = new FieldArithmeticFixer();
+		TreeBuilder builder = new TreeBuilder();
+		
+		for(ClassNode cn : contents.getClassContents()) {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() > 0) {
+					builder.build(m).accept(fixer);
+				}
+			}
+		}
+		
+		fixer.output();
 	}
 	
 	private void removeUnusedFields() {
@@ -344,49 +384,55 @@ public abstract class AbstractAnalysisProvider {
 	}
 	
 	private void fixFlow() {
-		ControlFlowGraph graph = new ControlFlowGraph();
-		
-		int c = 0;
-		
-		for(ClassNode cn : contents.getClassContents()) {
-			for(MethodNode m : cn.methods) {
-				if(m.instructions.size() > 0) {
-					c++;
-				}
-			}
-		}
-		
-		System.out.printf("Can build %d graphs.%n", c);
-		
-		for(ClassNode cn : contents.getClassContents()) {
-			for(MethodNode m : cn.methods) {
-				if(m.instructions.size() > 0) {
-					
-					//TODO: FIX
-					//UPDATE: fixed
-					/*if(m.key().equals("aa.am([II)V")) {
-						graph.debug = true;
-					} else {
-						graph.debug = false;
-					}*/
-					
-					try {
-						graph.create(m);
-						graph.fix();
-						graph.result(m);
-					} catch (ControlFlowException e) {
-						e.printStackTrace();
-					} finally {
-						graph.destroy();
-						
-						if(graph.debug)
-							System.exit(1);
-					}
-				}
-			}
-		}
-		
-		System.out.println("Done graphing.");
+//		ControlFlowGraph graph = new ControlFlowGraph();
+//		
+//		int c = 0;
+//		
+//		for(ClassNode cn : contents.getClassContents()) {
+//			for(MethodNode m : cn.methods) {
+//				if(m.instructions.size() > 0) {
+//					c++;
+//				}
+//			}
+//		}
+//		
+//		System.out.printf("Can build %d graphs.%n", c);
+//		
+//		for(ClassNode cn : contents.getClassContents()) {
+//			for(MethodNode m : cn.methods) {
+//				if(m.instructions.size() > 0) {
+//					
+//					//TODO: FIX
+//					//UPDATE: fixed
+//					/*if(m.key().equals("aa.am([II)V")) {
+//						graph.debug = true;
+//					} else {
+//						graph.debug = false;
+//					}*/
+//					
+//					if(m.owner.name.equals("dh") && m.name.equals("aj")) {
+//						graph.debug = true;
+//					} else {
+//						graph.debug = false;
+//					}
+//					
+//					try {
+//						graph.create(m);
+//						graph.fix();
+//						graph.result(m);
+//					} catch (ControlFlowException e) {
+//						e.printStackTrace();
+//					} finally {
+//						graph.destroy();
+//						
+//						if(graph.debug)
+//							System.exit(1);
+//					}
+//				}
+//			}
+//		}
+//		
+//		System.out.println("Done graphing.");
 	}
 
 	protected abstract List<ClassAnalyser> registerAnalysers() throws AnalysisException;
@@ -435,6 +481,10 @@ public abstract class AbstractAnalysisProvider {
 		return analysisTime;
 	}
 
+	public CFGCache getCFGCache() {
+		return cfgCache;
+	}
+	
 	private String[] getAllInstructions() {
 		InsnList aIns = null;
 		List<String> mI = new ArrayList<String>();

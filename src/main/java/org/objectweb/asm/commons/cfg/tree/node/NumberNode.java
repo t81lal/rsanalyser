@@ -64,4 +64,18 @@ public class NumberNode extends AbstractNode {
             ((LdcInsnNode) ain).cst = number;
         }
     }
+    
+    public void setNumber(Number num) {
+    	AbstractInsnNode ain = insn();
+    	if(!(ain instanceof LdcInsnNode)) {
+    		setInstruction(new LdcInsnNode(num));
+    	} else{
+    		((LdcInsnNode) ain).cst = num;
+    	}
+    }
+    
+    @Override
+	public String toString() {
+    	return insn().toString();
+    }
 }

@@ -4,6 +4,7 @@ import static org.nullbool.api.util.InstructionUtil.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -48,7 +49,7 @@ import org.objectweb.asm.tree.TryCatchBlockNode;
  * @author Bibl (don't ban me pls)
  * @created 25 May 2015
  */
-public class ControlFlowGraph implements Opcodes {
+public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 	
 	private static int graphCount = 0;
 	
@@ -62,7 +63,7 @@ public class ControlFlowGraph implements Opcodes {
 	
 	private FlowBlock entry, exit;
 
-	public ControlFlowGraph() {
+	protected ControlFlowGraph() {
 		blocks      = new ArrayList<FlowBlock>();
 		blockStarts = new HashMap<AbstractInsnNode, FlowBlock>();
 		labels      = new HashMap<LabelNode, FlowBlock>();
@@ -82,8 +83,9 @@ public class ControlFlowGraph implements Opcodes {
 	 * Finds and constructs the blocks of the cfg.
 	 * @param method The MethodNode to graph.
 	 * @throws ControlFlowException If there is a graphing error.
+	 * @return this
 	 */
-	public void create(MethodNode method) throws ControlFlowException {
+	public ControlFlowGraph create(MethodNode method) throws ControlFlowException {
 		///* get rid of the old graph data.*/
 		//destroy();
 
@@ -121,8 +123,14 @@ public class ControlFlowGraph implements Opcodes {
 			System.out.println("captureEntryAndExit");
 		captureEntryAndExit();
 		
+		if(method.key().equals("")) {
+			debug = true;
+		}
+		
 		if(debug) 
 			System.out.println(this);
+		
+		return this;
 	}
 	
 	public void fix() throws ControlFlowException {
@@ -141,6 +149,9 @@ public class ControlFlowGraph implements Opcodes {
 		if(debug) 
 			System.out.println("mergeBlocks");
 		mergeBlocks();
+		
+		
+		
 	}
 	
 	public void result(MethodNode method) throws ControlFlowException {
@@ -151,7 +162,6 @@ public class ControlFlowGraph implements Opcodes {
 			b.transfer(insns);
 		}
 		
-//		InsnList list = new InsnList();
 		InsnList list = method.instructions;
 		list.removeAll(true);
 		
@@ -167,8 +177,6 @@ public class ControlFlowGraph implements Opcodes {
 			method.instructions.add(ain);
 		}
 		
-//		method.instructions.removeAll(true);
-//		method.instructions = list;
 		
 		if(debug) {
 			ControlFlowGraph graph = new ControlFlowGraph();
@@ -176,34 +184,7 @@ public class ControlFlowGraph implements Opcodes {
 			for(String s : new InsnListPrinter(method.instructions).createPrint()) {
 				System.out.println(s);
 			}
-//			System.out.println(graph);
 		}
-	}
-	
-	private LabelNode getLabel(Map<String, LabelNode> labels, LabelNode old) throws ControlFlowException {
-		FlowBlock block = this.labels.get(old);
-		return getLabel(labels, block.id());
-	}
-	
-	private LabelNode getLabel(Map<String, LabelNode> labels, String id) throws ControlFlowException {
-		if(!labels.containsKey(id))
-			throw new ControlFlowException(String.format("Couldn't find block #%s.", id));
-		return labels.get(id);
-	}
-	
-	private LabelNode renewLabel(Map<FlowBlock, LabelNode> newLabels, LabelNode old) throws ControlFlowException {
-		FlowBlock targ     = labels.get(old);
-		//this is weird lol because the label points to a block
-		//and all the blocks are freshly mapped, so it should work
-		LabelNode newLabel = newLabels.get(targ);
-		
-		if(debug)
-			System.out.printf("Looking for block #%s.%n", targ.id());
-		
-		if(targ == null || newLabel ==null)
-			throw new ControlFlowException(String.format("Invalid target for LabelNode (%s, %s, %s)", old, targ, newLabel));
-		
-		return newLabel;
 	}
 	
 	private void createBlocks(MethodNode method) {
@@ -430,6 +411,8 @@ public class ControlFlowGraph implements Opcodes {
 	}
 	
 	private void associateExceptions(MethodNode method) throws ControlFlowException {
+		Map<String, ExceptionData> mapRanges = new HashMap<String, ExceptionData>();
+		
 		for(TryCatchBlockNode tcbn : method.tryCatchBlocks) {
 			FlowBlock dest = labels.get(tcbn.end);
 			FlowBlock from = labels.get(tcbn.start);
@@ -441,19 +424,26 @@ public class ControlFlowGraph implements Opcodes {
 			int i_to   = LabelHelper.numeric(dest.id());
 			int i_from = LabelHelper.numeric(from.id());
 			
-			List<FlowBlock> range = new ArrayList<FlowBlock>();
+			String key = from.id() + ":" + dest.id() + ":" + handler.id();
 			
-			for(int i=i_from; i < i_to; i++) {
-				String id = LabelHelper.createBlockName(i);
-				FlowBlock block = blockNames.get(id);
-				if(block == null) 
-					throw new ControlFlowException(String.format("Block #%s (%d) is not mapped.", id, i));
-				range.add(block);
-				handler.addExceptionPredecessor(block);
-				block.addExceptionSuccessor(handler);
-				
-				ExceptionData ed = new ExceptionData(handler, range);
-				exceptions.add(ed);
+			if (mapRanges.containsKey(key)) {
+				ExceptionData range = mapRanges.get(key);
+				range.types().add(tcbn.type);
+			} else {
+				List<FlowBlock> range = new ArrayList<FlowBlock>();
+				for(int i=i_from; i < i_to; i++) {
+					String id = LabelHelper.createBlockName(i);
+					FlowBlock block = blockNames.get(id);
+					if(block == null) 
+						throw new ControlFlowException(String.format("Block #%s (%d) is not mapped.", id, i));
+					range.add(block);
+					handler.addExceptionPredecessor(block);
+					block.addExceptionSuccessor(handler);
+					
+					ExceptionData ed = new ExceptionData(handler, range, Arrays.asList(tcbn.type));
+					mapRanges.put(key, ed);
+					exceptions.add(ed);
+				}
 			}
 		}
 	}
@@ -820,5 +810,33 @@ public class ControlFlowGraph implements Opcodes {
 				graph.create(m);
 			}
 		}
+	}
+
+	public List<FlowBlock> blocks() {
+		return blocks;
+	}
+	
+	public FlowBlock entry() {
+		return entry;
+	}
+	
+	public FlowBlock exit() {
+		return exit;
+	}
+
+	public ExceptionData getExceptionRange(FlowBlock handler, FlowBlock block) {
+		for (int i = exceptions.size() - 1; i >= 0; i--) {
+			ExceptionData ed = exceptions.get(i);
+			if (ed.handler() == handler && ed.range().contains(block)) {
+				return ed;
+			}
+		}
+
+		return null;
+	}
+	
+	@Override
+	public DFSIterator iterator() {
+		return new DFSIterator(this);
 	}
 }

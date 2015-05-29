@@ -11,15 +11,18 @@ public class ExceptionData {
 
 	private final FlowBlock handler;
 	private final List<FlowBlock> range;
+	private final List<String> types;
 	
-	public ExceptionData(FlowBlock handler, List<FlowBlock> range) {
+	public ExceptionData(FlowBlock handler, List<FlowBlock> range, List<String> types) {
 		this.handler = handler;
 		this.range = range;
+		this.types = types;
 	}
 	
 	public ExceptionData(FlowBlock handler) {
 		this.handler = handler;
 		this.range   = new ArrayList<FlowBlock>();
+		this.types   = new ArrayList<String>();
 	}
 	
 	public FlowBlock handler(){
@@ -34,5 +37,13 @@ public class ExceptionData {
 	
 	public List<FlowBlock> range() {
 		return range;
+	}
+	
+	public List<String> types() {
+		return types;
+	}
+
+	public boolean isCircular() {
+		return range.contains(handler);
 	}
 }
