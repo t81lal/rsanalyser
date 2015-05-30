@@ -59,6 +59,7 @@ public class InstructionPrinter {
 		searcher = new InstructionSearcher(m.instructions, pattern);
 		match = searcher.search();
 		if (match) {
+			matchedInsns = new ArrayList<AbstractInsnNode>();
 			for(AbstractInsnNode[] ains : searcher.getMatches()) {
 				for(AbstractInsnNode ain : ains) {
 					matchedInsns.add(ain);

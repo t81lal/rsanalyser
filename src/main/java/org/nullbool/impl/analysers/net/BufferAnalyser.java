@@ -1,5 +1,6 @@
 package org.nullbool.impl.analysers.net;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,16 +11,20 @@ import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.obfuscation.cfg.ControlFlowException;
+import org.nullbool.api.obfuscation.cfg.ControlFlowGraph;
 import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.nullbool.api.util.DescFilter;
-import org.nullbool.api.util.InstructionUtil;
+import org.nullbool.api.util.map.NullPermeableMap;
+import org.nullbool.api.util.map.ValueCreator;
+import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
+import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
+import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
 import org.topdank.banalysis.filter.Filter;
 import org.zbot.hooks.ClassHook;
 import org.zbot.hooks.FieldHook;
@@ -27,8 +32,11 @@ import org.zbot.hooks.MethodHook;
 import org.zbot.hooks.MethodHook.MethodType;
 
 @SupportedHooks(fields  = { "getPayload&[B", "getCaret&I", }, 
-methods = { "enableEncryption&(Ljava/math/BigInteger;Ljava/math/BigInteger;)V", 
-		"writeInvertedLEInt&(I)V", "writeLE24&(I)V", "writeInt&(I)V", "writeLEInt&(I)V", "write24Int&(I)V"})
+methods = { "enableEncryption&(Ljava/math/BigInteger;Ljava/math/BigInteger;)V",
+		"write8&(I)V", "write8Weird&(I)V", "write16&(I)V", "write16A&(I)V", "write16B&(I)V", "write24&(I)V", "write32&(I)V", "write40&(J)V", "write64&(J)V",
+		"writeLE16&(I)V", "writeLE16A&(I)V", "writeLE32&(I)V", "write32Weird&(I)V",
+		"writeInverted24&(I)V", "writeInverted32&(I)V", "writeInvertedLE32&(I)V",
+		"writeString&(Ljava/lang/String;)V", "writeJagexString&(Ljava/lang/String;)V", "writeCharSequence&(Ljava/lang/CharSequence;)V"})
 /**
  * @author Bibl (don't ban me pls)
  * @created 23 May 2015
@@ -69,44 +77,119 @@ public class BufferAnalyser extends ClassAnalyser {
 		public List<MethodHook> find(ClassNode cn) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 
-			ReadWriteMethodVisitor visitor = new ReadWriteMethodVisitor();
+			TreeBuilder tb = new TreeBuilder();
+			DataVisitor dv = new DataVisitor();
 
 			for(MethodNode m : cn.methods) {
 				if(m.desc.startsWith("(Ljava/math/BigInteger;Ljava/math/BigInteger;")) {
 					list.add(asMethodHook(MethodType.CALLBACK, m, "enableEncryption"));
 				} else {
-					if(visitor.preVisit(m, ReadWriteMethodVisitor.MARK_SHIFTS | ReadWriteMethodVisitor.MARK_SUBS | ReadWriteMethodVisitor.MARK_ANDS, BASTORE)) {
-						visitor.run();
+					if(!Modifier.isStatic(m.access) && m.desc.endsWith(")V")) {
+						try {
+							ControlFlowGraph graph = Context.current().getCFGCache().get(m);
+							for(FlowBlock block : graph) {
+								tb.build(m, block).accept(dv);
+							}
 
-						boolean b = false;
+							List<Integer> shifts = dv.map.getNotNull(ISHR);
+							List<Integer> subs   = dv.map.getNotNull(ISUB);
+							int tCount = shifts.size();
 
-						int tCount = visitor.shiftOrders.size();
-						if(tCount == 4) {
-							if(subequals(visitor.shiftOrders, new int[]{8, 0, 24, 16})) {
-								list.add(asMethodHook(MethodType.CALLBACK, m, "writeInvertedLEInt"));
-								b = true;
-							} else if(subequals(visitor.shiftOrders, new int[]{24, 16, 8, 0})) {
-								if(subequals(visitor.subOrders, new int[]{1, 1, 1, 1})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "writeInt"));
+							boolean b = false;
+
+							//FIXME: ghetto
+							if(m.desc.startsWith("(Ljava/lang/String;")) {
+								if(subequals(subs, new int[]{1})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "writeString"));
 									b = true;
-								} else if(subequals(visitor.subOrders, new int[]{4, 3, 2, 1})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "writeLEInt"));
+								} else if(subequals(subs, new int[]{1, 1})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "writeJagexString"));
 									b = true;
 								}
-							}
-						} else if(tCount == 3) {
-							if(subequals(visitor.shiftOrders, new int[]{16, 8, 0})) {
-								list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE24Int"));
-								b = true;
-							} else if(subequals(visitor.shiftOrders, new int[]{8, 16, 0})) {
-								list.add(asMethodHook(MethodType.CALLBACK, m, "write24Int"));
+							} else if(m.desc.startsWith("(Ljava/lang/CharSequence;")) {
+								list.add(asMethodHook(MethodType.CALLBACK, m, "writeCharSequence"));
 								b = true;
 							}
+
+							if(tCount == 8) {
+								if(subequals(shifts, new int[]{56, 48, 40, 32, 24, 16, 8, 0})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "write64"));
+									b = true;
+								}
+							} else if(tCount == 6) {
+								if(subequals(shifts, new int[]{40, 32, 24, 16, 8, 0})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "write40"));
+									b = true;
+								}
+							} else if(tCount == 4) {
+								if(subequals(shifts, new int[]{8, 0, 24, 16})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "writeInvertedLE32"));
+									b = true;
+								} else if(subequals(shifts, new int[]{24, 16, 8, 0})) {
+									if(subequals(subs, new int[]{1, 1, 1, 1})) {
+										list.add(asMethodHook(MethodType.CALLBACK, m, "write32"));
+										b = true;
+									} else if(subequals(subs, new int[]{4, 3, 2, 1})) {
+										list.add(asMethodHook(MethodType.CALLBACK, m, "write32Weird"));
+										b = true;
+									}
+								} else if(subequals(shifts, new int[]{0, 8, 16, 24})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE32"));
+									b = true;
+								} else if(subequals(shifts, new int[]{16, 24, 0, 8})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "writeInverted32"));
+									b = true;
+								}
+							} else if(tCount == 3) {
+								if(subequals(shifts, new int[]{16, 8, 0})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "write24"));
+									b = true;
+								} else if(subequals(shifts, new int[]{8, 16, 0})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "writeInverted24"));
+									b = true;
+								}
+							} else if(tCount == 2) {
+								if(subequals(shifts, new int[]{8, 0})) {
+									if(subequals(subs, new int[]{2, 1})) {
+										list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE16A"));
+										b = true;
+									} else if(subequals(subs, new int[]{1, 1})) {
+										list.add(asMethodHook(MethodType.CALLBACK, m, "write16"));
+										b = true;
+									}
+								} else if(subequals(shifts, new int[]{8, 128})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "write16A"));
+									b = true;
+								} else if(subequals(shifts, new int[]{128, 8})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "write16B"));
+									b = true;
+								} else if(subequals(shifts, new int[]{0, 8})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE16"));
+									b = true;
+								}
+							} else if(tCount == 1) {
+								if(subequals(shifts, new int[]{0})) {
+									if(subequals(subs, new int[]{1})) {
+										if(findAllOpcodePatterns(m, new int[]{ ILOAD, ISUB}).size() == 1) {
+											list.add(asMethodHook(MethodType.CALLBACK, m, "write8Weird"));
+											System.out.println("BufferAnalyser.MethodAnalyser.find()1 " + m);
+											b = true;
+										} else {
+											list.add(asMethodHook(MethodType.CALLBACK, m, "write8"));
+											b = true;
+										}
+									}
+								}
+							}
+
+							//							if(!b) {
+							System.err.println(m + " " + shifts + " " + subs);
+							//							}
+						} catch (ControlFlowException e) {
+							e.printStackTrace();
 						}
 
-						if(!b) {
-							System.err.printf("%s: %s, %s, %s.%n", m, visitor.shiftOrders, visitor.subOrders, visitor.andOrders);
-						}
+						dv.map.clear();
 					}
 				}
 			}
@@ -116,6 +199,9 @@ public class BufferAnalyser extends ClassAnalyser {
 	}
 
 	private static boolean subequals(List<Integer> list, int[] arr) {
+		if(list.size() != arr.length)
+			return false;
+
 		for(int i=0;i < arr.length; i++) {
 			if(list.get(i) != arr[i])
 				return false;
@@ -123,176 +209,41 @@ public class BufferAnalyser extends ClassAnalyser {
 		return true;
 	}
 
-	private static class ReadWriteMethodVisitor {
+	private static class DataVisitor extends NodeVisitor {
 
-		public static final int MARK_SHIFTS = 0x01, MARK_SUBS = 0x02, MARK_ANDS = 0x04;
-
-		private MethodNode method;
-		private int flags;
-		private int target;
-
-		private List<Integer> shiftOrders;
-		private List<Integer> subOrders;
-		private List<Integer>  andOrders;
-
-		private ReadWriteMethodVisitor() {
-			shiftOrders = new ArrayList<Integer>();
-			subOrders   = new ArrayList<Integer>();
-			andOrders   = new ArrayList<Integer>();
-		}
-
-		public boolean preVisit(MethodNode m, int flags, int target) {
-			if(m.desc.endsWith(")V")) {
-				this.method = m;
-				this.flags  = flags;
-				this.target = target;
-				shiftOrders.clear();
-				subOrders.clear();
-				return true;
-			} else {
-				return false;
+		private final NullPermeableMap<Integer, List<Integer>> map = new NullPermeableMap<Integer, List<Integer>>(new ValueCreator<List<Integer>>() {
+			@Override
+			public List<Integer> create() {
+				return new ArrayList<Integer>();
 			}
-		}
+		});
 
-		//TODO: Iterate through the (obfuscated) cfg to find the order
-		//      instead of following gotos.
-		public void run() {
-			boolean shifts = (flags & MARK_SHIFTS) == MARK_SHIFTS;
-			boolean subs   = (flags & MARK_SUBS)   == MARK_SUBS;
-			boolean ands   = (flags & MARK_ANDS)   == MARK_ANDS;
+		@Override
+		public void visit(AbstractNode n) {
+			if(n.opcode() == BASTORE) {
+				AbstractNode indexNode = n.child(1);
+				AbstractNode valNode = n.child(2);
+				
+				System.out.println(valNode);
+				
+				if(indexNode.children() == 2 && indexNode.child(1) instanceof NumberNode) {
+					NumberNode nn = (NumberNode) indexNode.child(1);
+					map.getNotNull(ISUB).add(nn.number());
+				}
+				
+				if((valNode.opcode() == I2B || (valNode.opcode() == L2I && valNode.hasParent())) && valNode.children() > 0) {
+					AbstractNode c1 = valNode.child(0);
 
-			int tCount = 0;
-			int sCount = 0;
-			int aCount = 0;
+					if(c1.opcode() == L2I) {
+						c1 = c1.child(0);
+					}
 
-			try {
-				for(FlowBlock block : Context.current().getCFGCache().get(method)) {
-					/*InsnList list = method.instructions;
-					AbstractInsnNode ain = list.getFirst();*/
-					AbstractInsnNode ain = block.first();
-					while(ain != null && !ain.equals(block.last())) {
-						if(shifts && ain.opcode() == target) {
-							tCount++;
-							followShift(ain);
-						}
-
-						if(subs && ain.opcode() == ISUB) {
-							sCount++;
-							followSub(ain);
-						}
-
-						if(ands && ain.opcode() == IAND) {
-							aCount++;
-							followAnd(ain);
-						}
-
-						/* 27/05/15, 18:07  We fix the execution path of the code now so the
-						 * 					natural order of the code should be correct.
-						else if(ain.opcode() == GOTO) {
-							JumpInsnNode jin = (JumpInsnNode) ain;
-							LabelNode label = jin.label;
-							if(!visited.contains(label)) {
-								visited.add(label);
-								AbstractInsnNode after = label.getNext();
-								ain = after;
-							}
-						}*/
-
-						ain = ain.getNext();
+					if(c1.firstNumber() != null) {
+						map.getNotNull(ISHR).add(c1.firstNumber().number());
+					} else {
+						map.getNotNull(ISHR).add(0);
 					}
 				}
-			} catch(ControlFlowException e) {
-				e.printStackTrace();
-			}
-
-			if(shifts && tCount != shiftOrders.size()) 
-				trim(shiftOrders, tCount);
-
-			if(subs && sCount != subOrders.size()) 
-				trim(subOrders, sCount);
-
-			if(ands && aCount != andOrders.size()) 
-				trim(andOrders, aCount);
-
-			//System.out.println(method + " " + shiftOrders);
-			//System.out.println(method + " " + subOrders);
-			//System.out.println(method + " " + andOrders);
-		}
-
-		private void trim(List<Integer> list, int count) {
-			int diff = list.size() - count;
-			if(diff <= 0) {
-				return;
-			}
-
-			for(int i=list.size() - 1; i >= count; i--) {
-				list.remove(i);
-			}
-		}
-
-		private void followShift(AbstractInsnNode ain) {			
-			/*go backwards to find the iload 1 (the value we're writing)*/
-			while(ain != null) {
-				if(ain.opcode() == -1) {
-					ain = ain.getPrevious();
-					continue;
-				}
-
-				if(ain.opcode() == ILOAD) {
-					VarInsnNode vin = (VarInsnNode) ain;
-					if(vin.var == 1) {
-
-						int shift = 0;
-
-						/* now that it's been found, go forward to find either the cst shift or 
-						 * if it has no shift, then just the cast.
-						 * 
-						 * since all shifts are done as integers using ishr or ishl, the value has
-						 * to be cast to be added to the byte[], so it guaranteed to be there if the
-						 * method is indeed a read/write method.*/
-
-						AbstractInsnNode ain2 = vin;
-						while(ain2 != null) {
-							if(ain2.opcode() == I2B) {
-								shift = 0;
-								break;
-							} else if(ain2.opcode() == BIPUSH || ain2.opcode() == SIPUSH) {
-								//								if(ain2.opcode() == SIPUSH) {
-								//									System.out.println("got a sipush");
-								//								}
-
-								shift = ((IntInsnNode) ain2).operand;
-								break;
-							}
-
-							ain2 = ain2.getNext();
-						}
-
-						shiftOrders.add(shift);
-
-						break;
-					}
-				}
-
-				ain = ain.getPrevious();
-			}
-		}
-
-		private void followSub(AbstractInsnNode ain) {
-			AbstractInsnNode prev = ain.getPrevious();
-			if(prev != null) {
-				int number = InstructionUtil.resolve(prev);
-				if(number != -1) 
-					subOrders.add(number);
-			}
-		}
-
-		private void followAnd(AbstractInsnNode ain) {
-			AbstractInsnNode prev = ain.getPrevious();
-			if(prev != null) {
-				int number = InstructionUtil.resolve(prev);
-				if(number != -1) 
-					andOrders.add(number);
 			}
 		}
 	}

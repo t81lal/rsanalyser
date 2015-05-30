@@ -25,6 +25,9 @@ public class ArithmeticFixer extends NodeVisitor {
 	
 	private int complexSubSwitch;
 	private int unswitchableSubs, correctSubs = 0;
+	private int wtfs;
+	
+	private int swappedMultis, correctMultis;
 	
 	@Override
 	public void visitOperation(ArithmeticNode expr) {
@@ -158,7 +161,9 @@ public class ArithmeticFixer extends NodeVisitor {
 					// Already correct
 					correctAdds++;
 				} else {
-//					throw new RuntimeException("huh x3: " + first.getClass().getSimpleName());
+					System.err.printf("   Unhandleable operation add at %s (%d).%n", expr.method(), val);
+					wtfs++;
+					//throw new RuntimeException("huh x3: " + first.getClass().getSimpleName());
 				}
 			}
 		} else if(expr.subtracting()) {
@@ -193,6 +198,34 @@ public class ArithmeticFixer extends NodeVisitor {
 				 * 
 				 * Can we change these? */
 				correctSubs++;
+			}
+		} else if(expr.multiplying()) {
+			/* If the first number is the constant, we move it after the other 
+			 * operand. */
+			if(a1.equals(first)) {
+				InstructionSwap swap = new InstructionSwap();
+				swap.method = expr.method();
+				swap.insn   = a1.insn();
+				swap.marker = a2.insn();
+				inserts.add(swap);
+				
+				/*if(expr.method().owner.name.equals("dh") && expr.method().name.equals("s")) {
+					System.out.println("ArithmeticFixer.visitOperation() " + first.number() + " " + a2.insn().getClass());
+					for(String s : new InstructionPrinter(expr.method(), new InstructionPattern(new InstructionFilter[]{
+							new InstructionFilter() {
+								@Override
+								public boolean accept(AbstractInsnNode t) {
+									return t.equals(swap.insn) || t.equals(swap.marker);
+								}
+							}
+					})).createPrint()){
+						System.out.println(s);
+					}
+				}*/
+				
+				swappedMultis++;
+			} else {
+				correctMultis++;
 			}
 		}
 	}
@@ -260,7 +293,14 @@ public class ArithmeticFixer extends NodeVisitor {
 	}
 
 	public void output() {
+		/* As the non constant operand of the operation may be calculated using more
+		 * than 1 instruction, we use can a ghetto hack and instead of swapping the
+		 * instructions by index, we simply add the constant after the other operands
+		 * instruction(s). */
 		for(InstructionSwap a : inserts) {
+			//if(a.method.owner.name.equals("dh") && a.method.name.equals("s")) {
+			//	System.out.println("ArithmeticFixer.output() " + a.insn.getClass() + " " + a.marker.getClass());
+			//}
 			a.method.instructions.remove(a.insn);
 			a.method.instructions.insert(a.marker, a.insn);
 		}
@@ -273,6 +313,10 @@ public class ArithmeticFixer extends NodeVisitor {
 		System.err.printf("Found    %4d unswitchable subtraction operations     (-const - variable).%n", unswitchableSubs);
 		System.err.printf("Switched %4d subtraction constant signs              (variable - -const).%n", complexSubSwitch);
 		System.err.printf("Found    %4d already correct subtraction operations  (variable - const).%n", correctSubs);
+		System.err.printf("Hit a few (%d) wtfs...%n", wtfs);
+		
+		System.err.printf("Swapped  %4d constant multiplication expressions     (const * variable).%n", swappedMultis);
+		System.err.printf("Found    %4d preferable CME's                        (variable * const).%n", correctMultis);
 	}
 
 	private static class InstructionSwap {

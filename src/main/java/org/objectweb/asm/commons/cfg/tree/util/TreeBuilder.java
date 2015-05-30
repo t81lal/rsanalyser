@@ -1,23 +1,11 @@
 package org.objectweb.asm.commons.cfg.tree.util;
 
-import static org.objectweb.asm.Opcodes.ATHROW;
-import static org.objectweb.asm.Opcodes.DCONST_1;
-import static org.objectweb.asm.Opcodes.GETFIELD;
-import static org.objectweb.asm.Opcodes.GETSTATIC;
-import static org.objectweb.asm.Opcodes.I2L;
-import static org.objectweb.asm.Opcodes.I2S;
-import static org.objectweb.asm.Opcodes.IADD;
-import static org.objectweb.asm.Opcodes.ICONST_M1;
-import static org.objectweb.asm.Opcodes.INVOKEDYNAMIC;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.LXOR;
-import static org.objectweb.asm.Opcodes.MONITOREXIT;
-import static org.objectweb.asm.Opcodes.PUTFIELD;
-import static org.objectweb.asm.Opcodes.PUTSTATIC;
+import static org.objectweb.asm.Opcodes.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.cfg.Block;
 import org.objectweb.asm.commons.cfg.tree.NodeTree;
@@ -205,6 +193,24 @@ public class TreeBuilder {
         List<AbstractNode> nodes = new ArrayList<>();
         long start = System.nanoTime();
         for (AbstractInsnNode ain : block.instructions)
+            nodes.add(createNode(ain, tree, getTreeSize(ain)));
+        long end = System.nanoTime();
+        create += (end - start);
+        treeIndex = nodes.size() - 1;
+        AbstractNode node;
+        start = System.nanoTime();
+        while ((node = iterate(nodes)) != null)
+            tree.addFirst(node);
+        end = System.nanoTime();
+        iterate += (end - start);
+        return tree;
+    }
+    
+    public NodeTree build(MethodNode method, FlowBlock block) {
+        NodeTree tree = new NodeTree(method);
+        List<AbstractNode> nodes = new ArrayList<>();
+        long start = System.nanoTime();
+        for (AbstractInsnNode ain : block.insns())
             nodes.add(createNode(ain, tree, getTreeSize(ain)));
         long end = System.nanoTime();
         create += (end - start);

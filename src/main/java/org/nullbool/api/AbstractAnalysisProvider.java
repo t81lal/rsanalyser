@@ -306,8 +306,6 @@ public abstract class AbstractAnalysisProvider {
 	
 	private void reorderOperations() {
 		ArithmeticFixer fixer = new ArithmeticFixer();
-		//		ArithmeticFixer fixer = new ArithmeticFixer();
-		//		FieldArithmeticFixer fixer = new FieldArithmeticFixer();
 		TreeBuilder builder = new TreeBuilder();
 		
 		for(ClassNode cn : contents.getClassContents()) {
