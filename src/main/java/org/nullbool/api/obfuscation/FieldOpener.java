@@ -1,6 +1,5 @@
-package org.nullbool.api.obfuscation.field;
+package org.nullbool.api.obfuscation;
 
-import org.nullbool.api.obfuscation.Visitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;

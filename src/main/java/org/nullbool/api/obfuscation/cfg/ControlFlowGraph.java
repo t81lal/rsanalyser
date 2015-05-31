@@ -245,6 +245,10 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 			blocks.add(block);
 		}
 	}
+	
+	public static boolean isBlockSplit(AbstractInsnNode ain) {
+		return isBoundary(ain) || (ain instanceof MethodInsnNode && ((MethodInsnNode) ain).desc.endsWith("V") && ain.getNext() instanceof LabelNode /* && isBoundary(ain.getNext())*/);
+	}
 
 	/* We need to resolve the LabelNodes for the method to account for the branching pattern
 	 * that is created by the ASM library. Basically, when creating basic blocks, we can't 
@@ -493,7 +497,7 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 		while (cont);
 	}
 	
-	private boolean removeEmptyBlock(FlowBlock block, boolean merging) throws ControlFlowException {
+	public boolean removeEmptyBlock(FlowBlock block, boolean merging) throws ControlFlowException {
 		boolean deletedRanges = false;
 		if (block.cleansize() == 0) {
 			if (block.successors().size() > 1) {
@@ -754,7 +758,7 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 		return labels.get(label);
 	}
 
-	private boolean isBoundary(AbstractInsnNode ain) {
+	private static boolean isBoundary(AbstractInsnNode ain) {
 		if(ain == null)
 			return false;
 		

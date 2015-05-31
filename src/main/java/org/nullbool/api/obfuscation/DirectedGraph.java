@@ -1,4 +1,4 @@
-package org.nullbool.api.obfuscation.call;
+package org.nullbool.api.obfuscation;
 
 import java.util.Collections;
 import java.util.HashMap;

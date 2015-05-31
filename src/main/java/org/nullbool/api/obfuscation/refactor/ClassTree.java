@@ -71,14 +71,15 @@ public class ClassTree {
 			getSupers0(node);
 			getDelegates0(node);
 		}
-
+	}
+	
+	public void output() {
 		if (classes.size() == delgates.size() && classes.size() == supers.size() && delgates.size() == supers.size()) {
 			if(Context.current().getFlags().getOrDefault("basicout", true)) 
 				System.out.println(String.format("Built tree for %d classes (%d del, %d sup).", classes.size(), delgates.size(), supers.size()));
 		} else {
 			System.out.println(String.format("WARNING: Built tree for %d classes (%d del, %d sup), may be erroneous.", classes.size(), delgates.size(),
 					supers.size()));
-			
 		}
 	}
 

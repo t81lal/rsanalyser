@@ -175,7 +175,6 @@ public class BytecodeRefactorer implements Opcodes {
 			System.out.printf("   %d methods and %d method calls. %n", methodNodes, methodCalls);
 			System.out.printf("   %d news, %d anewarrays, %d checkcasts, %d instancofs, %d mnewarrays. %n", newCalls, newArray, checkcasts, instances, mArrray);
 		}
-
 	}
 	
 	public String transformMethodDesc(String desc){
@@ -387,5 +386,41 @@ public class BytecodeRefactorer implements Opcodes {
 		methodMappings.put(fullKey, newName);
 		
 		return newName;
+	}
+
+	public Collection<ClassNode> getClasses() {
+		return classes;
+	}
+
+	public IRemapper getRemapper() {
+		return remapper;
+	}
+
+	public ClassTree getClassTree() {
+		return classTree;
+	}
+
+	public MethodCache getMethodCache() {
+		return methodCache;
+	}
+
+	public InheritedMethodMap getMethodChain() {
+		return methodChain;
+	}
+
+	public Map<String, String> getClassMappings() {
+		return classMappings;
+	}
+
+	public Map<String, String> getFieldMappings() {
+		return fieldMappings;
+	}
+
+	public Map<String, String> getDescMappings() {
+		return descMappings;
+	}
+
+	public Map<String, String> getMethodMappings() {
+		return methodMappings;
 	}
 }

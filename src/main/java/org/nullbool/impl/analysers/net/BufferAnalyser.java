@@ -172,7 +172,7 @@ public class BufferAnalyser extends ClassAnalyser {
 									if(subequals(subs, new int[]{1})) {
 										if(findAllOpcodePatterns(m, new int[]{ ILOAD, ISUB}).size() == 1) {
 											list.add(asMethodHook(MethodType.CALLBACK, m, "write8Weird"));
-											System.out.println("BufferAnalyser.MethodAnalyser.find()1 " + m);
+											//System.out.println("BufferAnalyser.MethodAnalyser.find()1 " + m);
 											b = true;
 										} else {
 											list.add(asMethodHook(MethodType.CALLBACK, m, "write8"));
@@ -183,7 +183,7 @@ public class BufferAnalyser extends ClassAnalyser {
 							}
 
 							//							if(!b) {
-							System.err.println(m + " " + shifts + " " + subs);
+							//System.err.println(m + " " + shifts + " " + subs);
 							//							}
 						} catch (ControlFlowException e) {
 							e.printStackTrace();
@@ -224,7 +224,7 @@ public class BufferAnalyser extends ClassAnalyser {
 				AbstractNode indexNode = n.child(1);
 				AbstractNode valNode = n.child(2);
 				
-				System.out.println(valNode);
+//				System.out.println(valNode);
 				
 				if(indexNode.children() == 2 && indexNode.child(1) instanceof NumberNode) {
 					NumberNode nn = (NumberNode) indexNode.child(1);

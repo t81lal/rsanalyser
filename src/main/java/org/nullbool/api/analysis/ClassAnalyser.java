@@ -525,7 +525,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		return Context.current().getMultiplierHandler().getDecoder(source);
 	}
 	
-	public Set<MethodNode> findMethodsByPattern(MethodNode[] methods, int[] opcodes) {
+	public static Set<MethodNode> findMethodsByPattern(MethodNode[] methods, int[] opcodes) {
 		Set<MethodNode> set = new HashSet<MethodNode>();
 		
 		for(MethodNode m : methods) {
@@ -538,7 +538,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		return set;
 	}
 	
-	public Set<MethodNode> findMethodsByPattern(ClassNode cn, int[] opcodes) {
+	public static Set<MethodNode> findMethodsByPattern(ClassNode cn, int[] opcodes) {
 		Set<MethodNode> set = new HashSet<MethodNode>();
 		
 		for(MethodNode m : cn.methods) {
@@ -551,7 +551,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		return set;
 	}
 	
-	public List<AbstractInsnNode[]> findAllOpcodePatterns(MethodNode m, int[] opcodes) {
+	public static List<AbstractInsnNode[]> findAllOpcodePatterns(MethodNode m, int[] opcodes) {
 		List<AbstractInsnNode[]> set = new ArrayList<AbstractInsnNode[]>();
 		AbstractInsnNode[] array = new AbstractInsnNode[opcodes.length];
 		
@@ -562,7 +562,7 @@ public abstract class ClassAnalyser implements Opcodes {
 			
 			int target = opcodes[j++];
 			
-			if(target == -1) {					
+			if(target == -1) {			
 //				System.out.println("ClassAnalyser.findOpcodePattern() -1 target");
 				continue;
 			} else if(target == -2) {
@@ -599,7 +599,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		return set;
 	}
 	
-	public List<AbstractInsnNode> findAllOpcodePatternsStarts(List<AbstractInsnNode[]> list, int[] opcodes) {
+	public static List<AbstractInsnNode> findAllOpcodePatternsStarts(List<AbstractInsnNode[]> list, int[] opcodes) {
 		if(list.isEmpty())
 			return null;
 		List<AbstractInsnNode> list2 = new ArrayList<AbstractInsnNode>();
@@ -611,7 +611,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		return list2;
 	}
 	
-	public List<AbstractInsnNode> findAllOpcodePatternsStarts(MethodNode m, int[] opcodes) {
+	public static List<AbstractInsnNode> findAllOpcodePatternsStarts(MethodNode m, int[] opcodes) {
 		List<AbstractInsnNode[]> list = findAllOpcodePatterns(m, opcodes);
 		if(list.isEmpty())
 			return null;
@@ -624,25 +624,25 @@ public abstract class ClassAnalyser implements Opcodes {
 		return list2;
 	}
 	
-	public AbstractInsnNode findOpcodePattern(MethodNode m, int[] opcodes) {
+	public static AbstractInsnNode findOpcodePattern(MethodNode m, int[] opcodes) {
 		List<AbstractInsnNode[]> list = findAllOpcodePatterns(m, opcodes);
 		if(list.isEmpty())
 			return null;
 		return list.get(0)[0];
 	}
 	
-	public AbstractInsnNode[] findOpcodePatternArr(MethodNode m, int[] opcodes) {
+	public static AbstractInsnNode[] findOpcodePatternArr(MethodNode m, int[] opcodes) {
 		List<AbstractInsnNode[]> list = findAllOpcodePatterns(m, opcodes);
 		if(list.isEmpty())
 			return null;
 		return list.get(0);
 	}
 	
-	public int countOpcodePatterns(MethodNode m, int[] opcodes) {
+	public static int countOpcodePatterns(MethodNode m, int[] opcodes) {
 		return findAllOpcodePatterns(m, opcodes).size();
 	}
 	
-	public int nextDefined(int[] opcodes, int offset) {
+	public static int nextDefined(int[] opcodes, int offset) {
 		for(int i=offset; i < opcodes.length; i++) {
 			int op = opcodes[i];
 			if(op >= 0)
@@ -651,7 +651,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		return offset;
 	}
 	
-	public int getDistance(AbstractInsnNode[] insns, int offset, int target) {
+	public static int getDistance(AbstractInsnNode[] insns, int offset, int target) {
 		for(int i=offset; i < insns.length; i++) {
 			AbstractInsnNode ain = insns[i];
 			if(ain.opcode() == target)
@@ -661,7 +661,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		return -1;
 	}
 	
-	public String source(FieldInsnNode fin) {
+	public static String source(FieldInsnNode fin) {
 		return String.format("%s.%s", fin.owner, fin.name);
 	}
 

@@ -1,4 +1,4 @@
-package org.nullbool.api.obfuscation.field;
+package org.nullbool.api.obfuscation;
 
 import java.lang.reflect.Modifier;
 import java.util.Collection;
@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.nullbool.api.Context;
-import org.nullbool.api.obfuscation.Visitor;
 import org.nullbool.api.obfuscation.refactor.ClassTree;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -20,6 +19,8 @@ public class UnusedFieldRemover extends Visitor {
 
 	@Override
 	public void visit(JarContents<? extends ClassNode> contents) {
+		System.err.println("Running Unused Field Remover.");
+		
 		@SuppressWarnings("unchecked")
 		ClassTree tree = new ClassTree((Collection<ClassNode>) contents.getClassContents());
 		Set<FieldNode> traced = new HashSet<FieldNode>();
@@ -48,10 +49,9 @@ public class UnusedFieldRemover extends Visitor {
 		}
 		
 		if(Context.current().getFlags().getOrDefault("basicout", true)) {
-			System.out.printf("Traced %d static field calls.%n", traced.size());
-			System.out.printf("Couldn't trace %d static field calls.%n", untraceable);
+			System.out.printf("   Traced %d static field calls.%n", traced.size());
+			System.out.printf("   Couldn't trace %d static field calls.%n", untraceable);
 		}
-	
 		
 		int removed = 0;
 		
@@ -73,7 +73,7 @@ public class UnusedFieldRemover extends Visitor {
 		}
 		
 		if(Context.current().getFlags().getOrDefault("basicout", true))
-			System.out.printf("Removed %d unused fields.%n", removed);
+			System.out.printf("   Removed %d unused fields.%n", removed);
 	}
 	
 	private static FieldNode findReference(ClassTree tree, String owner, String halfKey) {

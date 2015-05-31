@@ -1,11 +1,10 @@
-package org.nullbool.api.obfuscation.call;
+package org.nullbool.api.obfuscation;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
 import org.nullbool.api.Context;
-import org.nullbool.api.obfuscation.Visitor;
 import org.nullbool.api.util.ClassStructure;
 import org.objectweb.asm.tree.ClassNode;
 import org.topdank.byteengineer.commons.data.JarContents;

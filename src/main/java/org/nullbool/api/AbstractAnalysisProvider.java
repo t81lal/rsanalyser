@@ -15,16 +15,20 @@ import java.util.Map;
 
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.api.obfuscation.call.CallVisitor;
-import org.nullbool.api.obfuscation.call.HierarchyVisitor;
+import org.nullbool.api.obfuscation.CallVisitor;
+import org.nullbool.api.obfuscation.EmptyParameterFixer;
+import org.nullbool.api.obfuscation.EmptyPopRemover;
+import org.nullbool.api.obfuscation.FieldOpener;
+import org.nullbool.api.obfuscation.HierarchyVisitor;
+import org.nullbool.api.obfuscation.NullCheckFixer;
+import org.nullbool.api.obfuscation.OpaquePredicateRemover;
+import org.nullbool.api.obfuscation.SimpleArithmeticFixer;
+import org.nullbool.api.obfuscation.UnusedFieldRemover;
 import org.nullbool.api.obfuscation.cfg.CFGCache;
 import org.nullbool.api.obfuscation.cfg.ControlFlowException;
 import org.nullbool.api.obfuscation.dummyparam.EmptyParamVisitor;
 import org.nullbool.api.obfuscation.dummyparam.EmptyParamVisitor2;
 import org.nullbool.api.obfuscation.dummyparam.OpaquePredicateVisitor;
-import org.nullbool.api.obfuscation.field.FieldOpener;
-import org.nullbool.api.obfuscation.field.UnusedFieldRemover;
-import org.nullbool.api.obfuscation.number.ArithmeticFixer;
 import org.nullbool.api.obfuscation.number.MultiplierHandler;
 import org.nullbool.api.obfuscation.number.MultiplierVisitor;
 import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
@@ -81,6 +85,8 @@ public abstract class AbstractAnalysisProvider {
 	public void run() throws AnalysisException {
 		startTime         = System.currentTimeMillis();
 		classTree         = new ClassTree(contents.getClassContents());
+		classTree.output();
+		
 		multiplierHandler = new MultiplierHandler();
 		deobfuscate();
 		
@@ -262,6 +268,10 @@ public abstract class AbstractAnalysisProvider {
 		//fixFlow();
 		
 		reorderOperations();
+		reorderNullChecks();
+		deobOpaquePredicates();
+		fixEmptyParams();
+		removeEmptyPops();
 		buildCfgs();
 		
 		// runEmptyParamVisitor2(contents);
@@ -304,9 +314,66 @@ public abstract class AbstractAnalysisProvider {
 		System.err.printf("Built %d control flow graphs.%n", cfgCache.size());
 	}
 	
-	private void reorderOperations() {
-		ArithmeticFixer fixer = new ArithmeticFixer();
+	private void removeEmptyPops() {
+		EmptyPopRemover remover = new EmptyPopRemover();
 		TreeBuilder builder = new TreeBuilder();
+		
+		for(ClassNode cn : contents.getClassContents()) {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() > 0) {
+					builder.build(m).accept(remover);
+				}
+			}
+		}
+		
+		remover.output();
+	}
+	
+	private void fixEmptyParams() {
+		EmptyParameterFixer fixer = new EmptyParameterFixer();
+		fixer.visit(contents);
+		fixer.output();
+	}
+	
+	private void deobOpaquePredicates() {
+		OpaquePredicateRemover remover = new OpaquePredicateRemover();
+		
+		TreeBuilder builder = new TreeBuilder();
+		
+		for(ClassNode cn : contents.getClassContents()) {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() > 0) {
+					if(remover.methodEnter(m)) {
+						builder.build(m).accept(remover);
+						remover.methodExit();
+					}
+				}
+			}
+		}
+		
+		remover.output();
+	}
+	
+	private void reorderNullChecks() {
+		NullCheckFixer fixer = new NullCheckFixer();
+		TreeBuilder builder = new TreeBuilder();
+
+		for(ClassNode cn : contents.getClassContents()) {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() > 0) {
+					builder.build(m).accept(fixer);
+				}
+			}
+		}
+
+		fixer.output();
+	}
+	
+	private void reorderOperations() {
+		SimpleArithmeticFixer fixer = new SimpleArithmeticFixer();
+		TreeBuilder builder = new TreeBuilder();
+		
+		System.err.println("Running Simple Arithmetic Fixer.");
 		
 		for(ClassNode cn : contents.getClassContents()) {
 			for(MethodNode m : cn.methods) {

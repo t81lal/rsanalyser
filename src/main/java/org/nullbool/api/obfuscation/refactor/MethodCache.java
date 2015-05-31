@@ -21,15 +21,29 @@ public class MethodCache {
 		methodMap = new HashMap<String, MethodNode>();
 	}
 	
-	public MethodCache(Filter<MethodNode> filter,Collection<ClassNode> classes) {
+	public MethodCache(Filter<MethodNode> filter, Collection<ClassNode> classes) {
 		this(filter);
 		put(classes);
 	}
 	
 	public MethodCache(Collection<ClassNode> classes) {
-		this(Filter.acceptAll());
-		put(classes);
+		this(Filter.acceptAll(), classes);
 	}
+
+	//TODO:
+	//	public void propagate(ClassTree tree) {
+	//		for(Entry<String, MethodNode> e: methodMap.entrySet()) {
+	//			MethodNode m = e.getValue();
+	//			String key = e.getKey();
+	//			ClassNode owner = m.owner;
+	//			Set<ClassNode> sups = tree.getSupers(owner);
+	//			Set<ClassNode> dels = tree.getDelegates(owner);
+	//			
+	//			for(ClassNode sup : sups) {
+	//				
+	//			}
+	//		}
+	//	}
 	
 	//you have no idea how much I wished the compiler inlined these...
 	

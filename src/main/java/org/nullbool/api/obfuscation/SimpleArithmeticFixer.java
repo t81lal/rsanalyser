@@ -1,4 +1,4 @@
-package org.nullbool.api.obfuscation.number;
+package org.nullbool.api.obfuscation;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,26 +9,31 @@ import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
 import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
 import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.util.Printer;
 
 /**
  * @author Bibl (don't ban me pls)
  * @created 29 May 2015
  */
-public class ArithmeticFixer extends NodeVisitor {
+public class SimpleArithmeticFixer extends NodeVisitor {
 
 	private final Set<InstructionSwap> inserts = new HashSet<InstructionSwap>();
 
+	private int generalWtfs;
+	
 	private int complexAddSwitch, addSwitch = 0;
 	private int simpleAddSwap, correctAdds = 0;
-	
+
 	private int complexSubSwitch;
 	private int unswitchableSubs, correctSubs = 0;
-	private int wtfs;
-	
-	private int swappedMultis, correctMultis;
-	
+	private int awtfs;
+
+	private int swappedMultis, correctMultis, multiWtfs;
+
 	@Override
 	public void visitOperation(ArithmeticNode expr) {
 		if(expr.children() != 2)
@@ -42,9 +47,15 @@ public class ArithmeticFixer extends NodeVisitor {
 		NumberNode first = expr.firstNumber();
 		if(first == null)
 			return;
-		
+
 		if(a1 instanceof NumberNode && a2 instanceof NumberNode) {
 			System.out.println("ArithmeticFixer2.visitOperation(): double const?");
+			return;
+		}
+		
+		if(a2.opcode() == -1) {
+			generalWtfs++;
+			System.err.printf("   %s [%s, %d] [children=%d] at %s.%n", Printer.OPCODES[expr.opcode()], Printer.OPCODES[a1.opcode()], a2.opcode(), expr.children(), expr.method());
 			return;
 		}
 
@@ -107,6 +118,12 @@ public class ArithmeticFixer extends NodeVisitor {
 			 *          and
 			 *  -const   +   variable */
 			Number val = constVal(first.insn());
+
+			if(val.intValue() == Integer.MIN_VALUE) {
+				System.err.println("   SimpleArithmeticFixer.visitOperation(add)");
+				return;
+			}
+
 			if(shouldSwitchOperation(val)) {
 				/* Switch the numbers sign and the opcode. */
 				Number newVal = abs(val);
@@ -150,7 +167,7 @@ public class ArithmeticFixer extends NodeVisitor {
 				 * const + variable
 				 *  =
 				 * variable + const */
-				
+
 				if(a1.equals(first)) {
 					InstructionSwap swap = new InstructionSwap();
 					swap.method = expr.method();
@@ -162,12 +179,18 @@ public class ArithmeticFixer extends NodeVisitor {
 					correctAdds++;
 				} else {
 					System.err.printf("   Unhandleable operation add at %s (%d).%n", expr.method(), val);
-					wtfs++;
+					awtfs++;
 					//throw new RuntimeException("huh x3: " + first.getClass().getSimpleName());
 				}
 			}
 		} else if(expr.subtracting()) {
 			Number val = constVal(first.insn());
+
+			if(val.intValue() == Integer.MIN_VALUE) {
+				System.err.println("   SimpleArithmeticFixer.visitOperation(sub)");
+				return;
+			}
+
 			if(shouldSwitchOperation(val)) {
 				if(a1.equals(first)) {
 					unswitchableSubs++;
@@ -202,28 +225,31 @@ public class ArithmeticFixer extends NodeVisitor {
 		} else if(expr.multiplying()) {
 			/* If the first number is the constant, we move it after the other 
 			 * operand. */
+			
 			if(a1.equals(first)) {
-				InstructionSwap swap = new InstructionSwap();
-				swap.method = expr.method();
-				swap.insn   = a1.insn();
-				swap.marker = a2.insn();
-				inserts.add(swap);
-				
-				/*if(expr.method().owner.name.equals("dh") && expr.method().name.equals("s")) {
-					System.out.println("ArithmeticFixer.visitOperation() " + first.number() + " " + a2.insn().getClass());
-					for(String s : new InstructionPrinter(expr.method(), new InstructionPattern(new InstructionFilter[]{
-							new InstructionFilter() {
-								@Override
-								public boolean accept(AbstractInsnNode t) {
-									return t.equals(swap.insn) || t.equals(swap.marker);
-								}
+				if(a2.insn() instanceof FieldInsnNode || a2.insn() instanceof VarInsnNode) {
+					InstructionSwap swap = new InstructionSwap();
+					swap.method = expr.method();
+					swap.insn   = a1.insn();
+					swap.marker = a2.insn();
+					inserts.add(swap);
+					/*if(expr.method().owner.name.equals("dh") && expr.method().name.equals("s")) {
+							System.out.println("ArithmeticFixer.visitOperation() " + first.number() + " " + a2.insn().getClass());
+							for(String s : new InstructionPrinter(expr.method(), new InstructionPattern(new InstructionFilter[]{
+									new InstructionFilter() {
+										@Override
+										public boolean accept(AbstractInsnNode t) {
+											return t.equals(swap.insn) || t.equals(swap.marker);
+										}
+									}
+							})).createPrint()){
+								System.out.println(s);
 							}
-					})).createPrint()){
-						System.out.println(s);
-					}
-				}*/
-				
-				swappedMultis++;
+						}*/
+					swappedMultis++;
+				} else {
+					multiWtfs++;
+				}
 			} else {
 				correctMultis++;
 			}
@@ -293,6 +319,8 @@ public class ArithmeticFixer extends NodeVisitor {
 	}
 
 	public void output() {
+		System.out.println();
+		
 		/* As the non constant operand of the operation may be calculated using more
 		 * than 1 instruction, we use can a ghetto hack and instead of swapping the
 		 * instructions by index, we simply add the constant after the other operands
@@ -305,18 +333,22 @@ public class ArithmeticFixer extends NodeVisitor {
 			a.method.instructions.insert(a.marker, a.insn);
 		}
 
-		System.err.printf("Switched %4d negative addition constants             (variable + -const).%n", addSwitch);
-		System.err.printf("Switched %4d complex negative addition constants     (-const + variable).%n", complexAddSwitch);
-		System.err.printf("Switched %4d simple operand orders                   (const + variable).%n", simpleAddSwap);
-		System.err.printf("Found    %4d already correct add operations          (variable + const).%n", correctAdds);
-		
-		System.err.printf("Found    %4d unswitchable subtraction operations     (-const - variable).%n", unswitchableSubs);
-		System.err.printf("Switched %4d subtraction constant signs              (variable - -const).%n", complexSubSwitch);
-		System.err.printf("Found    %4d already correct subtraction operations  (variable - const).%n", correctSubs);
-		System.err.printf("Hit a few (%d) wtfs...%n", wtfs);
-		
-		System.err.printf("Swapped  %4d constant multiplication expressions     (const * variable).%n", swappedMultis);
-		System.err.printf("Found    %4d preferable CME's                        (variable * const).%n", correctMultis);
+		System.out.printf("   Hit %d general wtfs...%n", generalWtfs);
+		System.out.printf("   Switched %4d negative addition constants             (variable + -const).%n", addSwitch);
+		System.out.printf("   Switched %4d complex negative addition constants     (-const + variable).%n", complexAddSwitch);
+		System.out.printf("   Switched %4d simple operand orders                   (const + variable).%n", simpleAddSwap);
+		System.out.printf("   Found    %4d already correct add operations          (variable + const).%n", correctAdds);
+		System.out.println();
+		System.out.printf("   Found    %4d unswitchable subtraction operations     (-const - variable).%n", unswitchableSubs);
+		System.out.printf("   Switched %4d subtraction constant signs              (variable - -const).%n", complexSubSwitch);
+		System.out.printf("   Found    %4d already correct subtraction operations  (variable - const).%n", correctSubs);
+		System.out.printf("   Hit a few (%d) wtfs...%n", awtfs);
+		System.out.println();
+		System.out.printf("   Swapped  %4d constant multiplication expressions     (const * variable).%n", swappedMultis);
+		System.out.printf("   Found    %4d preferable CME's                        (variable * const).%n", correctMultis);
+		System.out.printf("   Hit a few (%d) wtfs...%n", multiWtfs);
+
+		inserts.clear();
 	}
 
 	private static class InstructionSwap {

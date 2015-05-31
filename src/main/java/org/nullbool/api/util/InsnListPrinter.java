@@ -1,6 +1,7 @@
 package org.nullbool.api.util;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ListIterator;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -28,21 +29,24 @@ import org.topdank.banalysis.asm.insn.InstructionPrinter;
  */
 public class InsnListPrinter extends InstructionPrinter {
 
-	private InsnList insns;
+	private ListIterator<AbstractInsnNode> it;
 	
 	public InsnListPrinter(InsnList insns) {
 		super(null);
-		this.insns = insns;
+		it = insns.iterator();
+	}
+	
+	public InsnListPrinter(List<AbstractInsnNode> col) {
+		super(null);
+		it = col.listIterator();
 	}
 
 	@Override
 	public ArrayList<String> createPrint() {
 		ArrayList<String> info = new ArrayList<String>();
-		ListIterator<?> it = insns.iterator();
 		int i = 0;
 		while (it.hasNext()) {
 			i++;
-			
 			AbstractInsnNode ain = (AbstractInsnNode) it.next();
 			String line = "";
 			if (ain instanceof VarInsnNode) {

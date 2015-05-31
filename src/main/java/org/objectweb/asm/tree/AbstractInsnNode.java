@@ -49,7 +49,7 @@ public abstract class AbstractInsnNode {
      */
     public static final int INSN = 0;
 
-    /**
+    /**Jump
      * The type of {@link IntInsnNode} instructions.
      */
     public static final int INT_INSN = 1;
