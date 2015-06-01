@@ -38,7 +38,7 @@ public class MultiplierVisitor extends NodeVisitor {
 		if (isSetting(an)) {
 			final FieldMemberNode fmn = (FieldMemberNode) an.parent();
 			final NumberNode nn = an.firstNumber();
-			if (!fmn.desc().equals("I") || (nn == null) || (nn.opcode() != LDC))
+			if (!fmn.desc().equals("I") && !fmn.desc().equals("J") || (nn == null) || (nn.opcode() != LDC))
 				return;
 			final int encoder = nn.number();
 			if ((encoder % 2) != 0) {

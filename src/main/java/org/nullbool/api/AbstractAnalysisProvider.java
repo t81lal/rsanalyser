@@ -20,15 +20,15 @@ import org.nullbool.api.obfuscation.EmptyParameterFixer;
 import org.nullbool.api.obfuscation.EmptyPopRemover;
 import org.nullbool.api.obfuscation.FieldOpener;
 import org.nullbool.api.obfuscation.HierarchyVisitor;
+import org.nullbool.api.obfuscation.MultiplicativeModifierCollector;
+import org.nullbool.api.obfuscation.MultiplicativeModifierRemover;
 import org.nullbool.api.obfuscation.NullCheckFixer;
 import org.nullbool.api.obfuscation.OpaquePredicateRemover;
 import org.nullbool.api.obfuscation.SimpleArithmeticFixer;
+import org.nullbool.api.obfuscation.StringBuilderCharReplacer;
 import org.nullbool.api.obfuscation.UnusedFieldRemover;
 import org.nullbool.api.obfuscation.cfg.CFGCache;
 import org.nullbool.api.obfuscation.cfg.ControlFlowException;
-import org.nullbool.api.obfuscation.dummyparam.EmptyParamVisitor;
-import org.nullbool.api.obfuscation.dummyparam.EmptyParamVisitor2;
-import org.nullbool.api.obfuscation.dummyparam.OpaquePredicateVisitor;
 import org.nullbool.api.obfuscation.number.MultiplierHandler;
 import org.nullbool.api.obfuscation.number.MultiplierVisitor;
 import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
@@ -272,29 +272,36 @@ public abstract class AbstractAnalysisProvider {
 		deobOpaquePredicates();
 		fixEmptyParams();
 		removeEmptyPops();
+		replaceCharStringBuilders();
+		//TOOD: multis
+		//removeMultis();
 		buildCfgs();
+	}
+	
+	private void removeMultis() {
+		MultiplicativeModifierCollector collector = new MultiplicativeModifierCollector();
+		TreeBuilder builder = new TreeBuilder();
 		
-		// runEmptyParamVisitor2(contents);
-		// checkRecursion(contents);
-		// removeUnusedParams(contents);
-		// removeOpaquePredicates(contents);
-		// // run again after and see if any more methods are swept after opaques are removed
-		// int[] last = new int[4];
-		// EmptyParamVisitor k = null;
-		// do {
-		// k = quiet_removeUnusedParams(contents);
-		// int[] j = k.getCounts();
-		// last[0] += j[0];
-		// last[1] += j[1];
-		// last[2] += j[2];
-		// last[3] += j[3];
-		// } while (k != null && k.getCounts() != null && k.getCounts()[3] != 0);
-		//
-		// EmptyParamVisitor.print(last, " #2");
-		//
-		// this.contents.getClassContents().clear();
-		// this.contents.getClassContents().addAll(contents.getClassContents());
-		// this.contents.getClassContents().namedMap();
+		for(ClassNode cn : contents.getClassContents()) {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() > 0) {
+					builder.build(m).accept(collector);
+				}
+			}
+		}
+		
+		collector.output();
+		
+		MultiplicativeModifierRemover remover = new MultiplicativeModifierRemover(collector);
+		for(ClassNode cn : contents.getClassContents()) {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() > 0) {
+					builder.build(m).accept(remover);
+				}
+			}
+		}
+		
+		remover.output();
 	}
 	
 	private void buildCfgs() {
@@ -312,6 +319,21 @@ public abstract class AbstractAnalysisProvider {
 		}
 		
 		System.err.printf("Built %d control flow graphs.%n", cfgCache.size());
+	}
+	
+	private void replaceCharStringBuilders() {
+		StringBuilderCharReplacer replacer = new StringBuilderCharReplacer();
+		TreeBuilder builder = new TreeBuilder();
+		
+		for(ClassNode cn : contents.getClassContents()) {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() > 0) {
+					builder.build(m).accept(replacer);
+				}
+			}
+		}
+		
+		replacer.output();
 	}
 	
 	private void removeEmptyPops() {
@@ -412,25 +434,6 @@ public abstract class AbstractAnalysisProvider {
 		
 		if(flags.getOrDefault("basicout", true))
 			System.err.printf("Reordered %d fields.%n", count);
-	}
-	
-	private void runEmptyParamVisitor2(JarContents<? extends ClassNode> contents) {
-		new EmptyParamVisitor2().accept(contents);
-	}
-
-	private int[] removeUnusedParams(JarContents<? extends ClassNode> contents) {
-		return new EmptyParamVisitor(false).countRemoval(contents);
-	}
-
-	//just in case
-	private EmptyParamVisitor quiet_removeUnusedParams(JarContents<? extends ClassNode> contents) {
-		EmptyParamVisitor visitor = new EmptyParamVisitor(true);
-		visitor.countRemoval(contents);
-		return visitor;
-	}
-
-	private void removeOpaquePredicates(JarContents<? extends ClassNode> contents) {
-		new OpaquePredicateVisitor().accept(contents);
 	}
 
 	private void removeDummyMethods(JarContents<? extends ClassNode> contents) {

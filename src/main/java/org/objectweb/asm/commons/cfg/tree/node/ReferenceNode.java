@@ -21,6 +21,8 @@ public class ReferenceNode extends AbstractNode {
         if (ain instanceof FieldInsnNode) {
             FieldInsnNode fin = (FieldInsnNode) ain;
             return fin.owner + "." + fin.name;
+            //return fin.key();
+            //return fin.owner + "." + fin.name + fin.desc;
         } else if (ain instanceof MethodInsnNode) {
             MethodInsnNode min = (MethodInsnNode) ain;
             return min.owner + "." + min.name + min.desc;
