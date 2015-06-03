@@ -8,6 +8,11 @@ import java.util.jar.JarFile;
 import org.nullbool.api.util.JarParser;
 import org.objectweb.asm.tree.ClassNode;
 
+/**
+ * Immutable data container containing information a defined gamepack revision. <br>
+ * @author Bibl (don't ban me pls)
+ * @created 1 Jun 2015 (actually before this)
+ */
 public class Revision {
 
 	private final String name;
@@ -26,6 +31,12 @@ public class Revision {
 		return dataFile;
 	}
 
+	/**
+	 * Reads and parses the dataFile that is linked with this revision,
+	 * converting the raw bytes of the Jar entries into ASM {@link ClassNode}s.
+	 * @return A Map of ClassNodes mapped with their names.
+	 * @throws IOException
+	 */
 	public Map<String, ClassNode> parse() throws IOException {
 		return new JarParser(new JarFile(dataFile)).getParsedClasses();
 		// return (Map) ClassRepository.fromJar(dataFile);

@@ -63,7 +63,7 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 	
 	private FlowBlock entry, exit;
 
-	protected ControlFlowGraph() {
+	public ControlFlowGraph() {
 		blocks      = new ArrayList<FlowBlock>();
 		blockStarts = new HashMap<AbstractInsnNode, FlowBlock>();
 		labels      = new HashMap<LabelNode, FlowBlock>();
@@ -96,7 +96,8 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 			System.out.println("createBlocks");
 		
 		createBlocks(method);
-		//System.out.printf("Constructed %d flowblocks.%n", blocks.size());
+		if(debug)
+			System.out.printf("Constructed %d flowblocks.%n", blocks.size());
 
 		if(debug) 
 			System.out.println("mapBlockNames");
@@ -149,9 +150,6 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 		if(debug) 
 			System.out.println("mergeBlocks");
 		mergeBlocks();
-		
-		
-		
 	}
 	
 	public void result(MethodNode method) throws ControlFlowException {
@@ -281,6 +279,11 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 
 				/* the blocks (supposedly) first instruction. */
 				AbstractInsnNode bStart = ain.getNext();
+				if(bStart == null) {
+					System.err.println("TardASM put a LabelNode before a null insn (end).");
+					continue;
+				}
+				
 				FlowBlock block = blockStarts.get(bStart);
 				
 				/* if the lookup failed, manually look. */
@@ -435,7 +438,14 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 				range.types().add(tcbn.type);
 			} else {
 				List<FlowBlock> range = new ArrayList<FlowBlock>();
-				for(int i=i_from; i < i_to; i++) {
+				int i = i_from;
+				/* 1/06/15, 19:33, changed this from a for loop to a do while as
+				 * there are instances where i_from and i_to are the same and so
+				 * the for loop does not execute properly. This meant that if there
+				 * was 1 trycatch substructure in the method, that lasted for only
+				 * 1 block, it would not be included, producing errorneous results
+				 * later on.*/
+				do {
 					String id = LabelHelper.createBlockName(i);
 					FlowBlock block = blockNames.get(id);
 					if(block == null) 
@@ -447,7 +457,9 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 					ExceptionData ed = new ExceptionData(handler, range, Arrays.asList(tcbn.type));
 					mapRanges.put(key, ed);
 					exceptions.add(ed);
-				}
+					
+					i++;
+				} while(i < i_to);
 			}
 		}
 	}
@@ -766,21 +778,24 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 		return isConditional(opcode) || isUnconditional(opcode) || isExit(opcode) || isSwitch(opcode);
 	}
 
-	@Override
-	public String toString() {
+	public StringBuilder toString(List<FlowBlock> blocks) {
 		StringBuilder sb = new StringBuilder();
 		for(FlowBlock b : blocks) {
 			sb.append(b.toVerboseString(labels)).append(System.lineSeparator());
 		}
-		
+		return sb;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = toString(blocks);
 		sb.append(System.lineSeparator());
 		sb.append("Exit> ");
 		sb.append(exit.toVerboseString(labels));
-		
 		return sb.toString();
 	}
 	
-	public static void main(String[] args) throws ControlFlowException, IOException {
+	public static void main1(String[] args) throws ControlFlowException, IOException {
 		
 		ControlFlowGraph graph = new ControlFlowGraph();
 
@@ -831,7 +846,7 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 	public ExceptionData getExceptionRange(FlowBlock handler, FlowBlock block) {
 		for (int i = exceptions.size() - 1; i >= 0; i--) {
 			ExceptionData ed = exceptions.get(i);
-			if (ed.handler() == handler && ed.range().contains(block)) {
+			if (ed.handler().equals(handler) && ed.range().contains(block)) {
 				return ed;
 			}
 		}
@@ -839,8 +854,12 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 		return null;
 	}
 	
+	public List<ExceptionData> exceptions() {
+		return exceptions;
+	}
+
 	@Override
 	public DFSIterator iterator() {
-		return new DFSIterator(this);
+		return new DFSIterator(entry);
 	}
 }

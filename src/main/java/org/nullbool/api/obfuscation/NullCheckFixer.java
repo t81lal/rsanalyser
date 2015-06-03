@@ -10,6 +10,19 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
+ * Swaps instructions to change null checks as 
+ * Jagex's obfuscator often swaps a null check such as <br>
+ * 
+ * <code>if(obj != null)</code> <br>
+ * to <br>
+ * <code>if(null != obj)</code> <br>
+ * 
+ * <p>
+ * 
+ * We do this as it makes analysis a bit easier.
+ * </p>
+ * 
+ * 
  * @author Bibl (don't ban me pls)
  * @created 31 May 2015
  */

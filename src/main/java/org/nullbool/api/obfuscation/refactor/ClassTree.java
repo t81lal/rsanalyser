@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.nullbool.api.Context;
-import org.nullbool.api.util.map.NullPermeableMap;
+import org.nullbool.api.util.map.NullPermeableHashMap;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -21,8 +21,8 @@ public class ClassTree {
 	private static final SetCreator<ClassNode> SET_CREATOR = new SetCreator<ClassNode>();
 
 	private final Map<String, ClassNode>                      classes;
-	private final NullPermeableMap<ClassNode, Set<ClassNode>> supers;
-	private final NullPermeableMap<ClassNode, Set<ClassNode>> delgates;
+	private final NullPermeableHashMap<ClassNode, Set<ClassNode>> supers;
+	private final NullPermeableHashMap<ClassNode, Set<ClassNode>> delgates;
 
 	public ClassTree(Collection<ClassNode> classes) {
 		this(convertToMap(classes));
@@ -30,8 +30,8 @@ public class ClassTree {
 
 	public ClassTree(Map<String, ClassNode> classes_) {
 		classes  = classes_;
-		supers   = new NullPermeableMap<ClassNode, Set<ClassNode>>(SET_CREATOR);
-		delgates = new NullPermeableMap<ClassNode, Set<ClassNode>>(SET_CREATOR);
+		supers   = new NullPermeableHashMap<ClassNode, Set<ClassNode>>(SET_CREATOR);
+		delgates = new NullPermeableHashMap<ClassNode, Set<ClassNode>>(SET_CREATOR);
 
 		build(classes);
 	}

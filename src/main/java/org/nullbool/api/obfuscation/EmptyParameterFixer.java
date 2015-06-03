@@ -21,6 +21,48 @@ import org.objectweb.asm.tree.VarInsnNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 
 /**
+ * <p>
+ * A transformer that finds dummy parameters on methods that are
+ * inserted by Jagex's obfuscater. Strict parameter validation
+ * is done to ensure that the parameter is indeed a dummy and
+ * is not actually a real parameter.
+ * </p>
+ * 
+ * <p>
+ * Firstly all of the methods in the gamepack are checked to see if
+ * their last parameter is a either a byte, short or integer as these
+ * are currently the only dummy parameter types that the obfuscater
+ * adds.
+ * </p>
+ * 
+ * <p>
+ * We then have to calculate the index of the local parameter in the
+ * locals depending on whether the method is static or not. Then we
+ * go through the method and check for inc instructions or var
+ * instructions to see if the parameter is used. If the parameter is
+ * used even once, we remove it from the Set. <br>
+ * Note that some dummy
+ * parameters are used to fulfil opaque predicate checks and so these
+ * must be removed before calling this transformer.
+ * </p>
+ * 
+ * <p>
+ * Then a chain is built of all of the methods so that each method is
+ * linked with it's parent method (if it is overridden). This allows us
+ * to check if the parameter is used in a super or subclass. If this
+ * fails, the entire method chain is dropped and none of those methods
+ * are changed.
+ * </p>
+ * 
+ * <p>
+ * Then once we are sure that we can change the method description,
+ * we remove the last parameter and then search the entire code for
+ * calls to the old method. For each call we find, we change the 
+ * description of the method and then add a POP before the call to 
+ * make sure that the value that was previously passed is taken from
+ * the stack before the method is called. <br>
+ * </p>
+ * 
  * @author Bibl (don't ban me pls)
  * @created 31 May 2015
  */
@@ -153,6 +195,19 @@ public class EmptyParameterFixer extends Visitor {
 		//System.err.printf("%d calls (%d).%n", callname, unchanged);
 	}
 
+	/**
+	 * Resolves a method call to the method it is calling.
+	 * If class A extends class B, then calling A.method()
+	 * when the method is actually defined in B will be 
+	 * indirectly calling B.method(). In this case, there
+	 * will be no method in A and so we have to work backwards
+	 * through the class hierarchy to find it.
+	 * 
+	 * @param min
+	 * @param tree
+	 * @param cache
+	 * @return
+	 */
 	private MethodNode findMethod(MethodInsnNode min, ClassTree tree, MethodCache cache) {
 		MethodNode oldm = cache.get(min.owner, min.name, min.desc);
 		if(oldm != null)
@@ -174,6 +229,13 @@ public class EmptyParameterFixer extends Visitor {
 		return null;
 	}
 
+	/**
+	 * Removes the last parameter in a methods descriptor 
+	 * (which must be a byte, short or int (B, S, I).
+	 * 
+	 * @param desc
+	 * @return
+	 */
 	private String newDesc(String desc) {
 		/* Since this method is only called for methods which have a 
 		 * valid dummy parameter type (I, B, S) and their length is 1,
@@ -195,6 +257,15 @@ public class EmptyParameterFixer extends Visitor {
 		return sub + aft;
 	}
 
+	/**
+	 * Counts the amount of times that the targetVar is used and
+	 * returns a boolean value depending on whether it was used
+	 * or not.
+	 * 
+	 * @param m
+	 * @param targetVar
+	 * @return
+	 */
 	private boolean isUnused(MethodNode m, int targetVar) {
 		int count = 0;
 		for (AbstractInsnNode ain : m.instructions.toArray()) {

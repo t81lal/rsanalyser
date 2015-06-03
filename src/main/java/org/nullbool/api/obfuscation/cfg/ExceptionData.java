@@ -46,4 +46,9 @@ public class ExceptionData {
 	public boolean isCircular() {
 		return range.contains(handler);
 	}
+
+	@Override
+	public String toString() {
+		return "ExceptionData [handler=" + handler + ", range=" + range + ", types=" + types + "]";
+	}
 }

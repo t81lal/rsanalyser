@@ -8,7 +8,6 @@ import org.objectweb.asm.tree.ClassNode;
 import org.topdank.byteengineer.commons.asm.ASMFactory;
 import org.topdank.byteengineer.commons.asm.DefaultASMFactory;
 import org.topdank.byteengineer.commons.data.LocateableJarContents;
-import org.zbot.logger.Logger;
 
 import sun.misc.URLClassPath;
 
@@ -57,7 +56,7 @@ public class JarClassLoader extends ClassLoader {
 		add(contents);
 
 		StackTraceElement e = creator(false);
-		Logger.getDefaultLogger().debug(
+		System.err.println(
 				String.format("Creating new JarClassLoader, parent ClassLoader: %s of %s.%s:%d", myParent, e.getClassName(), e.getMethodName(),
 						e.getLineNumber()));
 	}

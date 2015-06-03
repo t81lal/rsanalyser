@@ -5,6 +5,13 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 
+/**
+ * Edits class, field and method access modifiers to make
+ * them non-final and public.
+ * 
+ * @author Bibl (don't ban me pls)
+ * @created 1 Jun 2015 22:28:34 (actually before this)
+ */
 public class FieldOpener extends Visitor {
 
 	@Override

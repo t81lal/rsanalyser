@@ -2,17 +2,17 @@ package org.nullbool.api.util.map;
 
 import java.util.HashMap;
 
-public class NullPermeableMap<K, V> extends HashMap<K, V> {
+public class NullPermeableHashMap<K, V> extends HashMap<K, V> {
 
 	private static final long serialVersionUID = 1L;
 
 	private final ValueCreator<V> creator;
 
-	public NullPermeableMap(ValueCreator<V> creator) {
+	public NullPermeableHashMap(ValueCreator<V> creator) {
 		this.creator = creator;
 	}
 
-	public NullPermeableMap() {
+	public NullPermeableHashMap() {
 		this(new NullCreator<V>());
 	}
 
@@ -23,13 +23,5 @@ public class NullPermeableMap<K, V> extends HashMap<K, V> {
 			put(k, val);
 		} 
 		return val;
-	}
-
-	private static class NullCreator<V> implements ValueCreator<V> {
-
-		@Override
-		public V create() {
-			return null;
-		}
 	}
 }

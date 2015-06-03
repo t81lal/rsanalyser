@@ -87,6 +87,13 @@ public class FlowBlock {
 		return null;
 	}
 	
+	public void removeLast() {
+		AbstractInsnNode last = last();
+		if(last != null) {
+			insns.remove(last);
+		}
+	}
+	
 	public void addPredecessor(FlowBlock block) {
 		if(!predecessors.contains(block)) {
 			predecessors.add(block);
