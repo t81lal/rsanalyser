@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -121,24 +122,36 @@ public class SuccessorTree implements Iterable<Successor> {
 			FlowBlock v = stack.pop();
 			if(!visited.contains(v)) {
 				visited.add(v);
-				System.out.println(v.id());
+				System.out.print(v.id() + " ");
+				if(v.last() != null && InstructionUtil.isExit(v.last().opcode())) {
+					System.out.print("...");
+				}
 				List<Successor> succs = tree.get(v);
+				
+				if(succs == null || succs.isEmpty())
+					continue;
 
-				/* Favour successors. */
-				for(Successor s : succs) {
-					if(SuccessorType.IMMEDIATE.equals(s.type)) {
+				/* Do the others. */
+				ListIterator<Successor> it = succs.listIterator(succs.size());
+				while(it.hasPrevious()) {
+					Successor s = it.previous();
+					if(!SuccessorType.IMMEDIATE.equals(s.type)) {
 						stack.push(s.block);
 					}
 				}
 
-				/* Do the others. */
-				for(Successor s : succs) {
-					if(!SuccessorType.IMMEDIATE.equals(s.type)) {
+				/* Favour successors. */
+				it = succs.listIterator(succs.size());
+				while(it.hasPrevious()) {
+					Successor s = it.previous();
+					if(SuccessorType.IMMEDIATE.equals(s.type)) {
 						stack.push(s.block);
 					}
 				}
 			}
 		}
+		
+		System.out.println();
 	}
 
 	public List<Successor> collapsedList() {
