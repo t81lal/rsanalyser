@@ -1,11 +1,10 @@
 package org.nullbool.impl.analysers.client;
 
 import java.awt.Canvas;
-import java.util.List;
-import java.util.Map;
 
-import org.nullbool.api.analysis.ClassAnalyser;
+import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.AnalysisException;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
@@ -22,12 +21,12 @@ public class CanvasAnalyser extends ClassAnalyser {
 	}
 
 	@Override
-	protected List<IFieldAnalyser> registerFieldAnalysers() {
+	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
 		return null;
 	}
 
 	@Override
-	protected List<IMethodAnalyser> registerMethodAnalysers() {
+	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
 		return null;
 	}
 

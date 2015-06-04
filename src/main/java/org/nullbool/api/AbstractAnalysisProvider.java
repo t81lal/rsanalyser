@@ -100,7 +100,7 @@ public abstract class AbstractAnalysisProvider {
 		long now = System.currentTimeMillis();
 		
 		if (!flags.getOrDefault("justdeob", false)) {
-			analysers = registerAnalysers();
+			analysers = registerAnalysers().asList();
 			if (analysers != null && analysers.size() != 0)
 				analyse();
 
@@ -526,7 +526,7 @@ public abstract class AbstractAnalysisProvider {
 //		System.out.println("Done graphing.");
 	}
 
-	protected abstract List<ClassAnalyser> registerAnalysers() throws AnalysisException;
+	protected abstract Builder<ClassAnalyser> registerAnalysers() throws AnalysisException;
 
 	public Revision getRevision() {
 		return revision;

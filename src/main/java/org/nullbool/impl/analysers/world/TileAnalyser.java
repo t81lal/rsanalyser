@@ -1,11 +1,11 @@
 package org.nullbool.impl.analysers.world;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.nullbool.api.analysis.ClassAnalyser;
+import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.AnalysisException;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
@@ -24,12 +24,12 @@ public class TileAnalyser extends ClassAnalyser {
 	}
 
 	@Override
-	protected List<IFieldAnalyser> registerFieldAnalysers() {
-		return Arrays.asList(new GameObjectsHook());
+	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
+		return new Builder<IFieldAnalyser>().add(new GameObjectsHook());
 	}
 
 	@Override
-	protected List<IMethodAnalyser> registerMethodAnalysers() {
+	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
 		return null;
 	}
 

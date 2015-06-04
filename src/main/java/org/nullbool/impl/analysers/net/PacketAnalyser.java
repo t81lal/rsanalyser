@@ -1,10 +1,10 @@
 package org.nullbool.impl.analysers.net;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
@@ -50,13 +50,13 @@ public class PacketAnalyser extends ClassAnalyser {
 	}
 
 	@Override
-	protected List<IFieldAnalyser> registerFieldAnalysers() {
-		return Arrays.asList(new FieldAnalyser());
+	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
+		return new Builder<IFieldAnalyser>().add(new FieldAnalyser());
 	}
 
 	@Override
-	protected List<IMethodAnalyser> registerMethodAnalysers() {
-		return Arrays.asList(new MethodAnalyser());
+	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
+		return new Builder<IMethodAnalyser>().add(new MethodAnalyser());
 	}
 	
 	private class MethodAnalyser implements IMethodAnalyser {

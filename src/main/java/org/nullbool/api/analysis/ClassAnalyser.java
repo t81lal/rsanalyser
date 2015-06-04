@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.nullbool.api.AbstractAnalysisProvider;
+import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
 import org.nullbool.api.util.InstructionIdentifier;
 import org.objectweb.asm.Opcodes;
@@ -58,7 +59,7 @@ public abstract class ClassAnalyser implements Opcodes {
 	}
 
 	public void runSubs() {
-		List<IFieldAnalyser> fs = registerFieldAnalysers();
+		Builder<IFieldAnalyser> fs = registerFieldAnalysers();
 		if (fs != null) {
 			for (IFieldAnalyser f : fs) {
 				try {
@@ -70,7 +71,7 @@ public abstract class ClassAnalyser implements Opcodes {
 			}
 		}
 
-		List<IMethodAnalyser> ms = registerMethodAnalysers();
+		Builder<IMethodAnalyser> ms = registerMethodAnalysers();
 		if (ms != null) {
 			for (IMethodAnalyser m : ms) {
 				try {
@@ -111,9 +112,9 @@ public abstract class ClassAnalyser implements Opcodes {
 
 	protected abstract boolean matches(ClassNode cn);
 
-	protected abstract List<IFieldAnalyser> registerFieldAnalysers();
+	protected abstract Builder<IFieldAnalyser> registerFieldAnalysers();
 
-	protected abstract List<IMethodAnalyser> registerMethodAnalysers();
+	protected abstract Builder<IMethodAnalyser> registerMethodAnalysers();
 
 	public long getMethodDescCount(ClassNode cn, String regex) {
 		Stream<MethodNode> s = cn.methods.stream();

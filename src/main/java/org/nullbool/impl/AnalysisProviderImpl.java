@@ -1,10 +1,9 @@
 package org.nullbool.impl;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import org.nullbool.api.AbstractAnalysisProvider;
+import org.nullbool.api.Builder;
 import org.nullbool.api.Revision;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
@@ -47,11 +46,16 @@ public class AnalysisProviderImpl extends AbstractAnalysisProvider {
 	}
 
 	@Override
-	protected List<ClassAnalyser> registerAnalysers() throws AnalysisException {
-		return Arrays.asList(new WrappedExceptionAnalyser(), new ExceptionReporterAnalyser(), new CanvasAnalyser(), new NodeAnalyser(), new DualNodeAnalyser(),
-				new RasteriserAnalyser(), new RenderableAnalyser(), new ActorAnalyser(), new DequeAnalyser(), new NPCAnalyser(), new IsaacCipherAnalyser(), new BufferAnalyser(), new PacketAnalyser(), new HashtableAnalyser(), new GroundItemAnalyser(),
-				new RegionAnalyser(), new NPCDefinitionAnalyser(), new ObjectDefinitionAnalyser(), new ItemDefinitionAnalyser(), new ModelAnalyser(),
-				new PlayerAnalyser(), new TileAnalyser(), new WidgetNodeAnalyser(), new GameObjectAnalyser(), new WallObjectAnalyser(), new WidgetAnalyser(),
-				new WallDecorationAnalyser(), new GroundObjectAnalyser(), new GroundDecorationAnalyser(), new GameshellAnalyser(), new ClientAnalyser());
+	protected Builder<ClassAnalyser> registerAnalysers() throws AnalysisException {
+		Builder<ClassAnalyser> builder = new Builder<ClassAnalyser>();
+		builder.addAll(new ClassAnalyser[]
+				{	new WrappedExceptionAnalyser(), new ExceptionReporterAnalyser(), new CanvasAnalyser(), new NodeAnalyser(), new DualNodeAnalyser(),
+					new RasteriserAnalyser(), new RenderableAnalyser(), new ActorAnalyser(), new DequeAnalyser(), new NPCAnalyser(), new IsaacCipherAnalyser(), 
+					new BufferAnalyser(), new PacketAnalyser(), new HashtableAnalyser(), new GroundItemAnalyser(), new RegionAnalyser(), 
+					new NPCDefinitionAnalyser(), new ObjectDefinitionAnalyser(), new ItemDefinitionAnalyser(), new ModelAnalyser(),
+					new PlayerAnalyser(), new TileAnalyser(), new WidgetNodeAnalyser(), new GameObjectAnalyser(), new WallObjectAnalyser(), new WidgetAnalyser(),
+					new WallDecorationAnalyser(), new GroundObjectAnalyser(), new GroundDecorationAnalyser(), new GameshellAnalyser(), new ClientAnalyser()
+				}, true);
+		return builder;
 	}
 }

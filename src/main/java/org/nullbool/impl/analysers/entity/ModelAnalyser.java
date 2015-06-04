@@ -1,12 +1,11 @@
 package org.nullbool.impl.analysers.entity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import org.nullbool.api.analysis.ClassAnalyser;
+import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.AnalysisException;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
@@ -35,12 +34,12 @@ public class ModelAnalyser extends ClassAnalyser {
 	}
 
 	@Override
-	protected List<IFieldAnalyser> registerFieldAnalysers() {
-		return Arrays.asList(new ModelInfo());
+	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
+		return new Builder<IFieldAnalyser>().add(new ModelInfo());
 	}
 
 	@Override
-	protected List<IMethodAnalyser> registerMethodAnalysers() {
+	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
 		return null;
 	}
 

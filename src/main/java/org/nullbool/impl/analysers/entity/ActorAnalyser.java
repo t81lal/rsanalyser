@@ -1,10 +1,10 @@
 package org.nullbool.impl.analysers.entity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
@@ -54,12 +54,12 @@ public class ActorAnalyser extends ClassAnalyser {
 	}
 
 	@Override
-	protected List<IFieldAnalyser> registerFieldAnalysers() {
-		return Arrays.asList(new XYHooks(), new AnimationHooks(), new InteractingHooks(), new HealthAndDamageHooks());
+	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
+		return new Builder<IFieldAnalyser>().addAll(new XYHooks(), new AnimationHooks(), new InteractingHooks(), new HealthAndDamageHooks());
 	}
 
 	@Override
-	protected List<IMethodAnalyser> registerMethodAnalysers() {
+	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
 		return null;
 	}
 

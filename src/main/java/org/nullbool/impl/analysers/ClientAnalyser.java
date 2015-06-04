@@ -2,11 +2,11 @@ package org.nullbool.impl.analysers;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
@@ -40,8 +40,8 @@ import org.zbot.hooks.MethodHook.MethodType;
 		"getPlane&I", "getCameraX&I", "getCameraY&I", "getCameraZ&I", "getCameraYaw&I", "getCameraPitch&I", "getBaseX&I", "getBaseY&I", "getWidgets&[[Widget",
 		"getClientSettings&[I", "getWidgetsSettings&[I","getHoveredRegionTileX&I","getHoveredRegionTileY&I"}, 
 		
-		methods = { "loadObjDefinition&(II)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
-		"getPlayerModel&(I)LModel;", "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&?" })
+		methods = { "loadObjDefinition&(I)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
+		"getPlayerModel&()LModel;", "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&(IIIILjava/lang/String;Ljava/lang/String;II)V" })
 public class ClientAnalyser extends ClassAnalyser {
 
 	public ClientAnalyser() throws AnalysisException {
@@ -49,15 +49,15 @@ public class ClientAnalyser extends ClassAnalyser {
 	}
 
 	@Override
-	protected List<IFieldAnalyser> registerFieldAnalysers() {
-		return Arrays.asList(new ActorArrayHook(), new CurrentRegionHook(), new WidgetPositionXY(), new CanvasPlayerHook(), new ClientArrayHooks(),
+	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
+		return new Builder<IFieldAnalyser>().addAll(new ActorArrayHook(), new CurrentRegionHook(), new WidgetPositionXY(), new CanvasPlayerHook(), new ClientArrayHooks(),
 				new MenuScreenHooks(), new GroundItemsHook(), new TileInfoHooks(), new MinimapHooks(), new CameraHooks(), new BaseXYHooks(), new WidgetsHook(),
 				new SettingsHook(), new CredentialAnalyser() , new RegionWalkingHooks());
 	}
 
 	@Override
-	protected List<IMethodAnalyser> registerMethodAnalysers() {
-		return Arrays.asList(new LoadDefinitionHook(), new ReportMethodHookAnalyser(), new ProccessActionMethodHookAnalyser());
+	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
+		return new Builder<IMethodAnalyser>().addAll(new LoadDefinitionHook(), new ReportMethodHookAnalyser(), new ProccessActionMethodHookAnalyser());
 	}
 
 	@Override

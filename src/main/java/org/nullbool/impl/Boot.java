@@ -10,6 +10,9 @@ import org.nullbool.api.Context;
 import org.nullbool.api.Revision;
 import org.nullbool.api.output.APIGenerator;
 import org.nullbool.api.util.RSVersionHelper;
+import org.nullbool.impl.AnalysisProviderRegistry.ProviderCreator;
+import org.nullbool.impl.AnalysisProviderRegistry.RegistryEntry;
+import org.topdank.banalysis.filter.Filter;
 import org.topdank.byteio.util.Debug;
 
 /**
@@ -23,19 +26,18 @@ public class Boot {
 	public static void main(String[] args) throws Exception {
 		System.out.printf("Remote rev: %d.%n", RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100));
 		
-//		runLatest(71);
-//		runLast10();
-//		runTest(revision);
+		//runLatest(71);
+		//runLast10();
+		//runTest(revision);
 		
-		runLatest(revision);
-//		run(70, revision, 2);
+		runLatest(bootstrap());
+		//run(70, revision, 2);
 		
-//		deob(revision);
+		//deob(revision);
 	}
 	
-	private static void deob(int revision) throws Exception {
-		AbstractAnalysisProvider provider = new AnalysisProviderImpl(new Revision(Integer.toString(revision), new File(Boot.class.getResource(
-				"/jars/gamepack" + revision + ".jar").toURI())));
+	private static void deob(Revision rev) throws Exception {
+		AbstractAnalysisProvider provider = new AnalysisProviderImpl(rev);
 		Map<String, Boolean> flags = provider.getFlags();
 		flags.put("nodump", false);
 		flags.put("debug", false);
@@ -47,7 +49,7 @@ public class Boot {
 		
 		Context.bind(provider);
 		provider.run();
-//		Context.unbind();
+		//Context.unbind();
 	}
 	
 	private static void runLast10() {
@@ -102,7 +104,7 @@ public class Boot {
 						AbstractAnalysisProvider provider = new AnalysisProviderImpl(new Revision(Integer.toString(j), new File(Boot.class.getResource(
 								"/jars/gamepack" + j + ".jar").toURI())));
 						Map<String, Boolean> flags = provider.getFlags();
-//						flags.put("nodump", true);
+						//flags.put("nodump", true);
 						flags.put("debug", false);
 						flags.put("reorderfields", true);
 						flags.put("multis", false);
@@ -133,9 +135,8 @@ public class Boot {
 		executor.shutdown();
 	}
 	
-	private static void runLatest(int revision) throws Exception {
-		AbstractAnalysisProvider provider = new AnalysisProviderImpl(new Revision(Integer.toString(revision), new File(Boot.class.getResource(
-				"/jars/gamepack" + revision + ".jar").toURI())));
+	private static void runLatest(Revision rev) throws Exception {
+		AbstractAnalysisProvider provider = new AnalysisProviderImpl(rev);
 		Map<String, Boolean> flags = provider.getFlags();
 		flags.put("nodump", false);
 		flags.put("debug", false);
@@ -143,10 +144,48 @@ public class Boot {
 		flags.put("multis", true);
 		flags.put("logresults", true);
 		flags.put("verify", false);
-//		flags.put("justdeob", true);
+		//flags.put("justdeob", true);
 		
 		Context.bind(provider);
 		provider.run();
-//		Context.unbind();
+	}
+	
+	private static Revision bootstrap() throws Exception {
+		AnalysisProviderRegistry.register(new RegistryEntry(new ProviderCreator() {
+			@Override
+			public AbstractAnalysisProvider create(Revision rev) throws Exception {
+				return new AnalysisProviderImpl(rev);
+			}
+		}).addFilter(new Filter<Revision>() {
+			@Override
+			public boolean accept(Revision t) {
+				return true;
+			}
+		}));
+		
+		/* Adds it before the default implementation. */
+		AnalysisProviderRegistry.register(new RegistryEntry(new ProviderCreator() {
+			@Override
+			public AbstractAnalysisProvider create(Revision rev) throws Exception {
+				return new AnalysisProvider79(rev);
+			}
+		}).addFilter(new Filter<Revision>() {
+			@Override
+			public boolean accept(Revision t) {
+				if(t == null)
+					return false;
+				
+				try {
+					int val = Integer.parseInt(t.getName());
+					return val >= 79;
+				} catch(NumberFormatException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}));
+		
+		return new Revision(Integer.toString(revision), new File(Boot.class.getResource(
+				"/jars/gamepack" + revision + ".jar").toURI()));
 	}
 } 

@@ -1,9 +1,9 @@
 package org.nullbool.impl.analysers.client;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
@@ -28,12 +28,12 @@ public class WrappedExceptionAnalyser extends ClassAnalyser {
 	}
 
 	@Override
-	protected List<IFieldAnalyser> registerFieldAnalysers() {
-		return Arrays.asList(new FieldHooksAnalyser());
+	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
+		return new Builder<IFieldAnalyser>().add(new FieldHooksAnalyser());
 	}
 
 	@Override
-	protected List<IMethodAnalyser> registerMethodAnalysers() {
+	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
 		return null;
 	}
 

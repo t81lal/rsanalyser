@@ -1,12 +1,11 @@
 package org.nullbool.impl.analysers.world;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import org.nullbool.api.analysis.ClassAnalyser;
+import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.AnalysisException;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
@@ -40,12 +39,12 @@ public class WallDecorationAnalyser extends ClassAnalyser {
 	}
 
 	@Override
-	protected List<IFieldAnalyser> registerFieldAnalysers() {
-		return Arrays.asList(new WallObjectInfoHooks());
+	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
+		return new Builder<IFieldAnalyser>().add(new WallObjectInfoHooks());
 	}
 
 	@Override
-	protected List<IMethodAnalyser> registerMethodAnalysers() {
+	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
 		return null;
 	}
 

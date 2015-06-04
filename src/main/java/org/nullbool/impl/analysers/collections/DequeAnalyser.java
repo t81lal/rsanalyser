@@ -1,13 +1,12 @@
 package org.nullbool.impl.analysers.collections;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
-import org.nullbool.api.analysis.ClassAnalyser;
+import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.AnalysisException;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
@@ -36,12 +35,12 @@ public class DequeAnalyser extends ClassAnalyser {
 	}
 
 	@Override
-	protected List<IFieldAnalyser> registerFieldAnalysers() {
-		return Arrays.asList(new NodeInfoHooks());
+	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
+		return new Builder<IFieldAnalyser>().add(new NodeInfoHooks());
 	}
 
 	@Override
-	protected List<IMethodAnalyser> registerMethodAnalysers() {
+	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
 		return null;
 	}
 

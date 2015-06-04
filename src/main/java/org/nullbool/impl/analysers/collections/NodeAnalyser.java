@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
@@ -44,13 +45,13 @@ public class NodeAnalyser extends ClassAnalyser {
 	}
 
 	@Override
-	protected List<IFieldAnalyser> registerFieldAnalysers() {
-		return Arrays.asList(new NodeInfoHooks());
+	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
+		return new Builder<IFieldAnalyser>().add(new NodeInfoHooks());
 	}
 
 	@Override
-	protected List<IMethodAnalyser> registerMethodAnalysers() {
-		return Arrays.asList(new MethodsAnalyser());
+	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
+		return new Builder<IMethodAnalyser>().add(new MethodsAnalyser());
 	}
 	
 	private class MethodsAnalyser implements IMethodAnalyser {

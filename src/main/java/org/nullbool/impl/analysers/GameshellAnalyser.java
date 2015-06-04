@@ -1,7 +1,6 @@
 package org.nullbool.impl.analysers;
 
-import java.util.List;
-
+import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
@@ -25,12 +24,12 @@ public class GameshellAnalyser extends ClassAnalyser {
 	}
 
 	@Override
-	protected List<IFieldAnalyser> registerFieldAnalysers() {
+	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
 		return null;
 	}
 
 	@Override
-	protected List<IMethodAnalyser> registerMethodAnalysers() {
+	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
 		return null;
 	}
 }

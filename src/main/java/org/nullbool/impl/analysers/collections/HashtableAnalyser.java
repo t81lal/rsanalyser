@@ -2,11 +2,11 @@ package org.nullbool.impl.analysers.collections;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
@@ -49,13 +49,13 @@ public class HashtableAnalyser extends ClassAnalyser {
 	}
 
 	@Override
-	protected List<IFieldAnalyser> registerFieldAnalysers() {
-		return Arrays.asList(new HeadHooks(), new IntFieldAnalyser());
+	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
+		return new Builder<IFieldAnalyser>().addAll(new HeadHooks(), new IntFieldAnalyser());
 	}
 
 	@Override
-	protected List<IMethodAnalyser> registerMethodAnalysers() {
-		return Arrays.asList(new MethodAnalyser());
+	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
+		return new Builder<IMethodAnalyser>().add(new MethodAnalyser());
 	}
 	
 	private class MethodAnalyser implements IMethodAnalyser {

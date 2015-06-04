@@ -1,13 +1,12 @@
 package org.nullbool.impl.analysers.client.widget;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
+import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
-import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.AnalysisException;
+import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
@@ -39,12 +38,12 @@ public class WidgetAnalyser extends ClassAnalyser {
 	}
 
 	@Override
-	protected List<IFieldAnalyser> registerFieldAnalysers() {
-		return Arrays.asList(new ItemAndStackHooks(), new BoundsIndexHooks(), new WidgetInfoHooks(), new ChildrenHooks(), new TypeHooks());
+	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
+		return new Builder<IFieldAnalyser>().addAll(new ItemAndStackHooks(), new BoundsIndexHooks(), new WidgetInfoHooks(), new ChildrenHooks(), new TypeHooks());
 	}
 
 	@Override
-	protected List<IMethodAnalyser> registerMethodAnalysers() {
+	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
 		return null;
 	}
 
