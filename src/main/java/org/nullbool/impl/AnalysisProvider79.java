@@ -25,6 +25,6 @@ public class AnalysisProvider79 extends AnalysisProviderImpl implements Filter<C
 	
 	@Override
 	public boolean accept(ClassAnalyser t) {
-		return false;
+		return true;
 	}
 }

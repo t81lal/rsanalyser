@@ -30,14 +30,14 @@ public class Boot {
 		//runLast10();
 		//runTest(revision);
 		
-		runLatest(bootstrap());
+		Revision revision = bootstrap();
+		runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 		//run(70, revision, 2);
 		
 		//deob(revision);
 	}
 	
-	private static void deob(Revision rev) throws Exception {
-		AbstractAnalysisProvider provider = new AnalysisProviderImpl(rev);
+	private static void deob(AbstractAnalysisProvider provider) throws Exception {
 		Map<String, Boolean> flags = provider.getFlags();
 		flags.put("nodump", false);
 		flags.put("debug", false);
@@ -135,8 +135,7 @@ public class Boot {
 		executor.shutdown();
 	}
 	
-	private static void runLatest(Revision rev) throws Exception {
-		AbstractAnalysisProvider provider = new AnalysisProviderImpl(rev);
+	private static void runLatest(AbstractAnalysisProvider provider) throws Exception {
 		Map<String, Boolean> flags = provider.getFlags();
 		flags.put("nodump", false);
 		flags.put("debug", false);
