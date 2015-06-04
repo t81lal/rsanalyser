@@ -114,6 +114,30 @@ public class Builder<T> implements Iterable<T> {
 
 		return this;
 	}
+	
+	public Builder<T> replace(Filter<T> filter, T t) {
+		ListIterator<T> it = sequenced.listIterator();
+		while(it.hasNext()) {
+			T next = it.next();
+			if(filter.accept(next)) {
+				it.set(t);
+			}
+		}
+		
+		return this;
+	}
+	
+	public Builder<T> remove(Filter<T> filter) {
+		ListIterator<T> it = sequenced.listIterator();
+		while(it.hasNext()) {
+			T next = it.next();
+			if(filter.accept(next)) {
+				it.remove();
+			}
+		}
+		
+		return this;
+	}
 
 	/**
 	 * Removes entries in the internal list that don't pass through the filters.

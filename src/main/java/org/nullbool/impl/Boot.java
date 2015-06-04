@@ -12,6 +12,7 @@ import org.nullbool.api.output.APIGenerator;
 import org.nullbool.api.util.RSVersionHelper;
 import org.nullbool.impl.AnalysisProviderRegistry.ProviderCreator;
 import org.nullbool.impl.AnalysisProviderRegistry.RegistryEntry;
+import org.nullbool.impl.r79.AnalysisProvider79Impl;
 import org.topdank.banalysis.filter.Filter;
 import org.topdank.byteio.util.Debug;
 
@@ -166,7 +167,7 @@ public class Boot {
 		AnalysisProviderRegistry.register(new RegistryEntry(new ProviderCreator() {
 			@Override
 			public AbstractAnalysisProvider create(Revision rev) throws Exception {
-				return new AnalysisProvider79(rev);
+				return new AnalysisProvider79Impl(rev);
 			}
 		}).addFilter(new Filter<Revision>() {
 			@Override
