@@ -17,7 +17,7 @@ import org.topdank.byteio.util.Debug;
  */
 public class Boot {
 
-	private static int revision = 78;
+	private static int revision = 79;
 
 	public static void main(String[] args) throws Exception {
 //		runLatest(71);
