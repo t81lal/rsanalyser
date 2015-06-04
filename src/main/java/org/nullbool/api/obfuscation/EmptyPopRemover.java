@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.nullbool.api.util.map.NullPermeableMap;
+import org.nullbool.api.util.map.NullPermeableHashMap;
 import org.nullbool.api.util.map.ValueCreator;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
@@ -13,18 +13,23 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
+ * Removes POP and constant loading instructions 
+ * in the code that are directly popping a 
+ * constant (number). <br>
+ * 
  * @author Bibl (don't ban me pls)
  * @created 31 May 2015
  */
 public class EmptyPopRemover extends NodeVisitor {
 
-	private int removed, unremovable, chosenUnremovable;
-	private NullPermeableMap<MethodNode, List<AbstractInsnNode>> toRemove = new NullPermeableMap<MethodNode, List<AbstractInsnNode>>(new ValueCreator<List<AbstractInsnNode>>() {
+	private final NullPermeableHashMap<MethodNode, List<AbstractInsnNode>> toRemove = new NullPermeableHashMap<MethodNode, List<AbstractInsnNode>>(new ValueCreator<List<AbstractInsnNode>>() {
 		@Override
 		public List<AbstractInsnNode> create() {
 			return new ArrayList<AbstractInsnNode>();
 		}
 	});
+	
+	private int removed, unremovable, chosenUnremovable;
 	
 	@Override
 	public void visit(AbstractNode n) {
@@ -53,10 +58,12 @@ public class EmptyPopRemover extends NodeVisitor {
 				i++;
 			}
 		}
-		
+
 		System.err.println("Removing empty pop remover.");
 		System.out.printf("   Collapsed %d pops (%d).%n", removed, i / 2);
 		System.out.printf("   Was unable to remove %d pops.%n", unremovable);
 		System.out.printf("   Chose not to remove %d pops.%n", chosenUnremovable);
+		
+		toRemove.clear();
 	}
 }

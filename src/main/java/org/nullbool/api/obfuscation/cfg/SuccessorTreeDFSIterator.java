@@ -7,28 +7,20 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-public class DFSIterator implements Iterator<FlowBlock> {
+/**
+ * @author Bibl (don't ban me pls)
+ * @created 2 Jun 2015 18:57:42
+ */
+public class SuccessorTreeDFSIterator implements Iterator<FlowBlock> {
 
 	private final Set<FlowBlock> visited;
 	private final Deque<Iterator<FlowBlock>> stack;
 	private transient FlowBlock next;
 
-	public DFSIterator(FlowBlock entry, boolean exceptions) {
+	public SuccessorTreeDFSIterator(FlowBlock entry) {
 		visited = new HashSet<FlowBlock>();
 		stack   = new LinkedList<Iterator<FlowBlock>>();
 		next    = entry;
-		
-		init(exceptions);
-	}
-	
-	public DFSIterator(FlowBlock entry) {
-		this(entry, true);
-	}
-	
-	public void init(boolean exceptions) {
-		stack.push(next.successors().iterator());
-		if(exceptions)
-			stack.push(next.exceptionSuccessors().iterator());
 	}
 
 	@Override
@@ -68,19 +60,19 @@ public class DFSIterator implements Iterator<FlowBlock> {
 
 			next = successors.next();
 		} while (visited.contains(next));
-		
+
 		stack.push(next.successors().iterator());
 		stack.push(next.exceptionSuccessors().iterator());
 	}
-	
+
 	public Set<FlowBlock> visited() {
 		return visited;
 	}
-	
+
 	public FlowBlock last() {
 		return next;
 	}
-	
+
 	public Deque<Iterator<FlowBlock>> stack() {
 		return stack;
 	}

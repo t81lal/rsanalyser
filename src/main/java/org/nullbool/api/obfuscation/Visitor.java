@@ -4,6 +4,12 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 
+/**
+ * A timed visitor base class for basic transformations.
+ * 
+ * @author Bibl (don't ban me pls)
+ * @created 1 Jun 2015 21:25:48 (actually before this)
+ */
 public abstract class Visitor implements Opcodes {
 
 	private final Visitor cv;
@@ -16,6 +22,10 @@ public abstract class Visitor implements Opcodes {
 		this(null);
 	}
 
+	/**
+	 * Implementation dependent transformer.
+	 * @param contents
+	 */
 	public abstract void visit(JarContents<? extends ClassNode> contents);
 
 	public final void accept(JarContents<? extends ClassNode> contents) {

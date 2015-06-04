@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.nullbool.api.util.map.NullPermeableMap;
+import org.nullbool.api.util.map.NullPermeableHashMap;
 import org.nullbool.api.util.map.ValueCreator;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
@@ -16,6 +16,7 @@ import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.util.Printer;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -25,7 +26,7 @@ public class MultiplicativeModifierRemover extends NodeVisitor {
 
 	private final MultiplicativeModifierCollector collector;
 	private final Set<FieldNode> fields = new HashSet<FieldNode>();
-	private final NullPermeableMap<MethodNode, List<AbstractInsnNode>> toRemove = new NullPermeableMap<MethodNode, List<AbstractInsnNode>>(new ValueCreator<List<AbstractInsnNode>>() {
+	private final NullPermeableHashMap<MethodNode, List<AbstractInsnNode>> toRemove = new NullPermeableHashMap<MethodNode, List<AbstractInsnNode>>(new ValueCreator<List<AbstractInsnNode>>() {
 		@Override
 		public List<AbstractInsnNode> create() {
 			return new ArrayList<AbstractInsnNode>();
@@ -45,6 +46,13 @@ public class MultiplicativeModifierRemover extends NodeVisitor {
 				}
 			}
 		}
+		
+		System.out.println("multi for it is " + collector.mh.getEncoder("dj.f") + " " + collector.mh.getDecoder("dj.f") + " " + collector.mh.inverseDecoder("dj.f"));
+		System.out.println(-2078860851 * 1472428805);
+		System.out.println(-2078860851 * 1782921573);
+		System.out.println(1472428805 * 1782921573);
+		
+		System.out.println((1763674376 * 1782921573) * -2078860851);
 	}
 
 	@Override
@@ -56,16 +64,19 @@ public class MultiplicativeModifierRemover extends NodeVisitor {
 		FieldNode fn = null;
 		if(f != null) {
 			fn = collector.lookup(f.fin());
+			
 			if(fn == null)
 				return;
 
+			
+			
 			//			if(!fields.contains(fn))
 			//				return;
 		} else {
 			return;
 		}
-
-		if(fn.key().equals("dh.aI")) {
+		
+		if(fn.key().equals("dh.aI") || fn.key().equals("dj.fI")) {
 			NumberNode nn = an.firstNumber();
 			if(nn != null) {
 				int num = nn.number();
@@ -77,7 +88,12 @@ public class MultiplicativeModifierRemover extends NodeVisitor {
 				}
 				int val = num * decoder;
 				nn.setNumber(val);
-				//System.out.printf("(%s) %s %s [%d * %d] = %d.%n", an.method(), Printer.OPCODES[an.opcode()], fn.key(), num, decoder, val);
+				if(val != 1)
+				System.out.printf("(%s) %s %s [%d * %d] = %d.%n", an.method(), Printer.OPCODES[an.opcode()], fn.key(), num, decoder, val);
+			} else {
+//				System.out.println("MultiplicativeModifierRemover.visitOperation() " + fn.key());
+				if(fn.key().equals("dj.fI"))
+					System.err.println(an.method() + " " + an);
 			}
 		}
 		//		NumberNode nn = an.firstNumber();

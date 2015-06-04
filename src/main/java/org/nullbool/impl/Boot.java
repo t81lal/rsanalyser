@@ -9,6 +9,7 @@ import org.nullbool.api.AbstractAnalysisProvider;
 import org.nullbool.api.Context;
 import org.nullbool.api.Revision;
 import org.nullbool.api.output.APIGenerator;
+import org.nullbool.api.util.RSVersionHelper;
 import org.topdank.byteio.util.Debug;
 
 /**
@@ -20,6 +21,8 @@ public class Boot {
 	private static int revision = 79;
 
 	public static void main(String[] args) throws Exception {
+		System.out.printf("Remote rev: %d.%n", RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100));
+		
 //		runLatest(71);
 //		runLast10();
 //		runTest(revision);

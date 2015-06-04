@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.nullbool.api.Context;
 import org.nullbool.api.obfuscation.number.MultiplierHandler;
 import org.nullbool.api.obfuscation.refactor.ClassTree;
-import org.nullbool.api.util.map.NullPermeableMap;
+import org.nullbool.api.util.map.NullPermeableHashMap;
 import org.nullbool.api.util.map.ValueCreator;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
@@ -127,7 +127,7 @@ public class MultiplicativeModifierCollector extends NodeVisitor {
 		System.out.printf("   %d fluctuating field values.%n", total.size() - k);
 	}
 
-	public static final class CountMap extends NullPermeableMap<FieldNode, AtomicInteger> {
+	public static final class CountMap extends NullPermeableHashMap<FieldNode, AtomicInteger> {
 		private static final long serialVersionUID = -176930165575731808L;
 
 		public CountMap() {

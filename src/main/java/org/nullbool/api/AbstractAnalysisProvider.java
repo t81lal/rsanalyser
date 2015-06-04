@@ -16,6 +16,7 @@ import java.util.Map;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.obfuscation.CallVisitor;
+import org.nullbool.api.obfuscation.EmptyGotoCollapser;
 import org.nullbool.api.obfuscation.EmptyParameterFixer;
 import org.nullbool.api.obfuscation.EmptyPopRemover;
 import org.nullbool.api.obfuscation.FieldOpener;
@@ -272,10 +273,12 @@ public abstract class AbstractAnalysisProvider {
 		deobOpaquePredicates();
 		fixEmptyParams();
 		removeEmptyPops();
-		replaceCharStringBuilders();
+		//not really needed + a bit slow
+		//replaceCharStringBuilders();
 		//TOOD: multis
 		//removeMultis();
 		buildCfgs();
+		collapseEmptyGotoBlocks();
 	}
 	
 	private void removeMultis() {
@@ -302,6 +305,26 @@ public abstract class AbstractAnalysisProvider {
 		}
 		
 		remover.output();
+	}
+	
+	private void collapseEmptyGotoBlocks() {
+		EmptyGotoCollapser collapser = new EmptyGotoCollapser();
+		for(ClassNode cn : contents.getClassContents()) {
+			if(cn.name.equals("am")) {
+//			if(cn.name.equals("ae")) {
+				for(MethodNode m : cn.methods) {
+//					if(m.name.equals("c")) {
+					if(m.name.equals("f")) {
+						try {
+//							HandlerBlockRemover.fix(m, cfgCache.get(m));
+							collapser.collapse(m, cfgCache.get(m));
+						} catch (ControlFlowException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	private void buildCfgs() {

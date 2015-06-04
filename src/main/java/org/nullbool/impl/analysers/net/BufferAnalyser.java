@@ -14,7 +14,7 @@ import org.nullbool.api.obfuscation.cfg.ControlFlowException;
 import org.nullbool.api.obfuscation.cfg.ControlFlowGraph;
 import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.nullbool.api.util.DescFilter;
-import org.nullbool.api.util.map.NullPermeableMap;
+import org.nullbool.api.util.map.NullPermeableHashMap;
 import org.nullbool.api.util.map.ValueCreator;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
@@ -211,7 +211,7 @@ public class BufferAnalyser extends ClassAnalyser {
 
 	private static class DataVisitor extends NodeVisitor {
 
-		private final NullPermeableMap<Integer, List<Integer>> map = new NullPermeableMap<Integer, List<Integer>>(new ValueCreator<List<Integer>>() {
+		private final NullPermeableHashMap<Integer, List<Integer>> map = new NullPermeableHashMap<Integer, List<Integer>>(new ValueCreator<List<Integer>>() {
 			@Override
 			public List<Integer> create() {
 				return new ArrayList<Integer>();
