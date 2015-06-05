@@ -99,8 +99,9 @@ public class OpaquePredicateRemover extends NodeVisitor {
 	private MethodNode method;
 	private int targetVar;
 
-	private int count;
-
+	private int count, mcount = 0;
+	private int mdiscard, typediscard = 0;
+	
 	public boolean methodEnter(MethodNode m) {
 		Object[] objs = MethodUtil.getLastDummyParameter(m);
 		if(objs == null)
@@ -198,9 +199,16 @@ public class OpaquePredicateRemover extends NodeVisitor {
 						for(AbstractInsnNode a : e.getValue()) {
 							method.instructions.remove(a);
 						}
+						count++;
 					}
-					count++;
+					mcount++;
+				} else {
+					System.out.println(method);
+					typediscard++;
 				}
+			} else {
+				System.err.println(method);
+				mdiscard++;
 			}
 		}
 
@@ -252,7 +260,9 @@ public class OpaquePredicateRemover extends NodeVisitor {
 	}
 
 	public void output() {
-		System.err.printf("Removed %d opaque predicates.%n", count);
+		System.err.println("Removing Opaque Predicates.");
+		System.out.printf("   Removed %d opaque predicates (%d methods).%n", count, mcount);
+		System.out.printf("   %d method discards and %d type discards.%n", mdiscard, typediscard);
 	}
 
 	private static class ComparisonPair {

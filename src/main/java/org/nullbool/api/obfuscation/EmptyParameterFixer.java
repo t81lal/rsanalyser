@@ -179,8 +179,8 @@ public class EmptyParameterFixer extends Visitor {
 							nulls++;
 						} else if(oldm != null) {
 							if(!min.desc.equals(oldm.desc)) {
-								callnames++;
 								m.instructions.insertBefore(min, new InsnNode(POP));
+								callnames++;
 							} else {
 								unchanged++;
 							}
@@ -287,6 +287,8 @@ public class EmptyParameterFixer extends Visitor {
 	public void output() {
 		System.err.println("Running empty parameter fixer.");
 		System.out.printf("   map.start=%d, map.end=%d.%n", startSize, endSize);
-		System.out.printf("   %d empty parameter methods changed, %d calls (%d nulls).%n", callnames, unchanged, nulls);
+		System.out.printf("   %d empty parameter methods changed.%n", endSize);
+		System.out.printf("   %d calls changed.%n", callnames);
+		System.out.printf("   %d unchanged calls and %d nulls.%n", unchanged, nulls);
 	}
 }
