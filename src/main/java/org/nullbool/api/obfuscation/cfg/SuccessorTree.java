@@ -41,10 +41,10 @@ public class SuccessorTree implements Iterable<Successor> {
 				Successor successor = new Successor(b, s, typeOf(graph, b, s));
 				tree.getNotNull(b).add(successor);
 			}
-			for(FlowBlock s : b.exceptionSuccessors()) {
-				Successor successor = new Successor(b, s, typeOf(graph, b, s));
-				tree.getNotNull(b).add(successor);
-			}
+//			for(FlowBlock s : b.exceptionSuccessors()) {
+//				Successor successor = new Successor(b, s, typeOf(graph, b, s));
+//				tree.getNotNull(b).add(successor);
+//			}
 		}
 	}
 
@@ -57,6 +57,9 @@ public class SuccessorTree implements Iterable<Successor> {
 	 * @return
 	 */
 	public SuccessorType typeOf(ControlFlowGraph graph, FlowBlock b, FlowBlock target) {
+		if(b.last() == null)
+			return SuccessorType.IMMEDIATE;
+		
 		int cleansize = b.cleansize();
 		if(cleansize == 1 && b.last().opcode() == Opcodes.GOTO) {
 			return SuccessorType.EMTPY;
@@ -68,9 +71,11 @@ public class SuccessorTree implements Iterable<Successor> {
 		while(it.hasNext()) {
 			FlowBlock current = it.next();
 			if(current.equals(b)) {
-				FlowBlock next = it.next();
-				if(target.equals(next))
-					return SuccessorType.IMMEDIATE;
+				if(it.hasNext()) {
+					FlowBlock next = it.next();
+					if(target.equals(next))
+						return SuccessorType.IMMEDIATE;
+				}
 			}
 		}
 
@@ -78,6 +83,10 @@ public class SuccessorTree implements Iterable<Successor> {
 		return null;
 	}
 
+	public List<Successor> get(FlowBlock b) {
+		return tree.get(b);
+	}
+	
 	public void release() {
 		tree.clear();
 	}

@@ -473,7 +473,7 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 		 * multiple possible ones there could be in natural code. 
 		 * Note that we probably shouldn't save this in the blocks list as it is not
 		 * a real block. */
-		FlowBlock dummyExit = new FlowBlock(LabelHelper.createBlockName(blocks.size() + 1));
+		FlowBlock dummyExit = new DummyExitBlock(LabelHelper.createBlockName(blocks.size() + 1));
 		
 		for (FlowBlock b : blocks) {
 			if (b.successors().isEmpty()) {

@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
+import org.nullbool.api.obfuscation.BlockReorderer;
 import org.nullbool.api.obfuscation.CallVisitor;
 import org.nullbool.api.obfuscation.EmptyGotoCollapser;
 import org.nullbool.api.obfuscation.EmptyParameterFixer;
@@ -30,6 +31,8 @@ import org.nullbool.api.obfuscation.StringBuilderCharReplacer;
 import org.nullbool.api.obfuscation.UnusedFieldRemover;
 import org.nullbool.api.obfuscation.cfg.CFGCache;
 import org.nullbool.api.obfuscation.cfg.ControlFlowException;
+import org.nullbool.api.obfuscation.cfg.ControlFlowGraph;
+import org.nullbool.api.obfuscation.cfg.SuccessorTree;
 import org.nullbool.api.obfuscation.number.MultiplierHandler;
 import org.nullbool.api.obfuscation.number.MultiplierVisitor;
 import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
@@ -278,7 +281,8 @@ public abstract class AbstractAnalysisProvider {
 		//TOOD: multis
 		//removeMultis();
 		buildCfgs();
-		collapseEmptyGotoBlocks();
+//		collapseEmptyGotoBlocks();
+		//reorderBlocks();
 	}
 	
 	private void removeMultis() {
@@ -305,6 +309,62 @@ public abstract class AbstractAnalysisProvider {
 		}
 		
 		remover.output();
+	}
+	
+	private void reorderBlocks() {
+//		int k = 0;
+//		MethodNode mlong = null;
+//		
+//		BlockReorderer reorderer = new BlockReorderer();
+//		for(ClassNode cn : contents.getClassContents()) {
+//			for(MethodNode m : cn.methods) {
+//				if(m.instructions.size() > 0 && m.tryCatchBlocks.size() <= 1) {
+//					
+//					if(m.instructions.size() >= k) {
+//						k = m.instructions.size();
+//						mlong = m;
+//					}
+//					
+//					try {
+//						reorderer.reorder(m, cfgCache.get(m));
+//					} catch (ControlFlowException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//		}
+//		
+//		System.out.printf("Longest, %s (%d).%n", mlong, k);
+		
+		BlockReorderer reorderer = new BlockReorderer();
+		
+		for(ClassNode cn : contents.getClassContents()) {
+//			if(cn.name.equals("dj")) {
+//			if(cn.name.equals("r")) {
+			if(cn.name.equals("bw")) {
+				for(MethodNode m : cn.methods) {
+					
+					
+					
+//					if(m.name.equals("l")) {
+//					if(m.name.equals("at")) {
+//					if(m.name.equals("b") && m.desc.equals("(Lb;I)V")) {
+					if(m.name.equals("j")) {
+						try {
+							ControlFlowGraph oldGraph = cfgCache.get(m);
+							reorderer.reorder(m, oldGraph);
+							ControlFlowGraph newGraph = new ControlFlowGraph().create(m);
+							SuccessorTree tree = new SuccessorTree();
+							tree.map(newGraph);
+							BlockReorderer.traceDFS(newGraph, tree);
+						} catch (ControlFlowException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+		
 	}
 	
 	private void collapseEmptyGotoBlocks() {
