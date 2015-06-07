@@ -1,16 +1,10 @@
 package org.nullbool.impl.r79;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.impl.analysers.ClientAnalyser;
-import org.objectweb.asm.tree.ClassNode;
-import org.topdank.banalysis.filter.Filter;
-import org.zbot.hooks.FieldHook;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -20,8 +14,8 @@ import org.zbot.hooks.FieldHook;
 		fields = { "getNPCs&[NPC", "getPlayers&[Player", "getRegion&Region", /*"getWidgetPositionsX&[I", "getWidgetPositionsY&[I",*/
 		"getCanvas&Ljava/awt/Canvas;", "getLocalPlayer&Player", "getWidgetNodes&Hashtable", "getMenuActions&[Ljava/lang/String;", "isSpellSelected&Z",
 		"getSelectionState&I", "getMenuOptions&[Ljava/lang/String;", "getLoopCycle&I", "getCurrentWorld&I", "getGameState&I", "getCurrentLevels&[I",
-		"getRealLevels&[I", "getSkillsExp&[I", "getSelectedItem&I", /*"isMenuOpen&Z", "getMenuX&I", "getMenuY&I", "getMenuWidth&I", "getMenuHeight&I",
-		"getMenuSize&I",*/ "getGroundItems&[[[Deque", "getTileSettings&[[[B", "getTileHeights&[[[I", "getMapScale&I", "getMapOffset&I", "getMapAngle&I",
+		"getRealLevels&[I", "getSkillsExp&[I", "getSelectedItem&I", "isMenuOpen&Z", "getMenuX&I", "getMenuY&I", "getMenuWidth&I", "getMenuHeight&I",
+		"getMenuSize&I", "getGroundItems&[[[Deque", "getTileSettings&[[[B", "getTileHeights&[[[I", "getMapScale&I", "getMapOffset&I", "getMapAngle&I",
 		"getPlane&I", "getCameraX&I", "getCameraY&I", "getCameraZ&I", "getCameraYaw&I", "getCameraPitch&I", "getBaseX&I", "getBaseY&I", "getWidgets&[[Widget",
 		"getClientSettings&[I", "getWidgetsSettings&[I","getHoveredRegionTileX&I","getHoveredRegionTileY&I"}, 
 		
@@ -35,20 +29,6 @@ public class ClientAnalyser79 extends ClientAnalyser {
 	
 	@Override
 	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
-		return super.registerFieldAnalysers().remove(new Filter<IFieldAnalyser>() {
-			@Override
-			public boolean accept(IFieldAnalyser t) {
-				return t.getClass().equals(MenuScreenHooks.class);
-			}
-		});
-	}
-	
-	public class MenuScreenHooks79 extends MenuScreenHooks {
-		
-		@Override
-		public List<FieldHook> find(ClassNode cn) {
-			//TODO:
-			return Arrays.asList();
-		}
+		return super.registerFieldAnalysers();
 	}
 }

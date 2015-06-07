@@ -177,30 +177,32 @@ public class ClientAnalyser extends ClassAnalyser {
 
 		@Override
 		public List<FieldHook> find(ClassNode cn) {
+
 			String h, regex = ";I.{0,2};V";
 			List<FieldHook> list = new ArrayList<FieldHook>();
-			String[] p = { "getstatic", "getstatic", "invokevirtual", "istore" };
+			String[] p = { "getstatic", "getstatic", "invokevirtual" };
 			MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, false);
 
 			MethodNode[] m = startWithBc(p, mn);
 			AbstractInsnNode[] ins = followJump(m[0], 323);
-
-			h = findField(ins, true, true, 1, 's', "sipush 503");
+			final String[] pattern = { "if_icmple", "iload 6", "ifge","iconst_1" };
+			
+			h = findField(ins, true, true, 1, 's', pattern);
 			list.add(asFieldHook(h, "isMenuOpen", findMultiplier(h, true)));
 
-			h = findField(ins, true, true, 2, 's', "sipush 503");
+			h = findField(ins, true, true, 2, 's', pattern);
 			list.add(asFieldHook(h, "getMenuX", findMultiplier(h, true)));
 
-			h = findField(ins, true, true, 3, 's', "sipush 503");
+			h = findField(ins, true, true, 3, 's', pattern);
 			list.add(asFieldHook(h, "getMenuY", findMultiplier(h, true)));
 
-			h = findField(ins, true, true, 4, 's', "sipush 503");
+			h = findField(ins, true, true, 4, 's', pattern);
 			list.add(asFieldHook(h, "getMenuWidth", findMultiplier(h, true)));
 
-			h = findField(ins, true, true, 5, 's', "sipush 503");
+			h = findField(ins, true, true, 5, 's', pattern);
 			list.add(asFieldHook(h, "getMenuSize", findMultiplier(h, true)));
 
-			h = findField(ins, true, true, 6, 's', "sipush 503");
+			h = findField(ins, true, true, 6, 's', pattern);
 			list.add(asFieldHook(h, "getMenuHeight", findMultiplier(h, true)));
 
 			return list;
