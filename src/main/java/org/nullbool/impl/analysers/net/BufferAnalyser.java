@@ -13,14 +13,19 @@ import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.obfuscation.cfg.ControlFlowException;
 import org.nullbool.api.obfuscation.cfg.ControlFlowGraph;
 import org.nullbool.api.obfuscation.cfg.FlowBlock;
+import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
 import org.nullbool.api.util.DescFilter;
 import org.nullbool.api.util.InstructionUtil;
+import org.nullbool.api.util.NotifyNodeVisitor;
 import org.nullbool.api.util.map.NullPermeableHashMap;
 import org.nullbool.api.util.map.ValueCreator;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
 import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
 import org.objectweb.asm.commons.cfg.tree.node.ConversionNode;
+import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
+import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
 import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
 import org.objectweb.asm.commons.cfg.tree.node.VariableNode;
 import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
@@ -38,10 +43,13 @@ import org.zbot.hooks.MethodHook.MethodType;
 
 @SupportedHooks(fields  = { "getPayload&[B", "getCaret&I", }, 
 methods = { "enableEncryption&(Ljava/math/BigInteger;Ljava/math/BigInteger;)V",
-		"write8&(I)V", "write8Weird&(I)V", "write16&(I)V", "write16A&(I)V", "write16B&(I)V", "write24&(I)V", "write32&(I)V", "write40&(J)V", "write64&(J)V",
+		"writeVarByte&(I)V", "writeBytes&([BIII)V",
+		"write8&(I)V", "write8Weird&(I)V", "write16&(I)V", "write16A&(I)V", "write16B&(I)V", "write24&(I)V", "write32&(I)V", /*"write40&(J)V", */ "write64&(J)V",
 		"writeLE16&(I)V", "writeLE16A&(I)V", "writeLE32&(I)V", "write32Weird&(I)V",
-		"writeInverted24&(I)V", "writeInverted32&(I)V", "writeInvertedLE32&(I)V",
-		"writeString&(Ljava/lang/String;)V", "writeJagexString&(Ljava/lang/String;)V", "writeCharSequence&(Ljava/lang/CharSequence;)V"})
+		"writeInverted32&(I)V", /*"writeInverted24&(I)V",*/ "writeInvertedLE32&(I)V",
+		"writeString&(Ljava/lang/String;)V", "writeJagexString&(Ljava/lang/String;)V", "writeCharSequence&(Ljava/lang/CharSequence;)V",
+
+})
 /**
  * Notes:
  *    write40 was added in rev77.
@@ -53,20 +61,35 @@ methods = { "enableEncryption&(Ljava/math/BigInteger;Ljava/math/BigInteger;)V",
  */
 public class BufferAnalyser extends ClassAnalyser {
 
-	private static boolean print = true;
-	
-	private static final ShiftNode[] WRITE_LONG_SHIFTS = createIntSeq(LSHR, new int[]{58, 48, 40, 32, 24, 16, 8, 0});
-	private static final ShiftNode[] WRITE_INT_SHIFTS = createIntSeq(ISHR, new int[]{24, 16, 8, 0});
-	private static final ShiftNode[] WRITE_INV_32 = createIntSeq(ISHR, new int[]{16, 24, 0, 8});
-	private static final ShiftNode[] WRITE_INV_LE_32 = createIntSeq(ISHR, new int[]{8, 0, 24, 16});
-	private static final ShiftNode[] WRITE_LE_32 = createIntSeq(ISHR, new int[]{0, 8, 16, 24});
-	private static final ShiftNode[] WRITE_24 = createIntSeq(ISHR, new int[]{16, 8, 0});
+	// debug flag.
+	private static boolean print = false;
+
+	// TODO: do some merging
+	public static final ShiftNode[] WRITE_LONG_SHIFTS = createIntSeq(LSHR, new int[]{56, 48, 40, 32, 24, 16, 8, 0});
+	public static final ShiftNode[] WRITE_INT_SHIFTS = createIntSeq(ISHR, new int[]{24, 16, 8, 0});
+	public static final ShiftNode[] WRITE_INV_32 = createIntSeq(ISHR, new int[]{16, 24, 0, 8});
+	public static final ShiftNode[] WRITE_INV_LE_32 = createIntSeq(ISHR, new int[]{8, 0, 24, 16});
+	public static final ShiftNode[] WRITE_LE_32 = createIntSeq(ISHR, new int[]{0, 8, 16, 24});
+	public static final ShiftNode[] WRITE_24 = createIntSeq(ISHR, new int[]{16, 8, 0});
 	@Deprecated
-	private static final ShiftNode[] WRITE_INV_24 = createIntSeq(ISHR, new int[]{8, 16, 0});
-	private static final ShiftNode[] WRITE_16 = createIntSeq(ISHR, new int[]{8, 0});
-	private static final ArithmeticOp[] WRITE8OFFSET128 = new ArithmeticOp[]{new ArithmeticOp(IADD, 128, null)};
-	private static final ArithmeticOp[] WRITE8NEG0 = new ArithmeticOp[]{new ArithmeticOp(ISUB, 0, ArithmeticOpOrder.LEFT)};
-	private static final ArithmeticOp[] WRITE8NEG128 = new ArithmeticOp[]{new ArithmeticOp(ISUB, 128, ArithmeticOpOrder.LEFT)};
+	public static final ShiftNode[] WRITE_INV_24 = createIntSeq(ISHR, new int[]{8, 16, 0});
+	public static final ShiftNode[] WRITE_16 = createIntSeq(ISHR, new int[]{8, 0});
+	public static final ShiftNode[] WRITE_LE_16 = createIntSeq(ISHR, new int[]{0, 8});
+	public static final ShiftNode[] WRITE_8 = createIntSeq(ISHR, new int[]{0});
+	public static final Object[] WRITE_16A = new Object[]{new ShiftNode(ISHR, 8), new ArithmeticOp(IADD, 128, null)};
+	public static final Object[] WRITE_16B = new Object[]{new ArithmeticOp(IADD, 128, null), new ShiftNode(ISHR, 8)};
+	public static final ArithmeticOp[] WRITE8OFFSET128 = new ArithmeticOp[]{new ArithmeticOp(IADD, 128, null)};
+	public static final ArithmeticOp[] WRITE8NEG0 = new ArithmeticOp[]{new ArithmeticOp(ISUB, 0, ArithmeticOpOrder.LEFT)};
+	public static final ArithmeticOp[] WRITE8NEG128 = new ArithmeticOp[]{new ArithmeticOp(ISUB, 128, ArithmeticOpOrder.LEFT)};
+	public static final Sub2Node SUB2_NODE = new Sub2Node();
+
+	public static final Object[] WRITE_VAR_BYTE = new Object[]{new CompPair(IF_ICMPGE, 32768), new CompPair(IF_ICMPGE, 128)};
+	public static final ArraySet WRITE_BYTES = new ArraySet(ArraySetType.LOCAL, ArraySetType.FIELD);
+	public static final ArraySet WRITE_BYTES2 = new ArraySet(ArraySetType.FIELD, ArraySetType.LOCAL);
+	public static final ArithmeticOp[] WRITE_BYTES_SUB = new ArithmeticOp[]{new ArithmeticOp(ISUB, 128, ArithmeticOpOrder.RIGHT)};
+
+	private static final Filter<FieldNode> BYTE_ARRAY_FILTER = new DescFilter("[B");
+	private static final Filter<FieldNode> INT_FILTER        = new DescFilter("I");
 
 	private static ShiftNode[] createIntSeq(int opcode, int[] shifts) {
 		ShiftNode[] nodes = new ShiftNode[shifts.length];
@@ -76,9 +99,12 @@ public class BufferAnalyser extends ClassAnalyser {
 		return nodes;
 	}
 
-	private static final Filter<FieldNode> BYTE_ARRAY_FILTER = new DescFilter("[B");
-	private static final Filter<FieldNode> INT_FILTER        = new DescFilter("I");
-
+	private final TreeBuilder treeBuilder = new TreeBuilder();
+	private final ArrayStoreVisitor arrayStoreVisitor = new ArrayStoreVisitor();
+	private final ArrayLoadVisitor arrayLoadVisitor = new ArrayLoadVisitor();
+	private final ArrayMethodVisitor arrayMethodVisitor = new ArrayMethodVisitor();
+	private final VarIntNodeVisitor varIntNodeVisitor = new VarIntNodeVisitor();
+	
 	public BufferAnalyser() {
 		super("Buffer");
 	}
@@ -104,204 +130,183 @@ public class BufferAnalyser extends ClassAnalyser {
 		return new Builder<IMethodAnalyser>().add(new MethodAnalyser());
 	}
 
-	private class MethodAnalyser implements IMethodAnalyser {
+	public class MethodAnalyser implements IMethodAnalyser {
 
 		@Override
 		public List<MethodHook> find(ClassNode cn) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 
-			TreeBuilder tb = new TreeBuilder();
-			ArrayStoreVisitor asv = new ArrayStoreVisitor();
-
 			for(MethodNode m : cn.methods) {
 				if(m.desc.startsWith("(Ljava/math/BigInteger;Ljava/math/BigInteger;")) {
 					list.add(asMethodHook(MethodType.CALLBACK, m, "enableEncryption"));
-				} else {
-					if(!Modifier.isStatic(m.access) && m.desc.endsWith(")V")) {
-						try {
-							ControlFlowGraph graph = Context.current().getCFGCache().get(m);
-							if(print)
+				} else if(!Modifier.isStatic(m.access)) {
+					
+					ControlFlowGraph graph = null;
+					
+					try {
+						graph = Context.current().getCFGCache().get(m);
+					} catch (ControlFlowException e) {
+						e.printStackTrace();
+					}
+					
+					if(m.desc.endsWith(")V")) {
+							if(print) 
 								System.out.println(m);
-							asv.end();
-							for(FlowBlock block : graph) {
-								tb.build(m, block).accept(asv);
-							}
 							
-							List<Object> index = asv.found.get(ArrayStoreVisitor.INDEX);
-							List<Object> value = asv.found.get(ArrayStoreVisitor.VALUE);
-							List<Object> arith = asv.found.get(ArrayStoreVisitor.VALUE_SUB);
+							run(treeBuilder, arrayStoreVisitor, m, graph);
+							analyse(arrayStoreVisitor, graph, m, list);
 
-							boolean b = false;
-
-							//FIXME: ghetto
-							if(m.desc.startsWith("(Ljava/lang/String;")) {
-
-								if(match(index, new Object[]{1, 1})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "writeJagexString"));
-									b = true;
-								} else {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "writeString"));
-									b = true;
-								}
-							} else if(m.desc.startsWith("(Ljava/lang/CharSequence;")) {
-								list.add(asMethodHook(MethodType.CALLBACK, m, "writeCharSequence"));
-								b = true;
-							} else {
-								if(m.desc.startsWith("(J")) {
-									if(match(value, WRITE_LONG_SHIFTS)) {
-										list.add(asMethodHook(MethodType.CALLBACK, m, "write64"));
-										b = true;
-									} else if(match(value, WRITE_LONG_SHIFTS, 2)) {
-										list.add(asMethodHook(MethodType.CALLBACK, m, "write40"));
-										b = true;
-									}
-								} else if(m.desc.startsWith("(I")) {
-									if(match(value, WRITE_INT_SHIFTS)) {
-										if(match(index, new Object[]{4, 3, 2, 1})) {
-											list.add(asMethodHook(MethodType.CALLBACK, m, "write32Weird"));
-											b = true;
-										} else if(match(index, new Object[]{1, 1, 1, 1})) {
-											list.add(asMethodHook(MethodType.CALLBACK, m, "write32"));
-											b = true;
-										}
-										
-									} else if(match(value, WRITE_INV_LE_32)) {
-										list.add(asMethodHook(MethodType.CALLBACK, m, "writeInverted32"));
-										b = true;
-									} else if(match(value, WRITE_LE_32)) {
-										list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE32"));
-										b = true;
-									} else if(match(value, WRITE_INV_32)) {
-										list.add(asMethodHook(MethodType.CALLBACK, m, "writeInverted32"));
-										b = true;
-									} else if(match(value, WRITE_24)) {
-										list.add(asMethodHook(MethodType.CALLBACK, m, "write24"));
-										b = true;
-									}/* else if(match(value, WRITE_INV_24)) {
-										System.out.println("BufferAnalyser.MethodAnalyser.find() " + index);
-									}*/
-									else if(match(value, WRITE_16)) {
-										if(match(index, new Object[]{2, 1})) {
-											list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE16A"));
-											b = true;
-										} else if(match(index, new Object[]{1, 1})) {
-											list.add(asMethodHook(MethodType.CALLBACK, m, "write16"));
-											b = true;
-										}
-									} else if(match(value, WRITE8OFFSET128)) {
-										list.add(asMethodHook(MethodType.CALLBACK, m, "write8Offset128"));
-										b = true;
-									} else if(match(value, WRITE8NEG0)) {
-										list.add(asMethodHook(MethodType.CALLBACK, m, "write8Neg0"));
-										b = true;
-									} else if(match(value, WRITE8NEG128)) {
-										list.add(asMethodHook(MethodType.CALLBACK, m, "write8Neg128"));
-										b = true;
-									}
-								}
-							}
-
-							if("".equals(""))
-								continue;
-
-							List<Integer> shifts = null;
-							List<Integer> subs   = null;
-							int tCount = shifts.size();
+							arrayStoreVisitor.end(m);
+					} else {
+						Type ret = Type.getReturnType(m.desc);
+						if(BytecodeRefactorer.isPrimitive(ret.getDescriptor())) {
+							System.out.println(m);
 							
-							if(tCount == 8) {
-								if(subequals(shifts, new int[]{56, 48, 40, 32, 24, 16, 8, 0})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "write64"));
-									b = true;
-								}
-							} else if(tCount == 6) {
-								if(subequals(shifts, new int[]{40, 32, 24, 16, 8, 0})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "write40"));
-									b = true;
-								}
-							} else if(tCount == 4) {
-								if(subequals(shifts, new int[]{8, 0, 24, 16})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "writeInvertedLE32"));
-									b = true;
-								} else if(subequals(shifts, new int[]{24, 16, 8, 0})) {
-									if(subequals(subs, new int[]{1, 1, 1, 1})) {
-										list.add(asMethodHook(MethodType.CALLBACK, m, "write32"));
-										b = true;
-									} else if(subequals(subs, new int[]{4, 3, 2, 1})) {
-										list.add(asMethodHook(MethodType.CALLBACK, m, "write32Weird"));
-										b = true;
-									}
-								} else if(subequals(shifts, new int[]{0, 8, 16, 24})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE32"));
-									b = true;
-								} else if(subequals(shifts, new int[]{16, 24, 0, 8})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "writeInverted32"));
-									b = true;
-								}
-							} else if(tCount == 3) {
-								if(subequals(shifts, new int[]{16, 8, 0})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "write24"));
-									b = true;
-								} else if(subequals(shifts, new int[]{8, 16, 0})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "writeInverted24"));
-									b = true;
-								}
-							} else if(tCount == 2) {
-								if(subequals(shifts, new int[]{8, 0})) {
-									if(subequals(subs, new int[]{2, 1})) {
-										list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE16A"));
-										b = true;
-									} else if(subequals(subs, new int[]{1, 1})) {
-										list.add(asMethodHook(MethodType.CALLBACK, m, "write16"));
-										b = true;
-									}
-								} else if(subequals(shifts, new int[]{8, 128})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "write16A"));
-									b = true;
-								} else if(subequals(shifts, new int[]{128, 8})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "write16B"));
-									b = true;
-								} else if(subequals(shifts, new int[]{0, 8})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE16"));
-									b = true;
-								}
-							} else if(tCount == 1) {
-								if(subequals(shifts, new int[]{0})) {
-									if(subequals(subs, new int[]{1})) {
-										if(findAllOpcodePatterns(m, new int[]{ ILOAD, ISUB}).size() == 1) {
-											list.add(asMethodHook(MethodType.CALLBACK, m, "write8Weird"));
-											System.out.println("BufferAnalyser.MethodAnalyser.find()1 " + m);
-											b = true;
-										} else {
-											list.add(asMethodHook(MethodType.CALLBACK, m, "write8"));
-											b = true;
-										}
-									}
-								}
-							}
-						} catch (ControlFlowException e) {
-							e.printStackTrace();
+							run(treeBuilder, arrayLoadVisitor, m, graph);
+							
+							arrayLoadVisitor.end(m);
 						}
-						
-						
 					}
 				}
 			}
 
 			//TODO: remember to remove halt
-			Context.current().requestHalt();
+			//Context.current().requestHalt();
+			System.out.println(list.size());
 			return list;
+		}
+
+		protected void analyse(ArrayStoreVisitor asv, ControlFlowGraph graph, MethodNode m, List<MethodHook> list) {
+			List<Object> index = asv.found.get(ArrayStoreVisitor.INDEX);
+			List<Object> value = asv.found.get(ArrayStoreVisitor.VALUE);
+			boolean b = false;
+
+			//FIXME: ghetto
+			if(m.desc.startsWith("(Ljava/lang/String;")) {
+
+				if(match(index, new Object[]{1, 1})) {
+					list.add(asMethodHook(MethodType.CALLBACK, m, "writeJagexString"));
+					b = true;
+				} else {
+					list.add(asMethodHook(MethodType.CALLBACK, m, "writeString"));
+					b = true;
+				}
+			} else if(m.desc.startsWith("(Ljava/lang/CharSequence;")) {
+				list.add(asMethodHook(MethodType.CALLBACK, m, "writeCharSequence"));
+				b = true;
+			} else {
+				if(m.desc.startsWith("(J")) {
+					if(match(value, WRITE_LONG_SHIFTS)) {
+						list.add(asMethodHook(MethodType.CALLBACK, m, "write64"));
+						b = true;
+					}
+				} else if(m.desc.startsWith("(I")) {
+					if(match(value, WRITE_INT_SHIFTS)) {
+						if(match(index, new Object[]{4, SUB2_NODE, 3, SUB2_NODE, 2, SUB2_NODE, 1, SUB2_NODE})) {
+							list.add(asMethodHook(MethodType.CALLBACK, m, "write32Weird"));
+							b = true;
+						} else if(match(index, new Object[]{1, 1, 1, 1})) {
+							list.add(asMethodHook(MethodType.CALLBACK, m, "write32"));
+							b = true;
+						}
+
+					} else if(match(value, WRITE_INV_LE_32)) {
+						list.add(asMethodHook(MethodType.CALLBACK, m, "writeInvertedLE32"));
+						b = true;
+					} else if(match(value, WRITE_LE_32)) {
+						list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE32"));
+						b = true;
+					} else if(match(value, WRITE_INV_32)) {
+						list.add(asMethodHook(MethodType.CALLBACK, m, "writeInverted32"));
+						b = true;
+					} else if(match(value, WRITE_24)) {
+						list.add(asMethodHook(MethodType.CALLBACK, m, "write24"));
+						b = true;
+					}/* else if(match(value, WRITE_INV_24)) {
+						System.out.println("BufferAnalyser.MethodAnalyser.find() " + index);
+					}*/
+					else if(match(value, WRITE_16)) {
+						if(match(index, new Object[]{2, SUB2_NODE, 1, SUB2_NODE})) {
+							list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE16A"));
+							b = true;
+						} else if(match(index, new Object[]{1, 1})) {
+							list.add(asMethodHook(MethodType.CALLBACK, m, "write16"));
+							b = true;
+						}
+					} else if(match(value, WRITE_LE_16)) {
+						list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE16"));
+						b = true;
+					} else if(match(value, WRITE_16A)) {
+						list.add(asMethodHook(MethodType.CALLBACK, m, "write16A"));
+						b = true;
+					} else if(match(value, WRITE_16B)) {
+						list.add(asMethodHook(MethodType.CALLBACK, m, "write16B"));
+						b = true;
+					} else if(match(value, WRITE8OFFSET128)) {
+						list.add(asMethodHook(MethodType.CALLBACK, m, "write8Offset128"));
+						b = true;
+					} else if(match(value, WRITE8NEG0)) {
+						list.add(asMethodHook(MethodType.CALLBACK, m, "write8Neg0"));
+						b = true;
+					} else if(match(value, WRITE8NEG128)) {
+						list.add(asMethodHook(MethodType.CALLBACK, m, "write8Neg128"));
+						b = true;
+					} else if(match(index, new Object[]{1}) && match(value, WRITE_8)) {
+						list.add(asMethodHook(MethodType.CALLBACK, m, "write8"));
+						b = true;
+					} else if(match(index, new Object[]{1, SUB2_NODE}) && match(value, WRITE_8)) {
+						list.add(asMethodHook(MethodType.CALLBACK, m, "write8Weird"));
+						b = true;
+					} else {
+						run(treeBuilder, varIntNodeVisitor, m, graph);
+
+						List<Object> jmp = varIntNodeVisitor.found.get(VarIntNodeVisitor.JMP);
+						List<Object> add = varIntNodeVisitor.found.get(VarIntNodeVisitor.ADD);
+						if(match(jmp, WRITE_VAR_BYTE) && match(add, new Object[]{32768})) {
+							list.add(asMethodHook(MethodType.CALLBACK, m, "writeVarByte"));
+							b = true;
+						}
+						varIntNodeVisitor.end(m);
+					}
+				} else if(m.desc.startsWith("([BII")) {
+					run(treeBuilder, arrayMethodVisitor, m, graph);
+					analyseMultiByte(asv, arrayMethodVisitor, graph, m, list);
+					arrayMethodVisitor.end(m);
+				}
+			}
+
+			if(!b) {
+				//print = true;
+				asv.end(m);
+				//print = false;
+			} else {
+				asv.end(m);
+			}
+		}
+
+		public void analyseMultiByte(ArrayStoreVisitor asv, ArrayMethodVisitor amv, ControlFlowGraph graph, MethodNode m, List<MethodHook> list) {
+			if(WRITE_BYTES.equals(amv.set)) {
+				list.add(asMethodHook(MethodType.CALLBACK, m, "writeBytes"));
+			}
 		}
 	}
 
-	private static boolean match(List<Object> index, Object[] objects) {
+	public static void run(TreeBuilder tb, NodeVisitor nv, MethodNode m, ControlFlowGraph graph) {
+		// dfs search
+		for(FlowBlock block : graph) {
+			tb.build(m, block).accept(nv);
+		}
+	}
+
+	public static boolean match(List<Object> index, Object[] objects) {
 		return match(index, objects, 0);
 	}
 
-	private static boolean match(List<Object> index, Object[] objects, int offset) {
+	public static boolean match(List<Object> index, Object[] objects, int offset) {
 		//int j = Math.min(index.size(), objects.length);
 		if(index == null)
 			return false;
-		
+
 		int j = index.size();
 		//if(offset == 0) {
 		//if(j != objects.length)
@@ -333,18 +338,68 @@ public class BufferAnalyser extends ClassAnalyser {
 		return true;
 	}
 
-	private static boolean subequals(List<Integer> list, int[] arr) {
-		if(list.size() != arr.length)
-			return false;
-
-		for(int i=0;i < arr.length; i++) {
-			if(list.get(i) != arr[i])
-				return false;
+	/**
+	 * @author Bibl (don't ban me pls)
+	 * @created 7 Jun 2015 14:28:15
+	 */
+	public static class ArrayLoadVisitor extends NotifyNodeVisitor {
+		
+		public static final int INDEX = 0x01, VALUE = 0x02;
+		public final NullPermeableHashMap<Integer, List<Object>> found = new NullPermeableHashMap<Integer, List<Object>>(new ValueCreator<List<Object>>() {
+			@Override
+			public List<Object> create() {
+				return new ArrayList<Object>();
+			}
+		});
+		
+		@Override
+		public void visit(AbstractNode n) {
+			if(n.opcode() == BALOAD) {
+				AbstractNode n1 = n.child(1);
+				if(n1.opcode() == ISUB) {
+					findParents(n);
+				}
+			}
 		}
-		return true;
+		
+		public void findParents(AbstractNode n) {
+			while(n != null && n.hasParent()) {
+				AbstractNode p = n.parent();
+				if(p instanceof ArithmeticNode) {
+					ArithmeticNode an = (ArithmeticNode) p;
+					if(an.firstNumber() != null) {
+						NumberNode nn = an.firstNumber();
+						
+						ArithmeticOpOrder order = null;
+						if(nn.equals(an.child(0))) {
+							order = ArithmeticOpOrder.LEFT;
+						} else {
+							order = ArithmeticOpOrder.RIGHT;
+						}
+						
+						ArithmeticOp op = new ArithmeticOp(an.opcode(), nn.number(), order);
+						
+						found.getNonNull(VALUE).add(op);
+					}
+					System.out.println("   " + Printer.OPCODES[p.opcode()] + "   " + ((ArithmeticNode) p).firstNumber());
+				}
+				
+				n = p;
+			}
+		}
+		
+		@Override
+		public void end(MethodNode m) {
+			System.out.println("end " + m + "  " + found);
+			found.clear();
+		}
 	}
-
-	public static class ArrayStoreVisitor extends NodeVisitor {
+	
+	/**
+	 * @author Bibl (don't ban me pls)
+	 * @created 7 Jun 2015 10:27:11
+	 */
+	public static class ArrayStoreVisitor extends NotifyNodeVisitor {
 
 		public static final int INDEX = 0x01, VALUE = 0x02, VALUE_SUB = 0x03;
 		public final NullPermeableHashMap<Integer, List<Object>> found = new NullPermeableHashMap<Integer, List<Object>>(new ValueCreator<List<Object>>() {
@@ -357,15 +412,29 @@ public class BufferAnalyser extends ClassAnalyser {
 		@Override
 		public void visit(AbstractNode n) {
 			if(n.opcode() == BASTORE) {
+				
+				//if(n.method().name.equals("ba")) {
+				//System.out.println("ba " + n);
+				//}
+				//				
+				//if(n.method().name.equals("by")) {
+				//System.out.println("by " + n);
+				//}
+				
 				AbstractNode indexChild = n.child(1);
+				if(indexChild.opcode() == BALOAD) {
+					indexChild = indexChild.child(1);
+				}
+
 				if(indexChild.opcode() == ISUB) {
 					found.getNonNull(INDEX).add(InstructionUtil.resolve(indexChild.firstNumber().insn()));
 				} else if(indexChild.opcode() == ILOAD) {
 					found.getNonNull(INDEX).add(0);
-				} else {
-					System.out.flush();
-					System.err.flush();
-					System.err.println("gat " + n);
+				}
+
+				if(indexChild.children() > 0 && indexChild.child(0).opcode() == ISUB) {
+					indexChild = indexChild.child(0);
+					found.getNonNull(INDEX).add(new Sub2Node());
 				}
 
 				AbstractNode valueChild = n.child(2);
@@ -390,19 +459,59 @@ public class BufferAnalyser extends ClassAnalyser {
 						found.getNonNull(VALUE).add(new ArithmeticOp(valueChild.opcode(), nn.number(), order));
 					}
 				} else {
-					//System.out.println("n " + n.child(2));
+					//System.out.flush();
+					//System.out.println("n3 " + n.method() + " " + n.child(2));
 					//System.out.println("n1 " + valueChild);
 				}
 			}
 		}
 
-		public void end() {
+		@Override
+		public void end(MethodNode m) {
 			if(print)
-				System.out.println(found);
+				System.out.println(m + "  " + found);
 			found.clear();
 		}
 	}
 
+	/**
+	 * Represents something like this: <br>
+	 * <code>this.b[this.e * 1512989863 - var1 - 4] = (byte)(var1 >> 24);</code> <br>
+	 * where the index is calculated by subtracting the parameter itself.
+	 * 
+	 * @author Bibl (don't ban me pls)
+	 * @created 7 Jun 2015 10:19:02
+	 */
+	public static class Sub2Node {
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			return result * prime;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			return "Sub2Node []";
+		}
+	}
+
+	/**
+	 * @author Bibl (don't ban me pls)
+	 * @created 7 Jun 2015 10:44:05
+	 */
 	public static class ShiftNode {
 		private final int opcode;
 		private final int shift;
@@ -451,6 +560,10 @@ public class BufferAnalyser extends ClassAnalyser {
 		}
 	}
 
+	/**
+	 * @author Bibl (don't ban me pls)
+	 * @created 7 Jun 2015 10:44:11
+	 */
 	public static class ArithmeticOp {
 		private final int opcode;
 		private final int cst;
@@ -493,7 +606,7 @@ public class BufferAnalyser extends ClassAnalyser {
 			if (getClass() != obj.getClass())
 				return false;
 			ArithmeticOp other = (ArithmeticOp) obj;
-			
+
 			if(cst != Integer.MIN_VALUE && other.cst != Integer.MIN_VALUE)
 				if(cst != other.cst)
 					return false;
@@ -522,8 +635,250 @@ public class BufferAnalyser extends ClassAnalyser {
 		}
 	}
 
+	/**
+	 * @author Bibl (don't ban me pls)
+	 * @created 7 Jun 2015 10:44:16
+	 */
 	public static enum ArithmeticOpOrder {
 		RIGHT, LEFT;
+	}
+
+	/**
+	 * @author Bibl (don't ban me pls)
+	 * @created 7 Jun 2015 11:08:12
+	 */
+	public static class VarIntNodeVisitor extends NotifyNodeVisitor {
+		public static final int JMP = 0x01, ADD = 0x02;
+
+		public final NullPermeableHashMap<Integer, List<Object>> found = new NullPermeableHashMap<Integer, List<Object>>(new ValueCreator<List<Object>>() {
+			@Override
+			public List<Object> create() {
+				return new ArrayList<Object>();
+			}
+		});
+
+		@Override
+		public void visitJump(JumpNode jn) {
+			NumberNode nn = jn.firstNumber();
+			if(nn != null && jn.firstVariable() != null) {
+				found.getNonNull(JMP).add(new CompPair(jn.opcode(), nn.number()));
+			}
+		}
+
+		@Override
+		public void visitOperation(ArithmeticNode an) {
+			if(an.opcode() == IADD) {
+				NumberNode nn = an.firstNumber();
+				if(nn != null && an.firstVariable() != null) {
+					found.getNonNull(ADD).add(nn.number());
+				}
+			}
+		}
+
+		@Override
+		public void end(MethodNode m) {
+			//if(m.name.equals("c"))
+			//System.out.println(found);
+
+			found.clear();
+		}
+	}
+
+	/**
+	 * @author Bibl (don't ban me pls)
+	 * @created 7 Jun 2015 11:08:16
+	 */
+	public static class CompPair {
+		private final int opcode;
+		private final int cst;
+
+		public CompPair(int opcode, int cst) {
+			this.opcode = opcode;
+			this.cst = cst;
+		}
+
+		public int opcode() {
+			return opcode;
+		}
+
+		public int cst() {
+			return cst;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + cst;
+			result = prime * result + opcode;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			CompPair other = (CompPair) obj;
+			if(cst != -1 && other.cst != -1)
+				if (cst != other.cst)
+					return false;
+			if(opcode != -1 && other.opcode != -1)
+				if (opcode != other.opcode)
+					return false;
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			return "CompPair [opcode=" + opcode + ", cst=" + cst + "]";
+		}
+	}
+
+	/**
+	 * @author Bibl (don't ban me pls)
+	 * @created 7 Jun 2015 11:23:03
+	 */
+	public static class ArrayMethodVisitor extends NotifyNodeVisitor {
+		public ArraySet set;
+		public int opcode;
+
+		@Override
+		public void visit(AbstractNode n) {
+			if(n.opcode() == BASTORE) {
+
+				ArraySetType dst = null;
+				// should be the dst
+				AbstractNode n5 = n.child(0);
+				if(n5 instanceof VariableNode) {
+					dst = ArraySetType.LOCAL;
+				} else if (n5 instanceof FieldMemberNode) {
+					dst = ArraySetType.FIELD;
+				} else {
+					System.err.println("wtf(1) " + n5);
+				}
+
+				AbstractNode n2 = find(n, BALOAD);
+				// should be the src
+				AbstractNode n3 = n2.child(0);
+
+				ArraySetType src = null;
+
+				if(n3 instanceof VariableNode) {
+					src = ArraySetType.LOCAL;
+				} else if (n3 instanceof FieldMemberNode) {
+					src = ArraySetType.FIELD;
+				} else {
+					System.err.println("wtf(2) " + n2);
+				}
+
+				set = new ArraySet(src, dst);
+
+			}
+		}
+
+		@Override
+		public void visitJump(JumpNode jn) {
+			if(jn.opcode() != GOTO)
+				opcode = jn.opcode();
+		}
+
+		@Override
+		public void end(MethodNode m) {
+
+		}
+
+		public static AbstractNode find(AbstractNode n, int opcode) {
+			if(n == null)
+				return null;
+
+			if(n.opcode() == opcode)
+				return n;
+
+			for(int i=0; i < n.children(); i++) {
+				AbstractNode c = n.child(i);
+				if(c != null) {
+					AbstractNode c2 = find(c, opcode);
+					if(c2 != null)
+						return c2;
+				}
+			}
+
+			return null;
+		}
+	}
+
+	/**
+	 * @author Bibl (don't ban me pls)
+	 * @created 7 Jun 2015 11:40:48
+	 */
+	public static class ArraySet {
+		private final ArraySetType src;
+		private final ArraySetType dst;
+
+		public ArraySet(ArraySetType src, ArraySetType dst) {
+			this.src = src;
+			this.dst = dst;
+		}
+
+		public ArraySetType src() {
+			return src;
+		}
+
+		public ArraySetType dst() {
+			return dst;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((dst == null) ? 0 : dst.hashCode());
+			result = prime * result + ((src == null) ? 0 : src.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ArraySet other = (ArraySet) obj;
+			if(dst != null && other.dst != null)
+				if (dst != other.dst)
+					return false;
+			if(src != null && other.src != null)
+				if (src != other.src)
+					return false;
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			return "ArraySet [src=" + src + ", dst=" + dst + "]";
+		}
+	}
+
+	/**
+	 * @author Bibl (don't ban me pls)
+	 * @created 7 Jun 2015 11:40:53
+	 */
+	public static enum ArraySetType {
+		FIELD, LOCAL;
+	}
+
+	/**
+	 * @author Bibl (don't ban me pls)
+	 * @created 7 Jun 2015 11:23:07
+	 */
+	public static enum ArrayMethodType {
+		READ, WRITE;
 	}
 
 	private class FieldAnalyser implements IFieldAnalyser {
@@ -547,7 +902,6 @@ public class BufferAnalyser extends ClassAnalyser {
 					}
 				}
 			}
-
 			return list;
 		}
 	}

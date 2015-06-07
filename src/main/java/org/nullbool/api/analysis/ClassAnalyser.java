@@ -389,6 +389,9 @@ public abstract class ClassAnalyser implements Opcodes {
 	}
 
 	public MethodHook asMethodHook(MethodType type, MethodNode m, String realName) {
+//		if(m.owner.name.equals("dj")) {
+//			System.out.println("ClassAnalyser.asMethodHook() " + realName);
+//		}
 		return new MethodHook(type, getNew(m.owner.name), new ObfuscatedData(m.name, realName), new DynamicDesc(m.desc, true), Modifier.isStatic(m.access),
 				null);
 	}

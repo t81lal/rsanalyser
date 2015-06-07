@@ -12,6 +12,7 @@ import org.nullbool.api.output.APIGenerator;
 import org.nullbool.api.util.RSVersionHelper;
 import org.nullbool.impl.AnalysisProviderRegistry.ProviderCreator;
 import org.nullbool.impl.AnalysisProviderRegistry.RegistryEntry;
+import org.nullbool.impl.r77.AnalysisProvider77Impl;
 import org.nullbool.impl.r79.AnalysisProvider79Impl;
 import org.topdank.banalysis.filter.Filter;
 import org.topdank.byteio.util.Debug;
@@ -35,6 +36,7 @@ public class Boot {
 			Revision revision = rev(Boot.revision - i);
 			System.out.println("Running " + revision.getName());
 			runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
+//			runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 		}
 		
 		//runLatest(71);
@@ -186,6 +188,27 @@ public class Boot {
 			@Override
 			public boolean accept(Revision t) {
 				return true;
+			}
+		}));
+		
+		AnalysisProviderRegistry.register(new RegistryEntry(new ProviderCreator() {
+			@Override
+			public AbstractAnalysisProvider create(Revision rev) throws Exception {
+				return new AnalysisProvider77Impl(rev);
+			}
+		}).addFilter(new Filter<Revision>() {
+			@Override
+			public boolean accept(Revision t) {
+				if(t == null)
+					return false;
+				
+				try {
+					int val = Integer.parseInt(t.getName());
+					return val >= 77;
+				} catch(NumberFormatException e) {
+					e.printStackTrace();
+					return false;
+				}
 			}
 		}));
 		
