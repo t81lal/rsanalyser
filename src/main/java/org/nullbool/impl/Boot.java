@@ -29,6 +29,7 @@ public class Boot {
 		
 		bootstrap();
 		
+		// Use runLatest for full logs
 		int count = 10;
 		for(int i=0; i < count; i++) {
 			Revision revision = rev(Boot.revision - i);
