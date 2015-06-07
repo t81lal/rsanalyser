@@ -46,7 +46,7 @@ public class MultiplicativeModifierCollector extends NodeVisitor {
 		FieldNode fn = null;
 		if(f != null) {
 			fn = lookup(f.fin());
-			total.getNotNull(fn).incrementAndGet();
+			total.getNonNull(fn).incrementAndGet();
 		}
 
 		if((an.opcode() == IMUL || an.opcode() == LMUL) && an.children() > 0 && fn != null) {
@@ -60,7 +60,7 @@ public class MultiplicativeModifierCollector extends NodeVisitor {
 							int n = nn.number() * decoder;
 							//System.out.printf("%s %d * %d = %d.%n", f.fin().key(), nn.number(), decoder, n);
 							if(n == 1) {
-								mults.getNotNull(fn).incrementAndGet();
+								mults.getNonNull(fn).incrementAndGet();
 							}
 						}
 					} else if(f.opcode() == PUTFIELD || f.opcode() == PUTSTATIC) {
@@ -69,7 +69,7 @@ public class MultiplicativeModifierCollector extends NodeVisitor {
 							int n = nn.number() * encoder;
 							//System.out.printf("%s %d * %d = %d.%n", f.fin().key(), nn.number(), encoder, n);
 							if(n == 1) {
-								mults.getNotNull(fn).incrementAndGet();
+								mults.getNonNull(fn).incrementAndGet();
 							}
 						}
 					}
@@ -109,7 +109,9 @@ public class MultiplicativeModifierCollector extends NodeVisitor {
 	}
 
 	public void output() {
-		System.err.println("Collecting revertable fields.");
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.err.println("Collecting revertable fields.");
+		}
 		int k = 0;
 		for(Entry<FieldNode, AtomicInteger> e : total.entrySet()) {
 			FieldNode fn = e.getKey();
@@ -122,9 +124,11 @@ public class MultiplicativeModifierCollector extends NodeVisitor {
 			}
 		}
 
-		System.out.printf("   Map= %d:%d.%n", total.size(), mults.size());
-		System.out.printf("   Found %d changeable fields.%n", k);
-		System.out.printf("   %d fluctuating field values.%n", total.size() - k);
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.out.printf("   Map= %d:%d.%n", total.size(), mults.size());
+			System.out.printf("   Found %d changeable fields.%n", k);
+			System.out.printf("   %d fluctuating field values.%n", total.size() - k);
+		}
 	}
 
 	public static final class CountMap extends NullPermeableHashMap<FieldNode, AtomicInteger> {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.nullbool.api.Context;
 import org.nullbool.api.util.map.NullPermeableHashMap;
 import org.nullbool.api.util.map.ValueCreator;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
@@ -37,7 +38,7 @@ public class EmptyPopRemover extends NodeVisitor {
 			if(n.children() > 0) {
 				AbstractNode child = n.child(0);
 				if(child instanceof NumberNode) {
-					toRemove.getNotNull(n.method()).add(n.insn());
+					toRemove.getNonNull(n.method()).add(n.insn());
 					toRemove.get(n.method()).add(child.insn());
 					removed++;
 				} else {
@@ -59,10 +60,12 @@ public class EmptyPopRemover extends NodeVisitor {
 			}
 		}
 
-		System.err.println("Removing empty pop remover.");
-		System.out.printf("   Collapsed %d pops (%d).%n", removed, i / 2);
-		System.out.printf("   Was unable to remove %d pops.%n", unremovable);
-		System.out.printf("   Chose not to remove %d pops.%n", chosenUnremovable);
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.err.println("Running empty pop remover.");
+			System.out.printf("   Collapsed %d pops (%d).%n", removed, i / 2);
+			System.out.printf("   Was unable to remove %d pops.%n", unremovable);
+			System.out.printf("   Chose not to remove %d pops.%n", chosenUnremovable);
+		}
 		
 		toRemove.clear();
 	}

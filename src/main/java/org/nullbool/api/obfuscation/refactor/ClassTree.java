@@ -152,11 +152,11 @@ public class ClassTree {
 	}
 
 	private Set<ClassNode> getSupers0(ClassNode cn) {
-		return supers.getNotNull(cn);
+		return supers.getNonNull(cn);
 	}
 
 	private Set<ClassNode> getDelegates0(ClassNode cn) {
-		return delgates.getNotNull(cn);
+		return delgates.getNonNull(cn);
 	}
 
 	public Map<String, ClassNode> getClasses() {

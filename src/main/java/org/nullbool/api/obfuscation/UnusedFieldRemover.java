@@ -19,7 +19,8 @@ public class UnusedFieldRemover extends Visitor {
 
 	@Override
 	public void visit(JarContents<? extends ClassNode> contents) {
-		System.err.println("Running Unused Field Remover.");
+		if(Context.current().getFlags().getOrDefault("basicout", true))
+			System.err.println("Running Unused Field Remover.");
 		
 		@SuppressWarnings("unchecked")
 		ClassTree tree = new ClassTree((Collection<ClassNode>) contents.getClassContents());

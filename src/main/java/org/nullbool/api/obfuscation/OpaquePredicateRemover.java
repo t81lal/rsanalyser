@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.nullbool.api.Context;
 import org.nullbool.api.util.MethodUtil;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
@@ -203,11 +204,13 @@ public class OpaquePredicateRemover extends NodeVisitor {
 					}
 					mcount++;
 				} else {
-					System.out.println(method);
+					if(Context.current().getFlags().getOrDefault("basicout", true))
+						System.out.println(method);
 					typediscard++;
 				}
 			} else {
-				System.err.println(method);
+				if(Context.current().getFlags().getOrDefault("basicout", true))
+					System.err.println(method);
 				mdiscard++;
 			}
 		}
@@ -260,9 +263,11 @@ public class OpaquePredicateRemover extends NodeVisitor {
 	}
 
 	public void output() {
-		System.err.println("Removing Opaque Predicates.");
-		System.out.printf("   Removed %d opaque predicates (%d methods).%n", count, mcount);
-		System.out.printf("   %d method discards and %d type discards.%n", mdiscard, typediscard);
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.err.println("Removing Opaque Predicates.");
+			System.out.printf("   Removed %d opaque predicates (%d methods).%n", count, mcount);
+			System.out.printf("   %d method discards and %d type discards.%n", mdiscard, typediscard);
+		}
 	}
 
 	private static class ComparisonPair {

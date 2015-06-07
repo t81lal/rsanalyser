@@ -27,14 +27,19 @@ public class Boot {
 	public static void main(String[] args) throws Exception {
 		System.out.printf("Remote rev: %d.%n", RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100));
 		
+		bootstrap();
+		
+		int count = 10;
+		for(int i=0; i < count; i++) {
+			Revision revision = rev(Boot.revision - i);
+			System.out.println("Running " + revision.getName());
+			runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
+		}
+		
 		//runLatest(71);
 		//runLast10();
 		//runTest(revision);
-		
-		Revision revision = bootstrap();
-		runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 		//run(70, revision, 2);
-		
 		//deob(revision);
 	}
 	
@@ -136,6 +141,29 @@ public class Boot {
 		executor.shutdown();
 	}
 	
+	private static void runFlags(AbstractAnalysisProvider provider, Map<String, Boolean> flags) throws Exception {
+		try {
+			Context.bind(provider);
+			provider.run();
+		} finally {
+			Context.unbind();
+		}
+	}
+	
+	private static void runQuiet(AbstractAnalysisProvider provider) throws Exception {		
+		Map<String, Boolean> flags = provider.getFlags();
+		flags.put("debug", false);
+		flags.put("reorderfields", true);
+		flags.put("multis", false);
+		flags.put("logresults", false);
+		flags.put("verify", false);
+		flags.put("superDebug", false);
+		flags.put("basicout", false);
+		flags.put("out", false);
+		flags.put("nodump", true);
+		runFlags(provider, flags);
+	}
+	
 	private static void runLatest(AbstractAnalysisProvider provider) throws Exception {
 		Map<String, Boolean> flags = provider.getFlags();
 		flags.put("nodump", false);
@@ -144,13 +172,10 @@ public class Boot {
 		flags.put("multis", true);
 		flags.put("logresults", true);
 		flags.put("verify", false);
-		//flags.put("justdeob", true);
-		
-		Context.bind(provider);
-		provider.run();
+		runFlags(provider, flags);
 	}
 	
-	private static Revision bootstrap() throws Exception {
+	private static void bootstrap() throws Exception {
 		AnalysisProviderRegistry.register(new RegistryEntry(new ProviderCreator() {
 			@Override
 			public AbstractAnalysisProvider create(Revision rev) throws Exception {
@@ -184,7 +209,9 @@ public class Boot {
 				}
 			}
 		}));
-		
+	}
+	
+	private static Revision rev(int revision) throws Exception {
 		return new Revision(Integer.toString(revision), new File(Boot.class.getResource(
 				"/jars/gamepack" + revision + ".jar").toURI()));
 	}

@@ -3,6 +3,7 @@ package org.nullbool.api.obfuscation;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.nullbool.api.Context;
 import org.nullbool.api.util.InstructionUtil;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
@@ -55,7 +56,8 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 		
 		if(a2.opcode() == -1) {
 			generalWtfs++;
-			System.err.printf("   %s [%s, %d] [children=%d] at %s.%n", Printer.OPCODES[expr.opcode()], Printer.OPCODES[a1.opcode()], a2.opcode(), expr.children(), expr.method());
+			if(Context.current().getFlags().getOrDefault("basicout", true))
+				System.err.printf("   %s [%s, %d] [children=%d] at %s.%n", Printer.OPCODES[expr.opcode()], Printer.OPCODES[a1.opcode()], a2.opcode(), expr.children(), expr.method());
 			return;
 		}
 
@@ -120,7 +122,8 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 			Number val = constVal(first.insn());
 
 			if(val.intValue() == Integer.MIN_VALUE) {
-				System.err.println("   SimpleArithmeticFixer.visitOperation(add)");
+				if(Context.current().getFlags().getOrDefault("basicout", true))
+					System.err.println("   SimpleArithmeticFixer.visitOperation(add)");
 				return;
 			}
 
@@ -178,7 +181,8 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 					// Already correct
 					correctAdds++;
 				} else {
-					System.err.printf("   Unhandleable operation add at %s (%d).%n", expr.method(), val);
+					if(Context.current().getFlags().getOrDefault("basicout", true))
+						System.err.printf("   Unhandleable operation add at %s (%d).%n", expr.method(), val);
 					awtfs++;
 					//throw new RuntimeException("huh x3: " + first.getClass().getSimpleName());
 				}
@@ -187,7 +191,8 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 			Number val = constVal(first.insn());
 
 			if(val.intValue() == Integer.MIN_VALUE) {
-				System.err.println("   SimpleArithmeticFixer.visitOperation(sub)");
+				if(Context.current().getFlags().getOrDefault("basicout", true))
+					System.err.println("   SimpleArithmeticFixer.visitOperation(sub)");
 				return;
 			}
 
@@ -319,7 +324,8 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 	}
 
 	public void output() {
-		System.out.println();
+		if(Context.current().getFlags().getOrDefault("basicout", true))
+			System.out.println();
 		
 		/* As the non constant operand of the operation may be calculated using more
 		 * than 1 instruction, we use can a ghetto hack and instead of swapping the
@@ -333,21 +339,23 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 			a.method.instructions.insert(a.marker, a.insn);
 		}
 
-		System.out.printf("   Hit %d general wtfs...%n", generalWtfs);
-		System.out.printf("   Switched %4d negative addition constants             (variable + -const).%n", addSwitch);
-		System.out.printf("   Switched %4d complex negative addition constants     (-const + variable).%n", complexAddSwitch);
-		System.out.printf("   Switched %4d simple operand orders                   (const + variable).%n", simpleAddSwap);
-		System.out.printf("   Found    %4d already correct add operations          (variable + const).%n", correctAdds);
-		System.out.println();
-		System.out.printf("   Found    %4d unswitchable subtraction operations     (-const - variable).%n", unswitchableSubs);
-		System.out.printf("   Switched %4d subtraction constant signs              (variable - -const).%n", complexSubSwitch);
-		System.out.printf("   Found    %4d already correct subtraction operations  (variable - const).%n", correctSubs);
-		System.out.printf("   Hit a few (%d) wtfs...%n", awtfs);
-		System.out.println();
-		System.out.printf("   Swapped  %4d constant multiplication expressions     (const * variable).%n", swappedMultis);
-		System.out.printf("   Found    %4d preferable CME's                        (variable * const).%n", correctMultis);
-		System.out.printf("   Hit a few (%d) wtfs...%n", multiWtfs);
-
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.out.printf("   Hit %d general wtfs...%n", generalWtfs);
+			System.out.printf("   Switched %4d negative addition constants             (variable + -const).%n", addSwitch);
+			System.out.printf("   Switched %4d complex negative addition constants     (-const + variable).%n", complexAddSwitch);
+			System.out.printf("   Switched %4d simple operand orders                   (const + variable).%n", simpleAddSwap);
+			System.out.printf("   Found    %4d already correct add operations          (variable + const).%n", correctAdds);
+			System.out.println();
+			System.out.printf("   Found    %4d unswitchable subtraction operations     (-const - variable).%n", unswitchableSubs);
+			System.out.printf("   Switched %4d subtraction constant signs              (variable - -const).%n", complexSubSwitch);
+			System.out.printf("   Found    %4d already correct subtraction operations  (variable - const).%n", correctSubs);
+			System.out.printf("   Hit a few (%d) wtfs...%n", awtfs);
+			System.out.println();
+			System.out.printf("   Swapped  %4d constant multiplication expressions     (const * variable).%n", swappedMultis);
+			System.out.printf("   Found    %4d preferable CME's                        (variable * const).%n", correctMultis);
+			System.out.printf("   Hit a few (%d) wtfs...%n", multiWtfs);
+		}
+		
 		inserts.clear();
 	}
 

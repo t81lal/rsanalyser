@@ -3,6 +3,7 @@ package org.nullbool.api.obfuscation;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.nullbool.api.Context;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
 import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
@@ -58,7 +59,10 @@ public class NullCheckFixer extends NodeVisitor {
 			swap.method.instructions.insert(swap.insns[1], swap.insns[0]);
 		}
 		
-		System.err.printf("Swapped %d null check operands.%n", swaps.size());
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.err.printf("Swapped %d null check operands.%n", swaps.size());
+		}
+		
 		swaps.clear();
 	}
 

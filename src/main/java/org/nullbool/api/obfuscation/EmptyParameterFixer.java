@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.nullbool.api.Context;
 import org.nullbool.api.obfuscation.refactor.ClassTree;
 import org.nullbool.api.obfuscation.refactor.InheritedMethodMap;
 import org.nullbool.api.obfuscation.refactor.MethodCache;
@@ -285,10 +286,12 @@ public class EmptyParameterFixer extends Visitor {
 	}
 	
 	public void output() {
-		System.err.println("Running empty parameter fixer.");
-		System.out.printf("   map.start=%d, map.end=%d.%n", startSize, endSize);
-		System.out.printf("   %d empty parameter methods changed.%n", endSize);
-		System.out.printf("   %d calls changed.%n", callnames);
-		System.out.printf("   %d unchanged calls and %d nulls.%n", unchanged, nulls);
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.err.println("Running empty parameter fixer.");
+			System.out.printf("   map.start=%d, map.end=%d.%n", startSize, endSize);
+			System.out.printf("   %d empty parameter methods changed.%n", endSize);
+			System.out.printf("   %d calls changed.%n", callnames);
+			System.out.printf("   %d unchanged calls and %d nulls.%n", unchanged, nulls);
+		}
 	}
 }

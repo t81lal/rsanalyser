@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.nullbool.api.Context;
 import org.nullbool.api.util.map.NullPermeableHashMap;
 import org.nullbool.api.util.map.ValueCreator;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
@@ -46,12 +47,12 @@ public class MultiplicativeModifierRemover extends NodeVisitor {
 				}
 			}
 		}
-		
+
 		System.out.println("multi for it is " + collector.mh.getEncoder("dj.f") + " " + collector.mh.getDecoder("dj.f") + " " + collector.mh.inverseDecoder("dj.f"));
 		System.out.println(-2078860851 * 1472428805);
 		System.out.println(-2078860851 * 1782921573);
 		System.out.println(1472428805 * 1782921573);
-		
+
 		System.out.println((1763674376 * 1782921573) * -2078860851);
 	}
 
@@ -64,18 +65,18 @@ public class MultiplicativeModifierRemover extends NodeVisitor {
 		FieldNode fn = null;
 		if(f != null) {
 			fn = collector.lookup(f.fin());
-			
+
 			if(fn == null)
 				return;
 
-			
-			
+
+
 			//			if(!fields.contains(fn))
 			//				return;
 		} else {
 			return;
 		}
-		
+
 		if(fn.key().equals("dh.aI") || fn.key().equals("dj.fI")) {
 			NumberNode nn = an.firstNumber();
 			if(nn != null) {
@@ -89,11 +90,13 @@ public class MultiplicativeModifierRemover extends NodeVisitor {
 				int val = num * decoder;
 				nn.setNumber(val);
 				if(val != 1)
-				System.out.printf("(%s) %s %s [%d * %d] = %d.%n", an.method(), Printer.OPCODES[an.opcode()], fn.key(), num, decoder, val);
+					if(Context.current().getFlags().getOrDefault("basicout", true))
+						System.out.printf("(%s) %s %s [%d * %d] = %d.%n", an.method(), Printer.OPCODES[an.opcode()], fn.key(), num, decoder, val);
 			} else {
-//				System.out.println("MultiplicativeModifierRemover.visitOperation() " + fn.key());
+				//				System.out.println("MultiplicativeModifierRemover.visitOperation() " + fn.key());
 				if(fn.key().equals("dj.fI"))
-					System.err.println(an.method() + " " + an);
+					if(Context.current().getFlags().getOrDefault("basicout", true))
+						System.err.println(an.method() + " " + an);
 			}
 		}
 		//		NumberNode nn = an.firstNumber();
@@ -113,9 +116,11 @@ public class MultiplicativeModifierRemover extends NodeVisitor {
 			}
 		}
 
-		System.err.println("Undoing Multiplicative Number Obfuscation.");
-		System.out.printf("   Changed %d fields.%n", fields.size());
-		System.out.printf("   Removed %d (%d insns) field calls (with consts).%n", removed, k);
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.err.println("Undoing Multiplicative Number Obfuscation.");
+			System.out.printf("   Changed %d fields.%n", fields.size());
+			System.out.printf("   Removed %d (%d insns) field calls (with consts).%n", removed, k);
+		}
 
 		fields.clear();
 		toRemove.clear();

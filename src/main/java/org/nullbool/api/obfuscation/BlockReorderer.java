@@ -26,6 +26,8 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public class BlockReorderer implements Opcodes {
 
+	//TODO: fix
+	
 	boolean debug = false;
 
 	private SuccessorTree tree = new SuccessorTree();

@@ -3,6 +3,7 @@ package org.nullbool.api.obfuscation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nullbool.api.Context;
 import org.nullbool.api.obfuscation.cfg.ControlFlowGraph;
 import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.nullbool.api.obfuscation.cfg.SuccessorTree;
@@ -26,8 +27,9 @@ public class EmptyGotoCollapser implements Opcodes {
 				
 			}
 		}
-		
-		System.err.println(tree);
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.err.println(tree);
+		}
 		
 		tree.dfs(graph.entry());
 	}

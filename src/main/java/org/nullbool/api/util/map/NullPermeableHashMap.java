@@ -16,7 +16,7 @@ public class NullPermeableHashMap<K, V> extends HashMap<K, V> {
 		this(new NullCreator<V>());
 	}
 
-	public V getNotNull(K k) {
+	public V getNonNull(K k) {
 		V val = get(k);
 		if (val == null) {
 			val = creator.create();
