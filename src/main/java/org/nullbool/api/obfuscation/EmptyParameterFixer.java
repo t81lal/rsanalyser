@@ -1,8 +1,10 @@
 package org.nullbool.api.obfuscation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -71,6 +73,7 @@ public class EmptyParameterFixer extends Visitor {
 
 	private int startSize, endSize;
 	private int callnames, unchanged, nulls;
+	private final List<MethodNode> skipped = new ArrayList<MethodNode>();
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -84,6 +87,12 @@ public class EmptyParameterFixer extends Visitor {
 				Object[] objs = MethodUtil.getLastDummyParameter(m);
 				if(objs == null)
 					continue;
+				
+				if(m.name.length() > 2) {
+					skipped.add(m);
+					continue;
+				}
+				
 				int targetVar = (int) objs[0];
 				if(isUnused(m, targetVar)) {
 					String newDesc = newDesc(m.desc);
@@ -288,6 +297,7 @@ public class EmptyParameterFixer extends Visitor {
 	public void output() {
 		if(Context.current().getFlags().getOrDefault("basicout", true)) {
 			System.err.println("Running empty parameter fixer.");
+			System.out.printf("   Skipped methods: %s.%n", skipped);
 			System.out.printf("   map.start=%d, map.end=%d.%n", startSize, endSize);
 			System.out.printf("   %d empty parameter methods changed.%n", endSize);
 			System.out.printf("   %d calls changed.%n", callnames);
