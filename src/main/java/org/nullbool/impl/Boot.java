@@ -25,18 +25,43 @@ public class Boot {
 
 	private static int revision = 79;
 
+//	public static void main(String[] args) throws IOException {
+//		for(File f : files(new File("C:/Users/Bibl/Desktop/Arios RSPS"))) {
+//			BufferedReader br = new BufferedReader(new FileReader(f));
+//			String line;
+//			while((line = br.readLine()) != null) {
+//				if(line.contains("mgi.")) {
+//					System.out.println("in " + f.getAbsolutePath());
+//				}
+//			}
+//			br.close();
+//		}
+//	}
+	
+//	private static List<File> files(File dir) {
+//		List<File> files = new ArrayList<File>();
+//		for(File f : dir.listFiles()) {
+//			if(f.isDirectory()) {
+//				files.addAll(files(f));
+//			} else {
+//				files.add(f);
+//			}
+//		}
+//		return files;
+//	}
+	
 	public static void main(String[] args) throws Exception {
 		System.out.printf("Remote rev: %d.%n", RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100));
 		
 		bootstrap();
 		
 		// Use runLatest for full logs
-		int count = 10;
+		int count = 1;
 		for(int i=0; i < count; i++) {
 			Revision revision = rev(Boot.revision - i);
 			System.out.println("Running " + revision.getName());
-			runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
-//			runLatest(AnalysisProviderRegistry.get(revision).create(revision));
+//			runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
+			runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 		}
 		
 		//runLatest(71);

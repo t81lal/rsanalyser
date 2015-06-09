@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.obfuscation.cfg.ControlFlowGraph;
 import org.nullbool.impl.analysers.net.BufferAnalyser;
 import org.objectweb.asm.tree.MethodNode;
@@ -12,15 +11,6 @@ import org.topdank.banalysis.filter.Filter;
 import org.zbot.hooks.MethodHook;
 import org.zbot.hooks.MethodHook.MethodType;
 
-@SupportedHooks(fields  = { "getPayload&[B", "getCaret&I", }, 
-methods = { "enableEncryption&(Ljava/math/BigInteger;Ljava/math/BigInteger;)V",
-		"writeVarByte&(I)V", "writeBytes&([BIII)V",
-		"write8&(I)V", "write8Weird&(I)V", "write16&(I)V", "write16A&(I)V", "write16B&(I)V", "write24&(I)V", "write32&(I)V", "write40&(J)V", "write64&(J)V",
-		"writeLE16&(I)V", "writeLE16A&(I)V", "writeLE32&(I)V", "write32Weird&(I)V",
-		"writeInverted32&(I)V", /*"writeInverted24&(I)V",*/ "writeInvertedLE32&(I)V",
-		"writeString&(Ljava/lang/String;)V", "writeJagexString&(Ljava/lang/String;)V", "writeCharSequence&(Ljava/lang/CharSequence;)V",
-
-})
 /**
  * write40 disabled for revisions before 77.
  * 
@@ -29,6 +19,11 @@ methods = { "enableEncryption&(Ljava/math/BigInteger;Ljava/math/BigInteger;)V",
  */
 public class BufferAnalyser77 extends BufferAnalyser {
 
+	@Override
+	public String[] supportedMethods() {
+		return new Builder<String>(super.supportedMethods()).add("write40&(J)V").asArray(new String[0]);
+	}
+	
 	@Override
 	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
 		return super.registerMethodAnalysers().replace(new Filter<IMethodAnalyser>() {

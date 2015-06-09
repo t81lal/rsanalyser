@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import org.nullbool.api.util.ClassStructure;
 import org.nullbool.api.util.InsnListPrinter;
@@ -62,6 +63,7 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 	private final List<ExceptionData> exceptions;
 	
 	private FlowBlock entry, exit;
+	private boolean loop;
 
 	public ControlFlowGraph() {
 		blocks      = new ArrayList<FlowBlock>();
@@ -130,6 +132,8 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 		
 		if(debug) 
 			System.out.println(this);
+		
+		loop = cycles();
 		
 		return this;
 	}
@@ -861,5 +865,41 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 	@Override
 	public DFSIterator iterator() {
 		return new DFSIterator(entry);
+	}
+	
+	public boolean hasLoop() {
+		return loop;
+	}
+	
+	public boolean cycles() {
+		List<FlowBlock> dfs = new ArrayList<FlowBlock>();
+		Set<FlowBlock> visited = new HashSet<FlowBlock>();
+		Stack<FlowBlock> stack = new Stack<FlowBlock>();
+		stack.push(entry);
+		while(!stack.isEmpty()) {
+			FlowBlock v = stack.pop();
+			if(!visited.contains(v)) {
+				visited.add(v);
+				dfs.add(v);
+				
+				for(FlowBlock b : v.successors()) {
+					if(visited.contains(b)) {
+						return true;
+					} else {
+						stack.push(b);
+					}
+				}
+				
+				for(FlowBlock b : v.exceptionSuccessors()) {
+					if(visited.contains(b)) {
+						return true;
+					} else {
+						stack.push(b);
+					}
+				}
+			}
+		}
+		
+		return false;
 	}
 }

@@ -29,6 +29,13 @@ public class Builder<T> implements Iterable<T> {
 		sequenced = new ArrayList<T>();
 		filters = new HashSet<Filter<T>>();
 	}
+	
+	public Builder(T[] ts) {
+		this();
+		for(T t : ts) {
+			add(t);
+		}
+	}
 
 	/**
 	 * Checks to see if the given element is accepted by the internal filter set.
@@ -172,6 +179,10 @@ public class Builder<T> implements Iterable<T> {
 	 */
 	public List<T> asList() {
 		return Collections.unmodifiableList(sequenced);
+	}
+	
+	public T[] asArray(T[] t) {
+		return sequenced.toArray(t);
 	}
 
 	@Override

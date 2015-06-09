@@ -48,7 +48,9 @@ methods = { "enableEncryption&(Ljava/math/BigInteger;Ljava/math/BigInteger;)V",
 		"writeLE16&(I)V", "writeLE16A&(I)V", "writeLE32&(I)V", "write32Weird&(I)V",
 		"writeInverted32&(I)V", /*"writeInverted24&(I)V",*/ "writeInvertedLE32&(I)V",
 		"writeString&(Ljava/lang/String;)V", "writeJagexString&(Ljava/lang/String;)V", "writeCharSequence&(Ljava/lang/CharSequence;)V",
-
+		"write8Offset128&(I)", "write8Neg0&(I)", "write8Neg128&(I)", 
+		
+		"read16&()I", "readLE16&()I", "read16B&()I", "readLE16B&()I",
 })
 /**
  * Notes:
@@ -88,6 +90,11 @@ public class BufferAnalyser extends ClassAnalyser {
 	public static final ArraySet WRITE_BYTES2 = new ArraySet(ArraySetType.FIELD, ArraySetType.LOCAL);
 	public static final ArithmeticOp[] WRITE_BYTES_SUB = new ArithmeticOp[]{new ArithmeticOp(ISUB, 128, ArithmeticOpOrder.RIGHT)};
 
+	public static final ArithmeticOp[] READ_UNSIGNED_16 = new ArithmeticOp[]{null, new ArithmeticOp(ISHL, 8, null), new ArithmeticOp(IAND, 0xFF, null), new ArithmeticOp(IAND, 0xFF, null)};
+	public static final ArithmeticOp[] READ_UNSIGNED_16_2 = new ArithmeticOp[]{null, new ArithmeticOp(IAND, 0xFF, null), new ArithmeticOp(ISHL, 8, null), new ArithmeticOp(IAND, 0xFF, null)};
+
+	public static final ArithmeticOp[] READ_UNSIGNED_16B = new ArithmeticOp[]{null, new ArithmeticOp(ISHL, 8, null), new ArithmeticOp(IAND, 0xFF, null), new ArithmeticOp(IAND, 0xFF, null), new ArithmeticOp(ISUB, 128, null)};
+	
 	private static final Filter<FieldNode> BYTE_ARRAY_FILTER = new DescFilter("[B");
 	private static final Filter<FieldNode> INT_FILTER        = new DescFilter("I");
 
@@ -136,6 +143,8 @@ public class BufferAnalyser extends ClassAnalyser {
 		public List<MethodHook> find(ClassNode cn) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 
+			System.out.println(cn);
+			
 			for(MethodNode m : cn.methods) {
 				if(m.desc.startsWith("(Ljava/math/BigInteger;Ljava/math/BigInteger;")) {
 					list.add(asMethodHook(MethodType.CALLBACK, m, "enableEncryption"));
@@ -160,9 +169,27 @@ public class BufferAnalyser extends ClassAnalyser {
 					} else {
 						Type ret = Type.getReturnType(m.desc);
 						if(BytecodeRefactorer.isPrimitive(ret.getDescriptor())) {
-							System.out.println(m);
-							
 							run(treeBuilder, arrayLoadVisitor, m, graph);
+							
+							List<ArithmeticOp> found = arrayLoadVisitor.found;
+							List<Integer> subs = arrayLoadVisitor.subs;
+							if(match(found, READ_UNSIGNED_16)) {
+								if(match(subs, new Object[]{1, 2})) {
+									list.add(asMethodHook(MethodType.CALLBACK, m, "readLE16"));
+								} else if(match(subs, new Object[]{2, 1})) {
+									/* Looks like each side of this gets swapped sometimes */
+									list.add(asMethodHook(MethodType.CALLBACK, m, "read16"));
+								}
+//								System.out.println("dong " + found);
+//								System.out.println("long " + subs);
+								System.out.println("BufferAnalyser.MethodAnalyser.find() " + m + " " + graph.hasLoop() + " " + found + " " + subs);
+							} else if(match(found, READ_UNSIGNED_16B)) {
+//								if(match(subs, new Object[]{1, 2})) {
+//									list.add(asMethodHook(MethodType.CALLBACK, m, "readLE16B"));
+//								} else if(match(subs, new Object[]{2, 1})) {
+//									list.add(asMethodHook(MethodType.CALLBACK, m, "read16B"));
+//								}
+							}
 							
 							arrayLoadVisitor.end(m);
 						}
@@ -173,6 +200,35 @@ public class BufferAnalyser extends ClassAnalyser {
 			//TODO: remember to remove halt
 			//Context.current().requestHalt();
 			System.out.println(list.size());
+			
+			for(MethodHook mh : list) {
+				for(MethodHook mh1 : list) {
+					if(mh != mh1) {
+						if(mh.getName().getRefactored().equals(mh1.getName().getRefactored())) {
+							System.err.println("dup " + mh.getName().getRefactored());
+						}
+					}
+				}
+				
+				boolean b = false;
+				for(String s : supportedMethods()) {
+					String name = s.substring(0, s.indexOf("&"));
+					if(name.equals(mh.getName().getRefactored())) {
+						if(b) {
+							System.out.println("what b " + name);
+						} else {
+							b = true;
+						}
+					}
+				}
+				
+				if(!b) {
+					System.out.println("Not " + mh.getName().getRefactored());
+				}
+				
+			}
+			
+			
 			return list;
 		}
 
@@ -298,11 +354,11 @@ public class BufferAnalyser extends ClassAnalyser {
 		}
 	}
 
-	public static boolean match(List<Object> index, Object[] objects) {
+	public static boolean match(List<?> index, Object[] objects) {
 		return match(index, objects, 0);
 	}
 
-	public static boolean match(List<Object> index, Object[] objects, int offset) {
+	public static boolean match(List<?> index, Object[] objects, int offset) {
 		//int j = Math.min(index.size(), objects.length);
 		if(index == null)
 			return false;
@@ -344,54 +400,45 @@ public class BufferAnalyser extends ClassAnalyser {
 	 */
 	public static class ArrayLoadVisitor extends NotifyNodeVisitor {
 		
-		public static final int INDEX = 0x01, VALUE = 0x02;
-		public final NullPermeableHashMap<Integer, List<Object>> found = new NullPermeableHashMap<Integer, List<Object>>(new ValueCreator<List<Object>>() {
-			@Override
-			public List<Object> create() {
-				return new ArrayList<Object>();
-			}
-		});
+		public final List<Integer> subs = new ArrayList<Integer>();
+		public final List<ArithmeticOp> found = new ArrayList<ArithmeticOp>();
 		
-		@Override
-		public void visit(AbstractNode n) {
-			if(n.opcode() == BALOAD) {
-				AbstractNode n1 = n.child(1);
-				if(n1.opcode() == ISUB) {
-					findParents(n);
-				}
-			}
-		}
-		
-		public void findParents(AbstractNode n) {
-			while(n != null && n.hasParent()) {
-				AbstractNode p = n.parent();
-				if(p instanceof ArithmeticNode) {
-					ArithmeticNode an = (ArithmeticNode) p;
-					if(an.firstNumber() != null) {
-						NumberNode nn = an.firstNumber();
-						
-						ArithmeticOpOrder order = null;
-						if(nn.equals(an.child(0))) {
-							order = ArithmeticOpOrder.LEFT;
-						} else {
-							order = ArithmeticOpOrder.RIGHT;
-						}
-						
-						ArithmeticOp op = new ArithmeticOp(an.opcode(), nn.number(), order);
-						
-						found.getNonNull(VALUE).add(op);
-					}
-					System.out.println("   " + Printer.OPCODES[p.opcode()] + "   " + ((ArithmeticNode) p).firstNumber());
-				}
-				
-				n = p;
-			}
-		}
+	    @Override
+		public void visitOperation(ArithmeticNode an) {
+	    	if(an.children() == 2 && an.firstNumber() != null) {
+	    		boolean bool = hasIndexParent(an);
+	    		if(!bool) {
+	    			found.add(new ArithmeticOp(an.opcode(), an.firstNumber().number(), null));
+		    		//System.out.printf("%s %s BufferAnalyser.ArrayLoadVisitor.visitOperation(%b)%n", Printer.OPCODES[an.opcode()], an.firstNumber(), bool);
+	    		} else if(an.opcode() == ISUB) {
+	    			subs.add(an.firstNumber().number());
+	    		}
+	    	}
+	    }
+	    
+	    public boolean hasIndexParent(AbstractNode n) {
+	    	//boolean ret = true;
+	    	
+	    	while(n != null && n.hasParent()) {
+	    		if(n.opcode() == BALOAD)
+	    			return true;
+	    		
+	    		//if(Printer.OPCODES[n.opcode()].contains("RETURN"))
+	    		//	ret = false;
+	    		
+	    		n = n.parent();
+	    	}
+	    	
+	    	return false;
+	    	//return ret;
+	    }
 		
 		@Override
 		public void end(MethodNode m) {
-			System.out.println("end " + m + "  " + found);
+			System.out.println("end  " + m + "  " + found);
+			System.out.println("end2 " + m + " " + subs);
 			found.clear();
+			subs.clear();
 		}
 	}
 	
@@ -631,7 +678,7 @@ public class BufferAnalyser extends ClassAnalyser {
 				left = Integer.toString(cst);
 			}
 
-			return "[ArithOp " + left + " then " + right + "]";
+			return "[ArithOp " + left + " then " + right + " (" + order + ")]";
 		}
 	}
 

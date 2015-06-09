@@ -85,7 +85,12 @@ public abstract class ClassAnalyser implements Opcodes {
 	}
 
 	private SupportedHooks getSupportedHooksAnno() {
-		SupportedHooks anno = getClass().getAnnotation(SupportedHooks.class);
+		SupportedHooks anno = null;
+		Class<?> klass = getClass();
+		while(anno == null && klass != null && !klass.equals(Object.class)) {
+			anno = klass.getAnnotation(SupportedHooks.class);
+			klass = klass.getSuperclass();
+		}
 		return anno;
 	}
 

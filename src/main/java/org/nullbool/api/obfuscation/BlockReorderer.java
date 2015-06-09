@@ -27,12 +27,12 @@ import org.objectweb.asm.tree.MethodNode;
 public class BlockReorderer implements Opcodes {
 
 	//TODO: fix
-	
+
 	boolean debug = false;
 
 	private SuccessorTree tree = new SuccessorTree();
 
-	public void reorder(MethodNode m, ControlFlowGraph graph) {
+	public boolean reorder(MethodNode m, ControlFlowGraph graph) {
 		/* Remove the dummy exit (temporarily). */
 		DummyExitBlock exit = (DummyExitBlock) graph.exit();
 		exit.unlink();
@@ -115,7 +115,7 @@ public class BlockReorderer implements Opcodes {
 					it.previous();
 					FlowBlock targ = graph.findTarget(jin.label);
 					if(targ != null) {
-						if(next.equals(targ) && targ.predecessors().size() == 1) {
+						if(next.equals(targ)) {
 							b.removeLast();
 							if(debug)
 								System.out.printf("letting %s flow into %s.%n", b, targ);
@@ -160,6 +160,8 @@ public class BlockReorderer implements Opcodes {
 
 		tree.release();
 		exit.relink();
+		
+		return gotorem > 0;
 	}
 
 	public static List<FlowBlock> traceDFS(ControlFlowGraph graph, SuccessorTree tree) {
@@ -203,7 +205,7 @@ public class BlockReorderer implements Opcodes {
 		}
 
 		System.out.println();
-		
+
 		System.out.println(graph.toString(dfs));
 		return dfs;
 	}

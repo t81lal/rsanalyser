@@ -17,6 +17,7 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.obfuscation.BlockReorderer;
 import org.nullbool.api.obfuscation.CallVisitor;
+import org.nullbool.api.obfuscation.ComparisonReorderer;
 import org.nullbool.api.obfuscation.EmptyGotoCollapser;
 import org.nullbool.api.obfuscation.EmptyParameterFixer;
 import org.nullbool.api.obfuscation.EmptyPopRemover;
@@ -24,7 +25,6 @@ import org.nullbool.api.obfuscation.FieldOpener;
 import org.nullbool.api.obfuscation.HierarchyVisitor;
 import org.nullbool.api.obfuscation.MultiplicativeModifierCollector;
 import org.nullbool.api.obfuscation.MultiplicativeModifierRemover;
-import org.nullbool.api.obfuscation.NullCheckFixer;
 import org.nullbool.api.obfuscation.OpaquePredicateRemover;
 import org.nullbool.api.obfuscation.SimpleArithmeticFixer;
 import org.nullbool.api.obfuscation.StringBuilderCharReplacer;
@@ -32,7 +32,6 @@ import org.nullbool.api.obfuscation.UnusedFieldRemover;
 import org.nullbool.api.obfuscation.cfg.CFGCache;
 import org.nullbool.api.obfuscation.cfg.ControlFlowException;
 import org.nullbool.api.obfuscation.cfg.ControlFlowGraph;
-import org.nullbool.api.obfuscation.cfg.SuccessorTree;
 import org.nullbool.api.obfuscation.number.MultiplierHandler;
 import org.nullbool.api.obfuscation.number.MultiplierVisitor;
 import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
@@ -305,7 +304,7 @@ public abstract class AbstractAnalysisProvider {
 		//removeMultis();
 		buildCfgs();
 		//		collapseEmptyGotoBlocks();
-		//reorderBlocks();
+		reorderBlocks();
 	}
 
 	private void removeMultis() {
@@ -362,32 +361,26 @@ public abstract class AbstractAnalysisProvider {
 		BlockReorderer reorderer = new BlockReorderer();
 
 		for(ClassNode cn : contents.getClassContents()) {
-			//			if(cn.name.equals("dj")) {
-			//			if(cn.name.equals("r")) {
-			if(cn.name.equals("bw")) {
-				for(MethodNode m : cn.methods) {
-
-
-
-					//					if(m.name.equals("l")) {
-					//					if(m.name.equals("at")) {
-					//					if(m.name.equals("b") && m.desc.equals("(Lb;I)V")) {
-					if(m.name.equals("j")) {
-						try {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() > 0 && m.tryCatchBlocks.size() <= 1) {
+					try {
+						int k = 0;
+						while(true) {
 							ControlFlowGraph oldGraph = cfgCache.get(m);
-							reorderer.reorder(m, oldGraph);
-							ControlFlowGraph newGraph = new ControlFlowGraph().create(m);
-							SuccessorTree tree = new SuccessorTree();
-							tree.map(newGraph);
-							BlockReorderer.traceDFS(newGraph, tree);
-						} catch (ControlFlowException e) {
-							e.printStackTrace();
+							if(!reorderer.reorder(m, oldGraph))
+								break;
+							k++;
 						}
+
+						if(k > 1) {
+							System.out.println("AbstractAnalysisProvider.reorderBlocks() at " + m);
+						}
+					} catch (ControlFlowException e) {
+						e.printStackTrace();
 					}
 				}
 			}
 		}
-
 	}
 
 	private void collapseEmptyGotoBlocks() {
@@ -484,7 +477,7 @@ public abstract class AbstractAnalysisProvider {
 	}
 
 	private void reorderNullChecks() {
-		NullCheckFixer fixer = new NullCheckFixer();
+		ComparisonReorderer fixer = new ComparisonReorderer();
 		TreeBuilder builder = new TreeBuilder();
 
 		for(ClassNode cn : contents.getClassContents()) {

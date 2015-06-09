@@ -48,62 +48,52 @@ public class MultiplicativeModifierRemover extends NodeVisitor {
 			}
 		}
 
-		System.out.println("multi for it is " + collector.mh.getEncoder("dj.f") + " " + collector.mh.getDecoder("dj.f") + " " + collector.mh.inverseDecoder("dj.f"));
+		System.out.println("le multi " + collector.mh.getEncoder("dj.e") + " " + collector.mh.getDecoder("dj.e") + " " + collector.mh.inverseDecoder("dj.e"));
+		//		System.out.println("multi for it is " + collector.mh.getEncoder("dj.f") + " " + collector.mh.getDecoder("dj.f") + " " + collector.mh.inverseDecoder("dj.f"));
 		System.out.println(-2078860851 * 1472428805);
 		System.out.println(-2078860851 * 1782921573);
 		System.out.println(1472428805 * 1782921573);
 
 		System.out.println((1763674376 * 1782921573) * -2078860851);
+
+		System.out.println("asd " + 436273943 * 1512989863);
+
+		System.out.println("ass " + (-1304982511 * 1512989863));
 	}
 
 	@Override
 	public void visitOperation(ArithmeticNode an) {
-		if(an.children() < 1)
-			return;
-
+		//		if(an.method().key().startsWith("dj.")) {
 		FieldMemberNode f = an.firstField();
-		FieldNode fn = null;
-		if(f != null) {
-			fn = collector.lookup(f.fin());
+		if(f == null)
+			return;
 
-			if(fn == null)
-				return;
+		FieldNode fn = collector.lookup(f.fin());
 
-
-
-			//			if(!fields.contains(fn))
-			//				return;
-		} else {
+		if(fn == null) {
 			return;
 		}
 
-		if(fn.key().equals("dh.aI") || fn.key().equals("dj.fI")) {
-			NumberNode nn = an.firstNumber();
-			if(nn != null) {
-				int num = nn.number();
-				int decoder = 0;
-				if(an.subtracting() || an.adding()) {
-					decoder = collector.mh.getEncoder(f.key());
-				} else {
-					decoder = collector.mh.inverseDecoder(f.key());
-				}
-				int val = num * decoder;
-				nn.setNumber(val);
-				if(val != 1)
-					if(Context.current().getFlags().getOrDefault("basicout", true))
-						System.out.printf("(%s) %s %s [%d * %d] = %d.%n", an.method(), Printer.OPCODES[an.opcode()], fn.key(), num, decoder, val);
-			} else {
-				//				System.out.println("MultiplicativeModifierRemover.visitOperation() " + fn.key());
-				if(fn.key().equals("dj.fI"))
-					if(Context.current().getFlags().getOrDefault("basicout", true))
-						System.err.println(an.method() + " " + an);
-			}
+		if(!fn.key().equals("dj.eI")) {
+			return;
 		}
-		//		NumberNode nn = an.firstNumber();
-		//		if(nn != null) {
-		//			toRemove.getNotNull(an.method()).add(nn.insn());
-		//			toRemove.getNotNull(an.method()).add(an.insn());
-		//			removed++;
+
+
+		NumberNode nn = an.firstNumber();
+		if(f != null && nn != null) {
+			String key = f.owner() + "." + f.name();
+			int dec = 1;
+
+			if(f.opcode() == PUTSTATIC || f.opcode() == PUTFIELD || an.opcode() == IMUL) {
+				dec = collector.mh.inverseDecoder(key);
+			} else {
+				dec = collector.mh.getEncoder(key);
+			}
+
+			int newVal = nn.number() * dec;
+			System.out.printf("%s %s (%s) %d * %d -> %d.%n", Printer.OPCODES[an.opcode()], Printer.OPCODES[f.opcode()], an.method(), nn.number(), dec, newVal);
+			nn.setNumber(newVal);
+		}
 		//		}
 	}
 
