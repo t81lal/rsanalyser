@@ -3,6 +3,7 @@ package org.nullbool.api.obfuscation.refactor;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.objectweb.asm.tree.ClassNode;
 
@@ -18,5 +19,17 @@ public class ClassHelper {
 			map.put(cn.name, cn);
 		}
 		return map;
+	}
+	
+	public static <T, K> Map<T, K> copyOf(Map<T, K> src) {
+		Map<T, K> dst = new HashMap<T, K>();
+		copy(src, dst);
+		return dst;
+	}
+	
+	public static <T, K> void copy(Map<T, K> src, Map<T, K> dst) {
+		for(Entry<T, K> e : src.entrySet()) {
+			dst.put(e.getKey(), e.getValue());
+		}
 	}
 }

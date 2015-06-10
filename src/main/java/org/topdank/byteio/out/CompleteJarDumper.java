@@ -3,9 +3,13 @@ package org.topdank.byteio.out;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
+import org.nullbool.api.obfuscation.refactor.ClassTree;
+import org.nullbool.api.util.ClassStructure;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 import org.topdank.byteengineer.commons.data.JarContents;
@@ -19,15 +23,16 @@ import org.topdank.byteio.util.Debug;
  */
 public class CompleteJarDumper implements JarDumper {
 
-	protected JarContents<?> contents;
-
+	private final JarContents<?> contents;
+	private final ClassTree classTree;
 	/**
 	 * Creates a new JarDumper.
 	 *
 	 * @param contents Contents of jar.
 	 */
-	public CompleteJarDumper(JarContents<?> contents) {
+	public CompleteJarDumper(JarContents<ClassNode> contents) {
 		this.contents = contents;
+		classTree = new ClassTree(contents.getClassContents());
 	}
 
 	/**
@@ -68,7 +73,46 @@ public class CompleteJarDumper implements JarDumper {
 	public int dumpClass(JarOutputStream out, String name, ClassNode cn) throws IOException {
 		JarEntry entry = new JarEntry(cn.name + ".class");
 		out.putNextEntry(entry);
-		ClassWriter writer = new ClassWriter(0);
+		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES) {
+		    @Override
+			protected String getCommonSuperClass(final String type1, final String type2) {
+		    	ClassNode ccn = classTree.getClass(type1);
+		    	ClassNode dcn = classTree.getClass(type2);
+		    	
+		    	//System.out.println(type1 + " " + type2);
+		    	if(ccn == null) {
+		    		classTree.build(ClassStructure.create(type1));
+		    		return getCommonSuperClass(type1, type2);
+		    	}
+		    	
+		    	if(dcn == null) {
+		    		classTree.build(ClassStructure.create(type2));
+		    		return getCommonSuperClass(type1, type2);
+		    	}
+		    	
+		        Set<ClassNode> c = classTree.getSupers(ccn);
+		        Set<ClassNode> d = classTree.getSupers(dcn);
+		        
+		        if(c.contains(dcn))
+		        	return type1;
+		        
+		        if(d.contains(ccn))
+		        	return type2;
+		        
+		        if(Modifier.isInterface(ccn.access) || Modifier.isInterface(dcn.access)) {
+		        	return "java/lang/Object";
+		        } else {
+		        	do {
+		        		ClassNode nccn = classTree.getClass(ccn.superName);
+		        		if(nccn == null)
+		        			break;
+		        		ccn = nccn;
+		        		c = classTree.getSupers(ccn);
+		        	} while(!c.contains(dcn));
+		        	return ccn.name;
+		        }
+		    }
+		};
 		cn.accept(writer);
 		out.write(writer.toByteArray());
 		return 1;

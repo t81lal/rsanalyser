@@ -78,6 +78,7 @@ public class EmptyParameterFixer extends Visitor {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void visit(JarContents<? extends ClassNode> contents) {
+		Map<String, String> visited = new HashMap<String, String>();
 		Map<MethodNode, String> map = new HashMap<MethodNode, String>();
 
 		for(ClassNode cn : contents.getClassContents()) {
@@ -131,6 +132,35 @@ public class EmptyParameterFixer extends Visitor {
 				}
 			}
 		}
+		
+		System.out.printf("Check 1: discarding %d methods.%n", invalid.size());
+		
+		topFor: for(Entry<MethodNode, String> e : map.entrySet()) {
+			MethodNode m = e.getKey();
+			String newKey = m.name + e.getValue();
+			
+			Set<MethodNode> ms = mmp.getData(m).getAggregates();
+
+			Set<MethodNode> collisions = checkCollisions(map, m, newKey);
+			if(!collisions.isEmpty()) {
+				add(invalid, m, collisions, ms);
+				//continue topFor;
+			}
+			
+			if(ms.size() > 0) {
+				for(MethodNode m1 : ms) {
+					/* Collision, don't rename any of the methods. */
+					collisions = checkCollisions(map, m1, newKey);
+					if(!collisions.isEmpty()) {
+						add(invalid, m1, collisions, ms);
+						//continue topFor;
+					}
+				}
+			}
+		}
+		
+		System.out.printf("Check 2: discarding %d methods.%n", invalid.size());
+		System.out.println("Got: " + invalid);
 
 		for(MethodNode m : invalid) {
 			map.remove(m);
@@ -142,6 +172,38 @@ public class EmptyParameterFixer extends Visitor {
 
 		//System.out.printf("start=%d, end=%d.%n", startSize, map.size());
 		fix(tree, mmp, cache, classes, map);
+	}
+	
+	@SafeVarargs
+	public static <T> void add(Set<T> set, T t, Set<T>... sets) {
+		for(Set<T> s : sets) {
+			set.addAll(s);
+		}
+		set.add(t);
+	}
+	
+	private Set<MethodNode> checkCollisions(Map<MethodNode, String> remapped, MethodNode m, String newHalfKey) {
+		if(newHalfKey.equalsIgnoreCase("b()V")) {
+			System.out.println("EmptyParameterFixer.checkCollisions() " + m.owner.name + " " + m.owner.methods);
+		}
+		Set<MethodNode> set = new HashSet<MethodNode>();
+		for(MethodNode m2 : m.owner.methods) {
+			String halfKey = m2.halfKey();
+			if(halfKey.equals(newHalfKey) && m2 != m) {
+				set.add(m2);
+			}
+			
+			
+			String remappedDesc = remapped.get(m2);
+			if(remappedDesc != null) {
+				String remappedKey = m2.name + remappedDesc;
+				if(remappedKey.equals(newHalfKey) && m2 != m) {
+					set.add(m2);
+				}
+			}
+			
+		}
+		return set;
 	}
 
 	private void fix(ClassTree tree, InheritedMethodMap mmp, MethodCache cache, Collection<ClassNode> classes, Map<MethodNode, String> map) {

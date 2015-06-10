@@ -226,9 +226,7 @@ public class FlowBlock {
 	
 	public void transfer(InsnList list) {
 		for(AbstractInsnNode ain : insns) {
-			if(!(ain instanceof LabelNode)) {
-				list.add(ain);
-			}
+			list.add(ain);
 		}
 	}
 	

@@ -457,13 +457,12 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 					range.add(block);
 					handler.addExceptionPredecessor(block);
 					block.addExceptionSuccessor(handler);
-					
-					ExceptionData ed = new ExceptionData(handler, range, Arrays.asList(tcbn.type));
-					mapRanges.put(key, ed);
-					exceptions.add(ed);
-					
 					i++;
 				} while(i < i_to);
+				
+				ExceptionData ed = new ExceptionData(handler, range, Arrays.asList(tcbn.type));
+				mapRanges.put(key, ed);
+				exceptions.add(ed);
 			}
 		}
 	}
@@ -536,7 +535,7 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 				Set<FlowBlock> preds = new HashSet<FlowBlock>(block.predecessors());
 				Set<FlowBlock> succs = new HashSet<FlowBlock>(block.successors());
 
-				/* Collate the common exception rangers of the 
+				/* Collate the common exception ranges of the 
 				 * predecessors and successors of the block. */
 				Set<FlowBlock> commonHandlers = null;
 				for (int i = 0; i < 2; ++i) {
@@ -676,7 +675,7 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 		/* Jagex's obfuscator doesn't create subroutines (thank god).*/
 	}
 	
-	private void removeDeadBlocks() {
+	public void removeDeadBlocks() {
 		LinkedList<FlowBlock> stack = new LinkedList<FlowBlock>();
 		Set<FlowBlock> set = new HashSet<FlowBlock>();
 
@@ -686,10 +685,11 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 		while (!stack.isEmpty()) {
 			FlowBlock block = stack.removeFirst();
 
-			List<FlowBlock> lstSuccs = new ArrayList<FlowBlock>(block.successors());
-			lstSuccs.addAll(block.exceptionSuccessors());
+			List<FlowBlock> successors = new ArrayList<FlowBlock>();
+			successors.addAll(block.successors());
+			successors.addAll(block.exceptionSuccessors());
 
-			for (FlowBlock succ : lstSuccs) {
+			for (FlowBlock succ : successors) {
 				if (!set.contains(succ)) {
 					stack.add(succ);
 					set.add(succ);
@@ -702,9 +702,11 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 
 		for (FlowBlock block : setAllBlocks) {
 			
-			if(debug) {
-				System.out.println("ControlFlowGraph.removeDeadBlocks()");
-			}
+			System.out.println(block.toString() + " in " + block.last().method + " is dead.");
+			
+//			if(debug) {
+//				System.out.println("ControlFlowGraph.removeDeadBlocks()");
+//			}
 			removeBlock(block);
 		}
 		
@@ -860,6 +862,10 @@ public class ControlFlowGraph implements Opcodes, Iterable<FlowBlock> {
 	
 	public List<ExceptionData> exceptions() {
 		return exceptions;
+	}
+	
+	public Map<LabelNode, FlowBlock> labels() {
+		return labels;
 	}
 
 	@Override

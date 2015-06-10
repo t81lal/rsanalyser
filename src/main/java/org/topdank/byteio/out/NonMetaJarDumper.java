@@ -3,11 +3,12 @@ package org.topdank.byteio.out;
 import java.io.IOException;
 import java.util.jar.JarOutputStream;
 
+import org.objectweb.asm.tree.ClassNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 
 public class NonMetaJarDumper extends CompleteJarDumper {
 
-	public NonMetaJarDumper(JarContents<?> contents) {
+	public NonMetaJarDumper(JarContents<ClassNode> contents) {
 		super(contents);
 	}
 

@@ -49,6 +49,6 @@ public class ExceptionData {
 
 	@Override
 	public String toString() {
-		return "ExceptionData [handler=" + handler + ", range=" + range + ", types=" + types + "]";
+		return "ExceptionData [handler=" + handler + ", range=" + range.size() + ", types=" + types + "]";
 	}
 }

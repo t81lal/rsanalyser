@@ -303,7 +303,7 @@ public abstract class AbstractAnalysisProvider {
 		//TOOD: multis
 		//removeMultis();
 		buildCfgs();
-		reorderBlocks();
+		//reorderBlocks();
 	}
 
 	private void removeMultis() {
@@ -333,53 +333,46 @@ public abstract class AbstractAnalysisProvider {
 	}
 
 	private void reorderBlocks() {
-		//		int k = 0;
-		//		MethodNode mlong = null;
-		//		
-		//		BlockReorderer reorderer = new BlockReorderer();
-		//		for(ClassNode cn : contents.getClassContents()) {
-		//			for(MethodNode m : cn.methods) {
-		//				if(m.instructions.size() > 0 && m.tryCatchBlocks.size() <= 1) {
-		//					
-		//					if(m.instructions.size() >= k) {
-		//						k = m.instructions.size();
-		//						mlong = m;
-		//					}
-		//					
-		//					try {
-		//						reorderer.reorder(m, cfgCache.get(m));
-		//					} catch (ControlFlowException e) {
-		//						e.printStackTrace();
-		//					}
-		//				}
-		//			}
-		//		}
-		//		
-		//		System.out.printf("Longest, %s (%d).%n", mlong, k);
-
+		int j = 0;
+		
 		BlockReorderer reorderer = new BlockReorderer();
 
 		for(ClassNode cn : contents.getClassContents()) {
 			for(MethodNode m : cn.methods) {
 				if(m.instructions.size() > 0 && m.tryCatchBlocks.size() <= 1) {
+					
+					if(m.tryCatchBlocks.size() == 0) {
+//						System.out.println("at     " + m);
+					}
+					
 					try {
-						int k = 0;
-						while(true) {
-							ControlFlowGraph oldGraph = cfgCache.get(m);
-							if(!reorderer.reorder(m, oldGraph))
-								break;
-							k++;
-						}
-
-						if(k > 1) {
-							System.out.println("AbstractAnalysisProvider.reorderBlocks() at " + m);
-						}
+						ControlFlowGraph oldGraph = cfgCache.get(m);
+						reorderer.reorder(m, oldGraph);
+						
+//						int k = 0;
+//						while(true) {
+//							ControlFlowGraph oldGraph = cfgCache.get(m);
+//							if(!reorderer.reorder(m, oldGraph))
+//								break;
+//							
+//
+//							oldGraph.destroy();
+//							oldGraph.create(m);
+//						}
+//
+//						if(k > 1) {
+//							System.out.println("AbstractAnalysisProvider.reorderBlocks() at " + m);
+//						}
 					} catch (ControlFlowException e) {
 						e.printStackTrace();
 					}
 				}
 			}
 		}
+		
+		
+		System.out.printf("Fixed %d methods.%n", j);
+		reorderer.output();
 	}
 	
 	private void buildCfgs() {
@@ -434,6 +427,8 @@ public abstract class AbstractAnalysisProvider {
 		EmptyParameterFixer fixer = new EmptyParameterFixer();
 		fixer.visit(contents);
 		fixer.output();
+		
+		//System.exit(0);
 	}
 
 	private void deobOpaquePredicates() {

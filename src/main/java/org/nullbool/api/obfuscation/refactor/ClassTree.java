@@ -1,6 +1,7 @@
 package org.nullbool.api.obfuscation.refactor;
 
 import static org.nullbool.api.obfuscation.refactor.ClassHelper.convertToMap;
+import static org.nullbool.api.obfuscation.refactor.ClassHelper.copyOf;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,7 +30,7 @@ public class ClassTree {
 	}
 
 	public ClassTree(Map<String, ClassNode> classes_) {
-		classes  = classes_;
+		classes  = copyOf(classes_);
 		supers   = new NullPermeableHashMap<ClassNode, Set<ClassNode>>(SET_CREATOR);
 		delgates = new NullPermeableHashMap<ClassNode, Set<ClassNode>>(SET_CREATOR);
 
@@ -37,7 +38,7 @@ public class ClassTree {
 	}
 
 	// TODO: optimise
-	private void build(Map<String, ClassNode> classes) {
+	public void build(Map<String, ClassNode> classes) {
 		for (ClassNode node : classes.values()) {
 			for (String iface : node.interfaces) {
 				ClassNode ifacecs = classes.get(iface);
@@ -71,6 +72,42 @@ public class ClassTree {
 			getSupers0(node);
 			getDelegates0(node);
 		}
+	}
+	
+	public void build(ClassNode node) {
+		for (String iface : node.interfaces) {
+			ClassNode ifacecs = classes.get(iface);
+			if (ifacecs == null)
+				continue;
+
+			getDelegates0(ifacecs).add(node);
+
+			Set<ClassNode> superinterfaces = new HashSet<ClassNode>();
+			buildSubTree(classes, superinterfaces, ifacecs);
+
+			getSupers0(node).addAll(superinterfaces);
+		}
+		ClassNode currentSuper = classes.get(node.superName);
+		while (currentSuper != null) {
+			getDelegates0(currentSuper).add(node);
+			getSupers0(node).add(currentSuper);
+			for (String iface : currentSuper.interfaces) {
+				ClassNode ifacecs = classes.get(iface);
+				if (ifacecs == null)
+					continue;
+				getDelegates0(ifacecs).add(currentSuper);
+				Set<ClassNode> superinterfaces = new HashSet<ClassNode>();
+				buildSubTree(classes, superinterfaces, ifacecs);
+				getSupers0(currentSuper).addAll(superinterfaces);
+				getSupers0(node).addAll(superinterfaces);
+			}
+			currentSuper = classes.get(currentSuper.superName);
+		}
+
+		getSupers0(node);
+		getDelegates0(node);
+		
+		classes.put(node.name, node);
 	}
 	
 	public void output() {
