@@ -78,7 +78,12 @@ public class EmptyParameterFixer extends Visitor {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void visit(JarContents<? extends ClassNode> contents) {
-		Map<String, String> visited = new HashMap<String, String>();
+		boolean print = Context.current().getFlags().getOrDefault("basicout", true);
+		
+		if(print) {
+			System.err.println("Running empty parameter fixer.");
+		}
+		
 		Map<MethodNode, String> map = new HashMap<MethodNode, String>();
 
 		for(ClassNode cn : contents.getClassContents()) {
@@ -133,8 +138,9 @@ public class EmptyParameterFixer extends Visitor {
 			}
 		}
 		
-		System.out.printf("Check 1: discarding %d methods.%n", invalid.size());
-		
+		if(print) {
+			System.out.printf("   Check 1: discarding %d methods.%n", invalid.size());
+		}
 		topFor: for(Entry<MethodNode, String> e : map.entrySet()) {
 			MethodNode m = e.getKey();
 			String newKey = m.name + e.getValue();
@@ -159,8 +165,10 @@ public class EmptyParameterFixer extends Visitor {
 			}
 		}
 		
-		System.out.printf("Check 2: discarding %d methods.%n", invalid.size());
-		System.out.println("Got: " + invalid);
+		if(print) {
+			System.out.printf("   Check 2: discarding %d methods.%n", invalid.size());
+			System.out.println("   Got: " + invalid);
+		}
 
 		for(MethodNode m : invalid) {
 			map.remove(m);
@@ -172,6 +180,14 @@ public class EmptyParameterFixer extends Visitor {
 
 		//System.out.printf("start=%d, end=%d.%n", startSize, map.size());
 		fix(tree, mmp, cache, classes, map);
+		
+		if(print) {
+			System.out.printf("   Skipped methods: %s.%n", skipped);
+			System.out.printf("   map.start=%d, map.end=%d.%n", startSize, endSize);
+			System.out.printf("   %d empty parameter methods changed.%n", endSize);
+			System.out.printf("   %d calls changed.%n", callnames);
+			System.out.printf("   %d unchanged calls and %d nulls.%n", unchanged, nulls);
+		}
 	}
 	
 	@SafeVarargs
@@ -183,9 +199,6 @@ public class EmptyParameterFixer extends Visitor {
 	}
 	
 	private Set<MethodNode> checkCollisions(Map<MethodNode, String> remapped, MethodNode m, String newHalfKey) {
-		if(newHalfKey.equalsIgnoreCase("b()V")) {
-			System.out.println("EmptyParameterFixer.checkCollisions() " + m.owner.name + " " + m.owner.methods);
-		}
 		Set<MethodNode> set = new HashSet<MethodNode>();
 		for(MethodNode m2 : m.owner.methods) {
 			String halfKey = m2.halfKey();
@@ -207,7 +220,6 @@ public class EmptyParameterFixer extends Visitor {
 	}
 
 	private void fix(ClassTree tree, InheritedMethodMap mmp, MethodCache cache, Collection<ClassNode> classes, Map<MethodNode, String> map) {
-
 		/* We no longer need to do this (counting) due to the 
 		 * prevalidation done above which proves that all of the 
 		 * aggregate  methods of each of the methods in the map 
@@ -354,16 +366,5 @@ public class EmptyParameterFixer extends Visitor {
 			}
 		}
 		return count == 0;
-	}
-	
-	public void output() {
-		if(Context.current().getFlags().getOrDefault("basicout", true)) {
-			System.err.println("Running empty parameter fixer.");
-			System.out.printf("   Skipped methods: %s.%n", skipped);
-			System.out.printf("   map.start=%d, map.end=%d.%n", startSize, endSize);
-			System.out.printf("   %d empty parameter methods changed.%n", endSize);
-			System.out.printf("   %d calls changed.%n", callnames);
-			System.out.printf("   %d unchanged calls and %d nulls.%n", unchanged, nulls);
-		}
 	}
 }

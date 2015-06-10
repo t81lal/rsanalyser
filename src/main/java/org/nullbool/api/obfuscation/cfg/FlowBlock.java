@@ -87,6 +87,13 @@ public class FlowBlock {
 		return null;
 	}
 	
+	public int lastOpcode() {
+		AbstractInsnNode last = last();
+		if(last == null)
+			return -1;
+		return last.opcode();
+	}
+	
 	public void removeLast() {
 		AbstractInsnNode last = last();
 		if(last != null) {

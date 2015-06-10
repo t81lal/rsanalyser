@@ -69,6 +69,7 @@ public abstract class AbstractAnalysisProvider {
 	private List<ClassAnalyser> analysers;
 	private MultiplierHandler multiplierHandler;
 	private CFGCache cfgCache;
+	private TreeBuilder builder;
 
 	private volatile boolean haltRequested;
 
@@ -281,7 +282,8 @@ public abstract class AbstractAnalysisProvider {
 
 	private void deobfuscate() {
 		JarContents<ClassNode> contents = new LocateableJarContents<ClassNode>(new NodedContainer<ClassNode>(this.contents.getClassContents()), null, null);
-
+		builder = new TreeBuilder();
+		
 		if(flags.getOrDefault("reorderfields", true))
 			reorderFields();
 		openfields();
@@ -308,7 +310,6 @@ public abstract class AbstractAnalysisProvider {
 
 	private void removeMultis() {
 		MultiplicativeModifierCollector collector = new MultiplicativeModifierCollector();
-		TreeBuilder builder = new TreeBuilder();
 
 		for(ClassNode cn : contents.getClassContents()) {
 			for(MethodNode m : cn.methods) {
@@ -340,29 +341,9 @@ public abstract class AbstractAnalysisProvider {
 		for(ClassNode cn : contents.getClassContents()) {
 			for(MethodNode m : cn.methods) {
 				if(m.instructions.size() > 0 && m.tryCatchBlocks.size() <= 1) {
-					
-					if(m.tryCatchBlocks.size() == 0) {
-//						System.out.println("at     " + m);
-					}
-					
 					try {
 						ControlFlowGraph oldGraph = cfgCache.get(m);
 						reorderer.reorder(m, oldGraph);
-						
-//						int k = 0;
-//						while(true) {
-//							ControlFlowGraph oldGraph = cfgCache.get(m);
-//							if(!reorderer.reorder(m, oldGraph))
-//								break;
-//							
-//
-//							oldGraph.destroy();
-//							oldGraph.create(m);
-//						}
-//
-//						if(k > 1) {
-//							System.out.println("AbstractAnalysisProvider.reorderBlocks() at " + m);
-//						}
 					} catch (ControlFlowException e) {
 						e.printStackTrace();
 					}
@@ -395,7 +376,6 @@ public abstract class AbstractAnalysisProvider {
 
 	private void replaceCharStringBuilders() {
 		StringBuilderCharReplacer replacer = new StringBuilderCharReplacer();
-		TreeBuilder builder = new TreeBuilder();
 
 		for(ClassNode cn : contents.getClassContents()) {
 			for(MethodNode m : cn.methods) {
@@ -410,7 +390,6 @@ public abstract class AbstractAnalysisProvider {
 
 	private void removeEmptyPops() {
 		EmptyPopRemover remover = new EmptyPopRemover();
-		TreeBuilder builder = new TreeBuilder();
 
 		for(ClassNode cn : contents.getClassContents()) {
 			for(MethodNode m : cn.methods) {
@@ -426,15 +405,12 @@ public abstract class AbstractAnalysisProvider {
 	private void fixEmptyParams() {
 		EmptyParameterFixer fixer = new EmptyParameterFixer();
 		fixer.visit(contents);
-		fixer.output();
 		
 		//System.exit(0);
 	}
 
 	private void deobOpaquePredicates() {
 		OpaquePredicateRemover remover = new OpaquePredicateRemover();
-
-		TreeBuilder builder = new TreeBuilder();
 
 		for(ClassNode cn : contents.getClassContents()) {
 			for(MethodNode m : cn.methods) {
@@ -452,7 +428,6 @@ public abstract class AbstractAnalysisProvider {
 
 	private void reorderNullChecks() {
 		ComparisonReorderer fixer = new ComparisonReorderer();
-		TreeBuilder builder = new TreeBuilder();
 
 		for(ClassNode cn : contents.getClassContents()) {
 			for(MethodNode m : cn.methods) {
@@ -467,7 +442,6 @@ public abstract class AbstractAnalysisProvider {
 
 	private void reorderOperations() {
 		SimpleArithmeticFixer fixer = new SimpleArithmeticFixer();
-		TreeBuilder builder = new TreeBuilder();
 
 		if(Context.current().getFlags().getOrDefault("basicout", true))
 			System.err.println("Running Simple Arithmetic Fixer.");
@@ -524,58 +498,6 @@ public abstract class AbstractAnalysisProvider {
 			}
 		}
 		mutliVisitor.log();
-	}
-
-	private void fixFlow() {
-		//		ControlFlowGraph graph = new ControlFlowGraph();
-		//		
-		//		int c = 0;
-		//		
-		//		for(ClassNode cn : contents.getClassContents()) {
-		//			for(MethodNode m : cn.methods) {
-		//				if(m.instructions.size() > 0) {
-		//					c++;
-		//				}
-		//			}
-		//		}
-		//		
-		//		System.out.printf("Can build %d graphs.%n", c);
-		//		
-		//		for(ClassNode cn : contents.getClassContents()) {
-		//			for(MethodNode m : cn.methods) {
-		//				if(m.instructions.size() > 0) {
-		//					
-		//					//TODO: FIX
-		//					//UPDATE: fixed
-		//					/*if(m.key().equals("aa.am([II)V")) {
-		//						graph.debug = true;
-		//					} else {
-		//						graph.debug = false;
-		//					}*/
-		//					
-		//					if(m.owner.name.equals("dh") && m.name.equals("aj")) {
-		//						graph.debug = true;
-		//					} else {
-		//						graph.debug = false;
-		//					}
-		//					
-		//					try {
-		//						graph.create(m);
-		//						graph.fix();
-		//						graph.result(m);
-		//					} catch (ControlFlowException e) {
-		//						e.printStackTrace();
-		//					} finally {
-		//						graph.destroy();
-		//						
-		//						if(graph.debug)
-		//							System.exit(1);
-		//					}
-		//				}
-		//			}
-		//		}
-		//		
-		//		System.out.println("Done graphing.");
 	}
 
 	protected abstract Builder<ClassAnalyser> registerAnalysers() throws AnalysisException;
