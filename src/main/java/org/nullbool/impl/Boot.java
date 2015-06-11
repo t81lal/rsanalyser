@@ -31,15 +31,15 @@ public class Boot {
 		bootstrap();
 		
 		// Use runLatest for full logs
+		/**
 		int count = 10;
 		for(int i=0; i < count; i++) {
 			Revision revision = rev(Boot.revision - i);
 			System.out.println("Running " + revision.getName());
 			runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
-//			runLatest(AnalysisProviderRegistry.get(revision).create(revision));
-		}
-		
-		//runLatest(71);
+			runLatest(AnalysisProviderRegistry.get(revision).create(revision));
+		}*/
+		runLatest(AnalysisProviderRegistry.get(rev(Boot.revision)).create(rev(Boot.revision)));
 		//runLast10();
 		//runTest(revision);
 		//run(70, revision, 2);

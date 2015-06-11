@@ -15,6 +15,7 @@ import org.nullbool.impl.analysers.client.WrappedExceptionAnalyser;
 import org.nullbool.impl.analysers.client.definitions.ItemDefinitionAnalyser;
 import org.nullbool.impl.analysers.client.definitions.NPCDefinitionAnalyser;
 import org.nullbool.impl.analysers.client.definitions.ObjectDefinitionAnalyser;
+import org.nullbool.impl.analysers.client.widget.ItemContainerAnalyser;
 import org.nullbool.impl.analysers.client.widget.WidgetAnalyser;
 import org.nullbool.impl.analysers.client.widget.WidgetNodeAnalyser;
 import org.nullbool.impl.analysers.collections.DequeAnalyser;
@@ -53,7 +54,7 @@ public class AnalysisProviderImpl extends AbstractAnalysisProvider {
 					new RasteriserAnalyser(), new RenderableAnalyser(), new ActorAnalyser(), new DequeAnalyser(), new NPCAnalyser(), new IsaacCipherAnalyser(), 
 					new BufferAnalyser(), new PacketAnalyser(), new HashtableAnalyser(), new GroundItemAnalyser(), new RegionAnalyser(), 
 					new NPCDefinitionAnalyser(), new ObjectDefinitionAnalyser(), new ItemDefinitionAnalyser(), new ModelAnalyser(),
-					new PlayerAnalyser(), new TileAnalyser(), new WidgetNodeAnalyser(), new GameObjectAnalyser(), new WallObjectAnalyser(), new WidgetAnalyser(),
+					new PlayerAnalyser(), new TileAnalyser(),new ItemContainerAnalyser() ,new WidgetNodeAnalyser(), new GameObjectAnalyser(), new WallObjectAnalyser(), new WidgetAnalyser(),
 					new WallDecorationAnalyser(), new GroundObjectAnalyser(), new GroundDecorationAnalyser(), new GameshellAnalyser(), new ClientAnalyser()
 				}, true);
 		return builder;
