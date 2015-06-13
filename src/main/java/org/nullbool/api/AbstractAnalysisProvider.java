@@ -23,6 +23,7 @@ import org.nullbool.api.obfuscation.EmptyPopRemover;
 import org.nullbool.api.obfuscation.FieldOpener;
 import org.nullbool.api.obfuscation.HierarchyVisitor;
 import org.nullbool.api.obfuscation.MultiplicativeModifierCollector;
+import org.nullbool.api.obfuscation.MultiplicativeModifierDestroyer;
 import org.nullbool.api.obfuscation.MultiplicativeModifierRemover;
 import org.nullbool.api.obfuscation.OpaquePredicateRemover;
 import org.nullbool.api.obfuscation.SimpleArithmeticFixer;
@@ -297,15 +298,32 @@ public abstract class AbstractAnalysisProvider {
 		reorderOperations();
 		reorderNullChecks();
 		deobOpaquePredicates();
-		fixEmptyParams();
+		
+		if(flags.getOrDefault("paramdeob", false)) {
+			fixEmptyParams();
+		}
+		
 		removeEmptyPops();
 		//not really needed + a bit slow
 		//replaceCharStringBuilders();
 		
+		destroyMultis();
 		//TOOD: multis
 		//removeMultis();
 		buildCfgs();
 		//reorderBlocks();
+	}
+	
+	private void destroyMultis() {
+		MultiplicativeModifierDestroyer destroyer = new MultiplicativeModifierDestroyer();
+		
+		for(ClassNode cn : contents.getClassContents()) {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() > 0) {
+					builder.build(m).accept(destroyer);
+				}
+			}
+		}
 	}
 
 	private void removeMultis() {

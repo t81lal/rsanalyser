@@ -24,31 +24,6 @@ import org.topdank.byteio.util.Debug;
 public class Boot {
 
 	private static int revision = 79;
-
-//	public static void main(String[] args) throws IOException {
-//		for(File f : files(new File("C:/Users/Bibl/Desktop/Arios RSPS"))) {
-//			BufferedReader br = new BufferedReader(new FileReader(f));
-//			String line;
-//			while((line = br.readLine()) != null) {
-//				if(line.contains("mgi.")) {
-//					System.out.println("in " + f.getAbsolutePath());
-//				}
-//			}
-//			br.close();
-//		}
-//	}
-	
-//	private static List<File> files(File dir) {
-//		List<File> files = new ArrayList<File>();
-//		for(File f : dir.listFiles()) {
-//			if(f.isDirectory()) {
-//				files.addAll(files(f));
-//			} else {
-//				files.add(f);
-//			}
-//		}
-//		return files;
-//	}
 	
 	public static void main(String[] args) throws Exception {
 		System.out.printf("Remote rev: %d.%n", RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100));
@@ -60,7 +35,7 @@ public class Boot {
 		for(int i=0; i < count; i++) {
 			Revision revision = rev(Boot.revision - i);
 			System.out.println("Running " + revision.getName());
-//			runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
+			//runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
 			runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 		}
 		
@@ -200,6 +175,7 @@ public class Boot {
 		flags.put("multis", true);
 		flags.put("logresults", true);
 		flags.put("verify", false);
+		flags.put("paramdeob", true);
 		runFlags(provider, flags);
 	}
 	
@@ -264,4 +240,29 @@ public class Boot {
 		return new Revision(Integer.toString(revision), new File(Boot.class.getResource(
 				"/jars/gamepack" + revision + ".jar").toURI()));
 	}
+	
+//	public static void main(String[] args) throws IOException {
+//	for(File f : files(new File("C:/Users/Bibl/Desktop/Arios RSPS"))) {
+//		BufferedReader br = new BufferedReader(new FileReader(f));
+//		String line;
+//		while((line = br.readLine()) != null) {
+//			if(line.contains("mgi.")) {
+//				System.out.println("in " + f.getAbsolutePath());
+//			}
+//		}
+//		br.close();
+//	}
+//}
+
+//private static List<File> files(File dir) {
+//	List<File> files = new ArrayList<File>();
+//	for(File f : dir.listFiles()) {
+//		if(f.isDirectory()) {
+//			files.addAll(files(f));
+//		} else {
+//			files.add(f);
+//		}
+//	}
+//	return files;
+//}
 } 

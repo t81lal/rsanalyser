@@ -129,12 +129,7 @@ public class EmptyParameterFixer extends Visitor {
 				 * found the dummy parameter methods, if any of the 
 				 * aggregate methods aren't in the collected set, then
 				 * we can't reduce any of them. */
-				if(!methods.containsAll(ms)) {
-					invalid.add(m);
-					for(MethodNode _m : ms) {
-						invalid.add(_m);
-					}
-				}
+				add(invalid, m, ms);
 			}
 		}
 		
