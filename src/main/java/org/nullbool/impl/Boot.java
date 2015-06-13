@@ -37,7 +37,7 @@ public class Boot {
 			System.out.println("Running " + revision.getName());
 			//runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
 			runLatest(AnalysisProviderRegistry.get(revision).create(revision));
-		}
+		}		
 		
 		//runLatest(71);
 		//runLast10();
