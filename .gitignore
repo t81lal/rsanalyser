@@ -1,3 +1,5 @@
+.classpath
+.project
 /target/
 **/target/
 /.settings/
@@ -6,5 +8,3 @@
 /lib
 **/out/**
 /out/**
-.classpath
-.project
