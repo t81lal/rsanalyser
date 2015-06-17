@@ -4,19 +4,36 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Stack;
 
 import org.nullbool.api.obfuscation.cfg.SuccessorTree.Successor;
 import org.nullbool.api.util.InstructionUtil;
 import org.nullbool.api.util.map.NullPermeableLinkedHashMap;
 import org.nullbool.api.util.map.ValueCreator;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LookupSwitchInsnNode;
+import org.objectweb.asm.tree.TableSwitchInsnNode;
+import org.objectweb.asm.util.Printer;
 
 /**
+ * <p>
+ * A utility class for evaluating and storing relationships
+ * between basic blocks in a control flow diagram.
+ * </p>
+ * 
+ * <p>
+ * Note that after creating a tree tree, one must call the
+ * {@link #release()} method to clear the previously mapped
+ * data from the cache.
+ * </p>
+ * 
+ * @see FlowBlock
+ * @see ControlFlowGraph
+ * 
  * @author Bibl (don't ban me pls)
  * @created 2 Jun 2015 18:15:49
  */
@@ -33,18 +50,17 @@ public class SuccessorTree implements Iterable<Successor> {
 		});
 	}
 
-	public void map(ControlFlowGraph graph) {
-		for(FlowBlock b : graph.blocks()) {
-			tree.getNotNull(b);
-			
-			for(FlowBlock s : b.successors()) {
-				Successor successor = new Successor(b, s, typeOf(graph, b, s));
-				tree.getNotNull(b).add(successor);
-			}
-//			for(FlowBlock s : b.exceptionSuccessors()) {
-//				Successor successor = new Successor(b, s, typeOf(graph, b, s));
-//				tree.getNotNull(b).add(successor);
-//			}
+	public void map(IControlFlowGraph graph) {
+		for(FlowBlock block : graph.blocks()) {
+			mapSuccessors(graph, block, block.successors());
+			mapSuccessors(graph, block, block.exceptionSuccessors());
+		}
+	}
+
+	public void mapSuccessors(IControlFlowGraph graph, FlowBlock parent, List<FlowBlock> blockSuccs){
+		for(FlowBlock succ : blockSuccs) {
+			Successor successor = new Successor(parent, succ, typeOf(graph, parent, succ));
+			tree.getNotNull(parent).add(successor);
 		}
 	}
 
@@ -52,33 +68,98 @@ public class SuccessorTree implements Iterable<Successor> {
 	 * Evaluates the relationship between two blocks that are linked.
 	 * 
 	 * @param graph
-	 * @param b
-	 * @param target
+	 * @param b A block.
+	 * @param target A successor of that block.
 	 * @return
+	 * @throws RuntimeException If no relationship was found.
 	 */
-	public SuccessorType typeOf(ControlFlowGraph graph, FlowBlock b, FlowBlock target) {
+	public SuccessorType typeOf(IControlFlowGraph graph, FlowBlock b, FlowBlock target) {
 		if(b.last() == null)
-			return SuccessorType.IMMEDIATE;
-		
-		int cleansize = b.cleansize();
-		if(cleansize == 1 && b.last().opcode() == Opcodes.GOTO) {
-			return SuccessorType.EMTPY;
-		} else if(InstructionUtil.isExit(b.last().opcode())) {
+			return SuccessorType.DEAD;
+
+		if(b.exceptionSuccessors().contains(target))
+			return SuccessorType.EXCEPTION;
+
+		List<FlowBlock> blocks = graph.blocks();
+		int index = blocks.indexOf(b);
+		int targetIndex = blocks.indexOf(target);
+		if(index == -1 || targetIndex == -1) 
+			throw new RuntimeException();
+		boolean immediate = (index + 1) == targetIndex;
+
+		int lastOpcode = b.lastOpcode();
+
+		if(b.last() instanceof JumpInsnNode) {
+			if(b.cleansize() == 1 && lastOpcode == Opcodes.GOTO && immediate) {
+				return SuccessorType.EMPTY_GOTO;
+			} else if(!immediate){
+				return SuccessorType.FAR_JUMP;
+			}
+		} else if(lastOpcode == Opcodes.LOOKUPSWITCH) {
+			LookupSwitchInsnNode lsin = (LookupSwitchInsnNode) b.last();
+			
+			Set<LabelNode> labels = new HashSet<LabelNode>(lsin.labels);
+			labels.add(lsin.dflt);
+			
+			/* Validate to make sure the target is in the table. */
+			for(LabelNode l : labels) {
+				FlowBlock caseBlock = graph.findTarget(l);
+				if(caseBlock.equals(target)) {
+					if(immediate) {
+						return SuccessorType.IMMEDIATE;
+					} else {
+						return SuccessorType.FAR_JUMP;
+					}
+				}
+			}
+		} else if(lastOpcode == Opcodes.TABLESWITCH) {
+			TableSwitchInsnNode tsin = (TableSwitchInsnNode) b.last();
+			
+			Set<LabelNode> labels = new HashSet<LabelNode>(tsin.labels);
+			labels.add(tsin.dflt);
+			
+			/* Validate to make sure the target is in the table. */
+			for(LabelNode l : labels) {
+				FlowBlock caseBlock = graph.findTarget(l);
+				if(caseBlock.equals(target)) {
+					if(immediate) {
+						return SuccessorType.IMMEDIATE;
+					} else {
+						return SuccessorType.FAR_JUMP;
+					}
+				}
+			}
+		} else if(InstructionUtil.isExit(lastOpcode)) {
 			return SuccessorType.EXIT;
 		}
 
-		Iterator<FlowBlock> it = graph.blocks().iterator();
-		while(it.hasNext()) {
-			FlowBlock current = it.next();
-			if(current.equals(b)) {
-				if(it.hasNext()) {
-					FlowBlock next = it.next();
-					if(target.equals(next))
-						return SuccessorType.IMMEDIATE;
-				}
-			}
+		if(immediate) {
+			return SuccessorType.IMMEDIATE;
 		}
 
+		System.err.println(b.toVerboseString(graph.labels()));
+		System.err.println(target.toVerboseString(graph.labels()));
+
+		throw new RuntimeException(index + " " + targetIndex);
+	}
+
+	/**
+	 * Returns the Successor relationship that links the block and the
+	 * successor FlowBlock.
+	 * 
+	 * @param block
+	 * @param successor
+	 * @return
+	 */
+	public Successor findRelationship(FlowBlock block, FlowBlock successor) {
+		List<Successor> successors = tree.get(block);
+		if(successors == null || successors.isEmpty())
+			return null;
+
+		for(Successor s : successors) {
+			if(s.block().equals(successor))
+				return s;
+		}
 
 		return null;
 	}
@@ -86,7 +167,7 @@ public class SuccessorTree implements Iterable<Successor> {
 	public List<Successor> get(FlowBlock b) {
 		return tree.get(b);
 	}
-	
+
 	public void release() {
 		tree.clear();
 	}
@@ -106,63 +187,6 @@ public class SuccessorTree implements Iterable<Successor> {
 		return sb.toString();
 	}
 
-	//		1  procedure DFS(G,v):
-	//		2      label v as discovered
-	//		3      for all edges from v to w in G.adjacentEdges(v) do
-	//		4          if vertex w is not labeled as discovered then
-	//		5              recursively call DFS(G,w)
-
-	//		1  procedure DFS-iterative(G,v):
-	//		2      let S be a stack
-	//		3      S.push(v)
-	//		4      while S is not empty
-	//		5            v = S.pop() 
-	//		6            if v is not labeled as discovered:
-	//		7                label v as discovered
-	//		8                for all edges from v to w in G.adjacentEdges(v) do
-	//		9                    S.push(w)
-
-	public void dfs(FlowBlock entry) {
-		Set<FlowBlock> visited = new HashSet<FlowBlock>();
-
-		Stack<FlowBlock> stack = new Stack<FlowBlock>();
-		stack.push(entry);
-		while(!stack.isEmpty()) {
-			FlowBlock v = stack.pop();
-			if(!visited.contains(v)) {
-				visited.add(v);
-				System.out.print(v.id() + " ");
-				if(v.last() != null && InstructionUtil.isExit(v.last().opcode())) {
-					System.out.print("...");
-				}
-				List<Successor> succs = tree.get(v);
-				
-				if(succs == null || succs.isEmpty())
-					continue;
-
-				/* Do the others. */
-				ListIterator<Successor> it = succs.listIterator(succs.size());
-				while(it.hasPrevious()) {
-					Successor s = it.previous();
-					if(!SuccessorType.IMMEDIATE.equals(s.type)) {
-						stack.push(s.block);
-					}
-				}
-
-				/* Favour successors. */
-				it = succs.listIterator(succs.size());
-				while(it.hasPrevious()) {
-					Successor s = it.previous();
-					if(SuccessorType.IMMEDIATE.equals(s.type)) {
-						stack.push(s.block);
-					}
-				}
-			}
-		}
-		
-		System.out.println();
-	}
-
 	public List<Successor> collapsedList() {
 		List<Successor> list = new ArrayList<Successor>();
 		for(List<Successor> succs : tree.values()) {
@@ -173,6 +197,7 @@ public class SuccessorTree implements Iterable<Successor> {
 
 	@Override
 	public Iterator<Successor> iterator() {
+		//TODO: Make DFS iterable.
 		List<Successor> list = new ArrayList<Successor>();
 		for(List<Successor> succs : tree.values()) {
 			list.addAll(succs);
@@ -181,7 +206,7 @@ public class SuccessorTree implements Iterable<Successor> {
 	}
 
 	public static enum SuccessorType {
-		IMMEDIATE(), EMTPY(), EXIT();
+		DEAD(), EXCEPTION(), IMMEDIATE(), EXIT(), EMPTY_GOTO(), FAR_JUMP();
 	}
 
 	public static class Successor {
@@ -209,11 +234,64 @@ public class SuccessorTree implements Iterable<Successor> {
 
 		@Override
 		public String toString() {
-			StringBuilder sb = new StringBuilder();
-			sb.append(parent.id()).append(" -> ").append(block.id());
-			if(type != null)
-				sb.append(" (").append(type.name().toLowerCase()).append(")");
+			StringBuilder sb = new StringBuilder(parent.id());
+
+			sb.append(" -> ").append(block.id());
+			sb.append(" (").append(type == null ? "null" : type.name().toLowerCase());
+			if(type != SuccessorType.EXCEPTION)
+				sb.append(", ").append(parent.lastOpcode() == -1 ? "-1" : Printer.OPCODES[parent.lastOpcode()]);
+			sb.append(")");
+
 			return sb.toString();
 		}
 	}
+
+	/*public static class Pair<T> {
+		private final T item1;
+		private final T item2;
+
+		public Pair(T item1, T item2) {
+			this.item1 = item1;
+			this.item2 = item2;
+		}
+
+		public T item1() {
+			return item1;
+		}
+
+		public T item2() {
+			return item2;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((item1 == null) ? 0 : item1.hashCode());
+			result = prime * result + ((item2 == null) ? 0 : item2.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Pair<?> other = (Pair<?>) obj;
+			if (item1 == null) {
+				if (other.item1 != null)
+					return false;
+			} else if (!item1.equals(other.item1))
+				return false;
+			if (item2 == null) {
+				if (other.item2 != null)
+					return false;
+			} else if (!item2.equals(other.item2))
+				return false;
+			return true;
+		}
+	}*/
 }

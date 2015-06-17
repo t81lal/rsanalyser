@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,23 +17,24 @@ public class Pool {
 	private Map<Integer, PoolEntry> reversePool;
 	
 	public Pool() {
-		pool = new HashMap<PoolEntry, Integer>();
+		pool = new LinkedHashMap<PoolEntry, Integer>();
 	}
 	
 	public Pool(DataInputStream dis) throws IOException {
-		int size = dis.readShort();
-		pool = new HashMap<PoolEntry, Integer>(size);
+		int size = dis.readInt();
+		pool = new LinkedHashMap<PoolEntry, Integer>(size);
 
 		for(int i=0; i < size; i++) {
 			PoolEntry next = create(dis);
-			System.out.println("putting " + next.tag());
 			pool.put(next, i);
 		}
+		
+		System.out.println("size: " + pool.size());
 	}
 	
 	public Map<Integer, PoolEntry> reversePool() {
 		if(reversePool == null || reversePool.size() != pool.size()) {
-			reversePool = new HashMap<Integer, PoolEntry>();
+			reversePool = new LinkedHashMap<Integer, PoolEntry>();
 			for(Entry<PoolEntry, Integer> e : pool.entrySet()) {
 				reversePool.put(e.getValue(), e.getKey());
 			}
@@ -128,17 +129,21 @@ public class Pool {
 				Handle h = se.getHandle();
 				if(h.getTag() == tag && h.getOwner().equals(owner) && h.getName().equals(name) && h.getDesc().equals(desc))
 					return e.getValue();
+		
 			}
 		}
 		return -1;
 	}
 	
-	public void write(DataOutputStream dos) throws IOException {
-		dos.writeShort(pool.size());
+	public int write(DataOutputStream dos) throws IOException {
+		dos.writeInt(pool.size());
+		int i = 0;
 		for(PoolEntry entry : pool.keySet()) {
-			System.out.println("writing " + entry.tag());
 			entry.write(dos);
+			i++;
 		}
+		System.out.println("wsize: " + i);
+		return pool.size();
 	}
 	
 	public PoolEntry create(DataInputStream dis) throws IOException {
@@ -153,8 +158,9 @@ public class Pool {
 			}
 			case 1: {
 				boolean method = dis.readBoolean();
-				int index = dis.readUnsignedShort();
-				return new DescEntry_1(this, new DynamicDesc(((StringEntry_0) reversePool().get(index)).value(), method));
+				int index = dis.readInt();
+				String desc = ((StringEntry_0) reversePool().get(index)).value();
+				return new DescEntry_1(this, new DynamicDesc(desc, method));
 			}
 			default: {
 				throw new IOException(String.format("Invalid tag: %d.", tag));

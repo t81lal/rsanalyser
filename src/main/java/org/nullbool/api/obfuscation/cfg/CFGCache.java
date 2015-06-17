@@ -3,6 +3,7 @@ package org.nullbool.api.obfuscation.cfg;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.nullbool.api.util.map.ValueCreator;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
@@ -11,21 +12,23 @@ import org.objectweb.asm.tree.MethodNode;
  */
 public class CFGCache {
 
-	private final Map<MethodNode, ControlFlowGraph> cache;
+	private final Map<MethodNode, IControlFlowGraph> cache;
+	private final ValueCreator<IControlFlowGraph> graphCreator;
 	
-	public CFGCache() {
-		cache = new HashMap<MethodNode, ControlFlowGraph>();
+	public CFGCache(ValueCreator<IControlFlowGraph> graphCreator) {
+		cache = new HashMap<MethodNode, IControlFlowGraph>();
+		this.graphCreator = graphCreator;
 	}
 	
-	public void add(MethodNode m, ControlFlowGraph graph) {
+	public void add(MethodNode m, IControlFlowGraph graph) {
 		cache.put(m, graph);
 	}
 	
-	public ControlFlowGraph get(MethodNode m) throws ControlFlowException {
+	public IControlFlowGraph get(MethodNode m) throws ControlFlowException {
 		if(cache.containsKey(m)) {
 			return cache.get(m);
 		} else {
-			ControlFlowGraph graph = new ControlFlowGraph();
+			IControlFlowGraph graph = graphCreator.create();
 			graph.create(m);
 			cache.put(m, graph);
 			return graph;

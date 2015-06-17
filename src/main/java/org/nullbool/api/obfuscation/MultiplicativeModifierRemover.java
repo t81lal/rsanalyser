@@ -1,5 +1,6 @@
 package org.nullbool.api.obfuscation;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +18,6 @@ import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.util.Printer;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -50,15 +50,35 @@ public class MultiplicativeModifierRemover extends NodeVisitor {
 
 		System.out.println("le multi " + collector.mh.getEncoder("dj.e") + " " + collector.mh.getDecoder("dj.e") + " " + collector.mh.inverseDecoder("dj.e"));
 		//		System.out.println("multi for it is " + collector.mh.getEncoder("dj.f") + " " + collector.mh.getDecoder("dj.f") + " " + collector.mh.inverseDecoder("dj.f"));
-		System.out.println(-2078860851 * 1472428805);
-		System.out.println(-2078860851 * 1782921573);
-		System.out.println(1472428805 * 1782921573);
+		//		System.out.println(-2078860851 * 1472428805);
+		//		System.out.println(-2078860851 * 1782921573);
+		//		System.out.println(1472428805 * 1782921573);
+		//
+		//		System.out.println((1763674376 * 1782921573) * -2078860851);
+		//
+		//		System.out.println("asd " + 436273943 * 1512989863);
+		//		
+		//test();
+	}
 
-		System.out.println((1763674376 * 1782921573) * -2078860851);
+	public void test() {
+		// Encoder = 436273943
+		// Decoder = 1512989863
 
-		System.out.println("asd " + 436273943 * 1512989863);
+		int e = 436273943;
+		int d = 1512989863;
 
-		System.out.println("ass " + (-1304982511 * 1512989863));
+		int encoded = 804775752;
+		int encoded2 = -1374193509;
+
+		BigInteger num = BigInteger.valueOf(e);
+		int k = num.modInverse(new BigInteger(String.valueOf(1L << 32))).intValue();
+		System.out.println(k);
+
+		System.out.println(k * encoded);
+		System.out.println(k * encoded2);
+
+		System.exit(1);
 	}
 
 	@Override
@@ -70,31 +90,44 @@ public class MultiplicativeModifierRemover extends NodeVisitor {
 
 		FieldNode fn = collector.lookup(f.fin());
 
-		if(fn == null) {
+		if(fn == null)
 			return;
-		}
 
-		if(!fn.key().equals("dj.eI")) {
+		if(!collector.changeable.contains(fn))
 			return;
-		}
 
 
 		NumberNode nn = an.firstNumber();
 		if(f != null && nn != null) {
 			String key = f.owner() + "." + f.name();
-			int dec = 1;
+			long dec = 1;
 
-			if(f.opcode() == PUTSTATIC || f.opcode() == PUTFIELD || an.opcode() == IMUL) {
-				dec = collector.mh.inverseDecoder(key);
+			if(f.opcode() == PUTSTATIC || f.opcode() == PUTFIELD || an.opcode() == IMUL || an.opcode() == LMUL) {
+				if(fn.desc.equals("J")) {
+					//TODO:
+					if(true)
+						return;
+					//dec = collector.mh.inverseDecoderLong(key);
+				} else if(fn.desc.equals("I")){
+					dec = collector.mh.inverseDecoder(key);
+				}  else {
+					throw new RuntimeException();
+				}
 			} else {
 				dec = collector.mh.getEncoder(key);
 			}
 
-			int newVal = nn.number() * dec;
-			System.out.printf("%s %s (%s) %d * %d -> %d.%n", Printer.OPCODES[an.opcode()], Printer.OPCODES[f.opcode()], an.method(), nn.number(), dec, newVal);
+			long newVal = 0;
+			if(dec > Integer.MIN_VALUE && dec < Integer.MAX_VALUE) {
+				newVal =  nn.number() * (int) dec;
+			} else {
+				newVal =  nn.number() * dec;;
+			}
+
+			//should be 1
+			//System.out.printf("%s %s (%s) (%s) %d * %d -> %d.%n", Printer.OPCODES[an.opcode()], Printer.OPCODES[f.opcode()], an.method(), fn.key(), nn.number(), dec, newVal);
 			nn.setNumber(newVal);
 		}
-		//		}
 	}
 
 	public void output() {

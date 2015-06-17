@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.obfuscation.cfg.ControlFlowGraph;
+import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
 import org.nullbool.impl.analysers.net.BufferAnalyser;
 import org.objectweb.asm.tree.MethodNode;
 import org.topdank.banalysis.filter.Filter;
@@ -41,7 +41,7 @@ public class BufferAnalyser77 extends BufferAnalyser {
 	 */
 	public class MethodAnalyser77 extends MethodAnalyser {
 		@Override
-		protected void analyse(ArrayStoreVisitor asv, ControlFlowGraph graph, MethodNode m, List<MethodHook> list) {
+		protected void analyse(ArrayStoreVisitor asv, IControlFlowGraph graph, MethodNode m, List<MethodHook> list) {
 			boolean b = false;
 			if(m.desc.startsWith("(J") && m.desc.endsWith("V")) {
 				List<Object> value = asv.found.get(ArrayStoreVisitor.VALUE);

@@ -1,6 +1,11 @@
 package org.nullbool.impl;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,12 +29,40 @@ import org.topdank.byteio.util.Debug;
 public class Boot {
 
 	private static int revision = 79;
-	
+
 	public static void main(String[] args) throws Exception {
+		//		File f = new File("C:/Users/Bibl/Desktop/zbot git/rsanalyser/out/79/deobsrc/src3/deob79");
+		//		
+		//		for(File f1 : f.listFiles()) {
+		//			if(f1.getName().contains("META"))
+		//				continue;
+		//			BufferedReader br = new BufferedReader(new FileReader(f1));
+		//			String line;
+		//			while((line = br.readLine()) != null) {
+		//				if(line.contains("//")) {
+		//					System.out.println("error in " + f1.getAbsolutePath());
+		//				}
+		//			}
+		//			br.close();
+		//		}
+		//		
+		//		HookMap map = new MapDeserialiserImpl().deserialise(new FileInputStream(new File("out/79/log.ser")));
+		//		System.out.println(map.getClasses().size());
+		//		
+		//		int f = 0;
+		//		int m = 0;
+		//		
+		//		for(ClassHook c : map.getClasses()) {
+		//			f += c.getFields().size();
+		//			m += c.getMethods().size();
+		//		}
+		//		
+		//		System.out.println(f + " " + m);
+
 		System.out.printf("Remote rev: %d.%n", RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100));
-		
+
 		bootstrap();
-		
+
 		// Use runLatest for full logs
 		int count = 1;
 		for(int i=0; i < count; i++) {
@@ -38,14 +71,14 @@ public class Boot {
 			//runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
 			runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 		}		
-		
+
 		//runLatest(71);
 		//runLast10();
 		//runTest(revision);
 		//run(70, revision, 2);
 		//deob(revision);
 	}
-	
+
 	private static void deob(AbstractAnalysisProvider provider) throws Exception {
 		Map<String, Boolean> flags = provider.getFlags();
 		flags.put("nodump", false);
@@ -55,12 +88,12 @@ public class Boot {
 		flags.put("logresults", true);
 		flags.put("verify", false);
 		flags.put("justdeob", true);
-		
+
 		Context.bind(provider);
 		provider.run();
 		//Context.unbind();
 	}
-	
+
 	private static void runLast10() {
 		for(int i=70; i <= revision; i++) {			
 			System.out.println("=====================START===================");
@@ -76,7 +109,7 @@ public class Boot {
 	private static void runTest(int j) throws Exception {
 		Debug.debugging  = true;
 		APIGenerator.log = false;
-		
+
 		AbstractAnalysisProvider provider = new AnalysisProviderImpl(new Revision(Integer.toString(j), new File(Boot.class.getResource("/jars/gamepack" + j + ".jar").toURI())));
 		Map<String, Boolean> flags = provider.getFlags();
 		flags.put("nodump", true);
@@ -94,18 +127,18 @@ public class Boot {
 		Context.block();
 		provider.run();
 	}
-	
+
 	private static void run(int min, int max, int threads) {
 		ExecutorService executor = Executors.newFixedThreadPool(threads);
-		
+
 		Debug.debugging  = true;
 		APIGenerator.log = false;
-		
+
 		for(int i=min; i <= max; i++) {
 			final int j = i;
 			if(j == 76)
 				continue;
-			
+
 			Thread thread = new Thread(){
 				@Override
 				public void run() {
@@ -140,10 +173,10 @@ public class Boot {
 
 			executor.submit(thread);
 		}
-		
+
 		executor.shutdown();
 	}
-	
+
 	private static void runFlags(AbstractAnalysisProvider provider, Map<String, Boolean> flags) throws Exception {
 		try {
 			Context.bind(provider);
@@ -152,7 +185,7 @@ public class Boot {
 			Context.unbind();
 		}
 	}
-	
+
 	private static void runQuiet(AbstractAnalysisProvider provider) throws Exception {		
 		Map<String, Boolean> flags = provider.getFlags();
 		flags.put("debug", false);
@@ -166,7 +199,7 @@ public class Boot {
 		flags.put("nodump", true);
 		runFlags(provider, flags);
 	}
-	
+
 	private static void runLatest(AbstractAnalysisProvider provider) throws Exception {
 		Map<String, Boolean> flags = provider.getFlags();
 		flags.put("nodump", false);
@@ -178,7 +211,7 @@ public class Boot {
 		flags.put("paramdeob", true);
 		runFlags(provider, flags);
 	}
-	
+
 	private static void bootstrap() throws Exception {
 		AnalysisProviderRegistry.register(new RegistryEntry(new ProviderCreator() {
 			@Override
@@ -191,7 +224,7 @@ public class Boot {
 				return true;
 			}
 		}));
-		
+
 		AnalysisProviderRegistry.register(new RegistryEntry(new ProviderCreator() {
 			@Override
 			public AbstractAnalysisProvider create(Revision rev) throws Exception {
@@ -202,7 +235,7 @@ public class Boot {
 			public boolean accept(Revision t) {
 				if(t == null)
 					return false;
-				
+
 				try {
 					int val = Integer.parseInt(t.getName());
 					return val >= 77;
@@ -212,7 +245,7 @@ public class Boot {
 				}
 			}
 		}));
-		
+
 		/* Adds it before the default implementation. */
 		AnalysisProviderRegistry.register(new RegistryEntry(new ProviderCreator() {
 			@Override
@@ -224,7 +257,7 @@ public class Boot {
 			public boolean accept(Revision t) {
 				if(t == null)
 					return false;
-				
+
 				try {
 					int val = Integer.parseInt(t.getName());
 					return val >= 79;
@@ -235,34 +268,34 @@ public class Boot {
 			}
 		}));
 	}
-	
+
 	private static Revision rev(int revision) throws Exception {
 		return new Revision(Integer.toString(revision), new File(Boot.class.getResource(
 				"/jars/gamepack" + revision + ".jar").toURI()));
 	}
-	
-//	public static void main(String[] args) throws IOException {
-//	for(File f : files(new File("C:/Users/Bibl/Desktop/Arios RSPS"))) {
-//		BufferedReader br = new BufferedReader(new FileReader(f));
-//		String line;
-//		while((line = br.readLine()) != null) {
-//			if(line.contains("mgi.")) {
-//				System.out.println("in " + f.getAbsolutePath());
-//			}
-//		}
-//		br.close();
-//	}
-//}
 
-//private static List<File> files(File dir) {
-//	List<File> files = new ArrayList<File>();
-//	for(File f : dir.listFiles()) {
-//		if(f.isDirectory()) {
-//			files.addAll(files(f));
-//		} else {
-//			files.add(f);
-//		}
-//	}
-//	return files;
-//}
+	public static void main1(String[] args) throws IOException {
+		for(File f : files(new File("C:/Users/Bibl/Desktop/Arios RSPS"))) {
+			BufferedReader br = new BufferedReader(new FileReader(f));
+			String line;
+			while((line = br.readLine()) != null) {
+				if(line.contains("mgi.")) {
+					System.out.println("in " + f.getAbsolutePath());
+				}
+			}
+			br.close();
+		}
+	}
+
+	private static List<File> files(File dir) {
+		List<File> files = new ArrayList<File>();
+		for(File f : dir.listFiles()) {
+			if(f.isDirectory()) {
+				files.addAll(files(f));
+			} else {
+				files.add(f);
+			}
+		}
+		return files;
+	}
 } 

@@ -56,6 +56,12 @@ public class MultiplierVisitor extends NodeVisitor {
 				dCount++;
 			}
 		}
+		
+		//System.out.println(handler.getEncoders().get("dj.e"));
+		//System.out.println(handler.getDecoders().get("dj.e"));
+		
+		//System.exit(1);
+		
 		// TODO check if encoder identification is good enough. if it is, use it to validate
 		// multipliers
 		// and inverse it for fields that decoders were not identified for

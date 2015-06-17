@@ -259,7 +259,7 @@ public class FlowBlock {
 		sb.append(")");
 		sb.append(PADDING);
 
-		if(size > 0) {
+		if(size > 0 && labels != null) {
 			ListIterator<AbstractInsnNode> it = insns().listIterator();
 			int i = 0;
 			while(it.hasNext()) {

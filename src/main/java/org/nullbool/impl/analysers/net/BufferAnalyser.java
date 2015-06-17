@@ -11,8 +11,8 @@ import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.obfuscation.cfg.ControlFlowException;
-import org.nullbool.api.obfuscation.cfg.ControlFlowGraph;
 import org.nullbool.api.obfuscation.cfg.FlowBlock;
+import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
 import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
 import org.nullbool.api.util.DescFilter;
 import org.nullbool.api.util.InstructionUtil;
@@ -150,7 +150,7 @@ public class BufferAnalyser extends ClassAnalyser {
 					list.add(asMethodHook(MethodType.CALLBACK, m, "enableEncryption"));
 				} else if(!Modifier.isStatic(m.access)) {
 					
-					ControlFlowGraph graph = null;
+					IControlFlowGraph graph = null;
 					
 					try {
 						graph = Context.current().getCFGCache().get(m);
@@ -232,7 +232,7 @@ public class BufferAnalyser extends ClassAnalyser {
 			return list;
 		}
 
-		protected void analyse(ArrayStoreVisitor asv, ControlFlowGraph graph, MethodNode m, List<MethodHook> list) {
+		protected void analyse(ArrayStoreVisitor asv, IControlFlowGraph graph, MethodNode m, List<MethodHook> list) {
 			List<Object> index = asv.found.get(ArrayStoreVisitor.INDEX);
 			List<Object> value = asv.found.get(ArrayStoreVisitor.VALUE);
 			boolean b = false;
@@ -340,14 +340,14 @@ public class BufferAnalyser extends ClassAnalyser {
 			}
 		}
 
-		public void analyseMultiByte(ArrayStoreVisitor asv, ArrayMethodVisitor amv, ControlFlowGraph graph, MethodNode m, List<MethodHook> list) {
+		public void analyseMultiByte(ArrayStoreVisitor asv, ArrayMethodVisitor amv, IControlFlowGraph graph, MethodNode m, List<MethodHook> list) {
 			if(WRITE_BYTES.equals(amv.set)) {
 				list.add(asMethodHook(MethodType.CALLBACK, m, "writeBytes"));
 			}
 		}
 	}
 
-	public static void run(TreeBuilder tb, NodeVisitor nv, MethodNode m, ControlFlowGraph graph) {
+	public static void run(TreeBuilder tb, NodeVisitor nv, MethodNode m, IControlFlowGraph graph) {
 		// dfs search
 		for(FlowBlock block : graph) {
 			tb.build(m, block).accept(nv);

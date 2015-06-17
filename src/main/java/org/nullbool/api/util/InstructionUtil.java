@@ -1,13 +1,17 @@
 package org.nullbool.api.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.LookupSwitchInsnNode;
+import org.objectweb.asm.tree.TableSwitchInsnNode;
 
 public class InstructionUtil implements Opcodes {
 
@@ -39,6 +43,32 @@ public class InstructionUtil implements Opcodes {
 		for (AbstractInsnNode[] ains : coll) {
 		    System.out.println(Arrays.toString(ains));
 		}
+	}
+	
+	public static <T extends Collection<LabelNode>> T calcSwitchTargets(TableSwitchInsnNode tsin, T col) {
+		col.add(tsin.dflt);
+		col.addAll(tsin.labels);
+		return col;
+	}
+	
+	public static <T extends Collection<LabelNode>> T calcSwitchTargets(LookupSwitchInsnNode tsin, T col) {
+		col.add(tsin.dflt);
+		col.addAll(tsin.labels);
+		return col;
+	}
+	
+	public static List<LabelNode> calcSwitchTargets(TableSwitchInsnNode tsin) {
+		List<LabelNode> list = new ArrayList<LabelNode>();
+		list.add(tsin.dflt);
+		list.addAll(tsin.labels);
+		return list;
+	}
+	
+	public static List<LabelNode> calcSwitchTargets(LookupSwitchInsnNode lsin) {
+		List<LabelNode> list = new ArrayList<LabelNode>();
+		list.add(lsin.dflt);
+		list.addAll(lsin.labels);
+		return list;
 	}
 	
 	public static AbstractInsnNode next(AbstractInsnNode ain) {

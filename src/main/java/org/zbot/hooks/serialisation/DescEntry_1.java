@@ -14,7 +14,7 @@ public class DescEntry_1 extends PoolEntry {
 		super(pool, 1);
 		this.desc = desc;
 		
-		index = pool.allocateString(desc.getObfuscated());
+		index = pool.allocateString(desc.getObfuscated());		
 	}
 	
 	@Override
@@ -22,10 +22,15 @@ public class DescEntry_1 extends PoolEntry {
 		super.write(dos);
 		/*write the type and then the obfuscated desc string entry index*/
 		dos.writeBoolean(desc.isMethod());
-		dos.writeShort  (index);
+		dos.writeInt  (index);
 	}
 
 	public DynamicDesc getDesc() {
 		return desc;
+	}
+	
+	@Override
+	public String toString() {
+		return desc.toString();
 	}
 }

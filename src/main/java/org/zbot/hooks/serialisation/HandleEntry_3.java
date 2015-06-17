@@ -26,8 +26,8 @@ public class HandleEntry_3 extends PoolEntry {
 	@Override
 	public void write(DataOutputStream dos) throws IOException{
 		dos.writeInt(handle.getTag());
-		dos.writeShort(index1);
-		dos.writeShort(index2);
-		dos.writeShort(index3);
+		dos.writeInt(index1);
+		dos.writeInt(index2);
+		dos.writeInt(index3);
 	}
 }

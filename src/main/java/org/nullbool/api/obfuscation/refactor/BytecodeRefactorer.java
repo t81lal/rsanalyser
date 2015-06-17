@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.nullbool.api.Context;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.MultiANewArrayInsnNode;
@@ -149,6 +149,12 @@ public class BytecodeRefactorer implements Opcodes {
 						mArrray++;
 						MultiANewArrayInsnNode main = (MultiANewArrayInsnNode) ain;
 						main.desc = transformFieldDesc(main.desc);
+					} else if(ain instanceof LdcInsnNode) {
+						LdcInsnNode lin = (LdcInsnNode) ain;
+						
+						if(lin.cst instanceof Type) {
+							lin.cst = Type.getType(transformFieldDesc(((Type) lin.cst).getDescriptor()));
+						}
 					}
 				}
 			}
@@ -168,13 +174,14 @@ public class BytecodeRefactorer implements Opcodes {
 			cn.interfaces = newInterfaces;
 		}
 		
-		if(Context.current().getFlags().getOrDefault("basicout", true)) {
-			System.out.printf("Changed: %n");
-			System.out.printf("   %d classes and %d interfaces. %n", classc, iface);
-			System.out.printf("   %d fields  and %d field calls. %n", fieldNodes, fieldCalls);
-			System.out.printf("   %d methods and %d method calls. %n", methodNodes, methodCalls);
-			System.out.printf("   %d news, %d anewarrays, %d checkcasts, %d instancofs, %d mnewarrays. %n", newCalls, newArray, checkcasts, instances, mArrray);
-		}
+		// TODO: Uncomment
+//		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+//			System.out.printf("Changed: %n");
+//			System.out.printf("   %d classes and %d interfaces. %n", classc, iface);
+//			System.out.printf("   %d fields  and %d field calls. %n", fieldNodes, fieldCalls);
+//			System.out.printf("   %d methods and %d method calls. %n", methodNodes, methodCalls);
+//			System.out.printf("   %d news, %d anewarrays, %d checkcasts, %d instancofs, %d mnewarrays. %n", newCalls, newArray, checkcasts, instances, mArrray);
+//		}
 	}
 	
 	public String transformMethodDesc(String desc){

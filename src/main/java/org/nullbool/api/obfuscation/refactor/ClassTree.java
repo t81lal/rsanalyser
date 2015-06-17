@@ -124,11 +124,11 @@ public class ClassTree {
 		superinterfaces.add(current);
 		for (String iface : current.interfaces) {
 			ClassNode cs = classes.get(iface);
-			if(cs != null){
+			if(cs != null) {
 				getDelegates0(cs).add(current);
 				buildSubTree(classes, superinterfaces, cs);
-			}else{
-				System.out.println("Null interface -> " + iface);
+			} else {
+				//System.out.println("Null interface -> " + iface);
 			}
 		}
 	}

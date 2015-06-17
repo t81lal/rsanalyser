@@ -1,6 +1,8 @@
 package org.nullbool.api.obfuscation;
 
+import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.nullbool.api.Context;
@@ -25,6 +27,7 @@ public class MultiplicativeModifierCollector extends NodeVisitor {
 	public final MultiplierHandler mh = Context.current().getMultiplierHandler();
 	public final CountMap total = new CountMap();
 	public final CountMap mults = new CountMap();
+	public final Set<FieldNode> changeable = new HashSet<FieldNode>();
 
 	//	@Override
 	//	public void visitField(FieldMemberNode f) {
@@ -120,13 +123,14 @@ public class MultiplicativeModifierCollector extends NodeVisitor {
 				if(i.get() == e.getValue().get()) {
 					//System.err.println(fn.key() + " equals.");
 					k++;
+					changeable.add(fn);
 				}
 			}
 		}
 
 		if(Context.current().getFlags().getOrDefault("basicout", true)) {
 			System.out.printf("   Map= %d:%d.%n", total.size(), mults.size());
-			System.out.printf("   Found %d changeable fields.%n", k);
+			System.out.printf("   Found %d changeable fields (%d).%n", k, changeable.size());
 			System.out.printf("   %d fluctuating field values.%n", total.size() - k);
 		}
 	}

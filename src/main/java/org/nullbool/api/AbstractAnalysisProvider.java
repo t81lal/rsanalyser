@@ -31,7 +31,8 @@ import org.nullbool.api.obfuscation.StringBuilderCharReplacer;
 import org.nullbool.api.obfuscation.UnusedFieldRemover;
 import org.nullbool.api.obfuscation.cfg.CFGCache;
 import org.nullbool.api.obfuscation.cfg.ControlFlowException;
-import org.nullbool.api.obfuscation.cfg.ControlFlowGraph;
+import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
+import org.nullbool.api.obfuscation.cfg.SaneControlFlowGraph;
 import org.nullbool.api.obfuscation.number.MultiplierHandler;
 import org.nullbool.api.obfuscation.number.MultiplierVisitor;
 import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
@@ -42,6 +43,7 @@ import org.nullbool.api.output.OutputLogger;
 import org.nullbool.api.util.InstructionIdentifier;
 import org.nullbool.api.util.NodedContainer;
 import org.nullbool.api.util.PatternParser;
+import org.nullbool.api.util.map.ValueCreator;
 import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
@@ -137,7 +139,6 @@ public abstract class AbstractAnalysisProvider {
 		if(flags.getOrDefault("basicout", true)) {
 			APIGenerator.createAPI(hookMap);
 			writeLog(hookMap);
-			// HookMap map = new HookMap();
 		}
 
 		if (!flags.getOrDefault("nodump", false)) {
@@ -153,7 +154,7 @@ public abstract class AbstractAnalysisProvider {
 			folder.mkdirs();
 			File logFile = new File(folder, "log.ser");
 			FileOutputStream fos = new FileOutputStream(logFile);
-			//			map.write(fos);
+			map.serialise(map, fos);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -300,18 +301,22 @@ public abstract class AbstractAnalysisProvider {
 		deobOpaquePredicates();
 		
 		if(flags.getOrDefault("paramdeob", false)) {
-			fixEmptyParams();
+			//fixEmptyParams();
 		}
 		
 		removeEmptyPops();
 		//not really needed + a bit slow
 		//replaceCharStringBuilders();
 		
-		destroyMultis();
+		//destroyMultis();
 		//TOOD: multis
 		//removeMultis();
 		buildCfgs();
-		//reorderBlocks();
+		reorderBlocks();
+		
+//		if(true)
+//			System.exit(1);
+		
 	}
 	
 	private void destroyMultis() {
@@ -360,7 +365,7 @@ public abstract class AbstractAnalysisProvider {
 			for(MethodNode m : cn.methods) {
 				if(m.instructions.size() > 0 && m.tryCatchBlocks.size() <= 1) {
 					try {
-						ControlFlowGraph oldGraph = cfgCache.get(m);
+						IControlFlowGraph oldGraph = cfgCache.get(m);
 						reorderer.reorder(m, oldGraph);
 					} catch (ControlFlowException e) {
 						e.printStackTrace();
@@ -375,7 +380,12 @@ public abstract class AbstractAnalysisProvider {
 	}
 	
 	private void buildCfgs() {
-		cfgCache = new CFGCache();
+		cfgCache = new CFGCache(new ValueCreator<IControlFlowGraph>() {
+			@Override
+			public IControlFlowGraph create() {
+				return new SaneControlFlowGraph();
+			}
+		});
 		for(ClassNode cn : contents.getClassContents()) {
 			for(MethodNode m : cn.methods) {
 				if(m.instructions.size() > 0) {

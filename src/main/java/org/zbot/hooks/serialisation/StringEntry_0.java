@@ -23,4 +23,9 @@ public class StringEntry_0 extends PoolEntry {
 	public String value(){
 		return string;
 	}
+	
+	@Override
+	public String toString() {
+		return value();
+	}
 }
