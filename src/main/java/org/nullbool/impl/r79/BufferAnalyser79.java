@@ -6,10 +6,9 @@ import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
 import org.nullbool.impl.r77.BufferAnalyser77;
+import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
 import org.objectweb.asm.tree.MethodNode;
 import org.topdank.banalysis.filter.Filter;
-import org.zbot.hooks.MethodHook;
-import org.zbot.hooks.MethodHook.MethodType;
 
 /**
  * "readBytesA&([BII)V", "readBytesB&([BII)V" are only for rev 79+
@@ -48,10 +47,10 @@ public class BufferAnalyser79 extends BufferAnalyser77 {
 			List<Object> value = asv.found.get(ArrayStoreVisitor.VALUE);
 			if(WRITE_BYTES2.equals(amv.set) && match(value, WRITE_BYTES_SUB)) {
 				if(amv.opcode == IF_ICMPLT) {
-					list.add(asMethodHook(MethodType.CALLBACK, m, "readBytesB"));
+					list.add(asMethodHook(m, "readBytesB").var(MethodHook.TYPE, MethodHook.CALLBACK));
 					b = true;
 				} else if(amv.opcode == IF_ICMPGE) {
-					list.add(asMethodHook(MethodType.CALLBACK, m, "readBytesA"));
+					list.add(asMethodHook(m, "readBytesA").var(MethodHook.TYPE, MethodHook.CALLBACK));
 					b = true;
 				} else {
 					throw new RuntimeException();

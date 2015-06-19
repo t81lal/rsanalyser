@@ -15,6 +15,9 @@ import org.nullbool.api.AbstractAnalysisProvider;
 import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
 import org.nullbool.api.util.InstructionIdentifier;
+import org.nullbool.zbot.pi.core.hooks.api.ClassHook;
+import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
+import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -24,12 +27,6 @@ import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.topdank.banalysis.filter.Filter;
-import org.zbot.hooks.ClassHook;
-import org.zbot.hooks.DynamicDesc;
-import org.zbot.hooks.FieldHook;
-import org.zbot.hooks.MethodHook;
-import org.zbot.hooks.MethodHook.MethodType;
-import org.zbot.hooks.ObfuscatedData;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -63,7 +60,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		if (fs != null) {
 			for (IFieldAnalyser f : fs) {
 				try {
-					foundHook.getFields().addAll(f.find(foundClass));
+					foundHook.fields().addAll(f.find(foundClass));
 				} catch (Exception e) {
 					System.err.println(f.getClass().getCanonicalName() + " -> " + e.getClass().getSimpleName());
 					e.printStackTrace();
@@ -75,7 +72,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		if (ms != null) {
 			for (IMethodAnalyser m : ms) {
 				try {
-					foundHook.getMethods().addAll(m.find(foundClass));
+					foundHook.methods().addAll(m.find(foundClass));
 				} catch (Exception e) {
 					System.err.println(m.getClass().getCanonicalName() + " -> " + e.getClass().getSimpleName());
 					e.printStackTrace();
@@ -144,9 +141,9 @@ public abstract class ClassAnalyser implements Opcodes {
 		AbstractAnalysisProvider provider = Context.current();
 		// System.out.println(provider.getAnalysers());
 		Stream<ClassAnalyser> stream = provider.getAnalysers().stream();
-		stream = stream.filter(a -> a.foundHook.getRefactored().equals(n));
+		stream = stream.filter(a -> a.foundHook.refactored().equals(n));
 		ClassAnalyser a = stream.findFirst().orElse(null);
-		return a != null ? a.foundHook.getObfuscated() : null;
+		return a != null ? a.foundHook.obfuscated() : null;
 	}
 
 	public ClassAnalyser getAnalyser(String name) {
@@ -160,9 +157,9 @@ public abstract class ClassAnalyser implements Opcodes {
 	public ClassNode getClassNodeByRefactoredName(String name) {
 		AbstractAnalysisProvider provider = Context.current();
 		Stream<ClassAnalyser> stream = provider.getAnalysers().stream();
-		stream = stream.filter(a -> a.foundHook.getRefactored().equals(name));
+		stream = stream.filter(a -> a.foundHook.refactored().equals(name));
 		ClassAnalyser a = stream.findFirst().orElse(null);
-		return provider.getClassNodes().get(a.foundHook.getObfuscated());
+		return provider.getClassNodes().get(a.foundHook.obfuscated());
 	}
 
 	public boolean containFieldOfType(ClassNode classnode, String t) {
@@ -323,7 +320,12 @@ public abstract class ClassAnalyser implements Opcodes {
 		for (Object oF : cn.fields) {
 			FieldNode f = (FieldNode) oF;
 			if (parts[1].equals(f.name)) {
-				return new FieldHook(foundHook, new ObfuscatedData(f.name, realName), new DynamicDesc(f.desc, false), Modifier.isStatic(f.access), multiplier);
+				return new FieldHook(foundHook)
+					.obfuscated(f.name)
+					.refactored(realName)
+					.var(FieldHook.DESC, f.desc)
+					.var(FieldHook.STATIC, Boolean.toString(Modifier.isStatic(f.access)))
+					.var(FieldHook.MUTLI, Long.toString(multiplier));
 			}
 		}
 		return null;
@@ -335,7 +337,12 @@ public abstract class ClassAnalyser implements Opcodes {
 		for (Object oF : cn.fields) {
 			FieldNode f = (FieldNode) oF;
 			if (parts[1].equals(f.name)) {
-				return new FieldHook(foundHook, new ObfuscatedData(f.name, realName), new DynamicDesc(f.desc, false), Modifier.isStatic(f.access), multiplier);
+				return new FieldHook(foundHook)
+					.obfuscated(f.name)
+					.refactored(realName)
+					.var(FieldHook.DESC, f.desc)
+					.var(FieldHook.STATIC, Boolean.toString(Modifier.isStatic(f.access)))
+					.var(FieldHook.MUTLI, Long.toString(multiplier));
 			}
 		}
 		return null;
@@ -351,22 +358,31 @@ public abstract class ClassAnalyser implements Opcodes {
 	}
 	
 	public FieldHook asFieldHook(FieldInsnNode f, String realName, boolean isStatic, long multiplier) {
-		return new FieldHook(foundHook, new ObfuscatedData(f.name, realName), new DynamicDesc(f.desc, false), isStatic, multiplier);
+		return new FieldHook(foundHook)
+			.obfuscated(f.name)
+			.refactored(realName)
+			.var(MethodHook.DESC, f.desc)
+			.var(FieldHook.STATIC, Boolean.toString(isStatic))
+			.var(FieldHook.MUTLI, Long.toString(multiplier));
 	}
 
-	public MethodHook asMethodHook(MethodType type, MethodInsnNode min, String realName) {
+	public MethodHook asMethodHook(MethodInsnNode min, String realName) {
 		ClassNode cn = Context.current().getClassNodes().get(min.owner);
 		for (Object oM : cn.methods) {
 			MethodNode m = (MethodNode) oM;
 			if (min.name.equals(m.name) && min.desc.equals(m.desc)) {
-				return new MethodHook(type, foundHook, new ObfuscatedData(m.name, realName), new DynamicDesc(m.desc, true), Modifier.isStatic(m.access), null);
+				return new MethodHook(foundHook)
+					.obfuscated(m.name)
+					.refactored(realName)
+					.var(MethodHook.DESC, m.desc)
+					.var(MethodHook.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
 			}
 		}
 		return null;
 	}
 	
 	// TODO:
-	public MethodHook asMethodHook(MethodType type, String classAndName, String realName) {
+	public MethodHook asMethodHook(String classAndName, String realName) {
 		String[] parts = classAndName.split("\\.");
 		// System.out.println("methods in " + Arrays.toString(parts));
 		ClassNode cn = Context.current().getClassNodes().get(parts[0]);
@@ -374,8 +390,11 @@ public abstract class ClassAnalyser implements Opcodes {
 			MethodNode m = (MethodNode) oM;
 			// System.out.println("   method " + m.name + " " + m.desc);
 			if (parts[1].equals(m.name)) {
-				// System.out.println(classAndName);
-				return new MethodHook(type, foundHook, new ObfuscatedData(m.name, realName), new DynamicDesc(m.desc, true), Modifier.isStatic(m.access), null);
+				return new MethodHook(foundHook)
+				.obfuscated(m.name)
+				.refactored(realName)
+				.var(MethodHook.DESC, m.desc)
+				.var(MethodHook.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
 			}
 		}
 		return null;
@@ -385,7 +404,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		for (ClassAnalyser analyser : Context.current().getAnalysers()) {
 			ClassHook c = analyser.getFoundHook();
 			if (c != null) {
-				if (c.getObfuscated().equals(k))
+				if (c.obfuscated().equals(k))
 					return c;
 			}
 		}
@@ -393,12 +412,12 @@ public abstract class ClassAnalyser implements Opcodes {
 		return new ClassHook(k, null);
 	}
 
-	public MethodHook asMethodHook(MethodType type, MethodNode m, String realName) {
-//		if(m.owner.name.equals("dj")) {
-//			System.out.println("ClassAnalyser.asMethodHook() " + realName);
-//		}
-		return new MethodHook(type, getNew(m.owner.name), new ObfuscatedData(m.name, realName), new DynamicDesc(m.desc, true), Modifier.isStatic(m.access),
-				null);
+	public MethodHook asMethodHook(MethodNode m, String realName) {
+		return new MethodHook(getNew(m.owner.name))
+			.obfuscated(m.name)
+			.refactored(realName)
+			.var(MethodHook.DESC, m.desc)
+			.var(MethodHook.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
 	}
 
 	public MethodNode[] findMethods(Map<String, ClassNode> nodes, String regularExpression, boolean isStatic) {

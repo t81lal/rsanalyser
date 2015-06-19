@@ -11,15 +11,14 @@ import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.InstructionUtil;
+import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
+import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.zbot.hooks.FieldHook;
-import org.zbot.hooks.MethodHook;
-import org.zbot.hooks.MethodHook.MethodType;
 
 @SupportedHooks(fields = { "getCipher&IsaacCipher", "getBitCaret&I"}, methods = { "initCipher&([I)V", "initBitAccess&()V", "finishBitAccess&()V", "readableBytes&(I)I", "readBits&(I)I"})
 /**
@@ -69,21 +68,21 @@ public class PacketAnalyser extends ClassAnalyser {
 				if(m.desc.startsWith("([I") && m.desc.endsWith("V")) {
 					MethodInsnNode min = (MethodInsnNode) findOpcodePattern(m, INIT_CIPHER_PATTERN);
 					if(min != null) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "initCipher"));
+						list.add(asMethodHook(m, "initCipher").var(MethodHook.TYPE, MethodHook.CALLBACK));
 					}
 				} else if(m.desc.endsWith("V")) {
 					FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, INIT_BIT_ACCESS_PATTERN1);
 					if(fin != null) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "initBitAccess"));
+						list.add(asMethodHook(m, "initBitAccess").var(MethodHook.TYPE, MethodHook.CALLBACK));
 					} else {
 						fin = (FieldInsnNode) findOpcodePattern(m, INIT_BIT_ACCESS_PATTERN2);
 						if(fin != null) {
-							list.add(asMethodHook(MethodType.CALLBACK, m, "initBitAccess"));
+							list.add(asMethodHook(m, "initBitAccess").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						} else {
 							IntInsnNode iin = (IntInsnNode) findOpcodePattern(m, FINISH_BIT_ACCESS_PATTERN);
 							if(iin != null) {
 								if(InstructionUtil.resolve(iin) == 8) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "finishBitAccess"));
+									list.add(asMethodHook(m, "finishBitAccess").var(MethodHook.TYPE, MethodHook.CALLBACK));
 								}
 							}
 						}
@@ -94,11 +93,11 @@ public class PacketAnalyser extends ClassAnalyser {
 						fin = (FieldInsnNode) findOpcodePattern(m, READABLE_BEATS_PATTERN2);
 					
 					if(fin != null) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "readableBytes"));
+						list.add(asMethodHook(m, "readableBytes").var(MethodHook.TYPE, MethodHook.CALLBACK));
 					} else {
 						AbstractInsnNode a1 = findOpcodePattern(m, READ_BITS_PATTERN);
 						if(a1 != null) {
-							list.add(asMethodHook(MethodType.CALLBACK, m, "readBits"));
+							list.add(asMethodHook(m, "readBits").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						}
 					}
 				}

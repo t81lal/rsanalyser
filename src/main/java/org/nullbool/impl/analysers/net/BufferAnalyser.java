@@ -19,6 +19,9 @@ import org.nullbool.api.util.InstructionUtil;
 import org.nullbool.api.util.NotifyNodeVisitor;
 import org.nullbool.api.util.map.NullPermeableHashMap;
 import org.nullbool.api.util.map.ValueCreator;
+import org.nullbool.zbot.pi.core.hooks.api.ClassHook;
+import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
+import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
@@ -36,10 +39,6 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.util.Printer;
 import org.topdank.banalysis.filter.Filter;
-import org.zbot.hooks.ClassHook;
-import org.zbot.hooks.FieldHook;
-import org.zbot.hooks.MethodHook;
-import org.zbot.hooks.MethodHook.MethodType;
 
 @SupportedHooks(fields  = { "getPayload&[B", "getCaret&I", }, 
 methods = { "enableEncryption&(Ljava/math/BigInteger;Ljava/math/BigInteger;)V",
@@ -119,7 +118,7 @@ public class BufferAnalyser extends ClassAnalyser {
 	@Override
 	protected boolean matches(ClassNode cn) {
 		ClassHook nodeHook = getAnalyser("Node").getFoundHook();
-		if(cn.superName.equals(nodeHook.getObfuscated())) {
+		if(cn.superName.equals(nodeHook.obfuscated())) {
 			int bytesFieldCount = getFieldCount(cn, BYTE_ARRAY_FILTER);
 			int intFieldsCount  = getFieldCount(cn, INT_FILTER);
 			return bytesFieldCount == 1 && intFieldsCount > 0;
@@ -147,7 +146,7 @@ public class BufferAnalyser extends ClassAnalyser {
 			
 			for(MethodNode m : cn.methods) {
 				if(m.desc.startsWith("(Ljava/math/BigInteger;Ljava/math/BigInteger;")) {
-					list.add(asMethodHook(MethodType.CALLBACK, m, "enableEncryption"));
+					list.add(asMethodHook(m, "enableEncryption").var(MethodHook.TYPE, MethodHook.CALLBACK));
 				} else if(!Modifier.isStatic(m.access)) {
 					
 					IControlFlowGraph graph = null;
@@ -175,19 +174,19 @@ public class BufferAnalyser extends ClassAnalyser {
 							List<Integer> subs = arrayLoadVisitor.subs;
 							if(match(found, READ_UNSIGNED_16)) {
 								if(match(subs, new Object[]{1, 2})) {
-									list.add(asMethodHook(MethodType.CALLBACK, m, "readLE16"));
+									list.add(asMethodHook(m, "readLE16").var(MethodHook.TYPE, MethodHook.CALLBACK));
 								} else if(match(subs, new Object[]{2, 1})) {
 									/* Looks like each side of this gets swapped sometimes */
-									list.add(asMethodHook(MethodType.CALLBACK, m, "read16"));
+									list.add(asMethodHook(m, "read16").var(MethodHook.TYPE, MethodHook.CALLBACK));
 								}
 //								System.out.println("dong " + found);
 //								System.out.println("long " + subs);
 								System.out.println("BufferAnalyser.MethodAnalyser.find() " + m + " " + graph.hasLoop() + " " + found + " " + subs);
 							} else if(match(found, READ_UNSIGNED_16B)) {
 //								if(match(subs, new Object[]{1, 2})) {
-//									list.add(asMethodHook(MethodType.CALLBACK, m, "readLE16B"));
+//									list.add(asMethodHook(m, "readLE16B"));
 //								} else if(match(subs, new Object[]{2, 1})) {
-//									list.add(asMethodHook(MethodType.CALLBACK, m, "read16B"));
+//									list.add(asMethodHook(m, "read16B"));
 //								}
 							}
 							
@@ -204,8 +203,8 @@ public class BufferAnalyser extends ClassAnalyser {
 			for(MethodHook mh : list) {
 				for(MethodHook mh1 : list) {
 					if(mh != mh1) {
-						if(mh.getName().getRefactored().equals(mh1.getName().getRefactored())) {
-							System.err.println("dup " + mh.getName().getRefactored());
+						if(mh.refactored().equals(mh1.refactored())) {
+							System.err.println("dup " + mh.refactored());
 						}
 					}
 				}
@@ -213,7 +212,7 @@ public class BufferAnalyser extends ClassAnalyser {
 				boolean b = false;
 				for(String s : supportedMethods()) {
 					String name = s.substring(0, s.indexOf("&"));
-					if(name.equals(mh.getName().getRefactored())) {
+					if(name.equals(mh.refactored())) {
 						if(b) {
 							System.out.println("what b " + name);
 						} else {
@@ -223,7 +222,7 @@ public class BufferAnalyser extends ClassAnalyser {
 				}
 				
 				if(!b) {
-					System.out.println("Not " + mh.getName().getRefactored());
+					System.out.println("Not " + mh.refactored());
 				}
 				
 			}
@@ -241,77 +240,77 @@ public class BufferAnalyser extends ClassAnalyser {
 			if(m.desc.startsWith("(Ljava/lang/String;")) {
 
 				if(match(index, new Object[]{1, 1})) {
-					list.add(asMethodHook(MethodType.CALLBACK, m, "writeJagexString"));
+					list.add(asMethodHook(m, "writeJagexString").var(MethodHook.TYPE, MethodHook.CALLBACK));
 					b = true;
 				} else {
-					list.add(asMethodHook(MethodType.CALLBACK, m, "writeString"));
+					list.add(asMethodHook(m, "writeString").var(MethodHook.TYPE, MethodHook.CALLBACK));
 					b = true;
 				}
 			} else if(m.desc.startsWith("(Ljava/lang/CharSequence;")) {
-				list.add(asMethodHook(MethodType.CALLBACK, m, "writeCharSequence"));
+				list.add(asMethodHook(m, "writeCharSequence").var(MethodHook.TYPE, MethodHook.CALLBACK));
 				b = true;
 			} else {
 				if(m.desc.startsWith("(J")) {
 					if(match(value, WRITE_LONG_SHIFTS)) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "write64"));
+						list.add(asMethodHook(m, "write64").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						b = true;
 					}
 				} else if(m.desc.startsWith("(I")) {
 					if(match(value, WRITE_INT_SHIFTS)) {
 						if(match(index, new Object[]{4, SUB2_NODE, 3, SUB2_NODE, 2, SUB2_NODE, 1, SUB2_NODE})) {
-							list.add(asMethodHook(MethodType.CALLBACK, m, "write32Weird"));
+							list.add(asMethodHook(m, "write32Weird").var(MethodHook.TYPE, MethodHook.CALLBACK));
 							b = true;
 						} else if(match(index, new Object[]{1, 1, 1, 1})) {
-							list.add(asMethodHook(MethodType.CALLBACK, m, "write32"));
+							list.add(asMethodHook(m, "write32").var(MethodHook.TYPE, MethodHook.CALLBACK));
 							b = true;
 						}
 
 					} else if(match(value, WRITE_INV_LE_32)) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "writeInvertedLE32"));
+						list.add(asMethodHook(m, "writeInvertedLE32").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE_LE_32)) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE32"));
+						list.add(asMethodHook(m, "writeLE32").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE_INV_32)) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "writeInverted32"));
+						list.add(asMethodHook(m, "writeInverted32").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE_24)) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "write24"));
+						list.add(asMethodHook(m, "write24").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						b = true;
 					}/* else if(match(value, WRITE_INV_24)) {
 						System.out.println("BufferAnalyser.MethodAnalyser.find() " + index);
 					}*/
 					else if(match(value, WRITE_16)) {
 						if(match(index, new Object[]{2, SUB2_NODE, 1, SUB2_NODE})) {
-							list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE16A"));
+							list.add(asMethodHook(m, "writeLE16A").var(MethodHook.TYPE, MethodHook.CALLBACK));
 							b = true;
 						} else if(match(index, new Object[]{1, 1})) {
-							list.add(asMethodHook(MethodType.CALLBACK, m, "write16"));
+							list.add(asMethodHook(m, "write16").var(MethodHook.TYPE, MethodHook.CALLBACK));
 							b = true;
 						}
 					} else if(match(value, WRITE_LE_16)) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "writeLE16"));
+						list.add(asMethodHook(m, "writeLE16").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE_16A)) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "write16A"));
+						list.add(asMethodHook(m, "write16A").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE_16B)) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "write16B"));
+						list.add(asMethodHook(m, "write16B").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE8OFFSET128)) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "write8Offset128"));
+						list.add(asMethodHook(m, "write8Offset128").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE8NEG0)) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "write8Neg0"));
+						list.add(asMethodHook(m, "write8Neg0").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE8NEG128)) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "write8Neg128"));
+						list.add(asMethodHook(m, "write8Neg128").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						b = true;
 					} else if(match(index, new Object[]{1}) && match(value, WRITE_8)) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "write8"));
+						list.add(asMethodHook(m, "write8").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						b = true;
 					} else if(match(index, new Object[]{1, SUB2_NODE}) && match(value, WRITE_8)) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "write8Weird"));
+						list.add(asMethodHook(m, "write8Weird").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						b = true;
 					} else {
 						run(treeBuilder, varIntNodeVisitor, m, graph);
@@ -319,7 +318,7 @@ public class BufferAnalyser extends ClassAnalyser {
 						List<Object> jmp = varIntNodeVisitor.found.get(VarIntNodeVisitor.JMP);
 						List<Object> add = varIntNodeVisitor.found.get(VarIntNodeVisitor.ADD);
 						if(match(jmp, WRITE_VAR_BYTE) && match(add, new Object[]{32768})) {
-							list.add(asMethodHook(MethodType.CALLBACK, m, "writeVarByte"));
+							list.add(asMethodHook(m, "writeVarByte").var(MethodHook.TYPE, MethodHook.CALLBACK));
 							b = true;
 						}
 						varIntNodeVisitor.end(m);
@@ -342,7 +341,7 @@ public class BufferAnalyser extends ClassAnalyser {
 
 		public void analyseMultiByte(ArrayStoreVisitor asv, ArrayMethodVisitor amv, IControlFlowGraph graph, MethodNode m, List<MethodHook> list) {
 			if(WRITE_BYTES.equals(amv.set)) {
-				list.add(asMethodHook(MethodType.CALLBACK, m, "writeBytes"));
+				list.add(asMethodHook(m, "writeBytes").var(MethodHook.TYPE, MethodHook.CALLBACK));
 			}
 		}
 	}

@@ -6,10 +6,9 @@ import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
 import org.nullbool.impl.analysers.net.BufferAnalyser;
+import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
 import org.objectweb.asm.tree.MethodNode;
 import org.topdank.banalysis.filter.Filter;
-import org.zbot.hooks.MethodHook;
-import org.zbot.hooks.MethodHook.MethodType;
 
 /**
  * write40 disabled for revisions before 77.
@@ -47,7 +46,7 @@ public class BufferAnalyser77 extends BufferAnalyser {
 				List<Object> value = asv.found.get(ArrayStoreVisitor.VALUE);
 				if(match(value, WRITE_LONG_SHIFTS, 2)) {
 					// NOTE: ADDED IN R77
-					list.add(asMethodHook(MethodType.CALLBACK, m, "write40"));
+					list.add(asMethodHook(m, "write40").var(MethodHook.TYPE, MethodHook.CALLBACK));
 					b = true;
 				}
 			} 

@@ -13,13 +13,12 @@ import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.ClassStructure;
+import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
+import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.zbot.hooks.FieldHook;
-import org.zbot.hooks.MethodHook;
-import org.zbot.hooks.MethodHook.MethodType;
 
 /**
  * @author MalikDz
@@ -61,14 +60,14 @@ public class NodeAnalyser extends ClassAnalyser {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 			
 			if(hasPreviousMethod != null) {
-				list.add(asMethodHook(MethodType.CALLBACK, hasPreviousMethod, "isLinked"));
+				list.add(asMethodHook(hasPreviousMethod, "isLinked").var(MethodHook.TYPE, MethodHook.CALLBACK));
 			}
 			
 			MethodNode[] ms  = getMethodNodes(cn.methods.stream().filter(m -> !Modifier.isStatic(m.access) && m.desc.endsWith(")V") && !m.name.equals("<init>")).collect(Collectors.toList()).toArray());
 			MethodNode[] ms2 = startWithBc(new String[] { "aload", "getfield", "ifnonnull" }, ms);
 			if(ms2.length == 1) {
 				MethodNode m = ms2[0];
-				list.add(asMethodHook(MethodType.CALLBACK, m, "unlink"));
+				list.add(asMethodHook(m, "unlink").var(MethodHook.TYPE, MethodHook.CALLBACK));
 			}
 						
 			return list;

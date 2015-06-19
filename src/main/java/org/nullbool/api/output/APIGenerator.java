@@ -18,17 +18,17 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.nullbool.api.Context;
+import org.nullbool.zbot.pi.core.hooks.api.ClassHook;
+import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
+import org.nullbool.zbot.pi.core.hooks.api.HookMap;
+import org.nullbool.zbot.pi.core.hooks.api.InterfaceMapping;
+import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 import org.topdank.byteio.out.CompleteJarDumper;
-import org.zbot.hooks.ClassHook;
-import org.zbot.hooks.FieldHook;
-import org.zbot.hooks.HookMap;
-import org.zbot.hooks.InterfaceMapping;
-import org.zbot.hooks.MethodHook;
 
 import com.google.gson.GsonBuilder;
 
@@ -129,35 +129,35 @@ public class APIGenerator {
 
 	public static void createAPI(HookMap hookMap) {
 		JarContents<ClassNode> contents = new JarContents<ClassNode>();
-		for (ClassHook hook : hookMap.getClasses()) {
+		for (ClassHook hook : hookMap.classes()) {
 			ClassNode cn = new ClassNode();
 			cn.version = Opcodes.V1_8;
 			cn.superName = "java/lang/Object";
 			cn.access = Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT + Opcodes.ACC_INTERFACE;
-			String thisName = API_CANONICAL_NAMES.get(hook.getRefactored());
+			String thisName = API_CANONICAL_NAMES.get(hook.refactored());
 			if (thisName != null)
 				thisName = cn.name = ACCESSOR_BASE + thisName;
 			else
-				thisName = ACCESSOR_BASE + "I" + hook.getRefactored();
+				thisName = ACCESSOR_BASE + "I" + hook.refactored();
 			cn.name = thisName;
 
-			String sup = SUPER_INTERFACES.get(hook.getRefactored());
+			String sup = SUPER_INTERFACES.get(hook.refactored());
 			if (sup != null) {
 				if (!sup.startsWith("org/nullbool"))
 					sup = ACCESSOR_BASE + sup;
-				hook.getInterfaces().add(new InterfaceMapping(hook, sup));
+				hook.interfaces().add(new InterfaceMapping(hook, sup));
 				cn.interfaces.add(sup);
 			}
 
-			for (FieldHook f : hook.getFields()) {
-				MethodNode mn = new MethodNode(cn, Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, f.getName().getRefactored(), "()"
-						+ convertSingleBytecodeStyle(hookMap.getClasses(), f.getDesc().getObfuscated()), null, null);
+			for (FieldHook f : hook.fields()) {
+				MethodNode mn = new MethodNode(cn, Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, f.refactored(), "()"
+						+ convertSingleBytecodeStyle(hookMap.classes(), f.val(FieldHook.DESC)), null, null);
 				cn.methods.add(mn);
 			}
 
-			for (MethodHook m : hook.getMethods()) {
-				String d = convertMultiBytecodeStyle(hookMap.getClasses(), m.getDesc().getObfuscated());
-				MethodNode mn = new MethodNode(cn, Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, m.getName().getRefactored(), d, null, null);
+			for (MethodHook m : hook.methods()) {
+				String d = convertMultiBytecodeStyle(hookMap.classes(), m.val(MethodHook.DESC));
+				MethodNode mn = new MethodNode(cn, Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, m.refactored(), d, null, null);
 				cn.methods.add(mn);
 
 				// if (m.getInstructions() != null) {
@@ -359,8 +359,8 @@ public class APIGenerator {
 		String className = name.substring(1, name.length() - 1);
 
 		for (ClassHook hook : classes) {
-			if (hook.getObfuscated().equals(className)) {
-				className = hook.getRefactored();
+			if (hook.obfuscated().equals(className)) {
+				className = hook.refactored();
 				break;
 			}
 		}

@@ -10,10 +10,11 @@ import java.util.Set;
 import org.nullbool.api.AbstractAnalysisProvider;
 import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
-import org.zbot.hooks.ClassHook;
-import org.zbot.hooks.FieldHook;
-import org.zbot.hooks.HookMap;
-import org.zbot.hooks.MethodHook;
+import org.nullbool.zbot.pi.core.hooks.api.ClassHook;
+import org.nullbool.zbot.pi.core.hooks.api.DynamicDesc;
+import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
+import org.nullbool.zbot.pi.core.hooks.api.HookMap;
+import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
 
 /**
  * @author Bibl (don't ban me pls) <br>
@@ -59,21 +60,21 @@ public class OutputLogger {
 			StringBuilder nameSb = new StringBuilder();
 			StringBuilder sb = new StringBuilder();
 			nameSb.append("> ");
-			nameSb.append(classHook.getRefactored());
+			nameSb.append(classHook.refactored());
 			nameSb.append(" (-> ");
 			boolean b = false;
-			String toFind = provider.getClassNodes().get(classHook.getObfuscated()).superName;
+			String toFind = provider.getClassNodes().get(classHook.obfuscated()).superName;
 			for (ClassHook c : classes) {
 				if (c.equals(classHook))
 					continue;
-				if (c.getObfuscated().equals(toFind)) {
+				if (c.obfuscated().equals(toFind)) {
 					b = true;
-					nameSb.append(c.getRefactored());
+					nameSb.append(c.refactored());
 				}
 			}
 			if (!b) {
 				String t = toFind.substring(toFind.lastIndexOf('/') + 1);
-				if (t.equals(classHook.getRefactored())) {
+				if (t.equals(classHook.refactored())) {
 					nameSb.append(toFind);
 				} else {
 					nameSb.append(t);
@@ -81,20 +82,22 @@ public class OutputLogger {
 			}
 
 			nameSb.append(") identified as ");
-			nameSb.append(classHook.getObfuscated());
+			nameSb.append(classHook.obfuscated());
 
 			if (debug) {
 				sb.append("@SupportedHooks(fields = { ");
-				for (FieldHook hook : classHook.getFields()) {
-					sb.append("\"").append(hook.getName().getRefactored()).append("&").append(hook.getDesc().getRefactoredDesc(classes)).append("\", ");
+				for (FieldHook hook : classHook.fields()) {
+					DynamicDesc dd = new DynamicDesc(hook.val(FieldHook.DESC), false);
+					sb.append("\"").append(hook.refactored()).append("&").append(dd.getRefactoredDesc(classes)).append("\", ");
 				}
 				sb.append("},");
 
 				sb.append("\n");
 				sb.append("methods = { ");
-				for (MethodHook hook : classHook.getMethods()) {
-					System.out.println(hook.getDesc().getClass());
-					sb.append("\"").append(hook.getName().getRefactored()).append("&").append(hook.getDesc().getRefactoredDesc(classes)).append("\", ");
+				for (MethodHook hook : classHook.methods()) {
+					DynamicDesc dd = new DynamicDesc(hook.val(MethodHook.DESC), true);
+					System.out.println(dd.getClass());
+					sb.append("\"").append(hook.refactored()).append("&").append(dd.getRefactoredDesc(classes)).append("\", ");
 				}
 				sb.append("})");
 				sb.append("\n");
@@ -114,10 +117,10 @@ public class OutputLogger {
 				}
 				try {
 				} catch (Exception e) {
-					System.out.println("yolo " + s + " " + classHook.getRefactored());
+					System.out.println("yolo " + s + " " + classHook.refactored());
 					e.printStackTrace();
 				}
-				FieldHook hook = foundField(verify, parts[0], parts[1], classHook.getFields(), classes);
+				FieldHook hook = foundField(verify, parts[0], parts[1], classHook.fields(), classes);
 
 				if (hook == null) {
 					StringBuilder sb1 = new StringBuilder();
@@ -130,7 +133,7 @@ public class OutputLogger {
 					sb.append("\n");
 					
 					unidf.add(s);
-//					System.out.printf("%s %s broke!%n", parts[0], parts[1]);
+					// System.out.printf("%s %s broke!%n", parts[0], parts[1]);
 				} else {
 					fieldsFound++;
 					fhf++;
@@ -138,31 +141,33 @@ public class OutputLogger {
 					sb1.append(" ^  ");
 					sb1.append(longstring(parts[0], maxLength));
 					// sb1.append(longstring(" " + niceDesc(parts[1]) + "", maxLength));
-					sb1.append(longstring(" " + hook.getDesc().getRefactoredDesc(classes) + "", maxLength));
+					DynamicDesc fdd = new DynamicDesc(hook.val(FieldHook.DESC), false);
+					sb1.append(longstring(" " + fdd.getRefactoredDesc(classes) + "", maxLength));
 					if (sb1.length() > longestLine) {
 						longestLine = sb1.length();
 					}
 					sb.append(longstring(sb1.toString(), 47));
 					sb.append("identified as ");
 					StringBuilder sb2 = new StringBuilder();
-					sb2.append(hook.getOwner().getObfuscated());
+					sb2.append(hook.owner().obfuscated());
 					sb2.append(".");
-					sb2.append(hook.getName().getObfuscated());
+					sb2.append(hook.obfuscated());
 					if (printMultis) {
 						StringBuilder sb4 = new StringBuilder();
 						sb4.append(longstring(sb2.toString(), 10));
-						if (hook.getMultiplier() != 1) {
+						long multi = Long.parseLong(hook.val(FieldHook.MUTLI, "1"));
+						if (multi != 1) {
 							sb4.append(" * ");
-							if (hook.getMultiplier() >= 0)
+							if (multi >= 0)
 								sb4.append(" ");
-							sb4.append(hook.getMultiplier());
+							sb4.append(multi);
 						}
 						sb.append(longstring(sb4.toString(), 25));
 					} else {
 						sb.append(longstring(sb2.toString(), 12));
 					}
 					sb.append(" (");
-					sb.append(hook.getDesc().getObfuscated());
+					sb.append(hook.obfuscated());
 					sb.append(")");
 					sb.append("\n");
 				}
@@ -176,10 +181,10 @@ public class OutputLogger {
 				}
 				try {
 				} catch (Exception e) {
-					System.out.println("yolo " + s + " " + classHook.getRefactored());
+					System.out.println("yolo " + s + " " + classHook.refactored());
 					e.printStackTrace();
 				}
-				MethodHook hook = foundMethod(verify, parts[0], parts[1], classHook.getMethods(), classes);
+				MethodHook hook = foundMethod(verify, parts[0], parts[1], classHook.methods(), classes);
 				if (hook == null) {
 					StringBuilder sb1 = new StringBuilder();
 					sb1.append(" º  ");
@@ -197,16 +202,17 @@ public class OutputLogger {
 					sb1.append(" º  ");
 					sb1.append(longstring(parts[0], maxLength));
 					// sb1.append(longstring(" " + niceDescMethod(parts[1]), maxLength));
-					sb1.append(longstring(" " + hook.getDesc().getRefactoredDesc(classes) + " ", maxLength));
+					DynamicDesc mdd = new DynamicDesc(hook.val(MethodHook.DESC), true);
+					sb1.append(longstring(" " + mdd.getRefactoredDesc(classes) + " ", maxLength));
 					if (sb1.length() > longestLine) {
 						longestLine = sb1.length();
 					}
 					sb.append(longstring(sb1.toString(), 47));
 					sb.append("identified as ");
 					StringBuilder sb2 = new StringBuilder();
-					sb2.append(hook.getOwner().getObfuscated());
+					sb2.append(hook.owner().obfuscated());
 					sb2.append(".");
-					sb2.append(hook.getName().getObfuscated());
+					sb2.append(hook.obfuscated());
 					// if (PRINT_MUTLIS) {
 					// sb.append(longstring(sb2.toString(), 25));
 					// } else {
@@ -214,7 +220,7 @@ public class OutputLogger {
 					// }
 					sb.append(longstring(sb2.toString(), printMultis ? 25 : 12));
 					sb.append(" ");
-					sb.append(hook.getDesc().getObfuscated());
+					sb.append(hook.obfuscated());
 					sb.append("");
 					sb.append("\n");
 				}
@@ -232,7 +238,7 @@ public class OutputLogger {
 				System.out.println(nameSb.toString());
 				System.out.println(sb.toString());
 			} else if (broke) {
-				System.err.printf("%s broke.%n", classHook.getRefactored());
+				System.err.printf("%s broke.%n", classHook.refactored());
 				System.err.flush();
 				System.out.flush();
 				
@@ -270,7 +276,7 @@ public class OutputLogger {
 	private static Set<FieldHook> f_collect(Collection<ClassHook> classes) {
 		Set<FieldHook> set = new HashSet<FieldHook>();
 		for(ClassHook c : classes) {
-			set.addAll(c.getFields());
+			set.addAll(c.fields());
 		}
 		return set;
 	}
@@ -278,7 +284,7 @@ public class OutputLogger {
 	private static Set<MethodHook> m_collect(Collection<ClassHook> classes) {
 		Set<MethodHook> set = new HashSet<MethodHook>();
 		for(ClassHook c : classes) {
-			set.addAll(c.getMethods());
+			set.addAll(c.methods());
 		}
 		return set;
 	}
@@ -288,8 +294,8 @@ public class OutputLogger {
 		int fCount = 0;
 		int mCount = 0;
 		for(ClassHook c : classes){
-			fCount += c.getFields().size();
-			mCount += c.getMethods().size();
+			fCount += c.fields().size();
+			mCount += c.methods().size();
 		}
 
 		System.out.printf("%d field hooks.%n", fCount);
@@ -308,13 +314,15 @@ public class OutputLogger {
 	private static FieldHook foundField(boolean verify, String name, String desc, List<FieldHook> hooks, List<ClassHook> classes) {
 		FieldHook h = null;
 		for (FieldHook hook : hooks) {
-			if (hook.getName().getRefactored().equals(name)) {
+			if (hook.refactored().equals(name)) {
 				if (h != null) {
-					System.err.println(h);
-					System.err.println(hook);
-					throw new IllegalStateException("Found " + h.getOwner().getRefactored() + "." + h.getName().getRefactored() + " twice!");
+					if(hook != h) {
+						System.err.println(h);
+						System.err.println(hook);
+						throw new IllegalStateException("Found " + h.owner().refactored() + "." + h.refactored() + " twice!");
+					}
 				} else {
-					hook.setMarked(true);
+					hook.var("marked", "true");
 					h = hook;
 				}
 			}
@@ -330,22 +338,23 @@ public class OutputLogger {
 	}
 
 	private static void verifyField(List<ClassHook> cs, FieldHook h) {
-		String owner = h.getOwner().getObfuscated();
-		String name = h.getName().getObfuscated();
-		String desc = h.getDesc().getObfuscated();
+		String owner = h.owner().obfuscated();
+		String name = h.obfuscated();
+		String desc = h.val(FieldHook.DESC);
 
 		for (ClassHook c : cs) {
-			for (FieldHook f : c.getFields()) {
+			for (FieldHook f : c.fields()) {
 				if (h.equals(f))
 					continue;
-				String owner1 = f.getOwner().getObfuscated();
-				String name1 = f.getName().getObfuscated();
-				String desc1 = f.getDesc().getObfuscated();
+				String owner1 = f.owner().obfuscated();
+				String name1 = f.obfuscated();
+				String desc1 = f.val(FieldHook.DESC);
 				if (owner1.equals(owner)) {
 					if (name1.equals(name)) {
 						if (desc1.equals(desc)) {
-							String refac = String.format("%s.%s %s", f.getOwner().getRefactored(), f.getName().getRefactored(),
-									f.getDesc().getRefactoredDesc(cs));
+							DynamicDesc dd = new DynamicDesc(desc1, false);
+							String refac = String.format("%s.%s %s", f.owner().refactored(), f.refactored(),
+									dd.getRefactoredDesc(cs));
 							throw new IllegalStateException(String.format("Found %s.%s %s (%s) twice!", owner1, name1, desc1, refac));
 						}
 					}
@@ -355,22 +364,23 @@ public class OutputLogger {
 	}
 
 	private static void verifyMethod(List<ClassHook> cs, MethodHook h) {
-		String owner = h.getOwner().getObfuscated();
-		String name = h.getName().getObfuscated();
-		String desc = h.getDesc().getObfuscated();
+		String owner = h.owner().obfuscated();
+		String name = h.obfuscated();
+		String desc = h.val(MethodHook.DESC);
 
 		for (ClassHook c : cs) {
-			for (MethodHook m : c.getMethods()) {
+			for (MethodHook m : c.methods()) {
 				if (h.equals(m))
 					continue;
-				String owner1 = m.getOwner().getObfuscated();
-				String name1 = m.getName().getObfuscated();
-				String desc1 = m.getDesc().getObfuscated();
+				String owner1 = m.owner().obfuscated();
+				String name1 = m.obfuscated();
+				String desc1 = m.val(MethodHook.DESC);
 				if (owner1.equals(owner)) {
 					if (name1.equals(name)) {
 						if (desc1.equals(desc)) {
-							String refac = String.format("%s.%s %s", m.getOwner().getRefactored(), m.getName().getRefactored(),
-									m.getDesc().getRefactoredDesc(cs));
+							DynamicDesc dd = new DynamicDesc(desc1, true);
+							String refac = String.format("%s.%s %s", m.owner().refactored(), m.refactored(),
+									dd.getRefactoredDesc(cs));
 							throw new IllegalStateException(String.format("Found %s.%s %s (%s) twice!", owner1, name1, desc1, refac));
 						}
 					}
@@ -381,15 +391,15 @@ public class OutputLogger {
 
 	private static MethodHook foundMethod(boolean verify, String name, String desc, List<MethodHook> hooks, List<ClassHook> classes) {
 		MethodHook h = null;
-		MethodHook h1 = null;
 		try {
 			for (MethodHook hook : hooks) {
-				h1 = hook;
-				if (hook.getName().getRefactored().equals(name)) {
+				if (hook.refactored().equals(name)) {
 					if (h != null) {
-						throw new IllegalStateException(h + ", " + hook + " found twice.");
+						if(hook != h) {
+							throw new IllegalStateException(h + ", " + hook + " found twice.");
+						}
 					} else {
-						hook.setMarked(true);
+						hook.var("marked", "true");
 						h = hook;
 					}
 				}

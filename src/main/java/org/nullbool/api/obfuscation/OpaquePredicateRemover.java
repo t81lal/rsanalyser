@@ -96,6 +96,7 @@ import org.objectweb.asm.tree.TypeInsnNode;
  */
 public class OpaquePredicateRemover extends NodeVisitor {
 
+	private final Map<MethodNode, Opaque> foundPredicates = new HashMap<MethodNode, Opaque>();
 	private final Set<ComparisonPair> pairs = new HashSet<ComparisonPair>();
 	private MethodNode method;
 	private int targetVar;
@@ -188,6 +189,11 @@ public class OpaquePredicateRemover extends NodeVisitor {
 
 					for(Entry<ComparisonPair, List<AbstractInsnNode>> e : map.entrySet()) {
 						Jump jump = e.getKey().jump;
+						
+						if(!foundPredicates.containsKey(jump.jin.method)) {
+							foundPredicates.put(jump.jin.method, new Opaque(jump.jin.opcode(), e.getKey().num));
+						}
+						
 						/* Redirect the false jump location of the jump and force it
 						 * to the target. */
 						method.instructions.insert(jump.jin, new JumpInsnNode(GOTO, jump.jin.label));
@@ -218,6 +224,10 @@ public class OpaquePredicateRemover extends NodeVisitor {
 		pairs.clear();
 		method    = null;
 		targetVar = 0;
+	}
+	
+	public Opaque find(MethodNode m) {
+		return foundPredicates.get(m);
 	}
 
 	private static List<AbstractInsnNode> block(ComparisonPair p) {
@@ -287,6 +297,24 @@ public class OpaquePredicateRemover extends NodeVisitor {
 		public Jump(JumpInsnNode jin, AbstractInsnNode... insns) {
 			this.jin = jin;
 			this.insns = insns;
+		}
+	}
+	
+	public static class Opaque {
+		private final int opcode;
+		private final int num;
+		
+		public Opaque(int opcode, int num) {
+			this.opcode = opcode;
+			this.num = num;
+		}
+
+		public int getOpcode() {
+			return opcode;
+		}
+
+		public int getNum() {
+			return num;
 		}
 	}
 }

@@ -26,6 +26,7 @@ import org.nullbool.api.obfuscation.MultiplicativeModifierCollector;
 import org.nullbool.api.obfuscation.MultiplicativeModifierDestroyer;
 import org.nullbool.api.obfuscation.MultiplicativeModifierRemover;
 import org.nullbool.api.obfuscation.OpaquePredicateRemover;
+import org.nullbool.api.obfuscation.OpaquePredicateRemover.Opaque;
 import org.nullbool.api.obfuscation.SimpleArithmeticFixer;
 import org.nullbool.api.obfuscation.StringBuilderCharReplacer;
 import org.nullbool.api.obfuscation.UnusedFieldRemover;
@@ -38,12 +39,19 @@ import org.nullbool.api.obfuscation.number.MultiplierVisitor;
 import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
 import org.nullbool.api.obfuscation.refactor.ClassTree;
 import org.nullbool.api.obfuscation.refactor.IRemapper;
+import org.nullbool.api.obfuscation.refactor.MethodCache;
 import org.nullbool.api.output.APIGenerator;
 import org.nullbool.api.output.OutputLogger;
 import org.nullbool.api.util.InstructionIdentifier;
 import org.nullbool.api.util.NodedContainer;
 import org.nullbool.api.util.PatternParser;
 import org.nullbool.api.util.map.ValueCreator;
+import org.nullbool.pi.core.hook.serimpl.StaticMapSerialiserImpl;
+import org.nullbool.zbot.pi.core.hooks.api.ClassHook;
+import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
+import org.nullbool.zbot.pi.core.hooks.api.HookMap;
+import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
@@ -52,10 +60,6 @@ import org.objectweb.asm.tree.MethodNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 import org.topdank.byteengineer.commons.data.LocateableJarContents;
 import org.topdank.byteio.out.CompleteJarDumper;
-import org.zbot.hooks.ClassHook;
-import org.zbot.hooks.FieldHook;
-import org.zbot.hooks.HookMap;
-import org.zbot.hooks.MethodHook;
 
 @SuppressWarnings(value = { "all" })
 public abstract class AbstractAnalysisProvider {
@@ -71,6 +75,7 @@ public abstract class AbstractAnalysisProvider {
 	private ClassTree classTree;
 	private List<ClassAnalyser> analysers;
 	private MultiplierHandler multiplierHandler;
+	private OpaquePredicateRemover opaqueRemover;
 	private CFGCache cfgCache;
 	private TreeBuilder builder;
 
@@ -96,6 +101,7 @@ public abstract class AbstractAnalysisProvider {
 		classTree.output();
 
 		multiplierHandler = new MultiplierHandler();
+		builder = new TreeBuilder();
 		deobfuscate();
 
 		deobTime = System.currentTimeMillis() - startTime;
@@ -129,10 +135,10 @@ public abstract class AbstractAnalysisProvider {
 	private void output() {
 		HookMap hookMap = OutputLogger.output();
 
-		for (ClassHook h : hookMap.getClasses()) {
-			for (MethodHook m : h.getMethods()) {
-				if (m.getInstructions() != null)
-					m.getInstructions().reset();
+		for (ClassHook h : hookMap.classes()) {
+			for (MethodHook m : h.methods()) {
+				if (m.insns() != null)
+					m.insns().reset();
 			}
 		}
 
@@ -156,7 +162,43 @@ public abstract class AbstractAnalysisProvider {
 			FileOutputStream fos = new FileOutputStream(logFile);
 			// write content header type
 			fos.write("content-type=bser\n".getBytes());
-			map.serialise(map, fos);
+			
+			MethodCache cache = new MethodCache(contents.getClassContents());
+			for(ClassHook ch : map.classes()) {
+				for(MethodHook mh : ch.methods()) {
+					// TODO: Get after empty param deob
+					MethodNode m = cache.get(mh.owner().obfuscated(), mh.obfuscated(), mh.val(MethodHook.DESC));
+					
+					if(m == null) {
+						System.out.println("NULL " + mh.refactored());
+						continue;
+					}
+					
+					Opaque op = opaqueRemover.find(m);
+					int num = 0;
+					if(op != null) {
+						num = op.getNum();
+						switch(op.getOpcode()) {
+							case Opcodes.IF_ICMPLE:
+							case Opcodes.IF_ICMPLT:
+								num -= 1;
+								break;
+							// IF_ICMPNE can be any number other than the num
+							case Opcodes.IF_ICMPNE:
+							case Opcodes.IF_ICMPGE:
+							case Opcodes.IF_ICMPGT:
+								num += 1;
+								break;
+							case Opcodes.IF_ICMPEQ:
+								// no change.
+								break;
+						}
+					}
+					mh.var(MethodHook.SAFE_OPAQUE, Integer.toString(num));
+				}
+			}
+			
+			new StaticMapSerialiserImpl().serialise(map, fos);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -167,14 +209,14 @@ public abstract class AbstractAnalysisProvider {
 		Map<String, FieldHook>  fields  = new HashMap<String, FieldHook>();
 		Map<String, MethodHook> methods = new HashMap<String, MethodHook>();
 
-		for(ClassHook h : hookMap.getClasses()){
-			classes.put(h.getObfuscated(), h);
-			for(FieldHook f : h.getFields()){
-				fields.put(f.getOwner().getObfuscated() + "." + f.getName().getObfuscated() + " " + f.getDesc().getObfuscated(), f);
+		for(ClassHook h : hookMap.classes()){
+			classes.put(h.obfuscated(), h);
+			for(FieldHook f : h.fields()){
+				fields.put(f.owner().obfuscated() + "." + f.obfuscated() + " " + f.val(FieldHook.DESC), f);
 			}
 
-			for(MethodHook m : h.getMethods()){
-				methods.put(m.getOwner().getObfuscated() + "." + m.getName().getObfuscated() + m.getDesc().getObfuscated(), m);
+			for(MethodHook m : h.methods()){
+				methods.put(m.owner().obfuscated() + "." + m.obfuscated() + m.val(MethodHook.DESC), m);
 			}
 		}
 
@@ -183,7 +225,7 @@ public abstract class AbstractAnalysisProvider {
 			public String resolveMethodName(String owner, String name, String desc) {
 				String key = owner + "." + name + desc;
 				if(methods.containsKey(key)){
-					return methods.get(key).getName().getRefactored();
+					return methods.get(key).refactored();
 				}
 				return name;
 			}
@@ -192,7 +234,7 @@ public abstract class AbstractAnalysisProvider {
 			public String resolveFieldName(String owner, String name, String desc) {
 				String key = owner + "." + name + " " + desc;
 				if(fields.containsKey(key)){
-					return fields.get(key).getName().getRefactored();
+					return fields.get(key).refactored();
 				}
 				//let the refactorer do it's own thang if we can't quick-find it
 				//  ie. it will do a deep search.
@@ -203,7 +245,7 @@ public abstract class AbstractAnalysisProvider {
 			public String resolveClassName(String owner) {
 				ClassHook ref = classes.get(owner);
 				if(ref != null)
-					return ref.getRefactored();
+					return ref.refactored();
 				return owner;
 			}
 		};
@@ -227,7 +269,7 @@ public abstract class AbstractAnalysisProvider {
 			e.printStackTrace();
 		}
 	}
-
+	
 	private void dumpDeob() {
 		JarContents<ClassNode> contents = new JarContents<ClassNode>();
 		contents.getClassContents().addAll(getClassNodes().values());
@@ -286,7 +328,6 @@ public abstract class AbstractAnalysisProvider {
 
 	private void deobfuscate() {
 		JarContents<ClassNode> contents = new LocateableJarContents<ClassNode>(new NodedContainer<ClassNode>(this.contents.getClassContents()), null, null);
-		builder = new TreeBuilder();
 		
 		if(flags.getOrDefault("reorderfields", true))
 			reorderFields();
@@ -440,20 +481,20 @@ public abstract class AbstractAnalysisProvider {
 	}
 
 	private void deobOpaquePredicates() {
-		OpaquePredicateRemover remover = new OpaquePredicateRemover();
+		opaqueRemover = new OpaquePredicateRemover();
 
 		for(ClassNode cn : contents.getClassContents()) {
 			for(MethodNode m : cn.methods) {
 				if(m.instructions.size() > 0) {
-					if(remover.methodEnter(m)) {
-						builder.build(m).accept(remover);
-						remover.methodExit();
+					if(opaqueRemover.methodEnter(m)) {
+						builder.build(m).accept(opaqueRemover);
+						opaqueRemover.methodExit();
 					}
 				}
 			}
 		}
 
-		remover.output();
+		opaqueRemover.output();
 	}
 
 	private void reorderNullChecks() {
@@ -596,6 +637,10 @@ public abstract class AbstractAnalysisProvider {
 
 	public boolean isHaltRequested() {
 		return haltRequested;
+	}
+	
+	public OpaquePredicateRemover getOpaqueRemover() {
+		return opaqueRemover;
 	}
 
 	public void requestHalt() {

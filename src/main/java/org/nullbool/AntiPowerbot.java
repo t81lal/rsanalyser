@@ -509,14 +509,14 @@ public class AntiPowerbot implements Opcodes {
 		final char[] array4 = array2;
 		return new String(array4);
 	}
-
+	
 	public static final class ClassLoaderExt extends ClassLoader {
-		public void define(ClassNode cn) {
+		@SuppressWarnings("deprecation")
+		public Class<?> define(ClassNode cn) {
 			ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
 			cn.accept(cw);
 			byte[] bytes = cw.toByteArray();
-
-			defineClass(cn.name, bytes, 0, bytes.length);
-		}
+			return defineClass(cn.name, bytes, 0, bytes.length);
+	    }
 	}
 }

@@ -12,14 +12,13 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
+import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.zbot.hooks.FieldHook;
-import org.zbot.hooks.MethodHook;
-import org.zbot.hooks.MethodHook.MethodType;
 
 /**
  * @author Bibl
@@ -65,15 +64,15 @@ public class HashtableAnalyser extends ClassAnalyser {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 			
 			if(putMethod != null) {
-				list.add(asMethodHook(MethodType.CALLBACK, putMethod, "put"));
+				list.add(asMethodHook(putMethod, "put").var(MethodHook.TYPE, MethodHook.CALLBACK));
 			}
 			
 			if(firstMethod != null) {
-				list.add(asMethodHook(MethodType.CALLBACK, firstMethod, "first"));
+				list.add(asMethodHook(firstMethod, "first").var(MethodHook.TYPE, MethodHook.CALLBACK));
 			}
 			
 			if(nextMethod != null) {
-				list.add(asMethodHook(MethodType.CALLBACK, nextMethod, "next"));
+				list.add(asMethodHook(nextMethod, "next").var(MethodHook.TYPE, MethodHook.CALLBACK));
 			}
 			
             //aload0 // reference to self
@@ -89,14 +88,14 @@ public class HashtableAnalyser extends ClassAnalyser {
 				if(m.desc.endsWith(")V")) {
 					List<AbstractInsnNode[]> ainsl = findAllOpcodePatterns(m, SET_NULL_FIELD);
 					if(ainsl.size() == 2) {
-						list.add(asMethodHook(MethodType.CALLBACK, m, "clear"));
+						list.add(asMethodHook(m, "clear").var(MethodHook.TYPE, MethodHook.CALLBACK));
 					}
 				} else if(m.desc.startsWith("(J") && m.desc.endsWith(nodeDesc)) {
 					List<AbstractInsnNode> ains = findAllOpcodePatternsStarts(m, KEY_CALC_PATTERN);
 					if(ains.size() == 1) {
 						List<AbstractInsnNode[]> ainsl = findAllOpcodePatterns(m, SET_NULL_FIELD);
 						if(ainsl.size() == 1) {
-							list.add(asMethodHook(MethodType.CALLBACK, m, "get"));
+							list.add(asMethodHook(m, "get").var(MethodHook.TYPE, MethodHook.CALLBACK));
 						}
 					}
 					//getfield Hashtable.getSize:int

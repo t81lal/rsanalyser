@@ -8,6 +8,8 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
+import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
 import org.objectweb.asm.commons.cfg.tree.node.MethodMemberNode;
@@ -17,9 +19,6 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.zbot.hooks.FieldHook;
-import org.zbot.hooks.MethodHook;
-import org.zbot.hooks.MethodHook.MethodType;
 
 @SupportedHooks(fields = {"getResults&[I", "getMem&[I", "getCount&I"}, methods = {"init&()V", "next&()I", "isaac&()V"})
 /**
@@ -153,14 +152,14 @@ public class IsaacCipherAnalyser extends ClassAnalyser {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 			
 			/*initMin will be set if this method is called.*/
-			list.add(asMethodHook(MethodType.CALLBACK, initMin, "init"));
+			list.add(asMethodHook(initMin, "init").var(MethodHook.TYPE, MethodHook.CALLBACK));
 			
 			if(nextMethod != null) {
-				list.add(asMethodHook(MethodType.CALLBACK, nextMethod, "next"));
+				list.add(asMethodHook(nextMethod, "next").var(MethodHook.TYPE, MethodHook.CALLBACK));
 			}
 			
 			if(isaacMethod != null) {
-				list.add(asMethodHook(MethodType.CALLBACK, isaacMethod, "isaac"));
+				list.add(asMethodHook(isaacMethod, "isaac").var(MethodHook.TYPE, MethodHook.CALLBACK));
 			}
 	             
 			return list;

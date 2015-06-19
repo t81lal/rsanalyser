@@ -13,7 +13,7 @@ import org.nullbool.api.analysis.SupportedHooks;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.zbot.hooks.FieldHook;
+import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
 
 /**
  * @author : MalikDz
