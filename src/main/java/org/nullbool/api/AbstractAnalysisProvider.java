@@ -154,6 +154,8 @@ public abstract class AbstractAnalysisProvider {
 			folder.mkdirs();
 			File logFile = new File(folder, "log.ser");
 			FileOutputStream fos = new FileOutputStream(logFile);
+			// write content header type
+			fos.write("content-type=bser\n".getBytes());
 			map.serialise(map, fos);
 		} catch (Exception e) {
 			e.printStackTrace();

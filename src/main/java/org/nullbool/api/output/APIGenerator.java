@@ -1,8 +1,10 @@
 package org.nullbool.api.output;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +30,8 @@ import org.zbot.hooks.HookMap;
 import org.zbot.hooks.InterfaceMapping;
 import org.zbot.hooks.MethodHook;
 
+import com.google.gson.GsonBuilder;
+
 /**
  * @author Bibl (don't ban me pls) <br>
  * @created 19 Apr 2015 at 09:31:38 <br>
@@ -35,7 +39,7 @@ import org.zbot.hooks.MethodHook;
 public class APIGenerator {
 
 	public static boolean log = true;
-	public static final String ACCESSOR_BASE = "org/zbot/accessors/";
+	public static final String ACCESSOR_BASE = "org/nullbool/piexternal/game/api/accessors/";
 	public static final Map<String, String> SUPER_INTERFACES = new HashMap<String, String>();
 	public static final Map<String, String> API_CANONICAL_NAMES = new HashMap<String, String>();
 
@@ -44,6 +48,12 @@ public class APIGenerator {
 		API_CANONICAL_NAMES.put("Canvas", "ICanvas");
 		API_CANONICAL_NAMES.put("WrappedException", "IWrappedException");
 		API_CANONICAL_NAMES.put("ExceptionReporter", "IExceptionReporter");
+		
+		API_CANONICAL_NAMES.put("Rasteriser", "render/IRasteriser");
+		
+		API_CANONICAL_NAMES.put("IsaacCipher", "network/IsaacCipher");
+		API_CANONICAL_NAMES.put("Buffer", "network/IBuffer");
+		API_CANONICAL_NAMES.put("Packet", "network/IPacket");
 
 		API_CANONICAL_NAMES.put("Node", "collections/INode");
 		API_CANONICAL_NAMES.put("DualNode", "collections/IDualNode");
@@ -56,6 +66,7 @@ public class APIGenerator {
 
 		API_CANONICAL_NAMES.put("Widget", "widgets/IWidget");
 		API_CANONICAL_NAMES.put("WidgetNode", "widgets/IWidgetNode");
+		API_CANONICAL_NAMES.put("ItemContainer", "widgets/IItemContainer");
 
 		API_CANONICAL_NAMES.put("Renderable", "entity/IRenderable");
 		API_CANONICAL_NAMES.put("Actor", "entity/IActor");
@@ -73,12 +84,15 @@ public class APIGenerator {
 		API_CANONICAL_NAMES.put("Region", "world/IRegion");
 
 		// Client must extend org/zbot/api/IGameClient which is the client accessor base
-
-		SUPER_INTERFACES.put("Client", "org/zbot/api/IGameClient");
+		// NEW BASE
+		// org/nullbool/piexternal/game/api/IGameClient
+		
+		SUPER_INTERFACES.put("Client", "org/nullbool/piexternal/game/api/IGameClient");
 		SUPER_INTERFACES.put("DualNode", API_CANONICAL_NAMES.get("Node"));
 		SUPER_INTERFACES.put("Tile", API_CANONICAL_NAMES.get("Node"));
 		SUPER_INTERFACES.put("WidgetNode", API_CANONICAL_NAMES.get("Node"));
 		SUPER_INTERFACES.put("Widget", API_CANONICAL_NAMES.get("Node"));
+		SUPER_INTERFACES.put("ItemContainer", API_CANONICAL_NAMES.get("Node"));
 
 		SUPER_INTERFACES.put("Renderable", API_CANONICAL_NAMES.get("DualNode"));
 		SUPER_INTERFACES.put("Model", API_CANONICAL_NAMES.get("Renderable"));
@@ -92,6 +106,25 @@ public class APIGenerator {
 		SUPER_INTERFACES.put("NPCDefinition", API_CANONICAL_NAMES.get("DualNode"));
 		SUPER_INTERFACES.put("ObjectDefinition", API_CANONICAL_NAMES.get("DualNode"));
 		SUPER_INTERFACES.put("ItemDefinition", API_CANONICAL_NAMES.get("DualNode"));
+		
+		SUPER_INTERFACES.put("Rasteriser", API_CANONICAL_NAMES.get("DualNode"));
+		
+		SUPER_INTERFACES.put("Buffer", API_CANONICAL_NAMES.get("Node"));
+		SUPER_INTERFACES.put("Packet", API_CANONICAL_NAMES.get("Buffer"));
+		
+		DefaultAPIHelper helper = new DefaultAPIHelper(ACCESSOR_BASE);
+		for(Entry<String, String> e : API_CANONICAL_NAMES.entrySet()) {
+			helper.remapCanonicalname(e.getKey(), e.getValue());
+		}
+		for(Entry<String, String> e : SUPER_INTERFACES.entrySet()) {
+			helper.mapSuperInterfaces(e.getKey(), new String[]{e.getValue()}, false);
+		}
+		
+		try(BufferedWriter bw = new BufferedWriter(new FileWriter(new File("out/translate.json")))) {
+			bw.write(new GsonBuilder().setPrettyPrinting().create().toJson(helper));
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void createAPI(HookMap hookMap) {
@@ -110,7 +143,7 @@ public class APIGenerator {
 
 			String sup = SUPER_INTERFACES.get(hook.getRefactored());
 			if (sup != null) {
-				if (!sup.startsWith("org/zbot"))
+				if (!sup.startsWith("org/nullbool"))
 					sup = ACCESSOR_BASE + sup;
 				hook.getInterfaces().add(new InterfaceMapping(hook, sup));
 				cn.interfaces.add(sup);
@@ -146,7 +179,7 @@ public class APIGenerator {
 		CompleteJarDumper dumper = new CompleteJarDumper(contents);
 		String name = Context.current().getRevision().getName();
 		File baseDir = new File(String.format("out/%s/", name));
-		File file = new File(baseDir, String.format("api%s.jar", name));
+		File file = new File(baseDir, String.format("api.jar"));
 		if (file.exists())
 			file.delete();
 		file.mkdirs();
