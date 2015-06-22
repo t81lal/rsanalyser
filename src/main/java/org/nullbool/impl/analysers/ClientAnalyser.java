@@ -40,7 +40,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 		"getClientSettings&[I", "getWidgetsSettings&[I","getHoveredRegionTileX&I","getHoveredRegionTileY&I","getItemTables&Hashtable"}, 
 		
 		methods = { "loadObjDefinition&(I)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
-		"getPlayerModel&()LModel;", "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&(IIIILjava/lang/String;Ljava/lang/String;II)V" })
+		/*"getPlayerModel&()LModel;",*/ "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&(IIIILjava/lang/String;Ljava/lang/String;II)V" })
 public class ClientAnalyser extends ClassAnalyser {
 
 	public ClientAnalyser() throws AnalysisException {
@@ -428,9 +428,9 @@ public class ClientAnalyser extends ClassAnalyser {
 			mn = npcClass + "." + m.name;
 			mNode = findMethodNode(Context.current().getClassNodes(), ";I.{0,1};" + v);
 			//
-			mn = playerClass + "." + m.name;
-			mhook = getAnalyser("Model").asMethodHook(mn, "getPlayerModel").var(MethodHook.TYPE, MethodHook.CALLBACK);
-			list.add(mhook);
+			//mn = playerClass + "." + m.name;
+			//mhook = getAnalyser("Model").asMethodHook(mn, "getPlayerModel").var(MethodHook.TYPE, MethodHook.CALLBACK);
+			//list.add(mhook);
 
 			// these hooks are actually method hook, I think we should make a
 			// method format look

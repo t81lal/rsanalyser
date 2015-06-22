@@ -31,21 +31,23 @@ public class Context {
 	 * until the method times out (25,000 ms).
 	 */
 	public static void block() {
-		final long startTime = System.currentTimeMillis();
-		final Thread thread = Thread.currentThread();
-		while(true) {
-			if(binded.containsKey(thread))
-				break;
-			
-			long now = System.currentTimeMillis();
-			long d   = now - startTime;
-			if(d >= 25000) {
-				throw new RuntimeException("Timed out.");
-			}
-			try {
-				Thread.sleep(250);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		synchronized (binded) {
+			final long startTime = System.currentTimeMillis();
+			final Thread thread = Thread.currentThread();
+			while(true) {
+				if(binded.containsKey(thread))
+					break;
+				
+				long now = System.currentTimeMillis();
+				long d   = now - startTime;
+				if(d >= 25000) {
+					throw new RuntimeException("Timed out.");
+				}
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -56,18 +58,22 @@ public class Context {
 	 * @param provider
 	 */
 	public static void bind(AbstractAnalysisProvider provider) {
-		Thread thread = Thread.currentThread();
-		if(binded.containsKey(thread))
-			throw new RuntimeException("A provider is already binded to this thread!");
-		
-		binded.put(thread, provider);
+		synchronized (binded) {
+			Thread thread = Thread.currentThread();
+			if(binded.containsKey(thread))
+				throw new RuntimeException("A provider is already binded to this thread!");
+			
+			binded.put(thread, provider);	
+		}
 	}
 
 	/**
 	 * Removes the current Thread (and thus provider) from the map.
 	 */
 	public static void unbind() {
-		binded.remove(Thread.currentThread());
+		synchronized (binded) {
+			binded.remove(Thread.currentThread());
+		}
 	}
 
 	/**
@@ -75,6 +81,8 @@ public class Context {
 	 * @return An AbstractAnalysisProvider or null.
 	 */
 	public static AbstractAnalysisProvider current() {
-		return binded.get(Thread.currentThread());
+		synchronized (binded) {
+			return binded.get(Thread.currentThread());
+		}
 	}
 }

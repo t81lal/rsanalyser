@@ -167,7 +167,7 @@ public class OutputLogger {
 						sb.append(longstring(sb2.toString(), 12));
 					}
 					sb.append(" (");
-					sb.append(hook.obfuscated());
+					sb.append(hook.val(FieldHook.DESC));
 					sb.append(")");
 					sb.append("\n");
 				}
@@ -220,7 +220,7 @@ public class OutputLogger {
 					// }
 					sb.append(longstring(sb2.toString(), printMultis ? 25 : 12));
 					sb.append(" ");
-					sb.append(hook.obfuscated());
+					sb.append(hook.val(MethodHook.DESC));
 					sb.append("");
 					sb.append("\n");
 				}
