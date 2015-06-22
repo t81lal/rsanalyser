@@ -15,16 +15,15 @@ import java.util.Map;
 
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.api.obfuscation.BlockReorderer;
 import org.nullbool.api.obfuscation.CallVisitor;
 import org.nullbool.api.obfuscation.ComparisonReorderer;
+import org.nullbool.api.obfuscation.ComplexNumberVisitor;
+import org.nullbool.api.obfuscation.ControlFlowFixer;
 import org.nullbool.api.obfuscation.EmptyParameterFixer;
 import org.nullbool.api.obfuscation.EmptyPopRemover;
 import org.nullbool.api.obfuscation.FieldOpener;
 import org.nullbool.api.obfuscation.HierarchyVisitor;
-import org.nullbool.api.obfuscation.MultiplicativeModifierCollector;
 import org.nullbool.api.obfuscation.MultiplicativeModifierDestroyer;
-import org.nullbool.api.obfuscation.MultiplicativeModifierRemover;
 import org.nullbool.api.obfuscation.OpaquePredicateRemover;
 import org.nullbool.api.obfuscation.OpaquePredicateRemover.Opaque;
 import org.nullbool.api.obfuscation.SimpleArithmeticFixer;
@@ -170,7 +169,8 @@ public abstract class AbstractAnalysisProvider {
 					MethodNode m = cache.get(mh.owner().obfuscated(), mh.obfuscated(), mh.val(MethodHook.DESC));
 					
 					if(m == null) {
-						System.out.println("NULL " + mh.refactored());
+						System.out.println("NULL HOOK CALL?");
+						System.out.println(mh.baseToString());
 						continue;
 					}
 					
@@ -344,22 +344,17 @@ public abstract class AbstractAnalysisProvider {
 		deobOpaquePredicates();
 		
 		if(flags.getOrDefault("paramdeob", false)) {
-			//fixEmptyParams();
+			fixEmptyParams();
 		}
 		
 		removeEmptyPops();
-		//not really needed + a bit slow
-		//replaceCharStringBuilders();
+		// not really needed + a bit slow
+		// replaceCharStringBuilders();
 		
-		//destroyMultis();
-		//TOOD: multis
-		//removeMultis();
+		// destroyMultis();
+		// removeMultis();
 		buildCfgs();
-		reorderBlocks();
-		
-//		if(true)
-//			System.exit(1);
-		
+		// reorderBlocks();
 	}
 	
 	private void destroyMultis() {
@@ -375,41 +370,47 @@ public abstract class AbstractAnalysisProvider {
 	}
 
 	private void removeMultis() {
-		MultiplicativeModifierCollector collector = new MultiplicativeModifierCollector();
-
-		for(ClassNode cn : contents.getClassContents()) {
-			for(MethodNode m : cn.methods) {
-				if(m.instructions.size() > 0) {
-					builder.build(m).accept(collector);
-				}
-			}
-		}
-
-		collector.output();
-
-		MultiplicativeModifierRemover remover = new MultiplicativeModifierRemover(collector);
-		for(ClassNode cn : contents.getClassContents()) {
-			for(MethodNode m : cn.methods) {
-				if(m.instructions.size() > 0) {
-					builder.build(m).accept(remover);
-				}
-			}
-		}
-
-		remover.output();
+		ComplexNumberVisitor visitor = new ComplexNumberVisitor();
+		visitor.run(contents.getClassContents(), builder);
+		
+//		MultiplicativeModifierCollector collector = new MultiplicativeModifierCollector();
+//
+//		for(ClassNode cn : contents.getClassContents()) {
+//			for(MethodNode m : cn.methods) {
+//				if(m.instructions.size() > 0) {
+//					builder.build(m).accept(collector);
+//				}
+//			}
+//		}
+//
+//		collector.output();
+//
+//		MultiplicativeModifierRemover remover = new MultiplicativeModifierRemover(collector);
+//		for(ClassNode cn : contents.getClassContents()) {
+//			for(MethodNode m : cn.methods) {
+//				if(m.instructions.size() > 0) {
+//					builder.build(m).accept(remover);
+//				}
+//			}
+//		}
+//
+//		remover.output();
 	}
 
 	private void reorderBlocks() {
 		int j = 0;
 		
-		BlockReorderer reorderer = new BlockReorderer();
+		//BlockReorderer reorderer = new BlockReorderer();
 
+		ControlFlowFixer fixer = new ControlFlowFixer();
+		
 		for(ClassNode cn : contents.getClassContents()) {
 			for(MethodNode m : cn.methods) {
 				if(m.instructions.size() > 0 && m.tryCatchBlocks.size() <= 1) {
 					try {
 						IControlFlowGraph oldGraph = cfgCache.get(m);
-						reorderer.reorder(m, oldGraph);
+						fixer.fix(m, oldGraph);
+						//reorderer.reorder(m, oldGraph);
 					} catch (ControlFlowException e) {
 						e.printStackTrace();
 					}
@@ -417,9 +418,12 @@ public abstract class AbstractAnalysisProvider {
 			}
 		}
 		
+		if(true) {
+			System.exit(1);
+		}
 		
 		System.out.printf("Fixed %d methods.%n", j);
-		reorderer.output();
+		//reorderer.output();
 	}
 	
 	private void buildCfgs() {

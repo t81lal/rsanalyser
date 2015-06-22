@@ -29,20 +29,6 @@ public class MultiplicativeModifierCollector extends NodeVisitor {
 	public final CountMap mults = new CountMap();
 	public final Set<FieldNode> changeable = new HashSet<FieldNode>();
 
-	//	@Override
-	//	public void visitField(FieldMemberNode f) {
-	//		String desc = f.fin().desc;
-	//		if(desc.equals("I") || desc.equals("J")) {
-	//			total.getNotNull(lookup(f.fin())).incrementAndGet();
-	//			
-	//			if(f.opcode() == GETFIELD || f.opcode() == GETSTATIC) {
-	//				if(f.firstNumber() != null) {
-	//					System.out.println(f.fin().key() + " has " + f.firstNumber().number());
-	//				}
-	//			}
-	//		}
-	//	}
-
 	@Override
 	public void visitOperation(ArithmeticNode an) {
 		FieldMemberNode f = an.firstField();

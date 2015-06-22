@@ -538,7 +538,6 @@ private static int graphCount = 0;
 	}
 	
 	public void removeBlock(FlowBlock block) {
-		
 		if(debug) {
 			System.out.println("Removing " + block.id());
 			System.out.println("t1");
@@ -562,7 +561,6 @@ private static int graphCount = 0;
 		
 		if(debug) {
 			System.out.println("t3");
-			
 			System.out.printf("block has %d and %d.%n", block.predecessors().size(), block.successors().size());
 		}
 
@@ -612,10 +610,10 @@ private static int graphCount = 0;
 	
 	public void removeDeadBlocks() {
 		LinkedList<FlowBlock> stack = new LinkedList<FlowBlock>();
-		Set<FlowBlock> set = new HashSet<FlowBlock>();
+		Set<FlowBlock> visited = new HashSet<FlowBlock>();
 
 		stack.add(entry);
-		set.add(entry);
+		visited.add(entry);
 
 		while (!stack.isEmpty()) {
 			FlowBlock block = stack.removeFirst();
@@ -625,23 +623,19 @@ private static int graphCount = 0;
 			successors.addAll(block.exceptionSuccessors());
 
 			for (FlowBlock succ : successors) {
-				if (!set.contains(succ)) {
+				if (!visited.contains(succ)) {
 					stack.add(succ);
-					set.add(succ);
+					visited.add(succ);
 				}
 			}
 		}
 
-		Set<FlowBlock> setAllBlocks = new HashSet<FlowBlock>(blocks);
-		setAllBlocks.removeAll(set);
+		Set<FlowBlock> deadBlocks = new HashSet<FlowBlock>();
+		deadBlocks.addAll(blocks);
+		deadBlocks.removeAll(visited);
 
-		for (FlowBlock block : setAllBlocks) {
-			
+		for (FlowBlock block : deadBlocks) {
 			System.out.println(block.toString() + " in " + block.last().method + " is dead.");
-			
-//			if(debug) {
-//				System.out.println("ControlFlowGraph.removeDeadBlocks()");
-//			}
 			removeBlock(block);
 		}
 		

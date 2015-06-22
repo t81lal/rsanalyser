@@ -210,13 +210,13 @@ public class OpaquePredicateRemover extends NodeVisitor {
 					}
 					mcount++;
 				} else {
-					if(Context.current().getFlags().getOrDefault("basicout", true))
-						System.out.println(method);
+					//if(Context.current().getFlags().getOrDefault("basicout", true))
+					//	System.out.println("OpaquePredicateRemover.methodExit(): " + method);
 					typediscard++;
 				}
 			} else {
-				if(Context.current().getFlags().getOrDefault("basicout", true))
-					System.err.println(method);
+				//if(Context.current().getFlags().getOrDefault("basicout", true))
+				//	System.err.println("OpaquePredicateRemover.methodExit(): " + method);
 				mdiscard++;
 			}
 		}

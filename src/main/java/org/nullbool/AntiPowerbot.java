@@ -41,7 +41,9 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.topdank.banalysis.util.ClassUtil;
+import org.topdank.byteengineer.commons.data.JarContents;
 import org.topdank.byteengineer.commons.data.JarInfo;
+import org.topdank.byteengineer.commons.data.LocateableJarContents;
 import org.topdank.byteio.in.SingleJarDownloader;
 import org.topdank.byteio.out.CompleteJarDumper;
 
@@ -49,31 +51,31 @@ public class AntiPowerbot implements Opcodes {
 
 	public static void main(String[] args) throws Exception {
 		File dir = new File("C:/Users/Bibl/Desktop/osbots shit nigga");
-		File pb = new File(dir, "RSBot-6064.jar");
-		File out = new File(dir, "pbout.jar");
-
+		//File pb = new File(dir, "RSBot-6064.jar");
+		//File out = new File(dir, "pbout.jar");
+		File pb = new File(dir, "osb.jar");
+		File out = new File(dir, "osbout.jar");
+		
 		SingleJarDownloader<ClassNode> dl = new SingleJarDownloader<ClassNode>(new JarInfo(pb));
 		dl.download();
 
-		removeUnreachableCode(dl.getJarContents().getClassContents());
-		dupduppop2(dl.getJarContents().getClassContents());
-		MethodCache cache = new MethodCache(dl.getJarContents().getClassContents());
+		List<ClassNode> classList = dl.getJarContents().getClassContents();
+		removeUnreachableCode(classList);
+		dupduppop2(classList);
+		MethodCache cache = new MethodCache(classList);
 		
 		// allatori doesn't use jsr/ret
 		
-		for(ClassNode cn : dl.getJarContents().getClassContents()) {
+		for(ClassNode cn : classList) {
 			for(MethodNode m : cn.methods) {
 				if(m.localVariables != null && !m.localVariables.isEmpty()) {
 					m.localVariables.clear();
 				}
-				
-				
 			}
 		}
 		
-		ClassTree classTree = new ClassTree(dl.getJarContents().getClassContents());
 		Set<MethodNode> valid = new HashSet<MethodNode>();
-		for(ClassNode c : classTree.getClasses().values()) {
+		for(ClassNode c : classList) {
 			for(MethodNode m : c.methods) {
 				boolean se = false, sb = false, s = false, e = false, cn = false, mn = false;
 
@@ -100,6 +102,11 @@ public class AntiPowerbot implements Opcodes {
 						}
 					}
 				}
+				
+				if(c.name.equals("org/osbot/CB") && m.name.equals("iIIiIIIiiI")) {
+					System.out.println(fail);
+					System.out.println(Arrays.toString(new boolean[]{se, sb, s, e, cn, mn}));
+				}
 
 				//boolean se, sb, s, e, cn, mn;
 				if(fail) {
@@ -114,7 +121,7 @@ public class AntiPowerbot implements Opcodes {
 		}
 
 		NullPermeableHashMap<MethodNode, Set<MethodNode>> callMap = new NullPermeableHashMap<MethodNode, Set<MethodNode>>(new SetCreator<MethodNode>());
-		for(ClassNode cn : classTree.getClasses().values()) {
+		for(ClassNode cn : classList) {
 			for(MethodNode m : cn.methods) {
 				for(AbstractInsnNode ain : m.instructions.toArray()) {
 					if(ain instanceof MethodInsnNode) {
@@ -127,13 +134,6 @@ public class AntiPowerbot implements Opcodes {
 				}
 			}
 		}
-
-		//for(Entry<MethodNode, Set<MethodNode>> e : callMap.entrySet()) {
-		//	System.out.println(e.getKey().owner + "." + e.getKey().name + " used from " + e.getValue().size() + " different callers.");
-		//	for(MethodNode m : e.getValue()) {
-		//		System.out.println("   " + m);
-		//	}
-		//}
 
 		Map<MethodNode, Class<?>> generated = new HashMap<MethodNode, Class<?>>();
 
@@ -205,11 +205,6 @@ public class AntiPowerbot implements Opcodes {
 
 			cn.methods.add(mNew);
 
-			//System.out.println(m);
-			//InstructionPrinter.consolePrint(mNew);
-			//if(true)
-			//	System.exit(1);
-
 			// TODO: check for collisions
 			cl.define(cn);
 			
@@ -219,7 +214,7 @@ public class AntiPowerbot implements Opcodes {
 
 		final Class<?>[] PARAMS = new Class[]{String.class, String.class, String.class};
 
-		for(ClassNode cn : classTree.getClasses().values()) {
+		for(ClassNode cn : classList) {
 			for(MethodNode m : cn.methods) {
 				if(valid.contains(m))
 					continue;
@@ -256,7 +251,7 @@ public class AntiPowerbot implements Opcodes {
 			}
 		}
 		
-		for(ClassNode cn : classTree.getClasses().values()) {
+		for(ClassNode cn : classList) {
 			cn.access |= ACC_PUBLIC;
 			cn.access &= ~ACC_PRIVATE;
 			cn.access &= ~ACC_PROTECTED;
@@ -265,24 +260,10 @@ public class AntiPowerbot implements Opcodes {
 				m.access |= ACC_PUBLIC;
 				m.access &= ~ACC_PRIVATE;
 				m.access &= ~ACC_PROTECTED;
-				
-				if(cn.name.equals("org/powerbot/Boot") && m.name.equals("run")) {
-					IControlFlowGraph graph = new InsaneControlFlowGraph();
-					graph.create(m);
-					
-					System.out.println(graph);
-					//if(true)
-					//	System.exit(1);
-				}
 			}
 		}
 
 		System.out.println(valid.size());
-
-		Map<String, String> classes = new HashMap<String, String>();
-
-		//final String bootClass = "org/powerbot/Boot";
-		//classes.put(bootClass, "org/nullbool/Boot");
 
 		Set<String> KEYWORDS = new HashSet<String>();
 		Set<String> ILLEGAL_NAMES = new HashSet<String>();
@@ -306,6 +287,10 @@ public class AntiPowerbot implements Opcodes {
 			ILLEGAL_NAMES.add(s.toUpperCase());
 		}
 
+		ClassTree classTree = new ClassTree(classList);
+		Map<String, String> classes = new HashMap<String, String>();
+		Map<String, String> fields = new HashMap<String, String>();
+
 		BytecodeRefactorer refactorer = new BytecodeRefactorer(dl.getJarContents().getClassContents(), new IRemapper() {
 
 			@Override
@@ -315,12 +300,25 @@ public class AntiPowerbot implements Opcodes {
 
 			@Override
 			public String resolveFieldName(String owner, String name, String desc) {
-				if(KEYWORDS.contains(name))
-					return "field_" + name;
+				//if(KEYWORDS.contains(name))
+				//	return "field_" + name;
+				
+				if(fields.containsKey(owner)) {
+					return fields.get(owner);
+				}
+				
+				String rep = name.replace("i", "").replace("I", "");
+				if(owner.startsWith("org/osbot") && rep.length() == 0) {
+					String newName = "field_" + (f_count++);
+					fields.put(name, newName);
+					return newName;			
+				}
+				
 				return name;
 			}
 
 			int c_count = 0;
+			int f_count = 0;
 			
 			@Override
 			public String resolveClassName(String oldName) {
@@ -340,7 +338,16 @@ public class AntiPowerbot implements Opcodes {
 
 		refactorer.start();
 
-		new CompleteJarDumper(dl.getJarContents()){
+		for(ClassNode cn : classList) {
+			if(!classTree.getClasses().values().contains(cn)) {
+				System.err.println("NO " + cn);
+			}
+		}
+		System.out.println(classList.size());
+		System.out.println(classTree.getClasses().size());
+		LocateableJarContents<ClassNode> contents = new LocateableJarContents<ClassNode>(new JarContents.ClassNodeContainer<ClassNode>(classList), dl.getJarContents().getResourceContents(), dl.getJarContents().getJarUrls());
+		
+		new CompleteJarDumper(contents){
 			@Override
 			public int dumpResource(JarOutputStream out, String name, byte[] file) throws IOException {
 				if(name.startsWith("META-INF/SERVER."))
@@ -353,14 +360,6 @@ public class AntiPowerbot implements Opcodes {
 				return super.dumpResource(out, name, file);
 			}
 		}.dump(out);
-
-		//Method m = Canvas.class.getDeclaredMethod("try", new Class[]{String.class});
-		//System.out.println(m.invoke(null, "P\u0004<\u0019s\u0001l"));
-		//for(Field f : Class.forName("org.powerbot.Boot").getDeclaredFields()) {
-		//	f.setAccessible(true);
-		//	System.out.println(f.get(null));
-		//}
-		//System.out.println(t("P\u0004<\u0019s\u0001l"));
 	}
 	
 	private static void dupduppop2(Collection<ClassNode> classes) {
@@ -377,8 +376,6 @@ public class AntiPowerbot implements Opcodes {
 									m.instructions.remove(a);
 								}
 							}
-//							if(true)
-//								System.exit(1);
 						}
 					}
 				}

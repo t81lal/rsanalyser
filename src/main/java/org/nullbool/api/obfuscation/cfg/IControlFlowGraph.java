@@ -28,6 +28,8 @@ public abstract interface IControlFlowGraph extends Iterable<FlowBlock> {
 	
 	public abstract FlowBlock findTarget(LabelNode l);
 	
+	public abstract void removeBlock(FlowBlock block);
+	
 	public abstract IControlFlowGraph create(MethodNode m) throws ControlFlowException;
 	
 	public abstract void destroy();

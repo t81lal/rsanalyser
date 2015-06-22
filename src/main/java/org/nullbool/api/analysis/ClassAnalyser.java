@@ -591,7 +591,7 @@ public abstract class ClassAnalyser implements Opcodes {
 			int target = opcodes[j++];
 			
 			if(target == -1) {			
-//				System.out.println("ClassAnalyser.findOpcodePattern() -1 target");
+				//System.out.println("ClassAnalyser.findOpcodePattern() -1 target");
 				continue;
 			} else if(target == -2) {
 				//distance to the next one

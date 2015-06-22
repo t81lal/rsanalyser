@@ -1,7 +1,6 @@
 package org.nullbool.api.obfuscation.cfg;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -141,7 +140,9 @@ public class InsaneControlFlowGraph extends AbstractControlFlowGraph {
 					i++;
 				} while(i < i_to);
 				
-				ExceptionData ed = new ExceptionData(handler, range, Arrays.asList(tcbn.type));
+				List<String> types = new ArrayList<String>();
+				types.add(tcbn.type);
+				ExceptionData ed = new ExceptionData(handler, range, types);
 				mapRanges.put(key, ed);
 				exceptions.add(ed);
 			}

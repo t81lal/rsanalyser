@@ -78,6 +78,7 @@ public class MultiplicativeModifierRemover extends NodeVisitor {
 		System.out.println(k * encoded);
 		System.out.println(k * encoded2);
 
+		System.out.println("MultiplicativeModifierRemover.test() exiting");
 		System.exit(1);
 	}
 

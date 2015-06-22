@@ -11,6 +11,49 @@ public class NumberNode extends AbstractNode {
 		super(tree, insn, collapsed, producing);
 	}
 
+	public long longNumber() {
+		AbstractInsnNode insn = insn();
+		int op = insn.opcode();
+		switch (op) {
+			case NEWARRAY:
+			case BIPUSH:
+			case SIPUSH: {
+				return ((IntInsnNode) insn).operand;
+			}
+			case ICONST_M1:
+			case ICONST_0:
+			case ICONST_1:
+			case ICONST_2:
+			case ICONST_3:
+			case ICONST_4:
+			case ICONST_5: {
+				return op - ICONST_0;
+			}
+			case LCONST_0:
+			case LCONST_1: {
+				return op - LCONST_0;
+			}
+			case FCONST_0:
+			case FCONST_1:
+			case FCONST_2: {
+				return op - FCONST_0;
+			}
+			case DCONST_0:
+			case DCONST_1: {
+				return op - DCONST_0;
+			}
+			case LDC: {
+				Object cst = ((LdcInsnNode) insn).cst;
+				if (cst instanceof Number) {
+					return ((Number)cst).longValue();
+				}
+			}
+			default: {
+				return -1;
+			}
+		}
+	}
+	
 	public int number() {
 		AbstractInsnNode insn = insn();
 		int op = insn.opcode();

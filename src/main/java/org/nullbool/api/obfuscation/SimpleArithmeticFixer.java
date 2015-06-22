@@ -14,7 +14,6 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
-import org.objectweb.asm.util.Printer;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -33,7 +32,7 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 	private int unswitchableSubs, correctSubs = 0;
 	private int awtfs;
 
-	private int swappedMultis, correctMultis, multiWtfs;
+	private int multiplyByOne, swappedMultis, correctMultis, multiWtfs;
 
 	@Override
 	public void visitOperation(ArithmeticNode expr) {
@@ -56,8 +55,8 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 		
 		if(a2.opcode() == -1) {
 			generalWtfs++;
-			if(Context.current().getFlags().getOrDefault("basicout", true))
-				System.err.printf("   %s [%s, %d] [children=%d] at %s.%n", Printer.OPCODES[expr.opcode()], Printer.OPCODES[a1.opcode()], a2.opcode(), expr.children(), expr.method());
+			//if(Context.current().getFlags().getOrDefault("basicout", true))
+			//	System.err.printf("   %s [%s, %d] [children=%d] at %s.%n", Printer.OPCODES[expr.opcode()], Printer.OPCODES[a1.opcode()], a2.opcode(), expr.children(), expr.method());
 			return;
 		}
 
@@ -231,7 +230,12 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 			/* If the first number is the constant, we move it after the other 
 			 * operand. */
 			
-			if(a1.equals(first)) {
+			if(first.longNumber() == 1) {
+				MethodNode method = expr.method();
+				method.instructions.remove(expr.insn());
+				method.instructions.remove(first.insn());
+				multiplyByOne++;
+			} else if(a1.equals(first)) {
 				if(a2.insn() instanceof FieldInsnNode || a2.insn() instanceof VarInsnNode) {
 					InstructionSwap swap = new InstructionSwap();
 					swap.method = expr.method();
@@ -253,6 +257,7 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 						}*/
 					swappedMultis++;
 				} else {
+					// System.out.println("It's a " + Printer.OPCODES[a2.opcode()]);
 					multiWtfs++;
 				}
 			} else {
@@ -351,6 +356,7 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 			System.out.printf("   Found    %4d already correct subtraction operations  (variable - const).%n", correctSubs);
 			System.out.printf("   Hit a few (%d) wtfs...%n", awtfs);
 			System.out.println();
+			System.out.printf("   Removed %4d redundant multiplications (*1)%n", multiplyByOne);
 			System.out.printf("   Swapped  %4d constant multiplication expressions     (const * variable).%n", swappedMultis);
 			System.out.printf("   Found    %4d preferable CME's                        (variable * const).%n", correctMultis);
 			System.out.printf("   Hit a few (%d) wtfs...%n", multiWtfs);

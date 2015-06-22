@@ -31,33 +31,12 @@ public class Boot {
 	private static int revision = 79;
 
 	public static void main(String[] args) throws Exception {
-		//		File f = new File("C:/Users/Bibl/Desktop/zbot git/rsanalyser/out/79/deobsrc/src3/deob79");
-		//		
-		//		for(File f1 : f.listFiles()) {
-		//			if(f1.getName().contains("META"))
-		//				continue;
-		//			BufferedReader br = new BufferedReader(new FileReader(f1));
-		//			String line;
-		//			while((line = br.readLine()) != null) {
-		//				if(line.contains("//")) {
-		//					System.out.println("error in " + f1.getAbsolutePath());
-		//				}
-		//			}
-		//			br.close();
-		//		}
-		//		
-		//		HookMap map = new MapDeserialiserImpl().deserialise(new FileInputStream(new File("out/79/log.ser")));
-		//		System.out.println(map.getClasses().size());
-		//		
-		//		int f = 0;
-		//		int m = 0;
-		//		
-		//		for(ClassHook c : map.getClasses()) {
-		//			f += c.getFields().size();
-		//			m += c.getMethods().size();
-		//		}
-		//		
-		//		System.out.println(f + " " + m);
+		
+		/*if(true) {
+			int k = 1986473181 * 180709093;
+			System.out.println(k);
+			System.exit(1);
+		}*/
 
 		System.out.printf("Remote rev: %d.%n", RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100));
 
@@ -68,7 +47,7 @@ public class Boot {
 		for(int i=0; i < count; i++) {
 			Revision revision = rev(Boot.revision - i);
 			System.out.println("Running " + revision.getName());
-			//runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
+			// runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
 			runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 		}		
 

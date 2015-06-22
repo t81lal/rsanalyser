@@ -40,7 +40,12 @@ public class SingleJarDownloader<C extends ClassNode> extends AbstractJarDownloa
 			byte[] bytes = IOUtil.read(jarFile.getInputStream(entry));
 			if (entry.getName().endsWith(".class")) {
 				C cn = factory.create(bytes, entry.getName());
-				contents.getClassContents().add(cn);
+				if(!contents.getClassContents().namedMap().containsKey(cn.name))
+					contents.getClassContents().add(cn);
+				
+				//if(cn.name.equals("org/xmlpull/v1/XmlPullParser")) {
+				//	System.out.println("SingleJarDownloader.download() " +entry.getName() + " " + bytes.length);
+				//}
 			} else {
 				JarResource resource = new JarResource(entry.getName(), bytes);
 				contents.getResourceContents().add(resource);

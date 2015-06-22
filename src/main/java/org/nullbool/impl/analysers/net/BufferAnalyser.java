@@ -13,7 +13,6 @@ import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.obfuscation.cfg.ControlFlowException;
 import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
-import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
 import org.nullbool.api.util.DescFilter;
 import org.nullbool.api.util.InstructionUtil;
 import org.nullbool.api.util.NotifyNodeVisitor;
@@ -22,7 +21,6 @@ import org.nullbool.api.util.map.ValueCreator;
 import org.nullbool.zbot.pi.core.hooks.api.ClassHook;
 import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
 import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
 import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
@@ -49,7 +47,8 @@ methods = { "enableEncryption&(Ljava/math/BigInteger;Ljava/math/BigInteger;)V",
 		"writeString&(Ljava/lang/String;)V", "writeJagexString&(Ljava/lang/String;)V", "writeCharSequence&(Ljava/lang/CharSequence;)V",
 		"write8Offset128&(I)", "write8Neg0&(I)", "write8Neg128&(I)", 
 		
-		"read16&()I", "readLE16&()I", "read16B&()I", "readLE16B&()I",
+		//TODO: Fix read methods
+		/*"read16&()I", "readLE16&()I", "read16B&()I", "readLE16B&()I",*/
 })
 /**
  * Notes:
@@ -141,8 +140,6 @@ public class BufferAnalyser extends ClassAnalyser {
 		@Override
 		public List<MethodHook> find(ClassNode cn) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
-
-			System.out.println(cn);
 			
 			for(MethodNode m : cn.methods) {
 				if(m.desc.startsWith("(Ljava/math/BigInteger;Ljava/math/BigInteger;")) {
@@ -158,14 +155,11 @@ public class BufferAnalyser extends ClassAnalyser {
 					}
 					
 					if(m.desc.endsWith(")V")) {
-							if(print) 
-								System.out.println(m);
-							
 							run(treeBuilder, arrayStoreVisitor, m, graph);
 							analyse(arrayStoreVisitor, graph, m, list);
 
 							arrayStoreVisitor.end(m);
-					} else {
+					} /* else {
 						Type ret = Type.getReturnType(m.desc);
 						if(BytecodeRefactorer.isPrimitive(ret.getDescriptor())) {
 							run(treeBuilder, arrayLoadVisitor, m, graph);
@@ -176,29 +170,29 @@ public class BufferAnalyser extends ClassAnalyser {
 								if(match(subs, new Object[]{1, 2})) {
 									list.add(asMethodHook(m, "readLE16").var(MethodHook.TYPE, MethodHook.CALLBACK));
 								} else if(match(subs, new Object[]{2, 1})) {
-									/* Looks like each side of this gets swapped sometimes */
+									// Looks like each side of this gets swapped sometimes
 									list.add(asMethodHook(m, "read16").var(MethodHook.TYPE, MethodHook.CALLBACK));
 								}
-//								System.out.println("dong " + found);
-//								System.out.println("long " + subs);
-								System.out.println("BufferAnalyser.MethodAnalyser.find() " + m + " " + graph.hasLoop() + " " + found + " " + subs);
+								//System.out.println("dong " + found);
+								//System.out.println("long " + subs);
+								//System.out.println("BufferAnalyser.MethodAnalyser.find() " + m + " " + graph.hasLoop() + " " + found + " " + subs);
 							} else if(match(found, READ_UNSIGNED_16B)) {
-//								if(match(subs, new Object[]{1, 2})) {
-//									list.add(asMethodHook(m, "readLE16B"));
-//								} else if(match(subs, new Object[]{2, 1})) {
-//									list.add(asMethodHook(m, "read16B"));
-//								}
+								//if(match(subs, new Object[]{1, 2})) {
+								//	list.add(asMethodHook(m, "readLE16B"));
+								//} else if(match(subs, new Object[]{2, 1})) {
+								//	list.add(asMethodHook(m, "read16B"));
+								//}
 							}
 							
 							arrayLoadVisitor.end(m);
 						}
-					}
+					}*/
 				}
 			}
 
 			//TODO: remember to remove halt
 			//Context.current().requestHalt();
-			System.out.println(list.size());
+			// System.out.println(list.size());
 			
 			for(MethodHook mh : list) {
 				for(MethodHook mh1 : list) {
@@ -434,8 +428,8 @@ public class BufferAnalyser extends ClassAnalyser {
 		
 		@Override
 		public void end(MethodNode m) {
-			System.out.println("end  " + m + "  " + found);
-			System.out.println("end2 " + m + " " + subs);
+			// System.out.println("end  " + m + "  " + found);
+			// System.out.println("end2 " + m + " " + subs);
 			found.clear();
 			subs.clear();
 		}

@@ -37,6 +37,10 @@ public class Builder<T> implements Iterable<T> {
 		}
 	}
 
+	public int size() {
+		return sequenced.size();
+	}
+
 	/**
 	 * Checks to see if the given element is accepted by the internal filter set.
 	 * 

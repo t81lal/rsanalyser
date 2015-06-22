@@ -340,22 +340,24 @@ public class BytecodeRefactorer implements Opcodes {
 		if(cn == null)
 			return null;
 		//throw new IllegalStateException(String.format("Class %s is not present in the cache. (%s.%s %s)", owner, owner, name, desc));
-		String halfKey = name + "." + desc;
-		for(MethodNode m : cn.methods){
-			if(m.halfKey().equals(halfKey))
-				return m;
-		}
-		return null;
+		//String halfKey = name + "." + desc;
+		//for(MethodNode m : cn.methods){
+		//	if(m.halfKey().equals(halfKey))
+		//		return m;
+		//}
+		//return null;
 
+		return methodCache.get(owner, name, desc);
+		
 		/*Data is cached and recalled when needed because of a runtime issue.
 		 *Take class K with a method M. When the method K.M is renamed, if we
 		 *attempt to do a deep search to find the MethodNode it will fail, since
 		 *the key K.M will actually be be looking for Kn.M where Kn is the new name
 		 *of class K.
 		 */
-		/*
-		return methodCache.get(owner, name, desc);
-		*/
+		 /*
+		 return methodCache.get(owner, name, desc);
+		 */
 	}
 	
 	public String getMappedMethodName(MethodNode m) {
@@ -375,7 +377,7 @@ public class BytecodeRefactorer implements Opcodes {
 		if(!Modifier.isStatic(m.access)) {
 			ChainData cd = methodChain.getData(m);
 			if(cd == null){
-				System.err.println(m.key() +" is null " + Modifier.isStatic(m.access));
+				System.err.println(m.key() + " is null " + Modifier.isStatic(m.access) + " " + methodChain.getData(m));
 				System.exit(1);
 			}
 			for(MethodNode mn : cd.getAggregates()){
