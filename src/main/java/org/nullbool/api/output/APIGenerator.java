@@ -18,11 +18,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.nullbool.api.Context;
-import org.nullbool.zbot.pi.core.hooks.api.ClassHook;
-import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
-import org.nullbool.zbot.pi.core.hooks.api.HookMap;
-import org.nullbool.zbot.pi.core.hooks.api.InterfaceMapping;
-import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
+import org.nullbool.pi.core.hook.api.ClassHook;
+import org.nullbool.pi.core.hook.api.FieldHook;
+import org.nullbool.pi.core.hook.api.HookMap;
+import org.nullbool.pi.core.hook.api.InterfaceMapping;
+import org.nullbool.pi.core.hook.api.MethodHook;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;

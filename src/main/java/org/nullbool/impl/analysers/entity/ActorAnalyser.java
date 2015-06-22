@@ -16,7 +16,7 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
+import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author MalikDz

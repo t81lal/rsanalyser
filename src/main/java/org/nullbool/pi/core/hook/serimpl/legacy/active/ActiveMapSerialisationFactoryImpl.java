@@ -1,9 +1,9 @@
 //package org.nullbool.pi.core.hook.serimpl.legacy.active;
 //
-//import org.nullbool.zbot.pi.core.hooks.api.deprecated.ActiveHookMap;
-//import org.nullbool.zbot.pi.core.hooks.api.serialisation.IMapDeserialiser;
-//import org.nullbool.zbot.pi.core.hooks.api.serialisation.IMapSerialisationFactory;
-//import org.nullbool.zbot.pi.core.hooks.api.serialisation.IMapSerialiser;
+//import org.nullbool.pi.core.hook.api.deprecated.ActiveHookMap;
+//import org.nullbool.pi.core.hook.api.serialisation.IMapDeserialiser;
+//import org.nullbool.pi.core.hook.api.serialisation.IMapSerialisationFactory;
+//import org.nullbool.pi.core.hook.api.serialisation.IMapSerialiser;
 //
 //@Deprecated
 //public class ActiveMapSerialisationFactoryImpl implements IMapSerialisationFactory<ActiveHookMap> {

@@ -5,7 +5,7 @@
 //
 //import org.nullbool.pi.core.hook.serimpl.Pool;
 //import org.nullbool.pi.core.hook.serimpl.PoolEntry;
-//import org.nullbool.zbot.pi.core.hooks.api.DynamicDesc;
+//import org.nullbool.pi.core.hook.api.DynamicDesc;
 //
 //public class DescEntry_1 extends PoolEntry {
 //

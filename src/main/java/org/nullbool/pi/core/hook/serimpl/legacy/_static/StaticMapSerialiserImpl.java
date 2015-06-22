@@ -9,12 +9,12 @@
 //import java.util.Map;
 //
 //import org.nullbool.pi.core.hook.serimpl.Pool;
-//import org.nullbool.zbot.pi.core.hooks.api.ClassHook;
-//import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
-//import org.nullbool.zbot.pi.core.hooks.api.HookMap;
-//import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
-//import org.nullbool.zbot.pi.core.hooks.api.ObfuscatedData;
-//import org.nullbool.zbot.pi.core.hooks.api.serialisation.IMapSerialiser;
+//import org.nullbool.pi.core.hook.api.ClassHook;
+//import org.nullbool.pi.core.hook.api.FieldHook;
+//import org.nullbool.pi.core.hook.api.HookMap;
+//import org.nullbool.pi.core.hook.api.MethodHook;
+//import org.nullbool.pi.core.hook.api.ObfuscatedData;
+//import org.nullbool.pi.core.hook.api.serialisation.IMapSerialiser;
 //import org.objectweb.asm.Type;
 //import org.objectweb.asm.tree.AbstractInsnNode;
 //import org.objectweb.asm.tree.FieldInsnNode;

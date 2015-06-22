@@ -1,9 +1,9 @@
 package org.nullbool.pi.core.hook.serimpl;
 
-import org.nullbool.zbot.pi.core.hooks.api.HookMap;
-import org.nullbool.zbot.pi.core.hooks.api.serialisation.IMapDeserialiser;
-import org.nullbool.zbot.pi.core.hooks.api.serialisation.IMapSerialisationFactory;
-import org.nullbool.zbot.pi.core.hooks.api.serialisation.IMapSerialiser;
+import org.nullbool.pi.core.hook.api.HookMap;
+import org.nullbool.pi.core.hook.api.serialisation.IMapDeserialiser;
+import org.nullbool.pi.core.hook.api.serialisation.IMapSerialisationFactory;
+import org.nullbool.pi.core.hook.api.serialisation.IMapSerialiser;
 
 /**
  * @author Bibl (don't ban me pls)

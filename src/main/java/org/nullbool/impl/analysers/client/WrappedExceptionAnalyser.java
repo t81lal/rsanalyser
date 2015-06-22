@@ -12,7 +12,7 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
+import org.nullbool.pi.core.hook.api.FieldHook;
 
 @SupportedHooks(fields = { "getReason_&Ljava/lang/String;", "getThrowable&Ljava/lang/Throwable;" }, methods = {})
 public class WrappedExceptionAnalyser extends ClassAnalyser {

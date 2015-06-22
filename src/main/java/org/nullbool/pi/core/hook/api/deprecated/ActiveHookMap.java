@@ -1,10 +1,10 @@
-package org.nullbool.zbot.pi.core.hooks.api.deprecated;
+package org.nullbool.pi.core.hook.api.deprecated;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nullbool.zbot.pi.core.hooks.api.ClassHook;
-import org.nullbool.zbot.pi.core.hooks.api.HookMap;
+import org.nullbool.pi.core.hook.api.ClassHook;
+import org.nullbool.pi.core.hook.api.HookMap;
 
 @Deprecated
 public class ActiveHookMap extends HookMap {

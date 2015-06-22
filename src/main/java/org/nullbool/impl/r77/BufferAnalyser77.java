@@ -6,7 +6,7 @@ import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
 import org.nullbool.impl.analysers.net.BufferAnalyser;
-import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
+import org.nullbool.pi.core.hook.api.MethodHook;
 import org.objectweb.asm.tree.MethodNode;
 import org.topdank.banalysis.filter.Filter;
 

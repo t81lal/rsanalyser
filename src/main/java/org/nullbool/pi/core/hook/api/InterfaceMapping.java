@@ -1,4 +1,4 @@
-package org.nullbool.zbot.pi.core.hooks.api;
+package org.nullbool.pi.core.hook.api;
 
 import java.io.Serializable;
 

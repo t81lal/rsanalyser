@@ -10,11 +10,11 @@ import java.util.Set;
 import org.nullbool.api.AbstractAnalysisProvider;
 import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.zbot.pi.core.hooks.api.ClassHook;
-import org.nullbool.zbot.pi.core.hooks.api.DynamicDesc;
-import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
-import org.nullbool.zbot.pi.core.hooks.api.HookMap;
-import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
+import org.nullbool.pi.core.hook.api.ClassHook;
+import org.nullbool.pi.core.hook.api.DynamicDesc;
+import org.nullbool.pi.core.hook.api.FieldHook;
+import org.nullbool.pi.core.hook.api.HookMap;
+import org.nullbool.pi.core.hook.api.MethodHook;
 
 /**
  * @author Bibl (don't ban me pls) <br>

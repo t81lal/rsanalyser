@@ -2,7 +2,7 @@ package org.nullbool.impl.analysers.client.widget;
 
 import java.util.List;
 import java.util.ArrayList;
-import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;

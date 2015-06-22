@@ -1,4 +1,4 @@
-package org.nullbool.zbot.pi.core.hooks.api.deprecated;
+package org.nullbool.pi.core.hook.api.deprecated;
 
 import java.util.HashMap;
 import java.util.Map;

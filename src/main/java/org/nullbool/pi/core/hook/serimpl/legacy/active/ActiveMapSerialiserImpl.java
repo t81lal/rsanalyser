@@ -9,10 +9,10 @@
 //import java.util.Map.Entry;
 //
 //import org.nullbool.pi.core.hook.serimpl.legacy._static.StaticMapSerialiserImpl;
-//import org.nullbool.zbot.pi.core.hooks.api.HookMap;
-//import org.nullbool.zbot.pi.core.hooks.api.deprecated.AbstractActor;
-//import org.nullbool.zbot.pi.core.hooks.api.deprecated.ActiveHookMap;
-//import org.nullbool.zbot.pi.core.hooks.api.serialisation.IMapSerialiser;
+//import org.nullbool.pi.core.hook.api.HookMap;
+//import org.nullbool.pi.core.hook.api.deprecated.AbstractActor;
+//import org.nullbool.pi.core.hook.api.deprecated.ActiveHookMap;
+//import org.nullbool.pi.core.hook.api.serialisation.IMapSerialiser;
 //
 //@Deprecated
 //public class ActiveMapSerialiserImpl implements IMapSerialiser<ActiveHookMap> {

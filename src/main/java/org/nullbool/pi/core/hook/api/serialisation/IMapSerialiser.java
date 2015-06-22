@@ -1,9 +1,9 @@
-package org.nullbool.zbot.pi.core.hooks.api.serialisation;
+package org.nullbool.pi.core.hook.api.serialisation;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.nullbool.zbot.pi.core.hooks.api.HookMap;
+import org.nullbool.pi.core.hook.api.HookMap;
 
 /**
  * @author Bibl (don't ban me pls)

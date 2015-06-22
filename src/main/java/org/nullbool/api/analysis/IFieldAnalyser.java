@@ -3,7 +3,7 @@ package org.nullbool.api.analysis;
 import java.util.List;
 
 import org.objectweb.asm.tree.ClassNode;
-import org.nullbool.zbot.pi.core.hooks.api.FieldHook;
+import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author Bibl (don't ban me pls)

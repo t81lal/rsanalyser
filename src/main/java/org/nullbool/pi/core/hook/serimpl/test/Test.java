@@ -4,11 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.nullbool.pi.core.hook.api.ClassHook;
+import org.nullbool.pi.core.hook.api.HookMap;
+import org.nullbool.pi.core.hook.api.MethodHook;
 import org.nullbool.pi.core.hook.serimpl.StaticMapDeserialiserImpl;
 import org.nullbool.pi.core.hook.serimpl.StaticMapSerialiserImpl;
-import org.nullbool.zbot.pi.core.hooks.api.ClassHook;
-import org.nullbool.zbot.pi.core.hooks.api.HookMap;
-import org.nullbool.zbot.pi.core.hooks.api.MethodHook;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
