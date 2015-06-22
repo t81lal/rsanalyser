@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.nullbool.byeallatori;
 
 import java.io.ByteArrayOutputStream;
@@ -19,7 +16,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarOutputStream;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -34,8 +33,12 @@ import org.nullbool.api.obfuscation.refactor.ClassTree;
 import org.nullbool.api.obfuscation.refactor.IRemapper;
 import org.nullbool.api.obfuscation.refactor.MethodCache;
 import org.nullbool.api.obfuscation.refactor.SetCreator;
+import org.nullbool.api.util.ClassStructure;
 import org.nullbool.api.util.InstructionUtil;
 import org.nullbool.api.util.map.NullPermeableHashMap;
+import org.nullbool.api.util.map.ValueCreator;
+import org.nullboolext.md5gen_override;
+import org.nullboolext.process_builder_fixer;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
@@ -45,6 +48,7 @@ import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
@@ -53,8 +57,8 @@ import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
-import org.topdank.banalysis.util.ClassUtil;
 import org.topdank.byteengineer.commons.data.JarInfo;
+import org.topdank.byteengineer.commons.data.LocateableJarContents;
 import org.topdank.byteio.in.SingleJarDownloader;
 import org.topdank.byteio.out.CompleteJarDumper;
 
@@ -63,6 +67,10 @@ import org.topdank.byteio.out.CompleteJarDumper;
  * @created 21 Jun 2015 17:47:33
  */
 public class Boot implements Opcodes {
+
+
+	//TODO: remove
+	static String pass = "no";
 
 	public static void request() throws Exception {
 		NetworkInterface var4 = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
@@ -106,7 +114,7 @@ public class Boot implements Opcodes {
 				.append("&v3=").append(75)
 				.append("&os=").append(os)
 				.append("&add=").append(MiscHelper.add()).toString();
-		
+
 		HttpsURLConnection connection = ConnectionHelper.openSecureHandle("https://osbot.org:443/mvc/botauth/create");
 		connection.setDoOutput(true);
 		connection.setDoInput(true);
@@ -137,16 +145,16 @@ public class Boot implements Opcodes {
 			boolean var9 = var17.readUnsignedByte() == 0;
 			String var18 = payload = BufferUtilities.method_16(var13);
 			connection.disconnect();
-			
+
 			SESSION = var8;
-			
-			
+
+
 			System.out.println(var8);
 			System.out.println(var9);
 			System.out.println(var18);
 			// if(var18.equals("None")) {
-				//   var10000 = this;
-				// } else {
+			//   var10000 = this;
+			// } else {
 			//    var10000 = this;
 			//   this.field_96 = var12;
 			// }
@@ -171,9 +179,9 @@ public class Boot implements Opcodes {
 		} else 
 			connection.disconnect();
 	}
-	
+
 	private static String SESSION = "";
-	
+
 	public static byte[] hooks() {
 		try {
 			String var1 = (new StringBuilder()).insert(0, "sessionID=").append(SESSION).toString();
@@ -216,7 +224,7 @@ public class Boot implements Opcodes {
 		return null;
 	}
 
-	
+
 	public static String threessss(String var0) {
 		char[] var1 = var0.replace("_", " ").toLowerCase().toCharArray();
 
@@ -239,87 +247,180 @@ public class Boot implements Opcodes {
 		return new String(var1);
 	}
 
-    private static String readString(ByteBuffer var0) {
-        ByteArrayOutputStream var1 = new ByteArrayOutputStream();
-        byte var2;
-        while ((var2 = var0.get()) != 10) {
-            var1.write(var2);
-        }
-        return new String(var1.toByteArray());
-    }
-    
-    private static void parseHooks(ByteBuffer buf) {
-        final int magic = buf.getInt();
-        final int expectedMagic = 0xbaddcafe;
-        if (magic != expectedMagic) {
-            buf.reset();
-            return;
-        }
-        int k =0;
-        
-        System.out.println("Found hooks...");
-        final short aParnyShort = buf.getShort();
-        final int count = aParnyShort & 0xffff;
-        for (int i = 0; i < count; i++) {
-            String var4 = readString(buf);
-            String var5 = readString(buf);
-            System.out.println(var4 + " := " + var5);
-            final short aParnyShort0 = buf.getShort();
-            final int mcount = aParnyShort0 & 0xffff;
-            // System.out.println((k += mcount));
-            for (int j = 0; j < mcount; j++) {
-                String var7 = readString(buf);
-                String var8 = readString(buf);
-                String var9 = readString(buf);
-                String var10 = readString(buf);
-                String var11;
-                if ((var11 = readString(buf)).equals("")) {
-                    var11 = null;
-                }
-                if (buf.get() == 1) {
-                    long var13 = buf.getLong();
-                    long var15 = buf.getLong();
-                    System.out.println("\t" + var7 + "." + var9 + " identified as " + var8 + " * [" + var13 + "][" + var15 + "]");
-                } else {
-                    System.out.println("\t" + var7 + "." + var9 + " identified as " + var8);
-                }
-            }
-        }
-        System.out.println("...Complete");
+	private static String readString(ByteBuffer var0) {
+		ByteArrayOutputStream var1 = new ByteArrayOutputStream();
+		byte var2;
+		while ((var2 = var0.get()) != 10) {
+			var1.write(var2);
+		}
+		return new String(var1.toByteArray());
+	}
+
+	private static void parseHooks(ByteBuffer buf) {
+		final int magic = buf.getInt();
+		final int expectedMagic = 0xbaddcafe;
+		if (magic != expectedMagic) {
+			buf.reset();
+			return;
+		}
+		int k =0;
+
+		System.out.println("Found hooks...");
+		final short aParnyShort = buf.getShort();
+		final int count = aParnyShort & 0xffff;
+		for (int i = 0; i < count; i++) {
+			String var4 = readString(buf);
+			String var5 = readString(buf);
+			System.out.println(var4 + " := " + var5);
+			final short aParnyShort0 = buf.getShort();
+			final int mcount = aParnyShort0 & 0xffff;
+			// System.out.println((k += mcount));
+			for (int j = 0; j < mcount; j++) {
+				String var7 = readString(buf);
+				String var8 = readString(buf);
+				String var9 = readString(buf);
+				String var10 = readString(buf);
+				String var11;
+				if ((var11 = readString(buf)).equals("")) {
+					var11 = null;
+				}
+				if (buf.get() == 1) {
+					long var13 = buf.getLong();
+					long var15 = buf.getLong();
+					System.out.println("\t" + var7 + "." + var9 + " identified as " + var8 + " * [" + var13 + "][" + var15 + "]");
+				} else {
+					System.out.println("\t" + var7 + "." + var9 + " identified as " + var8);
+				}
+			}
+		}
+		System.out.println("...Complete");
 
 
-    }
+	}
+
+	private static void patchClient() throws Exception {
+		//patch jarmd5 method, only called from request class
+
+
+		cl: for(ClassNode cn : classList) {
+			for(MethodNode m : cn.methods) {
+				boolean md5 = false, dir = false;
+
+				for(AbstractInsnNode ain : m.instructions.toArray()) {
+					if(ain instanceof LdcInsnNode) {
+						LdcInsnNode ldc = (LdcInsnNode) ain;
+						if(ldc.cst instanceof String) {
+							if(ldc.cst.toString().equals("MD5")) {
+								md5 = true;
+							} else if(ldc.cst.toString().equals("(Is a directory)")) {
+								dir = true;
+							}
+						}
+					}
+				}
+
+
+				if(md5 && dir) {
+					//ClassNode realCn = dl.getJarContents().getClassContents().namedMap().get(classes.get(cn.name));
+					//int index = Integer.parseInt(m.name.replace("method_", ""));
+					//MethodNode rmn = realCn.methods.get(index);
+					InsnList insns = new InsnList();
+					insns.add(new VarInsnNode(ALOAD, 0));
+					insns.add(new MethodInsnNode(INVOKESTATIC, "org/nullboolext/md5gen_override", "generate", "(Ljava/io/File;)Ljava/lang/String;", false));
+					insns.add(new InsnNode(ARETURN));
+
+					m.instructions.clear();
+					m.instructions = insns;
+					break cl;
+				}
+			}
+		}
 	
+		ClassNode cn = contents.getClassContents().namedMap().get("org/osbot/Boot");
+		for(MethodNode m : cn.methods) {
+			//if(m.name.equals("launch")) {
+				for(AbstractInsnNode ain : m.instructions.toArray()) {
+					if(ain instanceof LdcInsnNode) {
+						LdcInsnNode ldc = (LdcInsnNode) ain;
+						if(ldc.cst instanceof String) {
+							if(ldc.cst.toString().equals("-XX:-UseSplitVerifier -Xmx")) {
+								ldc.cst = "-noverify -Xmx";
+								System.out.println("replaced splitverifier");
+							}
+						}
+					} else if(ain instanceof MethodInsnNode) {
+						MethodInsnNode min = (MethodInsnNode) ain;
+						if(min.owner.equals("java/lang/ProcessBuilder") && min.name.equals("<init>")) {
+							System.out.println("pb call " + min);
+							m.instructions.insertBefore(min, new MethodInsnNode(INVOKESTATIC, "org/nullboolext/process_builder_fixer", "fix", "([Ljava/lang/String;)[Ljava/lang/String;", false));
+						}
+					}
+				}
+			//}
+		}
+		
+
+
+
+		dl.getJarContents().getClassContents().add(ClassStructure.create(md5gen_override.class.getCanonicalName()));
+		dl.getJarContents().getClassContents().add(ClassStructure.create(process_builder_fixer.class.getCanonicalName()));
+
+		new CompleteJarDumper(dl.getJarContents()){
+			@Override
+			public int dumpResource(JarOutputStream out, String name, byte[] file) throws IOException {
+				if(name.startsWith("META-INF/SERVER."))
+					return 0;
+
+				return super.dumpResource(out, name, file);
+			}
+		}.dump(new File(out.getParentFile(), "runnableosbout.jar"));
+	}
+
+	private static Map<String, String> reverse(Map<String, String> map) {
+		Map<String, String> newMap = new HashMap<String, String>();
+		for(Entry<String, String> e : map.entrySet()) {
+			newMap.put(e.getValue(), e.getKey());
+		}
+		return newMap;
+	}
+
+	private static File pb;
 	private static File out;
 	private static SingleJarDownloader<ClassNode> dl;
+	private static LocateableJarContents<ClassNode> contents;
 	private static List<ClassNode> classList;
 	private static MethodCache cache;
 	private static int two = 0, three = 0;
 	private static MethodNode threes;
 	private static Set<MethodNode> complex, simple;
 
+	private static Map<String, String> classes = new HashMap<String, String>();
+	private static Map<String, String> methods = new HashMap<String, String>();
+	private static Map<String, String> fields = new HashMap<String, String>();
+
 	public static void main(String[] args) throws Exception {
 
 		//		System.out.println(iIIiIIIiiI("rd_\u007fTee\u0006eraN"));
 
-		request();
 		// SESSION = "655207082866909a0-f69b-43d1-90f6-6804ff43cdb0";
-		byte[] hooks = hooks();
-		parseHooks(ByteBuffer.wrap(hooks));
-		System.out.println(hooks.length);
-		
-		System.out.println(MiscHelper.add());
-		if(true)
-			return;
+		//		request();
+		//		byte[] hooks = hooks();
+		//		parseHooks(ByteBuffer.wrap(hooks));
+		//		System.out.println(hooks.length);
+		//		
+		//		System.out.println(MiscHelper.add());
+		//		if(true)
+		//			return;
 
 		File dir = new File("C:/Users/Bibl/Desktop/osbots shit nigga");
-		File pb = new File(dir, "osb.jar");
+		pb = new File(dir, "osb.jar");
 		out = new File(dir, "osbout.jar");
 
 		dl = new SingleJarDownloader<ClassNode>(new JarInfo(pb));
 		dl.download();
 
-		classList = dl.getJarContents().getClassContents();
+		contents = dl.getJarContents();
+		classList = contents.getClassContents();
 		cache = new MethodCache(classList);
 
 		nottheasshol();
@@ -329,30 +430,7 @@ public class Boot implements Opcodes {
 		//Map<MethodNode, Set<MethodNode>> complexCalls = graphCalls(complex);
 		Map<MethodNode, Class<?>> complexgen = generateComplex(complex);
 
-		Class<?> klass = complexgen.get(cache.get("org/osbot/COM1", "iiIIiiiIiI", "(Ljava/lang/String;)Ljava/lang/String;"));
-		Method m = klass.getDeclaredMethods()[0];
-
-		// "zbQxVlV\"\u00198Fl3v~Cq@\u001e D\u0010e+\u0000\"\u00020\fA)\u000b\u00019\u00110MsL\u007f\u000f#\u001b8\u001aGRnGyY~+\u0010\'\u001d$\u001fXs\"7CnPcI$\u001f.Hl"
-
-		for(MethodNode mn : cache.get("org/osbot/COM1", "iiIIiiiIiI", "(Ljava/lang/String;)Ljava/lang/String;").owner.methods) {
-			for(AbstractInsnNode ain : mn.instructions.toArray()) {
-				if(ain instanceof LdcInsnNode) {
-					LdcInsnNode ldc = (LdcInsnNode) ain;
-					if(ldc.cst instanceof String) {
-						System.out.println("enc: " + escapeJavaStyleString(ldc.cst.toString(), true));
-						System.out.print("dec: ");
-						System.out.println(m.invoke(null, new Object[]{
-								ldc.cst.toString(),
-								"org.osbot.COM1", mn.name}));
-					}
-				}
-			}
-		}
-
-
 		patchComplex(complex, complexgen);
-
-
 
 		simple = findSimple2and3();
 		Map<MethodNode, Class<?>> simpgen = generateSimple(simple);
@@ -360,9 +438,102 @@ public class Boot implements Opcodes {
 
 		System.out.printf("%d two, %d three.%n", two, three);
 
+		removeDummyMethods();
+
 		openmyassdaddy();
 		unfuck();
+		
+		// "zbQxVlV\"\u00198Fl3v~Cq@\u001e D\u0010e+\u0000\"\u00020\fA)\u000b\u00019\u00110MsL\u007f\u000f#\u001b8\u001aGRnGyY~+\u0010\'\u001d$\u001fXs\"7CnPcI$\u001f.Hl"
+
+//		ClassNode cn = contents.getClassContents().namedMap().get("org/osbot/D");
+//		for(MethodNode m : cn.methods) {
+//			
+//			if(m.name.equals("method_2")) {
+//				
+//				Method method = complexgen.get(m).getDeclaredMethods()[0];
+//				
+//				for(MethodNode m2 : cn.methods) {
+//					if(m != m2) {
+//						for(AbstractInsnNode ain : m2.instructions.toArray()) {
+//							if(ain instanceof LdcInsnNode) {
+//								LdcInsnNode ldc = (LdcInsnNode) ain;
+//								if(ldc.cst instanceof String) {
+//									System.out.println("enc: " + ldc.cst);
+//									System.out.printf("dec: ");
+//									System.out.println(method.invoke(null, ldc.cst.toString()));
+//								}
+//							}
+//						}
+//					}
+//				}
+//				break;
+//			}
+//		}
+		
+//		Class<?> klass = simpgen.get(cache.get("org/osbot/D", "method_2", "(Ljava/lang/String;)Ljava/lang/String;"));
+//		Method m = klass.getDeclaredMethods()[0];
+//		for(MethodNode mn : contents.getClassContents().namedMap().get("org/osbot/D").methods) {
+//			for(AbstractInsnNode ain : mn.instructions.toArray()) {
+//				if(ain instanceof LdcInsnNode) {
+//					LdcInsnNode ldc = (LdcInsnNode) ain;
+//					if(ldc.cst instanceof String) {
+//						System.out.println("enc: " + escapeJavaStyleString(ldc.cst.toString(), true));
+//						System.out.print("dec: ");
+//						System.out.println(m.invoke(null, ldc.cst.toString()));
+//						System.out.println(m.invoke(null, new Object[]{
+//								ldc.cst.toString(),
+//								"org.osbot.COM1", mn.name}));
+//					}
+//				}
+//			}
+//		}
+		
+		//System.out.println("dec: " + org.osbot.D.method_2("0J>H<K \b0J>U!@ V"));
+
+
+		reflectno();
+
 		dump();
+
+		patchClient();
+	}
+	   
+	private static void reflectno() {
+		TreeBuilder tb = new TreeBuilder();
+
+		NullPermeableHashMap<FieldNode, AtomicInteger> map = new NullPermeableHashMap<FieldNode, AtomicInteger>(new ValueCreator<AtomicInteger>() {
+			@Override
+			public AtomicInteger create() {
+				return new AtomicInteger();
+			}
+		});
+
+		NodeVisitor nv = new NodeVisitor() {
+			@Override
+			public void visitConstant(ConstantNode cn) {
+				if(cn.cst() != null) {
+					String cst = cn.cst().toString();
+					if(cst.startsWith("org.osbot.")) {
+						String bcst = cst.replace(".", "/");
+						if(classes.containsKey(bcst)) {
+							System.out.println("Replacing " + bcst + " with " + classes.get(bcst));
+							cn.insn().cst = classes.get(bcst).replace("/", ".");
+						}
+					}
+				}
+			}
+		};
+
+		for(ClassNode cn : classList) {
+			for(MethodNode m : cn.methods) {
+				tb.build(m).accept(nv);
+			}
+		}
+	}
+
+	private static void removeDummyMethods() {
+		//new HierarchyVisitor().accept(contents);
+		//new CallVisitor().accept(contents);
 	}
 
 	public static String hex(char ch) {
@@ -838,9 +1009,92 @@ public class Boot implements Opcodes {
 
 	private static void unfuck() {
 		ClassTree classTree = new ClassTree(classList);
-		Map<String, String> classes = new HashMap<String, String>();
-		Map<String, String> methods = new HashMap<String, String>();
-		Map<String, String> fields = new HashMap<String, String>();
+
+		classes.put("org/osbot/AB",  "org/objectweb/asm/commons/TryCatchBlockSorter");
+		classes.put("org/osbot/G",   "org/objectweb/asm/commons/JSRInlinerAdapter");
+		classes.put("org/osbot/db",  "org/objectweb/asm/commons/AnalyzerAdapter");
+		classes.put("org/osbot/eb",  "org/objectweb/asm/commons/LocalVariablesSorter");
+
+		classes.put("org/osbot/Dc",  "org/objectweb/asm/ClassWriter");
+		classes.put("org/osbot/xB",  "org/objectweb/asm/MethodVisitor");
+		classes.put("org/osbot/Cc",  "org/objectweb/asm/ClassVisitor");
+		classes.put("org/osbot/aUx", "org/objectweb/asm/Opcodes");
+		classes.put("org/osbot/PA",  "org/objectweb/asm/MethodWriter");
+		classes.put("org/osbot/XA",  "org/objectweb/asm/util/CheckClassAdapter");
+
+		classes.put("org/osbot/uA",  "org/objectweb/asm/tree/MethodNode");
+		classes.put("org/osbot/Cb",  "org/objectweb/asm/tree/InsnList");
+		classes.put("org/osbot/cb",  "org/objectweb/asm/tree/AbstractInsnNode");
+		classes.put("org/osbot/tB",  "org/objectweb/asm/tree/TypeAnnotationNode");
+		classes.put("org/osbot/j",   "org/objectweb/asm/tree/LabelNode");
+		
+		classes.put("org/osbot/aB",   "org/objectweb/asm/xml/SAXClassAdapter");
+		classes.put("org/osbot/gB",   "org/objectweb/asm/xml/Rule");
+		classes.put("org/osbot/dA",   "org/objectweb/asm/xml/MaxRule");
+		classes.put("org/osbot/aA",   "org/objectweb/asm/xml/InterfacesRule");
+		classes.put("org/osbot/cc",   "org/objectweb/asm/xml/AnnotationValueRule");
+		classes.put("org/osbot/LPt2", "org/objectweb/asm/Handle");
+		classes.put("org/osbot/T",    "org/objectweb/asm/Type");
+		classes.put("org/osbot/x",    "org/objectweb/asm/ClassReader");
+		classes.put("org/osbot/Y",    "org/objectweb/asm/tree/ClassNode");
+		
+		classes.put("org/osbot/LPT1", "org/objectweb/asm/util/TraceSignatureVisitor");
+		classes.put("org/osbot/zA",    "org/objectweb/asm/util/ASMifier");
+
+		classes.put("org/osbot/e",    "org/objectweb/asm/signature/SignatureVisitor");
+		classes.put("org/osbot/pA",   "org/objectweb/asm/tree/analysis/Analyzer");
+		classes.put("org/osbot/lPT7", "org/objectweb/asm/tree/analysis/AnalyzerException");
+		classes.put("org/osbot/lPt1", "org/objectweb/asm/tree/analysis/BasicInterpreter");
+		classes.put("org/osbot/Lpt4", "org/objectweb/asm/tree/analysis/BasicVerfier");
+		classes.put("org/osbot/LPt1", "org/objectweb/asm/tree/analysis/SimpleVerifier");
+		classes.put("org/osbot/lPt5", "org/objectweb/asm/tree/analysis/Frame");
+
+		classes.put("org/osbot/com4", "org/nullbool/hook/HookWriter");
+		classes.put("org/osbot/cOM3", "org/nullbool/hook/FieldHook");
+
+		classes.put("org/osbot/com1", "org/nullbool/client/TooltipCallbackInjector");
+
+		classes.put("org/osbot/COm2", "org/nullbool/client/BotRefCallbackInjector");
+		classes.put("org/osbot/cOM1", "org/nullbool/client/LoginReturnInjector");
+		classes.put("org/osbot/COm1", "org/nullbool/client/SkipDrawInjector");
+		classes.put("org/osbot/CoM1", "org/nullbool/client/HitsplatCallbackInjector");
+		classes.put("org/osbot/cOm1", "org/nullbool/client/HeadMessageCallbackInjector");
+		classes.put("org/osbot/Com1", "org/nullbool/client/ModelCallbackInjector");
+		classes.put("org/osbot/coM2", "org/nullbool/client/DefinitionTransformationCallInjector");
+		classes.put("org/osbot/coM1", "org/nullbool/client/ConfigCallbackInjector");
+		classes.put("org/osbot/pRN",  "org/nullbool/client/ChatboxMessageCallbackInjector");
+		classes.put("org/osbot/cOm5", "org/nullbool/client/ClassAndFieldAccessorInjector");
+		classes.put("org/osbot/COm3", "org/nullbool/client/RandomDatPatchForBotNumberInjector");
+		classes.put("org/osbot/PRn",  "org/nullbool/client/CanvasInjector");
+		classes.put("org/osbot/CoM6", "org/nullbool/client/ClassThatInjectsBotReferenceIntoClient");
+		classes.put("org/osbot/Com4", "org/nullbool/client/ComponentReshapeInjector");
+		classes.put("org/osbot/coM4", "org/nullbool/client/FilterInjector");
+
+		classes.put("org/osbot/cOm4", "org/nullbool/game/WorldHopRunnable");
+		
+
+		classes.put("org/osbot/con", "org/nullbool/script/ScriptPermissions");
+		classes.put("org/osbot/Con", "org/nullbool/script/SDNHandler");
+		
+
+		classes.put("org/osbot/dc",   "org/nullbool/util/InputStreamMonitor");
+		classes.put("org/osbot/COM2", "org/nullbool/util/BotTabHelper");
+		classes.put("org/osbot/Com2", "org/nullbool/util/AccountSetterRunnable");
+		classes.put("org/osbot/com2", "org/nullbool/util/jagex/RSByteBuffer");
+		
+		classes.put("org/osbot/COn", "org/nullbool/util/net/VersionChecker");
+		classes.put("org/osbot/COM1", "org/nullbool/util/net/WebServiceRequester");
+		classes.put("org/osbot/CON",  "org/nullbool/util/net/SSLTrustManager");
+		
+
+		classes.put("org/osbot/COM3", "org/nullbool/ui/AccountSelectorSelectionListener");
+		classes.put("org/osbot/coM3", "org/nullbool/ui/MultiComponentEnabler");
+		classes.put("org/osbot/COm4", "org/nullbool/ui/SetVisibleRunnable");
+		classes.put("org/osbot/COM6", "org/nullbool/ui/BotFrame");
+		classes.put("org/osbot/Db",   "org/nullbool/ui/CustomTableModel");
+		
+		
+		classes.put("org/osbot/CB", "org/nullbool/util/StringEncoding");
 
 		BytecodeRefactorer refactorer = new BytecodeRefactorer(dl.getJarContents().getClassContents(), new IRemapper() {
 
@@ -856,19 +1110,21 @@ public class Boot implements Opcodes {
 				//						return "decrypt_complex";
 				//					}
 				//				}
-				//
 				//				for(MethodNode m : simple) {
 				//					if(owner.equals(m.owner.name) && name.equals(m.name) && desc.equals(m.desc)) {
 				//						return "decrypt_simple";
 				//					}
 				//				}
 
-				
+
 				MethodNode mn = cache.get(owner, name, desc);
-				if(mn != null && Modifier.isStatic(mn.access)) {
-					return "method_" + mn.owner.methods.indexOf(mn);
+				String rep = name.replace("i", "").replace("I", "");
+				if(mn != null && Modifier.isStatic(mn.access) && rep.length() == 0) {
+					String newName = "method_" + mn.owner.methods.indexOf(mn);
+					methods.put(mn.key(), owner + "." + newName + desc);
+					return newName;
 				}
-				
+
 				return name;
 			}
 
@@ -877,35 +1133,38 @@ public class Boot implements Opcodes {
 				//if(KEYWORDS.contains(name))
 				//	return "field_" + name;
 
-				if(fields.containsKey(owner)) {
-					return fields.get(owner);
-				}
-
-				String rep = name.replace("i", "").replace("I", "");
-				if(owner.startsWith("org/osbot") && rep.length() == 0) {
-					String newName = "field_" + (f_count++);
-					fields.put(name, newName);
-					return newName;			
-				}
+//				if(fields.containsKey(owner)) {
+//					return fields.get(owner);
+//				}
+//
+//				String rep = name.replace("i", "").replace("I", "");
+//				if(owner.startsWith("org/osbot") && rep.length() == 0) {
+//					ClassNode cn = classTree.getClass(owner);
+//					for(FieldNode fn : cn.fields) {
+//						if(fn.name.equals(name) && fn.desc.equals(desc)) {
+//							String newName = "field_" + (cn.fields.indexOf(fn));
+//							fields.put(name, newName);
+//							return newName;			
+//						}
+//					}
+//				}
 
 				return name;
 			}
 
 			int c_count = 0;
-			int f_count = 0;
-			int m_count = 0;
 
 			@Override
 			public String resolveClassName(String oldName) {
 				if(classes.containsKey(oldName))
 					return classes.get(oldName);
 
-				String upper = ClassUtil.getClassName(oldName).toUpperCase();
-				if(classTree.getClass(oldName) != null && ILLEGAL_NAMES.contains(upper)) {
-					String newName = "org/nullbool/Klass" + (c_count++);
-					classes.put(oldName, newName);
-					return newName;
-				}
+				//				String upper = ClassUtil.getClassName(oldName).toUpperCase();
+				//				if(classTree.getClass(oldName) != null && ILLEGAL_NAMES.contains(upper)) {
+				//					String newName = "org/nullbool/Klass" + (c_count++);
+				//					classes.put(oldName, newName);
+				//					return newName;
+				//				}
 
 				return oldName;
 			}
@@ -941,13 +1200,23 @@ public class Boot implements Opcodes {
 	}
 
 	private static void dump() throws IOException {
+		//TODO: full
 		new CompleteJarDumper(dl.getJarContents()){
+
+			@Override
+			public int dumpClass(JarOutputStream out, String name, ClassNode cn) throws IOException {
+				if(name.startsWith("org/") && !(name.startsWith("org/pushingpixels/") || name.startsWith("org/xmlpull/")))
+					return super.dumpClass(out, name, cn);
+				return 0;
+			}
 			@Override
 			public int dumpResource(JarOutputStream out, String name, byte[] file) throws IOException {
-				if(name.startsWith("META-INF/SERVER."))
-					return 0;
+				//if(name.startsWith("META-INF/SERVER."))
+				//	return 0;
 
-				return super.dumpResource(out, name, file);
+				//return super.dumpResource(out, name, file);
+
+				return 0;
 			}
 		}.dump(out);
 	}
@@ -976,9 +1245,6 @@ public class Boot implements Opcodes {
 			ILLEGAL_NAMES.add(s.toUpperCase());
 		}
 	}
-	
 
-	//TODO: remove
-	static String pass = "0x90n0p";
-	
+
 }
