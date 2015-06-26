@@ -61,19 +61,19 @@ public class GroundObjectAnalyser extends ClassAnalyser {
 			l.add(asFieldHook(h, "getMarkedRenderable"));
 
 			h = findField(ins, false, true, 2, 'f', "putfield");
-			l.add(asFieldHook(h, "getStrictX", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getStrictX"));
 
 			h = findField(ins, false, true, 3, 'f', "putfield");
-			l.add(asFieldHook(h, "getStrictY", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getStrictY"));
 
 			h = findField(ins, false, true, 4, 'f', "putfield");
-			l.add(asFieldHook(h, "getPlane", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getPlane"));
 
 			h = findField(ins, false, true, 5, 'f', "putfield");
-			l.add(asFieldHook(h, "getUID", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getUID"));
 
 			h = findField(ins, false, true, 6, 'f', "putfield");
-			l.add(asFieldHook(h, "getFlags", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getFlags"));
 
 			return l;
 		}

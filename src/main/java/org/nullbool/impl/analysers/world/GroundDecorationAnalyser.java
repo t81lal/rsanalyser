@@ -72,20 +72,20 @@ public class GroundDecorationAnalyser extends ClassAnalyser {
 			// l.add(new Hook("getTopRenderable()", h));
 
 			h = findField(ins, false, true, 2, 'f', "putfield");
-			l.add(asFieldHook(h, "getRegionX", findMultiplier(h, false)));
-			// l.add(new Hook("getRegionX()", h, findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getRegionX"));
+			// l.add(new Hook("getRegionX()", h));
 
 			h = findField(ins, false, true, 3, 'f', "putfield");
-			l.add(asFieldHook(h, "getRegionY", findMultiplier(h, false)));
-			// l.add(new Hook("getRegionY()", h, findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getRegionY"));
+			// l.add(new Hook("getRegionY()", h));
 
 			h = findField(ins, false, true, 4, 'f', "putfield");
-			l.add(asFieldHook(h, "getPlane", findMultiplier(h, false)));
-			// l.add(new Hook("getPlane()", h, findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getPlane"));
+			// l.add(new Hook("getPlane()", h));
 
 			h = findField(ins, false, true, 5, 'f', "putfield");
-			l.add(asFieldHook(h, "getUID", findMultiplier(h, false)));
-			// l.add(new Hook("getUID()", h, findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getUID"));
+			// l.add(new Hook("getUID()", h));
 			// return l.toArray(new Hook[l.size()]);
 			return l;
 		}

@@ -8,6 +8,7 @@ import org.nullbool.api.analysis.SupportedHooks;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
+@Deprecated
 @SupportedHooks(fields = {}, methods = {})
 public class ExceptionReporterAnalyser extends ClassAnalyser {
 

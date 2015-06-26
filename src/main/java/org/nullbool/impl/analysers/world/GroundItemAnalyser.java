@@ -63,10 +63,10 @@ public class GroundItemAnalyser extends ClassAnalyser {
 			AbstractInsnNode[] ins = followJump(method, 5);
 
 			String h = findField(ins, false, true, 1, 'f', "getfield");
-			list.add(asFieldHook(h, "getId", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getId"));
 
 			h = findField(ins, false, true, 2, 'f', "getfield");
-			list.add(asFieldHook(h, "getStackSize", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getStackSize"));
 
 			return list;
 		}

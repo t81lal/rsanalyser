@@ -11,10 +11,10 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author : MalikDz
@@ -53,12 +53,12 @@ public class WidgetNodeAnalyser extends ClassAnalyser {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			MethodNode[] ms = findMethods(Context.current().getClassNodes(), pattern, true);
 			String h = findField(ms[0], false, true, 1, 'f', "aload");
-			list.add(asFieldHook(h, "getWidgetId", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getWidgetId"));
 
 			for (FieldNode f : cn.fields) {
 				String s = cn.name + "." + f.name;
 				if (!s.equals(h) && f.desc.equals("I") && !Modifier.isStatic(f.access)) {
-					list.add(asFieldHook(s, "getType", findMultiplier(s, false)));
+					list.add(asFieldHook(s, "getType"));
 				}
 			}
 

@@ -69,8 +69,6 @@ import org.topdank.byteio.out.CompleteJarDumper;
 public class Boot implements Opcodes {
 
 
-	//TODO: remove
-	static String pass = "no";
 
 	public static void request() throws Exception {
 		NetworkInterface var4 = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
@@ -403,14 +401,14 @@ public class Boot implements Opcodes {
 		//		System.out.println(iIIiIIIiiI("rd_\u007fTee\u0006eraN"));
 
 		// SESSION = "655207082866909a0-f69b-43d1-90f6-6804ff43cdb0";
-		//		request();
-		//		byte[] hooks = hooks();
-		//		parseHooks(ByteBuffer.wrap(hooks));
-		//		System.out.println(hooks.length);
-		//		
-		//		System.out.println(MiscHelper.add());
-		//		if(true)
-		//			return;
+				request();
+				byte[] hooks = hooks();
+				parseHooks(ByteBuffer.wrap(hooks));
+				System.out.println(hooks.length);
+				
+				System.out.println(MiscHelper.add());
+				if(true)
+					return;
 
 		File dir = new File("C:/Users/Bibl/Desktop/osbots shit nigga");
 		pb = new File(dir, "osb.jar");
@@ -1247,4 +1245,6 @@ public class Boot implements Opcodes {
 	}
 
 
+	//TODO: remove
+	static String pass = "nop";
 }

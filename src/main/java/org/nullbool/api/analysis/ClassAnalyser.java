@@ -44,7 +44,8 @@ public abstract class ClassAnalyser implements Opcodes {
 
 	public void preRun(Map<String, ClassNode> classes) throws AnalysisException {
 		foundClass = analyse(classes);
-		foundHook = new ClassHook(foundClass.name, name);
+		if(foundClass != null)
+			foundHook = new ClassHook(foundClass.name, name);
 	}
 
 	public ClassNode getFoundClass() {
@@ -307,65 +308,69 @@ public abstract class ClassAnalyser implements Opcodes {
 
 
 	public FieldHook asFieldHook(ClassHook c, String classAndName, String realName) {
-		return asFieldHook(c, classAndName, realName, 1);
+		String[] parts = classAndName.split("\\.");
+		ClassNode cn = Context.current().getClassNodes().get(parts[0]);
+		for (Object oF : cn.fields) {
+			FieldNode f = (FieldNode) oF;
+			if (parts[1].equals(f.name)) {
+				return new FieldHook(foundHook)
+					.obfuscated(f.name)
+					.refactored(realName)
+					.var(FieldHook.DESC, f.desc)
+					.var(FieldHook.STATIC, Boolean.toString(Modifier.isStatic(f.access)));
+			}
+		}
+		return null;
 	}
 	
 	public FieldHook asFieldHook(String classAndName, String realName) {
-		return asFieldHook(classAndName, realName, 1);
+		return asFieldHook(foundHook, classAndName, realName);
 	}
 
-	public FieldHook asFieldHook(String classAndName, String realName, long multiplier) {
-		String[] parts = classAndName.split("\\.");
-		ClassNode cn = Context.current().getClassNodes().get(parts[0]);
-		for (Object oF : cn.fields) {
-			FieldNode f = (FieldNode) oF;
-			if (parts[1].equals(f.name)) {
-				return new FieldHook(foundHook)
-					.obfuscated(f.name)
-					.refactored(realName)
-					.var(FieldHook.DESC, f.desc)
-					.var(FieldHook.STATIC, Boolean.toString(Modifier.isStatic(f.access)))
-					.var(FieldHook.MUTLI, Long.toString(multiplier));
-			}
-		}
-		return null;
-	}
+//	public FieldHook asFieldHook(String classAndName, String realName, long multiplier) {
+//		return asFieldHook(foundHook, classAndName, realName, multiplier);
+//	}
 	
-	public FieldHook asFieldHook(ClassHook foundHook, String classAndName, String realName, long multiplier) {
-		String[] parts = classAndName.split("\\.");
-		ClassNode cn = Context.current().getClassNodes().get(parts[0]);
-		for (Object oF : cn.fields) {
-			FieldNode f = (FieldNode) oF;
-			if (parts[1].equals(f.name)) {
-				return new FieldHook(foundHook)
-					.obfuscated(f.name)
-					.refactored(realName)
-					.var(FieldHook.DESC, f.desc)
-					.var(FieldHook.STATIC, Boolean.toString(Modifier.isStatic(f.access)))
-					.var(FieldHook.MUTLI, Long.toString(multiplier));
-			}
-		}
-		return null;
-	}
+//	public FieldHook asFieldHook(ClassHook foundHook, String classAndName, String realName, long multiplier) {
+//		String[] parts = classAndName.split("\\.");
+//		ClassNode cn = Context.current().getClassNodes().get(parts[0]);
+//		for (Object oF : cn.fields) {
+//			FieldNode f = (FieldNode) oF;
+//			if (parts[1].equals(f.name)) {
+//				FieldHook fh = new FieldHook(foundHook)
+//					.obfuscated(f.name)
+//					.refactored(realName)
+//					.var(FieldHook.DESC, f.desc)
+//					.var(FieldHook.STATIC, Boolean.toString(Modifier.isStatic(f.access)));
+//				if(hasMulti(f.desc)) {
+//					fh.var(FieldHook.MUTLI, Long.toString(multiplier));
+//				}
+//				return fh;
+//			}
+//		}
+//		return null;
+//	}
+	
+//	public FieldHook asFieldHook(FieldInsnNode f, String realName) {
+//		boolean isStatic = f.opcode() == PUTSTATIC || f.opcode() == GETSTATIC;
+//		return asFieldHook(f, realName, isStatic, findMultiplier(source(f), isStatic));
+//	}
 	
 	public FieldHook asFieldHook(FieldInsnNode f, String realName) {
-		boolean isStatic = f.opcode() == PUTSTATIC || f.opcode() == GETSTATIC;
-		return asFieldHook(f, realName, isStatic, findMultiplier(source(f), isStatic));
+		return asFieldHook(f, realName, f.opcode() == PUTSTATIC || f.opcode() == GETSTATIC);
 	}
 	
-	public FieldHook asFieldHook(FieldInsnNode f, String realName, long multiplier) {
-		return asFieldHook(f, realName, f.opcode() == PUTSTATIC || f.opcode() == GETSTATIC, multiplier);
-	}
-	
-	public FieldHook asFieldHook(FieldInsnNode f, String realName, boolean isStatic, long multiplier) {
-		return new FieldHook(foundHook)
+	public FieldHook asFieldHook(FieldInsnNode f, String realName, boolean isStatic) {
+		FieldHook fh = new FieldHook(foundHook)
 			.obfuscated(f.name)
 			.refactored(realName)
 			.var(MethodHook.DESC, f.desc)
-			.var(FieldHook.STATIC, Boolean.toString(isStatic))
-			.var(FieldHook.MUTLI, Long.toString(multiplier));
+			.var(FieldHook.STATIC, Boolean.toString(isStatic));
+			//if(hasMulti(f.desc))
+			//	fh.var(FieldHook.MUTLI, Long.toString(multiplier));
+			return fh;
 	}
-
+	
 	public MethodHook asMethodHook(MethodInsnNode min, String realName) {
 		ClassNode cn = Context.current().getClassNodes().get(min.owner);
 		for (Object oM : cn.methods) {

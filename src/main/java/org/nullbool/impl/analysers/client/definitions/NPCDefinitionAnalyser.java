@@ -75,49 +75,49 @@ public class NPCDefinitionAnalyser extends ClassAnalyser {
 			list.add(asFieldHook(h, "getName"));
 
 			h = findField(i, true, true, 3, 'f', regex);
-			list.add(asFieldHook(h, "getCombatLevel", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getCombatLevel"));
 
 			h = findField(i, true, true, 4, 'f', regex);
-			list.add(asFieldHook(h, "getWidth", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getWidth"));
 
 			h = findField(i, true, true, 5, 'f', regex);
-			list.add(asFieldHook(h, "getHeight", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getHeight"));
 
 			h = findField(i, true, true, 7, 'f', regex);
-			list.add(asFieldHook(h, "getBrightness", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getBrightness"));
 
 			h = findField(i, true, true, 8, 'f', regex);
-			list.add(asFieldHook(h, "getContrast", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getContrast"));
 
 			h = findField(i, true, true, 9, 'f', regex);
-			list.add(asFieldHook(h, "getHeadIcon", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getHeadIcon"));
 
 			h = findField(i, true, true, 10, 'f', regex);
-			list.add(asFieldHook(h, "getNpcDegToTurn", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getNpcDegToTurn"));
 
 			h = findField(i, true, true, 11, 'f', regex);
-			list.add(asFieldHook(h, "getVarpId", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getVarpId"));
 
 			h = findField(i, true, true, 12, 'f', regex);
-			list.add(asFieldHook(h, "getSettingId", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getSettingId"));
 
 			h = findField(i, false, true, 2, 'f', "putfield");
-			list.add(asFieldHook(h, "getNpcBoundDim", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getNpcBoundDim"));
 
 			h = findField(i, false, true, 3, 'f', "putfield");
-			list.add(asFieldHook(h, "getIdleAnimationId", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getIdleAnimationId"));
 
 			h = findField(i, false, true, 6, 'f', "putfield");
-			list.add(asFieldHook(h, "getWalkAnimationId", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getWalkAnimationId"));
 
 			h = findField(i, false, true, 7, 'f', "putfield");
-			list.add(asFieldHook(h, "getNpcTurnAround", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getNpcTurnAround"));
 
 			h = findField(i, false, true, 8, 'f', "putfield");
-			list.add(asFieldHook(h, "getNpcTurnRight", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getNpcTurnRight"));
 
 			h = findField(i, false, true, 9, 'f', "putfield");
-			list.add(asFieldHook(h, "getNpcTurnLeft", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getNpcTurnLeft"));
 
 			return list;
 		}

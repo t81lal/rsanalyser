@@ -31,7 +31,6 @@ public class Boot {
 	private static int revision = 79;
 
 	public static void main(String[] args) throws Exception {
-		
 		/*if(true) {
 			int k = 1986473181 * 180709093;
 			System.out.println(k);
@@ -43,12 +42,16 @@ public class Boot {
 		bootstrap();
 
 		// Use runLatest for full logs
-		int count = 1;
+		int count = 10;
 		for(int i=0; i < count; i++) {
 			Revision revision = rev(Boot.revision - i);
 			System.out.println("Running " + revision.getName());
-			// runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
-			runLatest(AnalysisProviderRegistry.get(revision).create(revision));
+			try {
+				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
+//				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
+			} catch(Throwable t) {
+				t.printStackTrace();
+			}
 		}		
 
 		//runLatest(71);
@@ -175,7 +178,7 @@ public class Boot {
 		flags.put("superDebug", false);
 		flags.put("basicout", false);
 		flags.put("out", false);
-		flags.put("nodump", true);
+		// flags.put("nodump", true);
 		runFlags(provider, flags);
 	}
 

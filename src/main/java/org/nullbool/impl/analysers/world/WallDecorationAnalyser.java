@@ -67,25 +67,25 @@ public class WallDecorationAnalyser extends ClassAnalyser {
 			l.add(asFieldHook(h, "getMarkerRenderable2"));
 
 			h = findField(ins, false, true, 3, 'f', "putfield");
-			l.add(asFieldHook(h, "getStrictX", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getStrictX"));
 
 			h = findField(ins, false, true, 4, 'f', "putfield");
-			l.add(asFieldHook(h, "getStrictY", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getStrictY"));
 
 			h = findField(ins, false, true, 5, 'f', "putfield");
-			l.add(asFieldHook(h, "getPlane", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getPlane"));
 
 			h = findField(ins, false, true, 1, 'f', "putfield");
-			l.add(asFieldHook(h, "getHash", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getHash"));
 
 			h = findField(ins, false, true, 2, 'f', "putfield");
-			l.add(asFieldHook(h, "getUID", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getUID"));
 
 			h = findField(ins, false, true, 8, 'f', "putfield");
-			l.add(asFieldHook(h, "getOrientation1", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getOrientation1"));
 
 			h = findField(ins, false, true, 9, 'f', "putfield");
-			l.add(asFieldHook(h, "getOrientation2", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getOrientation2"));
 			return l;
 		}
 	}

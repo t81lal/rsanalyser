@@ -6,7 +6,7 @@ public class FieldHook extends ObfuscatedData {
 	private static final long serialVersionUID = 5858100799382432079L;
 	public static final String DESC = "desc.obfuscated";
 	public static final String STATIC = "attr.static";
-	public static final String MUTLI = "attr.multi";
+	public static final String ENCODER = "attr.multi.encoder";
 
 	private ClassHook owner;
 

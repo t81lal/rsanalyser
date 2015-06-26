@@ -10,7 +10,6 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.impl.analysers.ClientAnalyser;
 import org.nullbool.impl.analysers.GameshellAnalyser;
 import org.nullbool.impl.analysers.client.CanvasAnalyser;
-import org.nullbool.impl.analysers.client.ExceptionReporterAnalyser;
 import org.nullbool.impl.analysers.client.WrappedExceptionAnalyser;
 import org.nullbool.impl.analysers.client.definitions.ItemDefinitionAnalyser;
 import org.nullbool.impl.analysers.client.definitions.NPCDefinitionAnalyser;
@@ -27,6 +26,8 @@ import org.nullbool.impl.analysers.entity.ModelAnalyser;
 import org.nullbool.impl.analysers.entity.NPCAnalyser;
 import org.nullbool.impl.analysers.entity.PlayerAnalyser;
 import org.nullbool.impl.analysers.entity.RenderableAnalyser;
+import org.nullbool.impl.analysers.friend.FriendAnalyser;
+import org.nullbool.impl.analysers.friend.IgnoredPlayerAnalyser;
 import org.nullbool.impl.analysers.net.BufferAnalyser;
 import org.nullbool.impl.analysers.net.IsaacCipherAnalyser;
 import org.nullbool.impl.analysers.net.PacketAnalyser;
@@ -50,9 +51,10 @@ public class AnalysisProviderImpl extends AbstractAnalysisProvider {
 	protected Builder<ClassAnalyser> registerAnalysers() throws AnalysisException {
 		Builder<ClassAnalyser> builder = new Builder<ClassAnalyser>();
 		builder.addAll(new ClassAnalyser[]
-				{	new WrappedExceptionAnalyser(), new ExceptionReporterAnalyser(), new CanvasAnalyser(), new NodeAnalyser(), new DualNodeAnalyser(),
+				{	new WrappedExceptionAnalyser(), /* deprecated new ExceptionReporterAnalyser(),*/ new CanvasAnalyser(), new NodeAnalyser(), new DualNodeAnalyser(),
 					new RasteriserAnalyser(), new RenderableAnalyser(), new ActorAnalyser(), new DequeAnalyser(), new NPCAnalyser(), new IsaacCipherAnalyser(), 
 					new BufferAnalyser(), new PacketAnalyser(), new HashtableAnalyser(), new GroundItemAnalyser(), new RegionAnalyser(), 
+					new FriendAnalyser(), new IgnoredPlayerAnalyser(),
 					new NPCDefinitionAnalyser(), new ObjectDefinitionAnalyser(), new ItemDefinitionAnalyser(), new ModelAnalyser(),
 					new PlayerAnalyser(), new TileAnalyser(),new ItemContainerAnalyser() ,new WidgetNodeAnalyser(), new GameObjectAnalyser(), new WallObjectAnalyser(), new WidgetAnalyser(),
 					new WallDecorationAnalyser(), new GroundObjectAnalyser(), new GroundDecorationAnalyser(), new GameshellAnalyser(), new ClientAnalyser()

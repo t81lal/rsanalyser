@@ -63,34 +63,34 @@ public class ObjectDefinitionAnalyser extends ClassAnalyser {
 			list.add(asFieldHook(h, "getName"));
 
 			h = findField(i, false, true, 2, 'f', "putfield");
-			list.add(asFieldHook(h, "getWidth", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getWidth"));
 
 			h = findField(i, false, true, 3, 'f', "putfield");
-			list.add(asFieldHook(h, "getHeight", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getHeight"));
 
 			h = findField(i, false, true, 10, 'f', "putfield");
-			list.add(asFieldHook(h, "getAnimationId", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getAnimationId"));
 
 			h = findField(i, true, true, 3, 'f', regex);
-			list.add(asFieldHook(h, "getObjMapScene", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getObjMapScene"));
 
 			h = findField(i, true, true, 6, 'f', regex);
-			list.add(asFieldHook(h, "getModelWidth", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getModelWidth"));
 
 			h = findField(i, true, true, 7, 'f', regex);
-			list.add(asFieldHook(h, "getModelHeight", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getModelHeight"));
 
 			h = findField(i, true, true, 8, 'f', regex);
-			list.add(asFieldHook(h, "getModelBreadth", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getModelBreadth"));
 
 			h = findField(i, true, true, 9, 'f', regex);
-			list.add(asFieldHook(h, "getTranslationX", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getTranslationX"));
 
 			h = findField(i, true, true, 10, 'f', regex);
-			list.add(asFieldHook(h, "getTranslationY", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getTranslationY"));
 
 			h = findField(i, true, true, 11, 'f', regex);
-			list.add(asFieldHook(h, "getTranslationZ", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getTranslationZ"));
 
 			h = findField(i, false, true, 5, 'f', "putfield");
 			list.add(asFieldHook(h, "isWalkable"));

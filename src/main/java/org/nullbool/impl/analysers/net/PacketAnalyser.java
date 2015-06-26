@@ -20,7 +20,9 @@ import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-@SupportedHooks(fields = { "getCipher&IsaacCipher", "getBitCaret&I"}, methods = { "initCipher&([I)V", "initBitAccess&()V", "finishBitAccess&()V", "readableBytes&(I)I", "readBits&(I)I"})
+@SupportedHooks(
+		fields = { "getCipher&IsaacCipher", "getBitCaret&I"}, 
+		methods = { "initCipher&([I)V", "initBitAccess&()V", "finishBitAccess&()V", "readableBytes&(I)I", "readBits&(I)I"})
 /**
  * @author Bibl (don't ban me pls)
  * @created 23 May 2015
@@ -139,7 +141,7 @@ public class PacketAnalyser extends ClassAnalyser {
 					AbstractInsnNode ain = findOpcodePattern(m, INIT_CIPHER_PATTERN);
 					if(ain != null) {
 						FieldInsnNode fin = (FieldInsnNode) ain.getNext();
-						list.add(asFieldHook(fin, "getCipher", findMultiplier(source(fin), false)));
+						list.add(asFieldHook(fin, "getCipher"));
 					}
 				} else if(m.desc.endsWith("V")) {
 					FieldInsnNode f1 = (FieldInsnNode) findOpcodePattern(m, INIT_BIT_ACCESS_PATTERN1);
@@ -150,7 +152,7 @@ public class PacketAnalyser extends ClassAnalyser {
 								//finishBitAccess
 								FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, GETFIELD_PATTERN);
 								if(fin != null) {
-									list.add(asFieldHook(fin, "getBitCaret", findMultiplier(source(fin), false)));
+									list.add(asFieldHook(fin, "getBitCaret"));
 								}
 							}
 						}
@@ -160,7 +162,7 @@ public class PacketAnalyser extends ClassAnalyser {
 			
 			
 //			String h = findField(caretMethod, true, true, 1, 'f', "iload 1");
-//			list.add(asFieldHook(h, "getBitCaret", findMultiplier(h, false)));
+//			list.add(asFieldHook(h, "getBitCaret"));
 			
 			return list;
 		}

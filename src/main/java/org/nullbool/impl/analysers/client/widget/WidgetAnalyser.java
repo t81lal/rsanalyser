@@ -60,7 +60,7 @@ public class WidgetAnalyser extends ClassAnalyser {
 			l.add(asFieldHook(h, "getActions"));
 
 			h = findField(method, true, true, 1, 'f', "dup_x1");
-			l.add(asFieldHook(h, "getUID", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getUID"));
 
 			h = findField(method, "getfield .*String;", "sipush 1802");
 			l.add(asFieldHook(h, "getName"));
@@ -69,52 +69,52 @@ public class WidgetAnalyser extends ClassAnalyser {
 			l.add(asFieldHook(h, "getText"));
 
 			h = findField(method, "putfield .*I", "sipush 1101");
-			l.add(asFieldHook(h, "getTextColor", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getTextColor"));
 
 			h = findField(method, "putfield .*I", "sipush 1102");
-			l.add(asFieldHook(h, "getTextAlpha", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getTextAlpha"));
 
 			h = findField(method, "putfield .*I", "sipush 1105");
-			l.add(asFieldHook(h, "getTextureId", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getTextureId"));
 
 			h = findField(method, "putfield .*I", "sipush 1116");
-			l.add(asFieldHook(h, "getBorderThickness", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getBorderThickness"));
 
 			h = findField(method, "putfield .*I", "sipush 1201");
-			l.add(asFieldHook(h, "getModelType", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getModelType"));
 
 			h = findField(method, "getfield .*I", "sipush 1100");
-			l.add(asFieldHook(h, "getScrollX", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getScrollX"));
 
 			h = findField(method, "getfield .*I", "sipush 1601");
-			l.add(asFieldHook(h, "getScrollY", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getScrollY"));
 
 			h = findField(method, "getfield .*I", "sipush 1500");
-			l.add(asFieldHook(h, "getRelativeX", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getRelativeX"));
 
 			h = findField(method, "getfield .*I", "sipush 1501");
-			l.add(asFieldHook(h, "getRelativeY", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getRelativeY"));
 
 			h = findField(method, "getfield .*I", "sipush 1502");
-			l.add(asFieldHook(h, "getWidth", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getWidth"));
 
 			h = findField(method, "getfield .*I", "sipush 1503");
-			l.add(asFieldHook(h, "getHeight", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getHeight"));
 
 			h = findField(method, "getfield .*I", "sipush 1504");
-			l.add(asFieldHook(h, "getParentId", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getParentId"));
 
 			h = findField(method, "getfield .*I", "sipush 1702");
-			l.add(asFieldHook(h, "getIndex", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getIndex"));
 
 			h = findField(method, "getfield .*I", "sipush 2606");
-			l.add(asFieldHook(h, "getRotationX", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getRotationX"));
 
 			h = findField(method, "getfield .*I", "sipush 2607");
-			l.add(asFieldHook(h, "getRotationY", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getRotationY"));
 
 			h = findField(method, "getfield .*I", "sipush 2608");
-			l.add(asFieldHook(h, "getRotationZ", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getRotationZ"));
 
 			return l;
 		}
@@ -171,7 +171,7 @@ public class WidgetAnalyser extends ClassAnalyser {
 			MethodNode m = identifyMethod(mn, true, "iconst_1", "bastore");
 
 			f = findField(m, true, true, 1, 'f', "getstatic .* \\[Z");
-			l.add(asFieldHook(f, "getBoundsIndex", findMultiplier(f, false)));
+			l.add(asFieldHook(f, "getBoundsIndex"));
 
 			return l;
 		}
@@ -189,13 +189,13 @@ public class WidgetAnalyser extends ClassAnalyser {
 			regex = "invokespecial " + cn.name + "\\.<init> \\(\\)V";
 
 			f = findField(m, true, true, 1, 'f', regex);
-			l.add(asFieldHook(f, "getWidgetType", findMultiplier(f, false)));
+			l.add(asFieldHook(f, "getWidgetType"));
 
 			f = findField(m, true, true, 1, 'f', "sipush 1701");
-			l.add(asFieldHook(f, "getItemId", findMultiplier(f, false)));
+			l.add(asFieldHook(f, "getItemId"));
 
 			f = findField(m, true, true, 2, 'f', "sipush 1701");
-			l.add(asFieldHook(f, "getStackSize", findMultiplier(f, false)));
+			l.add(asFieldHook(f, "getStackSize"));
 
 			return l;
 		}

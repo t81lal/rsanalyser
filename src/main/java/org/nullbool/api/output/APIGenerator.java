@@ -9,11 +9,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -51,7 +49,7 @@ public class APIGenerator {
 		
 		API_CANONICAL_NAMES.put("Rasteriser", "render/IRasteriser");
 		
-		API_CANONICAL_NAMES.put("IsaacCipher", "network/IsaacCipher");
+		API_CANONICAL_NAMES.put("IsaacCipher", "network/IIsaacCipher");
 		API_CANONICAL_NAMES.put("Buffer", "network/IBuffer");
 		API_CANONICAL_NAMES.put("Packet", "network/IPacket");
 
@@ -158,6 +156,7 @@ public class APIGenerator {
 			for (MethodHook m : hook.methods()) {
 				String d = convertMultiBytecodeStyle(hookMap.classes(), m.val(MethodHook.DESC));
 				MethodNode mn = new MethodNode(cn, Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, m.refactored(), d, null, null);
+				//System.out.println(m.obfuscated() + "." + m.val(MethodHook.DESC) + "  " + mn.name + "." + mn.desc);
 				cn.methods.add(mn);
 
 				// if (m.getInstructions() != null) {
@@ -315,7 +314,7 @@ public class APIGenerator {
 			retVal = convertSingleBytecodeStyle(classes, ret.getDescriptor());
 		}
 
-		Set<String> args = parseArgs(desc);
+		List<String> args = parseArgs(desc);
 		StringBuilder sb = new StringBuilder();
 		sb.append("(");
 		Iterator<String> it = args.iterator();
@@ -335,16 +334,16 @@ public class APIGenerator {
 		return desc.equals("V");
 	}
 
-	public static Set<String> parseArgs(String desc) {
+	public static List<String> parseArgs(String desc) {
 		if (desc == null)
 			return null;
 		Type[] args = Type.getArgumentTypes(desc);
 		// needs to be ordered
-		Set<String> set = new LinkedHashSet<String>(args.length);
+		List<String> list = new ArrayList<String>(args.length);
 		for (Type arg : args) {
-			set.add(arg.getDescriptor());
+			list.add(arg.getDescriptor());
 		}
-		return set;
+		return list;
 	}
 
 	public static String standardise(String s) {

@@ -14,6 +14,20 @@ public class MultiplierHandler {
 	public MultiplierHandler() {
 		decoders = encoders = new HashMap<>();
 	}
+	
+	public void test() {
+//		for(Entry<String, List<Long>> e : decoders.entrySet()) {
+//			if(e.getKey().startsWith("client.h")) {
+//				System.out.println("m for " + e.getKey());
+//			}
+//		}
+//		
+//		for(Entry<String, List<Long>> e : encoders.entrySet()) {
+//			if(e.getKey().startsWith("client.h")) {
+//				System.out.println("m for " + e.getKey());
+//			}
+//		}
+	}
 
 	public long getDecoder(final String key) {
 		long mostUsed = 0;

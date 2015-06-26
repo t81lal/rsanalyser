@@ -932,11 +932,11 @@ public class BufferAnalyser extends ClassAnalyser {
 					for(AbstractInsnNode ain : m.instructions.toArray()) {
 						if(ain.opcode() == PUTFIELD) {
 							FieldInsnNode fin = (FieldInsnNode) ain;
-							String source = String.format("%s.%s", fin.owner, fin.name);
+							// String source = String.format("%s.%s", fin.owner, fin.name);
 							if(ain.getPrevious().opcode() == ICONST_0) {
-								list.add(asFieldHook(fin, "getCaret", false, findMultiplier(source, false)));
+								list.add(asFieldHook(fin, "getCaret", false));
 							} else {
-								list.add(asFieldHook(fin, "getPayload", false, 1));
+								list.add(asFieldHook(fin, "getPayload", false));
 							}
 						}
 					}

@@ -60,34 +60,34 @@ public class GameObjectAnalyser extends ClassAnalyser {
 			AbstractInsnNode[] i = followJump(m, 300);
 
 			String h = findField(i, true, true, 1, 'f', "iload 1", "ldc .*");
-			l.add(asFieldHook(h, "getPlane", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getPlane"));
 
 			h = findField(i, true, true, 1, 'f', "iload 6", "ldc .*");
-			l.add(asFieldHook(h, "getStrictX", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getStrictX"));
 
 			h = findField(i, true, true, 1, 'f', "iload 7", "ldc .*");
-			l.add(asFieldHook(h, "getStrictY", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getStrictY"));
 
 			h = findField(i, true, true, 1, 'f', "iload 2", "ldc .*");
-			l.add(asFieldHook(h, "getLocalX", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getLocalX"));
 
 			h = findField(i, true, true, 1, 'f', "iload 3", "ldc .*");
-			l.add(asFieldHook(h, "getLocalY", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getLocalY"));
 
 			h = findField(i, true, true, 1, 'f', "iload 4", "iadd", "iconst_1");
-			l.add(asFieldHook(h, "getWidth", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getWidth"));
 
 			h = findField(i, true, true, 1, 'f', "iload 5", "iadd", "iconst_1");
-			l.add(asFieldHook(h, "getHeight", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getHeight"));
 
 			h = findField(i, true, true, 1, 'f', "iload 10", "ldc .*");
-			l.add(asFieldHook(h, "getOrientation", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getOrientation"));
 
 			h = findField(i, true, true, 1, 'f', "iload 13", "ldc .*");
-			l.add(asFieldHook(h, "getFlags", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getFlags"));
 
 			h = findField(i, true, true, 1, 'f', "aload 14", "aload 9");
-			l.add(asFieldHook(h, "getMarkedRenderable", findMultiplier(h, false)));
+			l.add(asFieldHook(h, "getMarkedRenderable"));
 
 			return l;
 		}
@@ -102,7 +102,7 @@ public class GameObjectAnalyser extends ClassAnalyser {
 			AbstractInsnNode[] i = followJump(method, 100);
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String h = findField(i, false, true, 1, 'f', "putfield");
-			list.add(asFieldHook(h, "getHash", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getHash"));
 			return list;
 		}
 	}

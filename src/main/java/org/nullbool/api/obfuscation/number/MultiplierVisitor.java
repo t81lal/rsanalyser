@@ -44,6 +44,10 @@ public class MultiplierVisitor extends NodeVisitor {
 			if ((encoder % 2) != 0) {
 				handler.addEncoder(fmn.key(), encoder);
 				eCount++;
+				
+//				if(fmn.key().equals("client.hs")) {
+//					System.out.println("MultiplierVisitor.visitOperation(1)");
+//				}
 			}
 		} else if (an.multiplying() && (an.children() == 2)) {
 			final FieldMemberNode fmn = an.firstField();
@@ -54,6 +58,10 @@ public class MultiplierVisitor extends NodeVisitor {
 			if ((decoder % 2) != 0) {
 				handler.addDecoder(fmn.key(), decoder);
 				dCount++;
+				
+//				if(fmn.key().equals("client.hs")) {
+//					System.out.println("MultiplierVisitor.visitOperation(2)");
+//				}
 			}
 		}
 		

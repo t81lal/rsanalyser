@@ -10,6 +10,7 @@ import java.util.Set;
 import org.nullbool.api.AbstractAnalysisProvider;
 import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
+import org.nullbool.api.obfuscation.number.MultiplierHandler;
 import org.nullbool.pi.core.hook.api.ClassHook;
 import org.nullbool.pi.core.hook.api.DynamicDesc;
 import org.nullbool.pi.core.hook.api.FieldHook;
@@ -22,6 +23,32 @@ import org.nullbool.pi.core.hook.api.MethodHook;
  */
 public class OutputLogger {
 
+	public static boolean hasMulti(String desc) {
+		return desc.equals("I") || desc.equals("B") || desc.equals("S") || desc.equals("J");
+	}
+	
+	public static void resolveMultis(List<ClassHook> classes) {
+		MultiplierHandler mh = Context.current().getMultiplierHandler();
+		for(ClassHook ch : classes) {
+			for(FieldHook fh : ch.fields()) {
+				String desc = fh.val(FieldHook.DESC);
+				if(hasMulti(desc)) {
+					String src = fh.owner().obfuscated() + "." + fh.obfuscated();
+					
+					long m = mh.getEncoder(src);
+					if(m == 0) {
+						m = mh.getDecoder(src);
+					}
+					
+					if(m == 0)
+						m = 1;
+					
+					fh.var(FieldHook.ENCODER, Long.toString(m));
+				}
+			}
+		}
+	}
+	
 	public static HookMap output() {
 		long start = System.currentTimeMillis();
 		AbstractAnalysisProvider provider = Context.current();
@@ -39,6 +66,10 @@ public class OutputLogger {
 		boolean debug = flags.getOrDefault("debug", false);
 		boolean printMultis = flags.getOrDefault("multis", true);
 		boolean verify = flags.getOrDefault("verify", false);
+		
+		if(printMultis) {
+			resolveMultis(classes);
+		}
 
 		if (logResults)
 			System.out.println();
@@ -154,14 +185,18 @@ public class OutputLogger {
 					sb2.append(hook.obfuscated());
 					if (printMultis) {
 						StringBuilder sb4 = new StringBuilder();
-						sb4.append(longstring(sb2.toString(), 10));
-						long multi = Long.parseLong(hook.val(FieldHook.MUTLI, "1"));
-						if (multi != 1) {
+						
+						if(hasMulti(fdd.getObfuscated())) {
+							sb4.append(longstring(sb2.toString(), 10));
+							long multi = Long.parseLong(hook.val(FieldHook.ENCODER, "1"));
 							sb4.append(" * ");
 							if (multi >= 0)
 								sb4.append(" ");
 							sb4.append(multi);
+						} else {
+							sb4.append(longstring(sb2.toString(), 10));
 						}
+						
 						sb.append(longstring(sb4.toString(), 25));
 					} else {
 						sb.append(longstring(sb2.toString(), 12));
@@ -270,6 +305,14 @@ public class OutputLogger {
 		if (debug)
 			System.out.println("Longest: " + longestLine);
 
+		
+		
+
+		MultiplierHandler mh = Context.current().getMultiplierHandler();
+		mh.test();
+		
+		
+		
 		return new HookMap(classes);
 	}
 	

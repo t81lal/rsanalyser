@@ -26,6 +26,7 @@ import org.nullbool.api.obfuscation.HierarchyVisitor;
 import org.nullbool.api.obfuscation.MultiplicativeModifierDestroyer;
 import org.nullbool.api.obfuscation.OpaquePredicateRemover;
 import org.nullbool.api.obfuscation.OpaquePredicateRemover.Opaque;
+import org.nullbool.api.obfuscation.RedunantGotoTransformer;
 import org.nullbool.api.obfuscation.SimpleArithmeticFixer;
 import org.nullbool.api.obfuscation.StringBuilderCharReplacer;
 import org.nullbool.api.obfuscation.UnusedFieldRemover;
@@ -41,15 +42,16 @@ import org.nullbool.api.obfuscation.refactor.IRemapper;
 import org.nullbool.api.obfuscation.refactor.MethodCache;
 import org.nullbool.api.output.APIGenerator;
 import org.nullbool.api.output.OutputLogger;
+import org.nullbool.api.rs.CaseAnalyser;
 import org.nullbool.api.util.InstructionIdentifier;
 import org.nullbool.api.util.NodedContainer;
 import org.nullbool.api.util.PatternParser;
 import org.nullbool.api.util.map.ValueCreator;
-import org.nullbool.pi.core.hook.serimpl.StaticMapSerialiserImpl;
 import org.nullbool.pi.core.hook.api.ClassHook;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.HookMap;
 import org.nullbool.pi.core.hook.api.MethodHook;
+import org.nullbool.pi.core.hook.serimpl.StaticMapSerialiserImpl;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.ClassNode;
@@ -77,6 +79,7 @@ public abstract class AbstractAnalysisProvider {
 	private OpaquePredicateRemover opaqueRemover;
 	private CFGCache cfgCache;
 	private TreeBuilder builder;
+	private CaseAnalyser caseAnalyser;
 
 	private volatile boolean haltRequested;
 
@@ -275,7 +278,7 @@ public abstract class AbstractAnalysisProvider {
 		contents.getClassContents().addAll(getClassNodes().values());
 		CompleteJarDumper dumper = new CompleteJarDumper(contents);
 		String name = getRevision().getName();
-		File file = new File("out/" + name + "/deob" + name + ".jar");
+		File file = new File("out/" + name + "/deob.jar");
 		if (file.exists())
 			file.delete();
 		file.mkdirs();
@@ -285,8 +288,29 @@ public abstract class AbstractAnalysisProvider {
 			e.printStackTrace();
 		}
 	}
+	
+	private void buildCases() {
+		Map<String, ClassNode> classNodes = contents.getClassContents().namedMap();
+		caseAnalyser = new CaseAnalyser();
+		for(ClassNode cn : classNodes.values()) {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() >= 12000) {
+					System.out.println("m: " + m + " " +m.instructions.size());
+					try {
+						if(caseAnalyser.analyse(m, cfgCache.get(m)))
+							return;
+					} catch (ControlFlowException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
 
 	private void analyse() throws AnalysisException {
+		
+		buildCases();
+		
 		Map<String, ClassNode> classNodes = contents.getClassContents().namedMap();
 		for (ClassAnalyser a : analysers) {
 			if(haltRequested)
@@ -299,6 +323,7 @@ public abstract class AbstractAnalysisProvider {
 			}
 
 			if (a.getFoundClass() == null || a.getFoundHook() == null)
+				//System.err.println("Couldn't find " + a.getName());
 				throw new AnalysisException("Couldn't find " + a.getName());
 			
 			if(haltRequested)
@@ -354,7 +379,24 @@ public abstract class AbstractAnalysisProvider {
 		// destroyMultis();
 		// removeMultis();
 		buildCfgs();
+		// transformGotos();
 		// reorderBlocks();
+	}
+	
+	private void transformGotos() {
+		RedunantGotoTransformer transformer = new RedunantGotoTransformer();
+		
+		for(ClassNode cn : contents.getClassContents()) {
+			for(MethodNode m : cn.methods) {
+				if(m.instructions.size() > 0) {
+					try {
+						transformer.restructure(m, cfgCache.get(m));
+					} catch (ControlFlowException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 	
 	private void destroyMultis() {
@@ -569,7 +611,7 @@ public abstract class AbstractAnalysisProvider {
 		MultiplierVisitor mutliVisitor = new MultiplierVisitor(multiplierHandler);
 		for (ClassNode cn : contents.getClassContents()) {
 			for (MethodNode m : cn.methods) {
-				new TreeBuilder().build(m).accept(mutliVisitor);
+				builder.build(m).accept(mutliVisitor);
 			}
 		}
 		mutliVisitor.log();
@@ -649,5 +691,9 @@ public abstract class AbstractAnalysisProvider {
 
 	public void requestHalt() {
 		this.haltRequested = true;
+	}
+
+	public CaseAnalyser getCaseAnalyser() {
+		return caseAnalyser;
 	}
 }

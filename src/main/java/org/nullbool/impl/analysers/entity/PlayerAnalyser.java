@@ -76,7 +76,7 @@ public class PlayerAnalyser extends ClassAnalyser {
 			String[] pattern = { "getstatic \\w*.\\w* L" + player + ";", "getfield \\w*.\\w* I" };
 
 			h = findField(method, true, true, 1, 'f', pattern);
-			list.add(asFieldHook(h, "getPlayerLevel", findMultiplier(h, false)));
+			list.add(asFieldHook(h, "getPlayerLevel"));
 
 			return list;
 		}

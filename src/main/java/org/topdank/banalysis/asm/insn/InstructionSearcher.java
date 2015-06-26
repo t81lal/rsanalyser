@@ -1,21 +1,31 @@
 package org.topdank.banalysis.asm.insn;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LineNumberNode;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class InstructionSearcher implements Opcodes {
 	
-	protected InsnList insns;
+	protected Collection<AbstractInsnNode> insns;
 	protected InstructionPattern pattern;
 	
 	protected List<AbstractInsnNode[]> matches;
 	
+	public InstructionSearcher(Collection<AbstractInsnNode> insns,
+			InstructionPattern pattern) {
+		this.insns = insns;
+		this.pattern = pattern;
+		matches = new ArrayList<AbstractInsnNode[]>();
+	}
+
 	public InstructionSearcher(InsnList insns, int[] opcodes) {
 		this(insns, new InstructionPattern(opcodes));
 	}
@@ -25,14 +35,14 @@ public class InstructionSearcher implements Opcodes {
 	}
 	
 	public InstructionSearcher(InsnList insns, InstructionPattern pattern) {
-		this.insns = insns;
+		this.insns = Arrays.asList(insns.toArray());
 		this.pattern = pattern;
 		matches = new ArrayList<AbstractInsnNode[]>();
 	}
 	
 	public boolean search() {
-		for(AbstractInsnNode ain : insns.toArray()) {
-			if (ain instanceof LineNumberNode || ain instanceof FrameNode)
+		for(AbstractInsnNode ain : insns) {
+			if (ain instanceof LineNumberNode || ain instanceof FrameNode || ain instanceof LabelNode)
 				continue;
 			if (pattern.accept(ain)) {
 				matches.add(pattern.getLastMatch());

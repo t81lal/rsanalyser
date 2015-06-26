@@ -142,13 +142,13 @@ public class ClientAnalyser extends ClassAnalyser {
 			MethodNode m = identifyMethod(mn, false, "ldc 120.0");
 
 			h = findField(m, true, true, 1, 's', "ldc 120.0");
-			list.add(asFieldHook(h, "getMapScale", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getMapScale"));
 
 			h = findField(m, true, true, 1, 's', "ldc 30.0");
-			list.add(asFieldHook(h, "getMapOffset", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getMapOffset"));
 
 			h = findField(m, true, true, 1, 's', "ldc 20.0");
-			list.add(asFieldHook(h, "getMapAngle", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getMapAngle"));
 
 			return list;
 		}
@@ -164,22 +164,22 @@ public class ClientAnalyser extends ClassAnalyser {
 			MethodNode m = startWithBc(Context.current().getPattern("camera"), mn)[0];
 
 			h = findNearIns(m, "invokestatic", "put", "get");
-			list.add(asFieldHook(h, "getPlane", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getPlane"));
 
 			h = findField(m, true, false, 1, 's', "isub", "istore 0");
-			list.add(asFieldHook(h, "getCameraX", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getCameraX"));
 
 			h = findField(m, true, false, 1, 's', "isub", "istore 1");
-			list.add(asFieldHook(h, "getCameraY", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getCameraY"));
 
 			h = findField(m, true, false, 1, 's', "imul", "isub", "istore 4");
-			list.add(asFieldHook(h, "getCameraZ", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getCameraZ"));
 
 			h = findField(m, true, false, 1, 's', "iaload", "istore 7");
-			list.add(asFieldHook(h, "getCameraYaw", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getCameraYaw"));
 
 			h = findField(m, true, false, 1, 's', "iaload", "istore 5");
-			list.add(asFieldHook(h, "getCameraPitch", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getCameraPitch"));
 
 			return list;
 		}
@@ -200,22 +200,22 @@ public class ClientAnalyser extends ClassAnalyser {
 			final String[] pattern = { "if_icmple", "iload 6", "ifge","iconst_1" };
 			
 			h = findField(ins, true, true, 1, 's', pattern);
-			list.add(asFieldHook(h, "isMenuOpen", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "isMenuOpen"));
 
 			h = findField(ins, true, true, 2, 's', pattern);
-			list.add(asFieldHook(h, "getMenuX", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getMenuX"));
 
 			h = findField(ins, true, true, 3, 's', pattern);
-			list.add(asFieldHook(h, "getMenuY", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getMenuY"));
 
 			h = findField(ins, true, true, 4, 's', pattern);
-			list.add(asFieldHook(h, "getMenuWidth", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getMenuWidth"));
 
 			h = findField(ins, true, true, 5, 's', pattern);
-			list.add(asFieldHook(h, "getMenuSize", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getMenuSize"));
 
 			h = findField(ins, true, true, 6, 's', pattern);
-			list.add(asFieldHook(h, "getMenuHeight", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getMenuHeight"));
 
 			return list;
 		}
@@ -313,10 +313,10 @@ public class ClientAnalyser extends ClassAnalyser {
 			AbstractInsnNode[] ins = followJump(method, 120);
 
 			h = findField(ins, false, false, 1, 's', "isub", "isub", "istore");
-			list.add(asFieldHook(h, "getBaseX", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getBaseX"));
 
 			h = findField(ins, false, true, 1, 's', "isub", "isub", "istore");
-			list.add(asFieldHook(h, "getBaseY", findMultiplier(h, true)));
+			list.add(asFieldHook(h, "getBaseY"));
 
 			return list;
 		}
@@ -524,71 +524,80 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class ReportMethodHookAnalyser implements IMethodAnalyser {
 
 		@Override
-		public List<MethodHook> find(ClassNode cn) {
+		public List<MethodHook> find(ClassNode _cn) {
 			List<MethodHook> hooks = new ArrayList<MethodHook>();
-			for (MethodNode m : getClassNodeByRefactoredName("ExceptionReporter").methods) {
-				if (m.desc.startsWith("(Ljava/lang/Throwable;Ljava/lang/String;") && m.desc.contains(")L")) {
-					MethodHook mhook = getAnalyser("ExceptionReporter").asMethodHook(m, "reportException").var(MethodHook.TYPE, MethodHook.PATCH);
-					hooks.add(mhook);
-					VarInsnNode beforeReturn = null;
-					try {
-						for (AbstractInsnNode ain : m.instructions.toArray()) {
-							if (ain.opcode() == ARETURN) {
-								if (beforeReturn != null)
-									System.err.println("WTF BOI");
-								beforeReturn = (VarInsnNode) ain.getPrevious();
+			for(ClassNode cn : Context.current().getClassNodes().values()) {
+				for(MethodNode m : cn.methods) {
+					if (m.desc.startsWith("(Ljava/lang/Throwable;Ljava/lang/String;)") && m.desc.contains(")L")) {
+						MethodHook mhook = asMethodHook(m, "reportException").var(MethodHook.TYPE, MethodHook.PATCH);
+						hooks.add(mhook);
+						VarInsnNode beforeReturn = null;
+						try {
+							for (AbstractInsnNode ain : m.instructions.toArray()) {
+								if (ain.opcode() == ARETURN) {
+									if (beforeReturn != null)
+										System.err.println("WTF BOI");
+									beforeReturn = (VarInsnNode) ain.getPrevious();
+								}
 							}
+							/* 1. Generate the event creation. 2. Call the dispatch method. */
+
+							// InsnList objCreateList = new InsnList();
+							// objCreateList.add(EventCallGenerator.generateEventCreate("org/zbot/api/event/ErrorEvent", "(Lorg/zbot/accessors/IWrappedException;)V",
+							// new VarInsnNode(beforeReturn.getOpcode(), beforeReturn.var), // load the raw object
+							// // cast it to an IWrappedException
+							// new TypeInsnNode(CHECKCAST, APIGenerator.ACCESSOR_BASE + APIGenerator.API_CANONICAL_NAMES.get("WrappedException"))));
+							// InsnList newInsns = EventCallGenerator.generateDispatch(objCreateList);
+
+							InsnList newInsns = new InsnList();
+							newInsns.add(EventCallGenerator.generatePrintLn(new LdcInsnNode("[Client] Create error.")));
+							newInsns.add(EventCallGenerator.generatePrintLn(new VarInsnNode(ALOAD, 1)));
+
+							newInsns.add(new VarInsnNode(ALOAD, 0));
+							newInsns.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable", "printStackTrace", "()V", false));
+
+							InsnList list2 = new InsnList();
+							list2.add(new TypeInsnNode(NEW, "java/lang/StringBuilder"));
+							list2.add(new InsnNode(DUP));
+
+							list2.add(new LdcInsnNode("[Client] "));
+							list2.add(new MethodInsnNode(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false));
+
+							list2.add(new VarInsnNode(ALOAD, 0));
+							list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false));
+							list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Class", "getCanonicalName", "()Ljava/lang/String;", false));
+							list2.add(new MethodInsnNode(INVOKESTATIC, "java/lang/String", "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;", false));
+							list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
+
+							list2.add(new LdcInsnNode(" "));
+							list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
+
+							list2.add(new VarInsnNode(ALOAD, 0));
+							list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable", "getMessage", "()Ljava/lang/String;", false));
+							list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
+							list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "valueOf", "()Ljava/lang/String;", false));
+
+							newInsns.add(EventCallGenerator.generatePrintLn(list2.toArray()));
+
+							InsnList mInsns = m.instructions;
+							mInsns.insertBefore(beforeReturn, newInsns);
+							mhook.insns(mInsns);
+							mhook.var(MethodHook.MAX_STACK, "7");
+							mhook.var(MethodHook.MAX_LOCALS, Integer.toString(m.maxLocals));
+							mInsns.reset();
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
-						/* 1. Generate the event creation. 2. Call the dispatch method. */
-
-						// InsnList objCreateList = new InsnList();
-						// objCreateList.add(EventCallGenerator.generateEventCreate("org/zbot/api/event/ErrorEvent", "(Lorg/zbot/accessors/IWrappedException;)V",
-						// new VarInsnNode(beforeReturn.getOpcode(), beforeReturn.var), // load the raw object
-						// // cast it to an IWrappedException
-						// new TypeInsnNode(CHECKCAST, APIGenerator.ACCESSOR_BASE + APIGenerator.API_CANONICAL_NAMES.get("WrappedException"))));
-						// InsnList newInsns = EventCallGenerator.generateDispatch(objCreateList);
-
-						InsnList newInsns = new InsnList();
-						newInsns.add(EventCallGenerator.generatePrintLn(new LdcInsnNode("[Client] Create error.")));
-						newInsns.add(EventCallGenerator.generatePrintLn(new VarInsnNode(ALOAD, 1)));
-
-						newInsns.add(new VarInsnNode(ALOAD, 0));
-						newInsns.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable", "printStackTrace", "()V", false));
-
-						InsnList list2 = new InsnList();
-						list2.add(new TypeInsnNode(NEW, "java/lang/StringBuilder"));
-						list2.add(new InsnNode(DUP));
-
-						list2.add(new LdcInsnNode("[Client] "));
-						list2.add(new MethodInsnNode(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false));
-
-						list2.add(new VarInsnNode(ALOAD, 0));
-						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false));
-						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Class", "getCanonicalName", "()Ljava/lang/String;", false));
-						list2.add(new MethodInsnNode(INVOKESTATIC, "java/lang/String", "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;", false));
-						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
-
-						list2.add(new LdcInsnNode(" "));
-						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
-
-						list2.add(new VarInsnNode(ALOAD, 0));
-						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable", "getMessage", "()Ljava/lang/String;", false));
-						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
-						list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "valueOf", "()Ljava/lang/String;", false));
-
-						newInsns.add(EventCallGenerator.generatePrintLn(list2.toArray()));
-
-						InsnList mInsns = m.instructions;
-						mInsns.insertBefore(beforeReturn, newInsns);
-						mhook.insns(mInsns);
-						mhook.var(MethodHook.MAX_STACK, "7");
-						mhook.var(MethodHook.MAX_LOCALS, Integer.toString(m.maxLocals));
-						mInsns.reset();
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
 				}
 			}
+			
+			
+			
+			//for (MethodNode m : getClassNodeByRefactoredName("ExceptionReporter").methods) {
+			//
+			//}
+			
 			return hooks;
 		}
 	}
