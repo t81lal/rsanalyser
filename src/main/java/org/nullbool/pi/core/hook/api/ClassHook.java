@@ -14,8 +14,8 @@ public class ClassHook extends ObfuscatedData {
 	public ClassHook() {
 	}
 
-	public ClassHook(String s, boolean refactored) {
-		super(s, refactored);
+	public ClassHook(String name, boolean refactored) {
+		super(name, refactored);
 	}
 
 	public ClassHook(String obfuscated, String refactored) {

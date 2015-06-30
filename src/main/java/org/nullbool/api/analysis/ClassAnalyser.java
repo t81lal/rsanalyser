@@ -313,7 +313,12 @@ public abstract class ClassAnalyser implements Opcodes {
 		for (Object oF : cn.fields) {
 			FieldNode f = (FieldNode) oF;
 			if (parts[1].equals(f.name)) {
-				return new FieldHook(foundHook)
+				
+				if(!foundHook.obfuscated().equals(f.owner.name)) {
+					System.out.printf("[%b] %s.%s doesn't match %s for %s.%n", Modifier.isStatic(f.access), f.owner.name, f.name, foundHook.obfuscated(), realName);
+				}
+				
+				return new FieldHook(new ClassHook(f.owner.name, foundHook.refactored()))
 					.obfuscated(f.name)
 					.refactored(realName)
 					.var(FieldHook.DESC, f.desc)

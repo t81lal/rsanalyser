@@ -35,6 +35,13 @@ public class MultiplierVisitor extends NodeVisitor {
 
 	@Override
 	public void visitOperation(final ArithmeticNode an) {
+		if(an.parent() instanceof FieldMemberNode) {
+			final FieldMemberNode f = (FieldMemberNode) an.parent();
+			if(f.key().equals("client.hs")) {
+				System.out.println("MultiplierVisitor.visitOperation(2)");
+			}
+		}
+		
 		if (isSetting(an)) {
 			final FieldMemberNode fmn = (FieldMemberNode) an.parent();
 			final NumberNode nn = an.firstNumber();
@@ -59,9 +66,7 @@ public class MultiplierVisitor extends NodeVisitor {
 				handler.addDecoder(fmn.key(), decoder);
 				dCount++;
 				
-//				if(fmn.key().equals("client.hs")) {
-//					System.out.println("MultiplierVisitor.visitOperation(2)");
-//				}
+
 			}
 		}
 		

@@ -43,6 +43,17 @@ public class OutputLogger {
 					if(m == 0)
 						m = 1;
 					
+					/* if(fh.refactored().equals("getMenuX")) {
+						System.out.printf("%s %d | %d | %d.%n", fh, mh.getEncoder(src), mh.getDecoder(src), m);
+						
+						for(Entry<String, List<Long>> e : mh.getDecoders().entrySet()) {
+							if(e.getKey().contains(".hs")) {
+								System.out.println(e);
+							}
+						}
+						
+					} */
+					
 					fh.var(FieldHook.ENCODER, Long.toString(m));
 				}
 			}

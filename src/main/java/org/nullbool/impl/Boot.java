@@ -42,13 +42,13 @@ public class Boot {
 		bootstrap();
 
 		// Use runLatest for full logs
-		int count = 10;
+		int count = 1;
 		for(int i=0; i < count; i++) {
 			Revision revision = rev(Boot.revision - i);
 			System.out.println("Running " + revision.getName());
 			try {
-				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
-//				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
+//				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
+				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 			} catch(Throwable t) {
 				t.printStackTrace();
 			}
