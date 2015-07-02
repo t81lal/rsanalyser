@@ -69,7 +69,7 @@ public class ConnectionHelper {
 
 		key_file_name = key_file.getPath();
 		
-		key_file_name = new File("C:/Users/Bibl/Desktop/osbots shit nigga/xna_uop.str").getAbsolutePath();
+		key_file_name = new File("C:/Users/Bibl/Desktop/BACKUP/osbots shit nigga/xna_uop.str").getAbsolutePath();
 				
 		connection.setSSLSocketFactory(loadSSLContext(key_file_name).getSocketFactory());
 		return connection;

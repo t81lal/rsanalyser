@@ -57,6 +57,7 @@ public class ClassStructure extends ClassNode {
 			cr.accept(cs, ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
 			return cs;
 		} catch (IOException e) {
+			e.printStackTrace();
 			return null;
 		}
 	}

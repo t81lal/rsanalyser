@@ -1,5 +1,6 @@
 package org.nullbool.api.obfuscation;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import org.nullbool.api.obfuscation.refactor.ClassTree;
 import org.nullbool.api.obfuscation.refactor.InheritedMethodMap;
 import org.nullbool.api.obfuscation.refactor.MethodCache;
 import org.nullbool.api.util.MethodUtil;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.IincInsnNode;
@@ -138,7 +140,7 @@ public class EmptyParameterFixer extends Visitor {
 		}
 		topFor: for(Entry<MethodNode, String> e : map.entrySet()) {
 			MethodNode m = e.getKey();
-			String newKey = m.name + e.getValue();
+			String newKey = calculateParamKey(m.name, e.getValue());
 			
 			Set<MethodNode> ms = mmp.getData(m).getAggregates();
 
@@ -193,19 +195,40 @@ public class EmptyParameterFixer extends Visitor {
 		set.add(t);
 	}
 	
-	private Set<MethodNode> checkCollisions(Map<MethodNode, String> remapped, MethodNode m, String newHalfKey) {
+	/* 02/07/15, 9:01, we need to change this to only take
+	 * 				   parameters into account and not the 
+	 * 				   return type since we can have two methods
+	 *  			   which both have the same parameters but
+	 *   			   different return types, failing the 
+	 *   			   collision test.*/
+	public String calculateParamKey(MethodNode m) {
+		return calculateParamKey(m.name, m.desc);
+	}
+	
+	public String calculateParamKey(String name, String desc) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(name);
+		sb.append("(");
+		for(Type arg : Type.getArgumentTypes(desc)) {
+			sb.append(arg.getDescriptor());
+		}
+		sb.append(")");
+		return sb.toString();
+	}
+	
+	private Set<MethodNode> checkCollisions(Map<MethodNode, String> remapped, MethodNode m, String newParamKey) {
 		Set<MethodNode> set = new HashSet<MethodNode>();
 		for(MethodNode m2 : m.owner.methods) {
-			String halfKey = m2.halfKey();
-			if(halfKey.equals(newHalfKey) && m2 != m) {
+			String paramKey = calculateParamKey(m2);
+			if(paramKey.equals(newParamKey) && m2 != m) {
 				set.add(m2);
 			}
 			
 			
 			String remappedDesc = remapped.get(m2);
 			if(remappedDesc != null) {
-				String remappedKey = m2.name + remappedDesc;
-				if(remappedKey.equals(newHalfKey) && m2 != m) {
+				String remappedKey = calculateParamKey(m2.name, remappedDesc);
+				if(remappedKey.equals(newParamKey) && m2 != m) {
 					set.add(m2);
 				}
 			}
@@ -346,6 +369,9 @@ public class EmptyParameterFixer extends Visitor {
 	 * @return
 	 */
 	private boolean isUnused(MethodNode m, int targetVar) {
+		if(m.owner.name.equals("bf") && m.name.equals("j")) {
+			System.out.println(m.desc + " targ= " + targetVar + " " + Modifier.isStatic(m.access));
+		}
 		int count = 0;
 		for (AbstractInsnNode ain : m.instructions.toArray()) {
 			if (ain instanceof VarInsnNode) {
@@ -360,6 +386,11 @@ public class EmptyParameterFixer extends Visitor {
 				}
 			}
 		}
+		
+		if(m.owner.name.equals("bf") && m.name.equals("j")) {
+			System.out.println("Couunt "  + count);
+		}
+		
 		return count == 0;
 	}
 }

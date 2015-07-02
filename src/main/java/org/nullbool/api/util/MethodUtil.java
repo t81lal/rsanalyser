@@ -29,7 +29,8 @@ public class MethodUtil {
 		return DUMMY_PARAM_TYPES.contains(desc);
 	}
 	
-	public static int getLastParameterIndex(MethodNode m) {
+	@Deprecated
+	private static int getLastParameterIndex(MethodNode m) {
 		Type[] args = Type.getArgumentTypes(m.desc);
 		return args.length + (Modifier.isStatic(m.access) ? -1 : 0);
 	}
@@ -39,7 +40,32 @@ public class MethodUtil {
 		if(args.length == 0)
 			return null;
 		
-		return new Object[]{ args.length + (Modifier.isStatic(m.access) ? -1 : 0), args[args.length - 1]};
+		// static   = args + 0
+		// instance = args + 1
+		/* 02/05/15, 10:07, turns out that we need to go through and calculate
+		 * 					the last parameter index with a loop since doubles
+		 * 					and longs take up 1 places. */
+		
+		
+		// [last arg index, last arg type]
+		// return new Object[]{ args.length + (Modifier.isStatic(m.access) ? -1 : 0), args[args.length - 1]};
+		return new Object[]{calculateLastParameterIndex(args) + (Modifier.isStatic(m.access) ? -1 : 0), args[args.length - 1]};
+	}
+	
+	public static int calculateLastParameterIndex(Type[] args) {
+		int c = 0;
+		for(int i=0; i < args.length; i++) {
+			switch(args[i].getDescriptor()) {
+				case "D":
+				case "J":
+					c += 2;
+					break;
+				default:
+					c += 1;
+					break;
+			}
+		}
+		return c;
 	}
 	
 	public static Object[] getLastDummyParameter(MethodNode m) {

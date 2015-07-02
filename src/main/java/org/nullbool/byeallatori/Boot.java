@@ -4,11 +4,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,6 +41,9 @@ import org.nullbool.api.util.ClassStructure;
 import org.nullbool.api.util.InstructionUtil;
 import org.nullbool.api.util.map.NullPermeableHashMap;
 import org.nullbool.api.util.map.ValueCreator;
+import org.nullboolext.ad_overide;
+import org.nullboolext.append_print;
+import org.nullboolext.check_map;
 import org.nullboolext.md5gen_override;
 import org.nullboolext.process_builder_fixer;
 import org.objectweb.asm.Label;
@@ -333,45 +340,45 @@ public class Boot implements Opcodes {
 				}
 			}
 		}
-	
-		ClassNode cn = contents.getClassContents().namedMap().get("org/osbot/Boot");
-		for(MethodNode m : cn.methods) {
-			//if(m.name.equals("launch")) {
-				for(AbstractInsnNode ain : m.instructions.toArray()) {
-					if(ain instanceof LdcInsnNode) {
-						LdcInsnNode ldc = (LdcInsnNode) ain;
-						if(ldc.cst instanceof String) {
-							if(ldc.cst.toString().equals("-XX:-UseSplitVerifier -Xmx")) {
-								ldc.cst = "-noverify -Xmx";
-								System.out.println("replaced splitverifier");
-							}
-						}
-					} else if(ain instanceof MethodInsnNode) {
-						MethodInsnNode min = (MethodInsnNode) ain;
-						if(min.owner.equals("java/lang/ProcessBuilder") && min.name.equals("<init>")) {
-							System.out.println("pb call " + min);
-							m.instructions.insertBefore(min, new MethodInsnNode(INVOKESTATIC, "org/nullboolext/process_builder_fixer", "fix", "([Ljava/lang/String;)[Ljava/lang/String;", false));
-						}
+
+	ClassNode cn = contents.getClassContents().namedMap().get("org/osbot/Boot");
+	for(MethodNode m : cn.methods) {
+		//if(m.name.equals("launch")) {
+		for(AbstractInsnNode ain : m.instructions.toArray()) {
+			if(ain instanceof LdcInsnNode) {
+				LdcInsnNode ldc = (LdcInsnNode) ain;
+				if(ldc.cst instanceof String) {
+					if(ldc.cst.toString().equals("-XX:-UseSplitVerifier -Xmx")) {
+						ldc.cst = "-noverify -Xmx";
+						System.out.println("replaced splitverifier");
 					}
 				}
-			//}
-		}
-		
-
-
-
-		dl.getJarContents().getClassContents().add(ClassStructure.create(md5gen_override.class.getCanonicalName()));
-		dl.getJarContents().getClassContents().add(ClassStructure.create(process_builder_fixer.class.getCanonicalName()));
-
-		new CompleteJarDumper(dl.getJarContents()){
-			@Override
-			public int dumpResource(JarOutputStream out, String name, byte[] file) throws IOException {
-				if(name.startsWith("META-INF/SERVER."))
-					return 0;
-
-				return super.dumpResource(out, name, file);
+			} else if(ain instanceof MethodInsnNode) {
+				MethodInsnNode min = (MethodInsnNode) ain;
+				if(min.owner.equals("java/lang/ProcessBuilder") && min.name.equals("<init>")) {
+					System.out.println("pb call " + min);
+					m.instructions.insertBefore(min, new MethodInsnNode(INVOKESTATIC, "org/nullboolext/process_builder_fixer", "fix", "([Ljava/lang/String;)[Ljava/lang/String;", false));
+				}
 			}
-		}.dump(new File(out.getParentFile(), "runnableosbout.jar"));
+		}
+		//}
+	}
+
+
+
+
+	dl.getJarContents().getClassContents().add(ClassStructure.create(md5gen_override.class.getCanonicalName()));
+	dl.getJarContents().getClassContents().add(ClassStructure.create(process_builder_fixer.class.getCanonicalName()));
+
+	new CompleteJarDumper(dl.getJarContents()){
+		@Override
+		public int dumpResource(JarOutputStream out, String name, byte[] file) throws IOException {
+			if(name.startsWith("META-INF/SERVER."))
+				return 0;
+
+			return super.dumpResource(out, name, file);
+		}
+	}.dump(new File(out.getParentFile(), "runnableosbout.jar"));
 	}
 
 	private static Map<String, String> reverse(Map<String, String> map) {
@@ -380,6 +387,158 @@ public class Boot implements Opcodes {
 			newMap.put(e.getValue(), e.getKey());
 		}
 		return newMap;
+	}
+
+
+	public static void test() throws IOException {
+		//		http://osbot.org/bot/adreq.php
+		URLConnection var10000;
+		InputStream var14 = null;
+		try {
+			var10000 = (new URL("http://osbot.org/bot/adreq.php")).openConnection();
+			var10000.setConnectTimeout(300000);
+			var10000.setRequestProperty("User-Agent", "OSBot Comms");
+			ByteArrayOutputStream var12 = new ByteArrayOutputStream();
+			var14 = var10000.getInputStream();
+
+			int var3;
+			while((var3 = var14.read()) != -1) {
+				var12.write(var3);
+			}
+
+			byte[] var13 = var12.toByteArray();
+			System.out.println(new String(var13));
+		} finally {
+			try {
+				if(var14 != null) {
+					var14.close();
+				}
+			} catch (Exception var10) {
+				var10.printStackTrace();
+			}
+
+		}
+
+	}
+
+
+	public static void scrapt(int id) throws Exception {
+
+		try {
+			String var4 = (new StringBuilder()).insert(0, "sessionID=").append(SESSION).append("&scriptID=").append(id).append("&action=").append("add").toString();
+			HttpsURLConnection var5 = ConnectionHelper.openSecureHandle("https://osbot.org:443/mvc/botserver/appendscript");
+			var5.setDoOutput(true);
+			var5.setDoInput(true);
+			var5.setInstanceFollowRedirects(false);
+			var5.setRequestMethod("POST");
+			var5.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			var5.setRequestProperty("charset", "utf-8");
+			var5.setRequestProperty("Content-Length", (new StringBuilder()).insert(0, "").append(Integer.toString(var4.getBytes().length)).toString());
+			var5.setRequestProperty("User-Agent", "OSBot Comms");
+			var5.setUseCaches(false);
+			DataOutputStream var10002 = new DataOutputStream(var5.getOutputStream());
+			var10002.writeBytes(var4);
+			var10002.flush();
+			var10002.close();
+			System.out.println(var5.getResponseCode());
+			var5.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
+
+		//		Class<?> klass = Class.forName("org.osbot.COm1");
+		//		Method m = klass.getDeclaredMethod("method_10", new Class[]{String.class});
+		//		System.out.println(m.invoke(null, "M)@\u0012K\bZKz\u001f^\u0003"));
+	}
+
+	public static void dumpscript(int id) {
+		try {
+			String var2 = (new StringBuilder()).insert(0, "sessionID=").append(SESSION).append("&scriptID=").append(id).toString();
+			HttpsURLConnection var3 = ConnectionHelper.openSecureHandle("https://osbot.org:443/mvc/botserver/req");
+			var3.setDoOutput(true);
+			var3.setDoInput(true);
+			var3.setInstanceFollowRedirects(false);
+			var3.setRequestMethod("POST");
+			var3.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			var3.setRequestProperty("charset", "utf-8");
+			var3.setRequestProperty("Content-Length", (new StringBuilder()).insert(0, "").append(Integer.toString(var2.getBytes().length)).toString());
+			var3.setRequestProperty("User-Agent", "OSBot Comms");
+			var3.setUseCaches(false);
+			DataOutputStream var10001 = new DataOutputStream(var3.getOutputStream());
+			var10001.writeBytes(var2);
+			var10001.flush();
+			var10001.close();
+			if(var3.getResponseCode() == 200) {
+				DataInputStream var7 = new DataInputStream(var3.getInputStream());
+				ByteArrayOutputStream var4 = new ByteArrayOutputStream();
+				DataInputStream var10000 = var7;
+
+				int var5;
+				while((var5 = var10000.read()) != -1) {
+					var10000 = var7;
+					var4.write(var5);
+				}
+
+				var7.close();
+				var3.disconnect();
+				byte[] bs =  var4.toByteArray();
+
+				dump(id, bs);
+
+
+
+			} else {
+				System.out.printf("resp %d for id=%d.%n", var3.getResponseCode(), id);
+			}
+
+			var3.disconnect();
+		} catch (Exception var6) {
+			var6.printStackTrace();
+		}
+
+
+	}
+
+	public static void dump(int i, byte[] var1) throws IOException {
+//		HashMap<String, byte[]> classes = new HashMap<String, byte[]>();
+//		HashMap<String, byte[]> resources = new HashMap<String, byte[]>();
+//		byte[] buff = new byte[1024];
+		
+		
+		
+//		JarInputStream jis = new JarInputStream(new ByteArrayInputStream(var1));
+//		JarOutputStream jos = new JarOutputStream(new FileOutputStream(new File("C:/Users/Bibl/Desktop/BACKUP/osbots shit nigga/script_" + i + ".jar")));
+//
+//		ZipEntry entry;
+//		while((entry = jis.getNextEntry()) != null) {
+//			System.out.println(entry.getName());
+//			jos.putNextEntry(entry);
+//		}
+//		jos.close();
+//		jis.close();
+		
+		FileOutputStream fos = new FileOutputStream(new File("C:/Users/Bibl/Desktop/BACKUP/osbots shit nigga/script_" + i + ".jar"));
+		fos.write(var1);
+		fos.close();
+		
+		//        ZipEntry entry;
+		//        while((entry = jis.getNextEntry()) != null) {
+		//           ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		//
+		//           int read;
+		//           while((read = jis.read(buff, 0, buff.length)) != -1) {
+		//              baos.write(buff, 0, read);
+		//           }
+		//
+		//           if(entry.getName().endsWith(".class")) {
+		//              classes.put(entry.getName(), baos.toByteArray());
+		//           } else {
+		//              resources.put(entry.getName(), baos.toByteArray());
+		//           }
+		//        }
+
 	}
 
 	private static File pb;
@@ -401,17 +560,35 @@ public class Boot implements Opcodes {
 		//		System.out.println(iIIiIIIiiI("rd_\u007fTee\u0006eraN"));
 
 		// SESSION = "655207082866909a0-f69b-43d1-90f6-6804ff43cdb0";
-				request();
-				byte[] hooks = hooks();
-				parseHooks(ByteBuffer.wrap(hooks));
-				System.out.println(hooks.length);
-				
-				System.out.println(MiscHelper.add());
-				if(true)
-					return;
+		request();
+		for(int i=0; i < 500; i++) {
+			try {
+				scrapt(i);
+				dumpscript(i);
+			} catch(Throwable t) {
+				t.printStackTrace();
+			}
+		}
+		//				byte[] hooks = hooks();
+		//				parseHooks(ByteBuffer.wrap(hooks));
+		//				System.out.println(hooks.length);
+		//				
+		//				System.out.println(MiscHelper.add());
+		//				if(true)
+		//					return;
 
-		File dir = new File("C:/Users/Bibl/Desktop/osbots shit nigga");
-		pb = new File(dir, "osb.jar");
+		if(true)
+			return;
+		//		
+		//		if(true)
+		//			return;
+		//		
+		//		test();
+		//		if(true)
+		//			return;
+
+		File dir = new File("C:/Users/Bibl/Desktop/BACKUP/osbots shit nigga");
+		pb = new File(dir, "osbot 2.3.77.jar");
 		out = new File(dir, "osbout.jar");
 
 		dl = new SingleJarDownloader<ClassNode>(new JarInfo(pb));
@@ -440,54 +617,57 @@ public class Boot implements Opcodes {
 
 		openmyassdaddy();
 		unfuck();
-		
+
 		// "zbQxVlV\"\u00198Fl3v~Cq@\u001e D\u0010e+\u0000\"\u00020\fA)\u000b\u00019\u00110MsL\u007f\u000f#\u001b8\u001aGRnGyY~+\u0010\'\u001d$\u001fXs\"7CnPcI$\u001f.Hl"
 
-//		ClassNode cn = contents.getClassContents().namedMap().get("org/osbot/D");
-//		for(MethodNode m : cn.methods) {
-//			
-//			if(m.name.equals("method_2")) {
-//				
-//				Method method = complexgen.get(m).getDeclaredMethods()[0];
-//				
-//				for(MethodNode m2 : cn.methods) {
-//					if(m != m2) {
-//						for(AbstractInsnNode ain : m2.instructions.toArray()) {
-//							if(ain instanceof LdcInsnNode) {
-//								LdcInsnNode ldc = (LdcInsnNode) ain;
-//								if(ldc.cst instanceof String) {
-//									System.out.println("enc: " + ldc.cst);
-//									System.out.printf("dec: ");
-//									System.out.println(method.invoke(null, ldc.cst.toString()));
-//								}
-//							}
-//						}
-//					}
-//				}
-//				break;
-//			}
-//		}
-		
-//		Class<?> klass = simpgen.get(cache.get("org/osbot/D", "method_2", "(Ljava/lang/String;)Ljava/lang/String;"));
-//		Method m = klass.getDeclaredMethods()[0];
-//		for(MethodNode mn : contents.getClassContents().namedMap().get("org/osbot/D").methods) {
-//			for(AbstractInsnNode ain : mn.instructions.toArray()) {
-//				if(ain instanceof LdcInsnNode) {
-//					LdcInsnNode ldc = (LdcInsnNode) ain;
-//					if(ldc.cst instanceof String) {
-//						System.out.println("enc: " + escapeJavaStyleString(ldc.cst.toString(), true));
-//						System.out.print("dec: ");
-//						System.out.println(m.invoke(null, ldc.cst.toString()));
-//						System.out.println(m.invoke(null, new Object[]{
-//								ldc.cst.toString(),
-//								"org.osbot.COM1", mn.name}));
-//					}
-//				}
-//			}
-//		}
-		
+		//		ClassNode cn = contents.getClassContents().namedMap().get("org/osbot/D");
+		//		for(MethodNode m : cn.methods) {
+		//			
+		//			if(m.name.equals("method_2")) {
+		//				
+		//				Method method = complexgen.get(m).getDeclaredMethods()[0];
+		//				
+		//				for(MethodNode m2 : cn.methods) {
+		//					if(m != m2) {
+		//						for(AbstractInsnNode ain : m2.instructions.toArray()) {
+		//							if(ain instanceof LdcInsnNode) {
+		//								LdcInsnNode ldc = (LdcInsnNode) ain;
+		//								if(ldc.cst instanceof String) {
+		//									System.out.println("enc: " + ldc.cst);
+		//									System.out.printf("dec: ");
+		//									System.out.println(method.invoke(null, ldc.cst.toString()));
+		//								}
+		//							}
+		//						}
+		//					}
+		//				}
+		//				break;
+		//			}
+		//		}
+
+		//		Class<?> klass = simpgen.get(cache.get("org/osbot/D", "method_2", "(Ljava/lang/String;)Ljava/lang/String;"));
+		//		Method m = klass.getDeclaredMethods()[0];
+		//		for(MethodNode mn : contents.getClassContents().namedMap().get("org/osbot/D").methods) {
+		//			for(AbstractInsnNode ain : mn.instructions.toArray()) {
+		//				if(ain instanceof LdcInsnNode) {
+		//					LdcInsnNode ldc = (LdcInsnNode) ain;
+		//					if(ldc.cst instanceof String) {
+		//						System.out.println("enc: " + escapeJavaStyleString(ldc.cst.toString(), true));
+		//						System.out.print("dec: ");
+		//						System.out.println(m.invoke(null, ldc.cst.toString()));
+		//						System.out.println(m.invoke(null, new Object[]{
+		//								ldc.cst.toString(),
+		//								"org.osbot.COM1", mn.name}));
+		//					}
+		//				}
+		//			}
+		//		}
+
 		//System.out.println("dec: " + org.osbot.D.method_2("0J>H<K \b0J>U!@ V"));
 
+		patchgc();
+		intercept_append();
+		loaded_map();
 
 		reflectno();
 
@@ -495,7 +675,82 @@ public class Boot implements Opcodes {
 
 		patchClient();
 	}
-	   
+
+	private static void loaded_map() {
+		for(ClassNode cn : dl.getJarContents().getClassContents()) {
+			//			org/osbot/auX.iIiIIIiiiI:java.util.Map
+
+			if(cn.name.equals("org/osbot/auX")) {
+				for(MethodNode m : cn.methods) {
+					if(m.name.equals("method_13")) {
+						for(AbstractInsnNode ain : m.instructions.toArray()) { 
+							if(ain.opcode() == RETURN) {
+								InsnList list = new InsnList();
+								//								list.add(new VarInsnNode(ALOAD, 0));
+								list.add(new FieldInsnNode(GETSTATIC, "org/osbot/auX", "iIiIIIiiiI", "Ljava/util/Map;"));
+								list.add(new MethodInsnNode(INVOKESTATIC, check_map.class.getCanonicalName().replace(".", "/"), "check", "(Ljava/util/Map;)V", false));
+								m.instructions.insertBefore(ain, list);
+								System.out.println("Boot.loaded_map()");
+							}
+						}
+					}
+				}
+			}
+		}
+
+
+
+		dl.getJarContents().getClassContents().add(ClassStructure.create(check_map.class.getCanonicalName()));
+
+	}
+
+	private static void intercept_append() {
+
+		//public iiIiiIIIII(int arg0, java.lang.String arg1) { //(ILjava/lang/String;)Z
+
+		for(ClassNode cn : dl.getJarContents().getClassContents()) {
+			if(cn.name.equals("org/osbot/COm1")) {
+				for(MethodNode m : cn.methods) {
+					if(m.name.equals("iiIiiIIIII") && m.desc.equals("(ILjava/lang/String;)Z")) {
+						InsnList list = new InsnList();
+						list.add(new VarInsnNode(ILOAD, 1));
+						list.add(new VarInsnNode(ALOAD, 2));
+						list.add(new MethodInsnNode(INVOKESTATIC, append_print.class.getCanonicalName().replace(".", "/"), "print", "(ILjava/lang/String;)I", false));
+						list.add(new VarInsnNode(ISTORE, 1));
+						m.instructions.insertBefore(m.instructions.getFirst(), list);
+						System.out.println("Boot.intercept_append()");
+					}
+				}
+			}
+		}
+		dl.getJarContents().getClassContents().add(ClassStructure.create(append_print.class.getCanonicalName()));
+
+	}
+
+	private static void patchgc() {
+		for(ClassNode cn : dl.getJarContents().getClassContents()) {
+			if(cn.name.equals("org/osbot/Gc")) {
+				for(MethodNode m : cn.methods) {
+					if(m.name.equals("<init>")) {
+						for(AbstractInsnNode ain : m.instructions.toArray()) {
+							if(ain instanceof MethodInsnNode) {
+								MethodInsnNode min = (MethodInsnNode) ain;
+								if(min.owner.equals("org/osbot/IA") && min.name.equals("method_3")) {
+									min.owner = ad_overide.class.getCanonicalName().replace(".", "/");
+									min.name = "create";
+									min.desc = "()L" + ad_overide.class.getCanonicalName().replace(".", "/") + ";";
+									System.out.println("Boot.patchgc()");
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		dl.getJarContents().getClassContents().add(ClassStructure.create(ad_overide.class.getCanonicalName()));
+	}
+
 	private static void reflectno() {
 		TreeBuilder tb = new TreeBuilder();
 
@@ -1008,91 +1263,91 @@ public class Boot implements Opcodes {
 	private static void unfuck() {
 		ClassTree classTree = new ClassTree(classList);
 
-		classes.put("org/osbot/AB",  "org/objectweb/asm/commons/TryCatchBlockSorter");
-		classes.put("org/osbot/G",   "org/objectweb/asm/commons/JSRInlinerAdapter");
-		classes.put("org/osbot/db",  "org/objectweb/asm/commons/AnalyzerAdapter");
-		classes.put("org/osbot/eb",  "org/objectweb/asm/commons/LocalVariablesSorter");
-
-		classes.put("org/osbot/Dc",  "org/objectweb/asm/ClassWriter");
-		classes.put("org/osbot/xB",  "org/objectweb/asm/MethodVisitor");
-		classes.put("org/osbot/Cc",  "org/objectweb/asm/ClassVisitor");
-		classes.put("org/osbot/aUx", "org/objectweb/asm/Opcodes");
-		classes.put("org/osbot/PA",  "org/objectweb/asm/MethodWriter");
-		classes.put("org/osbot/XA",  "org/objectweb/asm/util/CheckClassAdapter");
-
-		classes.put("org/osbot/uA",  "org/objectweb/asm/tree/MethodNode");
-		classes.put("org/osbot/Cb",  "org/objectweb/asm/tree/InsnList");
-		classes.put("org/osbot/cb",  "org/objectweb/asm/tree/AbstractInsnNode");
-		classes.put("org/osbot/tB",  "org/objectweb/asm/tree/TypeAnnotationNode");
-		classes.put("org/osbot/j",   "org/objectweb/asm/tree/LabelNode");
-		
-		classes.put("org/osbot/aB",   "org/objectweb/asm/xml/SAXClassAdapter");
-		classes.put("org/osbot/gB",   "org/objectweb/asm/xml/Rule");
-		classes.put("org/osbot/dA",   "org/objectweb/asm/xml/MaxRule");
-		classes.put("org/osbot/aA",   "org/objectweb/asm/xml/InterfacesRule");
-		classes.put("org/osbot/cc",   "org/objectweb/asm/xml/AnnotationValueRule");
-		classes.put("org/osbot/LPt2", "org/objectweb/asm/Handle");
-		classes.put("org/osbot/T",    "org/objectweb/asm/Type");
-		classes.put("org/osbot/x",    "org/objectweb/asm/ClassReader");
-		classes.put("org/osbot/Y",    "org/objectweb/asm/tree/ClassNode");
-		
-		classes.put("org/osbot/LPT1", "org/objectweb/asm/util/TraceSignatureVisitor");
-		classes.put("org/osbot/zA",    "org/objectweb/asm/util/ASMifier");
-
-		classes.put("org/osbot/e",    "org/objectweb/asm/signature/SignatureVisitor");
-		classes.put("org/osbot/pA",   "org/objectweb/asm/tree/analysis/Analyzer");
-		classes.put("org/osbot/lPT7", "org/objectweb/asm/tree/analysis/AnalyzerException");
-		classes.put("org/osbot/lPt1", "org/objectweb/asm/tree/analysis/BasicInterpreter");
-		classes.put("org/osbot/Lpt4", "org/objectweb/asm/tree/analysis/BasicVerfier");
-		classes.put("org/osbot/LPt1", "org/objectweb/asm/tree/analysis/SimpleVerifier");
-		classes.put("org/osbot/lPt5", "org/objectweb/asm/tree/analysis/Frame");
-
-		classes.put("org/osbot/com4", "org/nullbool/hook/HookWriter");
-		classes.put("org/osbot/cOM3", "org/nullbool/hook/FieldHook");
-
-		classes.put("org/osbot/com1", "org/nullbool/client/TooltipCallbackInjector");
-
-		classes.put("org/osbot/COm2", "org/nullbool/client/BotRefCallbackInjector");
-		classes.put("org/osbot/cOM1", "org/nullbool/client/LoginReturnInjector");
-		classes.put("org/osbot/COm1", "org/nullbool/client/SkipDrawInjector");
-		classes.put("org/osbot/CoM1", "org/nullbool/client/HitsplatCallbackInjector");
-		classes.put("org/osbot/cOm1", "org/nullbool/client/HeadMessageCallbackInjector");
-		classes.put("org/osbot/Com1", "org/nullbool/client/ModelCallbackInjector");
-		classes.put("org/osbot/coM2", "org/nullbool/client/DefinitionTransformationCallInjector");
-		classes.put("org/osbot/coM1", "org/nullbool/client/ConfigCallbackInjector");
-		classes.put("org/osbot/pRN",  "org/nullbool/client/ChatboxMessageCallbackInjector");
-		classes.put("org/osbot/cOm5", "org/nullbool/client/ClassAndFieldAccessorInjector");
-		classes.put("org/osbot/COm3", "org/nullbool/client/RandomDatPatchForBotNumberInjector");
-		classes.put("org/osbot/PRn",  "org/nullbool/client/CanvasInjector");
-		classes.put("org/osbot/CoM6", "org/nullbool/client/ClassThatInjectsBotReferenceIntoClient");
-		classes.put("org/osbot/Com4", "org/nullbool/client/ComponentReshapeInjector");
-		classes.put("org/osbot/coM4", "org/nullbool/client/FilterInjector");
-
-		classes.put("org/osbot/cOm4", "org/nullbool/game/WorldHopRunnable");
-		
-
-		classes.put("org/osbot/con", "org/nullbool/script/ScriptPermissions");
-		classes.put("org/osbot/Con", "org/nullbool/script/SDNHandler");
-		
-
-		classes.put("org/osbot/dc",   "org/nullbool/util/InputStreamMonitor");
-		classes.put("org/osbot/COM2", "org/nullbool/util/BotTabHelper");
-		classes.put("org/osbot/Com2", "org/nullbool/util/AccountSetterRunnable");
-		classes.put("org/osbot/com2", "org/nullbool/util/jagex/RSByteBuffer");
-		
-		classes.put("org/osbot/COn", "org/nullbool/util/net/VersionChecker");
-		classes.put("org/osbot/COM1", "org/nullbool/util/net/WebServiceRequester");
-		classes.put("org/osbot/CON",  "org/nullbool/util/net/SSLTrustManager");
-		
-
-		classes.put("org/osbot/COM3", "org/nullbool/ui/AccountSelectorSelectionListener");
-		classes.put("org/osbot/coM3", "org/nullbool/ui/MultiComponentEnabler");
-		classes.put("org/osbot/COm4", "org/nullbool/ui/SetVisibleRunnable");
-		classes.put("org/osbot/COM6", "org/nullbool/ui/BotFrame");
-		classes.put("org/osbot/Db",   "org/nullbool/ui/CustomTableModel");
-		
-		
-		classes.put("org/osbot/CB", "org/nullbool/util/StringEncoding");
+		//		classes.put("org/osbot/AB",  "org/objectweb/asm/commons/TryCatchBlockSorter");
+		//		classes.put("org/osbot/G",   "org/objectweb/asm/commons/JSRInlinerAdapter");
+		//		classes.put("org/osbot/db",  "org/objectweb/asm/commons/AnalyzerAdapter");
+		//		classes.put("org/osbot/eb",  "org/objectweb/asm/commons/LocalVariablesSorter");
+		//
+		//		classes.put("org/osbot/Dc",  "org/objectweb/asm/ClassWriter");
+		//		classes.put("org/osbot/xB",  "org/objectweb/asm/MethodVisitor");
+		//		classes.put("org/osbot/Cc",  "org/objectweb/asm/ClassVisitor");
+		//		classes.put("org/osbot/aUx", "org/objectweb/asm/Opcodes");
+		//		classes.put("org/osbot/PA",  "org/objectweb/asm/MethodWriter");
+		//		classes.put("org/osbot/XA",  "org/objectweb/asm/util/CheckClassAdapter");
+		//
+		//		classes.put("org/osbot/uA",  "org/objectweb/asm/tree/MethodNode");
+		//		classes.put("org/osbot/Cb",  "org/objectweb/asm/tree/InsnList");
+		//		classes.put("org/osbot/cb",  "org/objectweb/asm/tree/AbstractInsnNode");
+		//		classes.put("org/osbot/tB",  "org/objectweb/asm/tree/TypeAnnotationNode");
+		//		classes.put("org/osbot/j",   "org/objectweb/asm/tree/LabelNode");
+		//		
+		//		classes.put("org/osbot/aB",   "org/objectweb/asm/xml/SAXClassAdapter");
+		//		classes.put("org/osbot/gB",   "org/objectweb/asm/xml/Rule");
+		//		classes.put("org/osbot/dA",   "org/objectweb/asm/xml/MaxRule");
+		//		classes.put("org/osbot/aA",   "org/objectweb/asm/xml/InterfacesRule");
+		//		classes.put("org/osbot/cc",   "org/objectweb/asm/xml/AnnotationValueRule");
+		//		classes.put("org/osbot/LPt2", "org/objectweb/asm/Handle");
+		//		classes.put("org/osbot/T",    "org/objectweb/asm/Type");
+		//		classes.put("org/osbot/x",    "org/objectweb/asm/ClassReader");
+		//		classes.put("org/osbot/Y",    "org/objectweb/asm/tree/ClassNode");
+		//		
+		//		classes.put("org/osbot/LPT1", "org/objectweb/asm/util/TraceSignatureVisitor");
+		//		classes.put("org/osbot/zA",    "org/objectweb/asm/util/ASMifier");
+		//
+		//		classes.put("org/osbot/e",    "org/objectweb/asm/signature/SignatureVisitor");
+		//		classes.put("org/osbot/pA",   "org/objectweb/asm/tree/analysis/Analyzer");
+		//		classes.put("org/osbot/lPT7", "org/objectweb/asm/tree/analysis/AnalyzerException");
+		//		classes.put("org/osbot/lPt1", "org/objectweb/asm/tree/analysis/BasicInterpreter");
+		//		classes.put("org/osbot/Lpt4", "org/objectweb/asm/tree/analysis/BasicVerfier");
+		//		classes.put("org/osbot/LPt1", "org/objectweb/asm/tree/analysis/SimpleVerifier");
+		//		classes.put("org/osbot/lPt5", "org/objectweb/asm/tree/analysis/Frame");
+		//
+		//		classes.put("org/osbot/com4", "org/nullbool/hook/HookWriter");
+		//		classes.put("org/osbot/cOM3", "org/nullbool/hook/FieldHook");
+		//
+		//		classes.put("org/osbot/com1", "org/nullbool/client/TooltipCallbackInjector");
+		//
+		//		classes.put("org/osbot/COm2", "org/nullbool/client/BotRefCallbackInjector");
+		//		classes.put("org/osbot/cOM1", "org/nullbool/client/LoginReturnInjector");
+		//		classes.put("org/osbot/COm1", "org/nullbool/client/SkipDrawInjector");
+		//		classes.put("org/osbot/CoM1", "org/nullbool/client/HitsplatCallbackInjector");
+		//		classes.put("org/osbot/cOm1", "org/nullbool/client/HeadMessageCallbackInjector");
+		//		classes.put("org/osbot/Com1", "org/nullbool/client/ModelCallbackInjector");
+		//		classes.put("org/osbot/coM2", "org/nullbool/client/DefinitionTransformationCallInjector");
+		//		classes.put("org/osbot/coM1", "org/nullbool/client/ConfigCallbackInjector");
+		//		classes.put("org/osbot/pRN",  "org/nullbool/client/ChatboxMessageCallbackInjector");
+		//		classes.put("org/osbot/cOm5", "org/nullbool/client/ClassAndFieldAccessorInjector");
+		//		classes.put("org/osbot/COm3", "org/nullbool/client/RandomDatPatchForBotNumberInjector");
+		//		classes.put("org/osbot/PRn",  "org/nullbool/client/CanvasInjector");
+		//		classes.put("org/osbot/CoM6", "org/nullbool/client/ClassThatInjectsBotReferenceIntoClient");
+		//		classes.put("org/osbot/Com4", "org/nullbool/client/ComponentReshapeInjector");
+		//		classes.put("org/osbot/coM4", "org/nullbool/client/FilterInjector");
+		//
+		//		classes.put("org/osbot/cOm4", "org/nullbool/game/WorldHopRunnable");
+		//		
+		//
+		//		classes.put("org/osbot/con", "org/nullbool/script/ScriptPermissions");
+		//		classes.put("org/osbot/Con", "org/nullbool/script/SDNHandler");
+		//		
+		//
+		//		classes.put("org/osbot/dc",   "org/nullbool/util/InputStreamMonitor");
+		//		classes.put("org/osbot/COM2", "org/nullbool/util/BotTabHelper");
+		//		classes.put("org/osbot/Com2", "org/nullbool/util/AccountSetterRunnable");
+		//		classes.put("org/osbot/com2", "org/nullbool/util/jagex/RSByteBuffer");
+		//		
+		//		classes.put("org/osbot/COn", "org/nullbool/util/net/VersionChecker");
+		//		classes.put("org/osbot/COM1", "org/nullbool/util/net/WebServiceRequester");
+		//		classes.put("org/osbot/CON",  "org/nullbool/util/net/SSLTrustManager");
+		//		
+		//
+		//		classes.put("org/osbot/COM3", "org/nullbool/ui/AccountSelectorSelectionListener");
+		//		classes.put("org/osbot/coM3", "org/nullbool/ui/MultiComponentEnabler");
+		//		classes.put("org/osbot/COm4", "org/nullbool/ui/SetVisibleRunnable");
+		//		classes.put("org/osbot/COM6", "org/nullbool/ui/BotFrame");
+		//		classes.put("org/osbot/Db",   "org/nullbool/ui/CustomTableModel");
+		//		
+		//		
+		//		classes.put("org/osbot/CB", "org/nullbool/util/StringEncoding");
 
 		BytecodeRefactorer refactorer = new BytecodeRefactorer(dl.getJarContents().getClassContents(), new IRemapper() {
 
@@ -1131,21 +1386,21 @@ public class Boot implements Opcodes {
 				//if(KEYWORDS.contains(name))
 				//	return "field_" + name;
 
-//				if(fields.containsKey(owner)) {
-//					return fields.get(owner);
-//				}
-//
-//				String rep = name.replace("i", "").replace("I", "");
-//				if(owner.startsWith("org/osbot") && rep.length() == 0) {
-//					ClassNode cn = classTree.getClass(owner);
-//					for(FieldNode fn : cn.fields) {
-//						if(fn.name.equals(name) && fn.desc.equals(desc)) {
-//							String newName = "field_" + (cn.fields.indexOf(fn));
-//							fields.put(name, newName);
-//							return newName;			
-//						}
-//					}
-//				}
+				//				if(fields.containsKey(owner)) {
+				//					return fields.get(owner);
+				//				}
+				//
+				//				String rep = name.replace("i", "").replace("I", "");
+				//				if(owner.startsWith("org/osbot") && rep.length() == 0) {
+				//					ClassNode cn = classTree.getClass(owner);
+				//					for(FieldNode fn : cn.fields) {
+				//						if(fn.name.equals(name) && fn.desc.equals(desc)) {
+				//							String newName = "field_" + (cn.fields.indexOf(fn));
+				//							fields.put(name, newName);
+				//							return newName;			
+				//						}
+				//					}
+				//				}
 
 				return name;
 			}
@@ -1246,5 +1501,5 @@ public class Boot implements Opcodes {
 
 
 	//TODO: remove
-	static String pass = "nop";
+	static String pass = "mop";
 }

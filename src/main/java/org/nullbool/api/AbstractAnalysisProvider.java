@@ -16,6 +16,7 @@ import java.util.Map;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.obfuscation.CallVisitor;
+import org.nullbool.api.obfuscation.CatchBlockFixer;
 import org.nullbool.api.obfuscation.ComparisonReorderer;
 import org.nullbool.api.obfuscation.ComplexNumberVisitor;
 import org.nullbool.api.obfuscation.ControlFlowFixer;
@@ -249,10 +250,15 @@ public abstract class AbstractAnalysisProvider {
 				ClassHook ref = classes.get(owner);
 				if(ref != null)
 					return ref.refactored();
+				
+				if(owner.equals("do") || owner.equals("if")) {
+					return "klass_" + owner;
+				}
+				
 				return owner;
 			}
 		};
-
+		
 		BytecodeRefactorer refactorer = new BytecodeRefactorer((Collection<ClassNode>) contents.getClassContents(), remapper);
 		refactorer.start();
 
@@ -276,12 +282,52 @@ public abstract class AbstractAnalysisProvider {
 	private void dumpDeob() {
 		JarContents<ClassNode> contents = new JarContents<ClassNode>();
 		contents.getClassContents().addAll(getClassNodes().values());
+		
+		if(flags.getOrDefault("justdeob", false)) {
+			IRemapper remapper = new IRemapper() {
+				@Override
+				public String resolveMethodName(String owner, String name, String desc) {
+					if(name.equals("if") || name.equals("do"))
+						return "m_" + name;
+					return name;
+				}
+
+				@Override
+				public String resolveFieldName(String owner, String name, String desc) {
+					if(owner.indexOf('/') == -1) {
+						return "field_" + name;
+					}
+					//let the refactorer do it's own thang if we can't quick-find it
+					//  ie. it will do a deep search.
+					return null;
+				}
+
+				@Override
+				public String resolveClassName(String owner) {
+					if(owner.indexOf('/') == -1) {
+						if(owner.equals("do") || owner.equals("if")) {
+							owner = "klass_" + owner;
+						}
+						
+						return "rs/" + owner;	
+					} else {
+						return owner;
+					}	
+				}
+			};
+			
+			BytecodeRefactorer refactorer = new BytecodeRefactorer(contents.getClassContents(), remapper);
+			refactorer.start();
+		}
+		
+		
 		CompleteJarDumper dumper = new CompleteJarDumper(contents);
 		String name = getRevision().getName();
 		File file = new File("out/" + name + "/deob.jar");
 		if (file.exists())
 			file.delete();
 		file.mkdirs();
+		
 		try {
 			dumper.dump(file);
 		} catch (IOException e) {
@@ -373,6 +419,8 @@ public abstract class AbstractAnalysisProvider {
 		}
 		
 		removeEmptyPops();
+		
+		CatchBlockFixer.rek(contents.getClassContents());
 		// not really needed + a bit slow
 		// replaceCharStringBuilders();
 		

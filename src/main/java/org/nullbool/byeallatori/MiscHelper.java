@@ -18,7 +18,7 @@ public class MiscHelper {
     public static String md5_file( File file) {
     	
     	/// C:/Users/Bibl/Desktop/osbots shit nigga/test.jar
-    	file = new File("/C:/Users/Bibl/Desktop/osbots shit nigga/osbclean.jar");
+    	file = new File("/C:/Users/Bibl/Desktop/BACKUP/osbots shit nigga/osbclean.jar");
         try {
             final MessageDigest instance = MessageDigest.getInstance("MD5");
             final FileInputStream fileInputStream = new FileInputStream(file);

@@ -1,5 +1,6 @@
 package org.nullbool.api.obfuscation;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 import org.nullbool.api.Context;
 import org.nullbool.api.util.MethodUtil;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
 import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
@@ -104,8 +106,33 @@ public class OpaquePredicateRemover extends NodeVisitor {
 	private int count, mcount = 0;
 	private int mdiscard, typediscard = 0;
 	
+	public static Object[] getLastParameter(MethodNode m) {
+		Type[] args = Type.getArgumentTypes(m.desc);
+		if(args.length == 0)
+			return null;
+		
+		// static   = args + 0
+		// instance = args + 1
+
+		
+		// [last arg index, last arg type]
+		return new Object[]{ args.length + (Modifier.isStatic(m.access) ? -1 : 0), args[args.length - 1]};
+	}
+	
+	public static Object[] getLastDummyParameter(MethodNode m) {
+		Object[] objs = getLastParameter(m);
+		if(objs == null)
+			return null;
+		
+		Type type = (Type) objs[1];
+		if(!MethodUtil.isDummy(type))
+			return null;
+		
+		return objs;
+	}
+	
 	public boolean methodEnter(MethodNode m) {
-		Object[] objs = MethodUtil.getLastDummyParameter(m);
+		Object[] objs = getLastDummyParameter(m);
 		if(objs == null)
 			return false;
 

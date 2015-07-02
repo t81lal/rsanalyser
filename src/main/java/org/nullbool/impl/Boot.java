@@ -47,8 +47,9 @@ public class Boot {
 			Revision revision = rev(Boot.revision - i);
 			System.out.println("Running " + revision.getName());
 			try {
+				deob(AnalysisProviderRegistry.get(revision).create(revision));
 //				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
-				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
+//				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 			} catch(Throwable t) {
 				t.printStackTrace();
 			}
@@ -70,6 +71,7 @@ public class Boot {
 		flags.put("logresults", true);
 		flags.put("verify", false);
 		flags.put("justdeob", true);
+		flags.put("paramdeob", true);
 
 		Context.bind(provider);
 		provider.run();
