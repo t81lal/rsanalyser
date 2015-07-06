@@ -2,13 +2,10 @@ package org.nullbool.impl.r79;
 
 import java.util.List;
 
-import org.nullbool.api.Builder;
-import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
 import org.nullbool.impl.r77.BufferAnalyser77;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.objectweb.asm.tree.MethodNode;
-import org.topdank.banalysis.filter.Filter;
 
 /**
  * "readBytesA&([BII)V", "readBytesB&([BII)V" are only for rev 79+
@@ -18,21 +15,21 @@ import org.topdank.banalysis.filter.Filter;
  */
 public class BufferAnalyser79 extends BufferAnalyser77 {
 	
-	@Override
-	public String[] supportedMethods() {
-		return new Builder<String>(super.supportedMethods()).addAll("readBytesA&([BII)V", "readBytesB&([BII)V").asArray(new String[0]);
-	}
+//	@Override
+//	public String[] supportedMethods() {
+//		return new Builder<String>(super.supportedMethods()).addAll("readBytesA&([BII)V", "readBytesB&([BII)V").asArray(new String[0]);
+//	}
 	
-	@Override
-	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
-		return super.registerMethodAnalysers().replace(new Filter<IMethodAnalyser>() {
-			
-			@Override
-			public boolean accept(IMethodAnalyser t) {
-				return t.getClass().equals(MethodAnalyser77.class);
-			}
-		}, new MethodAnalyser79());
-	}
+//	@Override
+//	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
+//		return super.registerMethodAnalysers().replace(new Filter<IMethodAnalyser>() {
+//			
+//			@Override
+//			public boolean accept(IMethodAnalyser t) {
+//				return t.getClass().equals(MethodAnalyser77.class);
+//			}
+//		}, new MethodAnalyser79());
+//	}
 	
 	/**
 	 * @author Bibl (don't ban me pls)

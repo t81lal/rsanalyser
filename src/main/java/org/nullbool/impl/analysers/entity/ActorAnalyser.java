@@ -22,7 +22,7 @@ import org.objectweb.asm.tree.MethodNode;
  * @author MalikDz
  */
 @SupportedHooks(fields = { "getLocalX&I", "getLocalY&I", "getAnimationId&I", "getInteractingId&I", "getHealth&I", "getMaxHealth&I", "getHitTypes&[I",
-		"getMessage&Ljava/lang/String;", "getHitDamages&[I", "getHealthBarCycle&I" }, methods = {})
+		"getMessage&Ljava/lang/String;", "getHitDamages&[I", /*"getHealthBarCycle&I" */}, methods = {})
 public class ActorAnalyser extends ClassAnalyser {
 
 	public ActorAnalyser() throws AnalysisException {
@@ -163,6 +163,7 @@ public class ActorAnalyser extends ClassAnalyser {
 
 			h = findField(m, true, false, 2, 'f', "idiv", "istore 8");
 			list.add(asFieldHook(h, "getHealth"));
+			
 			// TODO:
 			// System.out.println(m.owner.name + " " + m.name + " " + m.desc);
 			h = findField(m, true, false, 1, 'f', "idiv", "istore 8");

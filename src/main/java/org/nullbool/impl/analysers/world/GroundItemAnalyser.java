@@ -11,10 +11,10 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author MalikDz
@@ -57,7 +57,7 @@ public class GroundItemAnalyser extends ClassAnalyser {
 		@Override
 		public List<FieldHook> find(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
-			String[] pat = { "invokevirtual", "areturn", "new", "dup" };
+			String[] pat = { "invokevirtual", "areturn", };
 			MethodNode[] m = getMethodNodes(cn.methods.toArray());
 			MethodNode method = identifyMethod(m, true, pat);
 			AbstractInsnNode[] ins = followJump(method, 5);

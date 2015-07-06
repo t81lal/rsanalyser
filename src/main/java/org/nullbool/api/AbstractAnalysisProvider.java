@@ -3,15 +3,18 @@ package org.nullbool.api;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
@@ -42,7 +45,7 @@ import org.nullbool.api.obfuscation.refactor.ClassTree;
 import org.nullbool.api.obfuscation.refactor.IRemapper;
 import org.nullbool.api.obfuscation.refactor.MethodCache;
 import org.nullbool.api.output.APIGenerator;
-import org.nullbool.api.output.OutputLogger;
+import org.nullbool.api.output.NewOutputLogger;
 import org.nullbool.api.rs.CaseAnalyser;
 import org.nullbool.api.util.InstructionIdentifier;
 import org.nullbool.api.util.NodedContainer;
@@ -54,6 +57,7 @@ import org.nullbool.pi.core.hook.api.HookMap;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.nullbool.pi.core.hook.serimpl.StaticMapSerialiserImpl;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
@@ -136,7 +140,7 @@ public abstract class AbstractAnalysisProvider {
 	}
 
 	private void output() {
-		HookMap hookMap = OutputLogger.output();
+		HookMap hookMap = NewOutputLogger.output();
 
 		for (ClassHook h : hookMap.classes()) {
 			for (MethodHook m : h.methods()) {
@@ -226,7 +230,7 @@ public abstract class AbstractAnalysisProvider {
 
 		IRemapper remapper = new IRemapper() {
 			@Override
-			public String resolveMethodName(String owner, String name, String desc) {
+			public String resolveMethodName(String owner, String name, String desc, boolean isStatic) {
 				String key = owner + "." + name + desc;
 				if(methods.containsKey(key)){
 					return methods.get(key).refactored();
@@ -282,20 +286,86 @@ public abstract class AbstractAnalysisProvider {
 	private void dumpDeob() {
 		JarContents<ClassNode> contents = new JarContents<ClassNode>();
 		contents.getClassContents().addAll(getClassNodes().values());
+		Map<String, ClassNode> nodes = contents.getClassContents().namedMap();
+		MethodCache cache = new MethodCache(contents.getClassContents());
 		
 		if(flags.getOrDefault("justdeob", false)) {
 			IRemapper remapper = new IRemapper() {
 				@Override
-				public String resolveMethodName(String owner, String name, String desc) {
-					if(name.equals("if") || name.equals("do"))
-						return "m_" + name;
+				public String resolveMethodName(String owner, String name, String desc, boolean isStatic) {
+					if(name.length() > 2)
+						return name;
+					
+					if(owner.lastIndexOf('/') == -1 && isStatic) {
+						ClassNode cn = nodes.get(owner);
+						if(cn != null) {
+							Set<MethodNode> matches = new HashSet<MethodNode>();
+							
+							MethodNode mn = null;
+							for(MethodNode m : cn.methods) {
+								if(m.name.equals(name) && paramsMatch(desc, m.desc)) {
+									if(m.desc.equals(desc) && mn == null && Modifier.isStatic(m.access) == isStatic) {
+										mn = m;
+									} else {
+										matches.add(m);
+									}
+								}
+							}
+							
+							for(ClassNode _cn : classTree.getSupers(cn)) {
+								for(MethodNode m : _cn.methods) {
+									if(m.name.equals(name) && paramsMatch(desc, m.desc)) {
+										if(m.desc.equals(desc) && mn == null && Modifier.isStatic(m.access) == isStatic) {
+											mn = m;
+										} else {
+											matches.add(m);
+										}
+									}
+								}
+							}
+							for(ClassNode _cn : classTree.getDelegates(cn)) {
+								for(MethodNode m : _cn.methods) {
+									if(m.name.equals(name) && paramsMatch(desc, m.desc)) {
+										if(m.desc.equals(desc) && mn == null && Modifier.isStatic(m.access) == isStatic) {
+											mn = m;
+										} else {
+											matches.add(m);
+										}
+									}
+								}
+							}
+							
+							if(mn == null)
+								throw new RuntimeException(String.format("%s.%s %s : ", owner, name, desc) + matches.toString());
+							
+							Type ret = Type.getReturnType(mn.desc);
+							for(MethodNode m : matches) {
+								Type ret1 = Type.getReturnType(m.desc);
+								if(!ret.getDescriptor().equals(ret1.getDescriptor())) {
+									System.out.println(String.format("Renaming %s.%s %s (%b) : ", owner, name, desc, Modifier.isStatic(mn.access)) + matches.toString());
+									return "m_" + cn.methods.indexOf(mn);
+								}
+							}
+						}
+					}
+					
+					if(name.equals("if") || name.equals("do")) {
+						MethodNode m = cache.get(owner, name, desc);
+						if(Modifier.isStatic(m.access)) {
+							System.out.println(m.key() + " is static.");
+						} else {
+							System.out.println(m.key() + " isn't static.");
+						}
+						return "m1_" + name;
+					}
+					
 					return name;
 				}
 
 				@Override
 				public String resolveFieldName(String owner, String name, String desc) {
-					if(owner.indexOf('/') == -1) {
-						return "field_" + name;
+					if(name.equals("do") || name.equals("if")) {
+						return "f_" + name;
 					}
 					//let the refactorer do it's own thang if we can't quick-find it
 					//  ie. it will do a deep search.
@@ -318,6 +388,38 @@ public abstract class AbstractAnalysisProvider {
 			
 			BytecodeRefactorer refactorer = new BytecodeRefactorer(contents.getClassContents(), remapper);
 			refactorer.start();
+			
+//			IRemapper rm = new IRemapper() {
+//				@Override
+//				public String resolveMethodName(String owner, String name, String desc, boolean isStatic) {
+//					if(name.equals("<init>") || name.equals("<clinit>"))
+//						return name;
+//					
+//					if(owner.indexOf('/') == -1) {
+//						return "_" + name;
+//					}
+//					return name;
+//				}
+//				
+//				@Override
+//				public String resolveFieldName(String owner, String name, String desc) {
+//					if(owner.indexOf('/') == -1) {
+//						return "_" + name;
+//					}
+//					return name;
+//				}
+//				
+//				@Override
+//				public String resolveClassName(String oldName) {
+//					if(oldName.indexOf('/') == -1) {
+//						return "_" + oldName;
+//					}
+//					return oldName;
+//				}
+//			};
+//			
+//			BytecodeRefactorer refactorer = new BytecodeRefactorer(contents.getClassContents(), rm);
+//			refactorer.start();
 		}
 		
 		
@@ -333,6 +435,19 @@ public abstract class AbstractAnalysisProvider {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private static boolean paramsMatch(String d1, String d2) {
+		Type[] args1 = Type.getArgumentTypes(d1);
+		Type[] args2 = Type.getArgumentTypes(d2);
+		if(args1.length == args2.length) {
+			for(int i=0; i < args1.length; i++) {
+				if(!args1[i].getDescriptor().equals(args2[i].getDescriptor()))
+					return false;
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	private void buildCases() {

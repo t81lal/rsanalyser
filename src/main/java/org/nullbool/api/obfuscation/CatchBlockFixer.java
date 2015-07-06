@@ -46,7 +46,7 @@ public class CatchBlockFixer implements Opcodes {
                 }
             }
         }
-        System.out.println(" # Removed " + catchblockkills + " exceptions");
+        System.err.println("Removed " + catchblockkills + " redundant exceptions/");
     }
  
     private static boolean isCodeKill(int opcode) {

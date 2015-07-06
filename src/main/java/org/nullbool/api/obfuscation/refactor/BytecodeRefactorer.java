@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.objectweb.asm.Opcodes;
@@ -55,124 +56,165 @@ public class BytecodeRefactorer implements Opcodes {
 
 	private void startImpl() {
 		
-		int fieldNodes    = 0;
-		int methodNodes   = 0;
+		//int fieldNodes    = 0;
+		//int methodNodes   = 0;
 		
-		int fieldCalls    = 0;
-		int methodCalls   = 0;
+		//int fieldCalls    = 0;
+		//int methodCalls   = 0;
 		
 		//TypeInsnNode
-		int newCalls      = 0;
-		int newArray      = 0;
-		int checkcasts    = 0;
-		int instances     = 0;
-		int mArrray       = 0;
+		//int newCalls      = 0;
+		//int newArray      = 0;
+		//int checkcasts    = 0;
+		//int instances     = 0;
+		//int mArrray       = 0;
 		
-		int classc        = 0;
-		int iface         = 0;
-
-	
+		//int classc        = 0;
+		//int iface         = 0;
+		
+		Map<ClassNode, String> classMappings = new HashMap<ClassNode, String>();
+		Map<String, String> superMappings = new HashMap<String, String>();
+		Map<String, String> interfaceMappings = new HashMap<String, String>();
+		Map<FieldNode, Tuple3> fieldMappings = new HashMap<FieldNode, Tuple3>();
+		Map<MethodNode, Tuple3> methodMappings = new HashMap<MethodNode, Tuple3>();
+		
+		Map<FieldInsnNode, Tuple3> finMappings = new HashMap<FieldInsnNode, Tuple3>();
+		Map<MethodInsnNode, Tuple3> minMappings = new HashMap<MethodInsnNode, Tuple3>();
+		Map<AbstractInsnNode, String> singAinMappings = new HashMap<AbstractInsnNode, String>();
+		
 		for (ClassNode cn : classes) {
-			
 			for(FieldNode fn : cn.fields) {
-				fieldNodes++;
-				fn.name = getMappedFieldName(fn);
-				fn.desc = transformFieldDesc(fn.desc);
+				Tuple3 t = new Tuple3(fn.owner.name, getMappedFieldName(fn), transformFieldDesc(fn.desc));
+				fieldMappings.put(fn, t);
 			}
 			
 			for(MethodNode mn : cn.methods) {
-				methodNodes++;
-				mn.name = getMappedMethodName(mn);
-				mn.desc = transformMethodDesc(mn.desc);
+				Tuple3 t = new Tuple3(mn.owner.name, getMappedMethodName(mn), transformMethodDesc(mn.desc));
+				methodMappings.put(mn, t);
 				
 				for(AbstractInsnNode ain : mn.instructions.toArray()) {
 					if(ain instanceof FieldInsnNode) {
-						fieldCalls++;
-						
 						FieldInsnNode fin = (FieldInsnNode) ain;
-						
 						String newOwner = getMappedClassName(fin.owner);
 						String newName  = getMappedFieldName(fin.owner, fin.name, fin.desc);
 						String newDesc  = transformFieldDesc(fin.desc);
-						
-						fin.owner = newOwner;
-						fin.name  = newName;
-						fin.desc  = newDesc;
+						Tuple3 t2 = new Tuple3(newOwner, newName, newDesc);
+						finMappings.put(fin, t2);
 					} else if(ain instanceof MethodInsnNode) {
-						methodCalls++;
-						
 						MethodInsnNode min = (MethodInsnNode) ain;
-						String newOwner = getMappedClassName(min.owner);
-						String newName  = getMappedMethodName(min.owner, min.name, min.desc);
-						String newDesc  = transformMethodDesc(min.desc);
-						min.owner = newOwner;
-						min.name  = newName;
-						min.desc  = newDesc;
+						try {
+							String newOwner = getMappedClassName(min.owner);
+							String newName  = getMappedMethodName(min.owner, min.name, min.desc, min.opcode() == INVOKESTATIC);
+							String newDesc  = transformMethodDesc(min.desc);
+							Tuple3 t2 = new Tuple3(newOwner, newName, newDesc);
+							minMappings.put(min, t2);
+						} catch(RuntimeException e) {
+							System.out.printf("Error in %s.%n", mn.key());
+							System.out.printf("Looking for %s.%n", ain);
+							ClassNode c = classTree.getClass(min.owner);
+							System.out.println("sups: " + classTree.getSupers(c));
+							throw e;
+						}
 					} else if(ain instanceof TypeInsnNode) {
 						TypeInsnNode tin = (TypeInsnNode) ain;
 						
-//						if(tin.opcode() == ANEWARRAY && tin.desc.contains("fb")) {
-//							System.out.printf("opcode=%d, desc=%s.%n", tin.opcode(), tin.desc);
-//						}
-						
 						if(tin.opcode() == NEW || tin.opcode() == ANEWARRAY) {
-							if(tin.opcode() == NEW)
-								newCalls++;
-							else
-								newArray++;
-							
 							String desc  = tin.desc;
 							if(desc.startsWith("[") || desc.endsWith(";")) {
-								tin.desc = transformFieldDesc(desc);
+								singAinMappings.put(tin, transformFieldDesc(desc));
 							} else {
-								tin.desc = getMappedClassName(desc);
+								singAinMappings.put(tin, getMappedClassName(desc));
 							}
 						} else if(tin.opcode() == CHECKCAST || tin.opcode() == INSTANCEOF) {
 							//ALOAD 1
 							//CHECKCAST java/lang/Character
 							//INVOKEVIRTUAL java/lang/Character.charValue ()C
 							//Checkcasts are always object casts
-							
-							if(tin.opcode() == CHECKCAST)
-								checkcasts++;
-							else
-								instances++;
-							
 							String desc  = tin.desc;
 							if(desc.startsWith("[") || desc.endsWith(";")) {
-								tin.desc = transformFieldDesc(desc);
+								singAinMappings.put(tin, transformFieldDesc(desc));
 							} else {
-								tin.desc = getMappedClassName(desc);
+								singAinMappings.put(tin, getMappedClassName(desc));
 							}
 						}
 					 } else if(ain instanceof MultiANewArrayInsnNode) {
-						mArrray++;
 						MultiANewArrayInsnNode main = (MultiANewArrayInsnNode) ain;
-						main.desc = transformFieldDesc(main.desc);
+						singAinMappings.put(main, transformFieldDesc(main.desc));
 					} else if(ain instanceof LdcInsnNode) {
 						LdcInsnNode lin = (LdcInsnNode) ain;
 						
 						if(lin.cst instanceof Type) {
-							lin.cst = Type.getType(transformFieldDesc(((Type) lin.cst).getDescriptor()));
+							singAinMappings.put(lin, transformFieldDesc(((Type) lin.cst).getDescriptor()));
 						}
 					}
 				}
 			}
 			
-			classc++;
+			superMappings.put(cn.superName, getMappedClassName(cn.superName));
+			classMappings.put(cn, getMappedClassName(cn.name));
 			
-			cn.superName  = getMappedClassName(cn.superName);
-			cn.name       = getMappedClassName(cn.name);
+			for(String oldIface : cn.interfaces) {
+				interfaceMappings.put(oldIface, getMappedClassName(oldIface));
+			}
+		}
+		
+		
+		// ======================= FIX ==================================
+		
+		
+		for (ClassNode cn : classes) {
+			cn.name = classMappings.get(cn);
+			cn.superName = superMappings.get(cn.superName);
 			
-			List<String> oldInterfaces = cn.interfaces;
 			List<String> newInterfaces = new ArrayList<String>();
-			for(String oldIface : oldInterfaces) {
-				iface++;
-				newInterfaces.add(getMappedClassName(oldIface));
+			for(String oldIface : cn.interfaces) {
+				newInterfaces.add(interfaceMappings.get(oldIface));
+			}
+			cn.interfaces = newInterfaces;
+			
+			for(FieldNode fn : cn.fields) {
+				Tuple3 t = fieldMappings.get(fn);
+				fn.name = t.name;
+				fn.desc = t.desc;
 			}
 			
-			cn.interfaces = newInterfaces;
+			for(MethodNode mn : cn.methods) {
+				Tuple3 t = methodMappings.get(mn);
+				mn.name = t.name;
+				mn.desc = t.desc;
+			}
 		}
+		
+		for(Entry<FieldInsnNode, Tuple3> e : finMappings.entrySet()) {
+			FieldInsnNode fin = e.getKey();
+			Tuple3 t = e.getValue();
+			fin.owner = t.owner;
+			fin.name = t.name;
+			fin.desc = t.desc;
+		}
+		
+		for(Entry<MethodInsnNode, Tuple3> e : minMappings.entrySet()) {
+			MethodInsnNode fin = e.getKey();
+			Tuple3 t = e.getValue();
+			fin.owner = t.owner;
+			fin.name = t.name;
+			fin.desc = t.desc;
+		}
+		
+		for(Entry<AbstractInsnNode, String> e : singAinMappings.entrySet()) {
+			AbstractInsnNode ain = e.getKey();
+			String desc = e.getValue();
+			if(ain instanceof TypeInsnNode) {
+				((TypeInsnNode) ain).desc = desc;
+			} else if(ain instanceof MultiANewArrayInsnNode) {
+				((MultiANewArrayInsnNode) ain).desc = desc;
+			} else if(ain instanceof LdcInsnNode) {
+				((LdcInsnNode) ain).cst = Type.getType(desc);
+			} else {
+				throw new RuntimeException();
+			}
+		}
+		
 		
 		// TODO: Uncomment
 //		if(Context.current().getFlags().getOrDefault("basicout", true)) {
@@ -326,16 +368,46 @@ public class BytecodeRefactorer implements Opcodes {
 		return newName;
 	}
 
-	public String getMappedMethodName(String owner, String name, String desc){
+	public String getMappedMethodName(String owner, String name, String desc, boolean isStatic){
 		MethodNode m = findMethod(owner, name, desc);
-		if(m == null){
-//			System.out.printf("Can't find %s.%s %s.%n", owner, name, desc);
-			return name;
+		if(m != null && Modifier.isStatic(m.access) == isStatic)
+			return getMappedMethodName(m);
+		
+		if(isStatic && owner.lastIndexOf('/') == -1) {
+			m = searchTree(owner, name, desc, isStatic);
+			if(m == null)
+//				return name;
+				 throw new RuntimeException(String.format("Can't find %s.%s %s %b.%n", owner, name, desc, isStatic));
+			// System.out.printf("Can't find %s.%s %s %b.%n", owner, name, desc, isStatic);
+			else
+				return getMappedMethodName(m);
 		}
-		return getMappedMethodName(m);
+
+		return name;
 	}
 	
-	private MethodNode findMethod(String owner, String name, String desc){
+	/* Added 02/07/15, 20:16. */
+	public MethodNode searchTree(String owner, String name, String desc, boolean isStatic) {
+		ClassNode cn = classTree.getClasses().get(owner);
+		if(cn == null)
+			return null;
+		
+		MethodNode m = methodCache.get(owner, name, desc);
+		if(m != null && Modifier.isStatic(m.access) == isStatic) {
+			return m;
+		}
+		
+		for(ClassNode _super : classTree.getSupers(cn)) {
+			MethodNode _m = methodCache.get(_super.name, name, desc);
+			if(_m != null && Modifier.isStatic(_m.access) == isStatic) {
+				return _m;
+			}
+		}
+		
+		return null;
+	}
+	
+	public MethodNode findMethod(String owner, String name, String desc){
 		ClassNode cn = classTree.getClasses().get(owner);
 		if(cn == null)
 			return null;
@@ -391,7 +463,7 @@ public class BytecodeRefactorer implements Opcodes {
 		}
 		
 		/*step 3. ask the remapper*/		
-		newName = remapper.resolveMethodName(m.owner.name, m.name, m.desc);
+		newName = remapper.resolveMethodName(m.owner.name, m.name, m.desc, Modifier.isStatic(m.access));
 		methodMappings.put(fullKey, newName);
 		
 		return newName;
@@ -431,5 +503,16 @@ public class BytecodeRefactorer implements Opcodes {
 
 	public Map<String, String> getMethodMappings() {
 		return methodMappings;
+	}
+	
+	public static class Tuple3 {
+		public final String owner;
+		public final String name;
+		public final String desc;
+		public Tuple3(String owner, String name, String desc) {
+			this.owner = owner;
+			this.name = name;
+			this.desc = desc;
+		}
 	}
 }

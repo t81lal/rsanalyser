@@ -1,6 +1,19 @@
 package org.objectweb.asm.commons.cfg.tree.util;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.ATHROW;
+import static org.objectweb.asm.Opcodes.DCONST_1;
+import static org.objectweb.asm.Opcodes.GETFIELD;
+import static org.objectweb.asm.Opcodes.GETSTATIC;
+import static org.objectweb.asm.Opcodes.I2L;
+import static org.objectweb.asm.Opcodes.I2S;
+import static org.objectweb.asm.Opcodes.IADD;
+import static org.objectweb.asm.Opcodes.ICONST_M1;
+import static org.objectweb.asm.Opcodes.INVOKEDYNAMIC;
+import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.LXOR;
+import static org.objectweb.asm.Opcodes.MONITOREXIT;
+import static org.objectweb.asm.Opcodes.PUTFIELD;
+import static org.objectweb.asm.Opcodes.PUTSTATIC;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,8 +187,13 @@ public class TreeBuilder {
         NodeTree tree = new NodeTree(mn);
         List<AbstractNode> nodes = new ArrayList<>();
         long start = System.nanoTime();
-        for (AbstractInsnNode ain : mn.instructions.toArray())
+        for (AbstractInsnNode ain : mn.instructions.toArray()) {
+//        	if(ain == null) {
+//        		System.out.println("NULL INSN NIGGER AT " + mn);
+//        		System.exit(10);
+//        	}
             nodes.add(createNode(ain, tree, getTreeSize(ain)));
+        }
         long end = System.nanoTime();
         create += (end - start);
         treeIndex = nodes.size() - 1;

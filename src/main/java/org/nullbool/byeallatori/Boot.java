@@ -502,27 +502,27 @@ public class Boot implements Opcodes {
 	}
 
 	public static void dump(int i, byte[] var1) throws IOException {
-//		HashMap<String, byte[]> classes = new HashMap<String, byte[]>();
-//		HashMap<String, byte[]> resources = new HashMap<String, byte[]>();
-//		byte[] buff = new byte[1024];
-		
-		
-		
-//		JarInputStream jis = new JarInputStream(new ByteArrayInputStream(var1));
-//		JarOutputStream jos = new JarOutputStream(new FileOutputStream(new File("C:/Users/Bibl/Desktop/BACKUP/osbots shit nigga/script_" + i + ".jar")));
-//
-//		ZipEntry entry;
-//		while((entry = jis.getNextEntry()) != null) {
-//			System.out.println(entry.getName());
-//			jos.putNextEntry(entry);
-//		}
-//		jos.close();
-//		jis.close();
-		
+		//		HashMap<String, byte[]> classes = new HashMap<String, byte[]>();
+		//		HashMap<String, byte[]> resources = new HashMap<String, byte[]>();
+		//		byte[] buff = new byte[1024];
+
+
+
+		//		JarInputStream jis = new JarInputStream(new ByteArrayInputStream(var1));
+		//		JarOutputStream jos = new JarOutputStream(new FileOutputStream(new File("C:/Users/Bibl/Desktop/BACKUP/osbots shit nigga/script_" + i + ".jar")));
+		//
+		//		ZipEntry entry;
+		//		while((entry = jis.getNextEntry()) != null) {
+		//			System.out.println(entry.getName());
+		//			jos.putNextEntry(entry);
+		//		}
+		//		jos.close();
+		//		jis.close();
+
 		FileOutputStream fos = new FileOutputStream(new File("C:/Users/Bibl/Desktop/BACKUP/osbots shit nigga/script_" + i + ".jar"));
 		fos.write(var1);
 		fos.close();
-		
+
 		//        ZipEntry entry;
 		//        while((entry = jis.getNextEntry()) != null) {
 		//           ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -561,21 +561,21 @@ public class Boot implements Opcodes {
 
 		// SESSION = "655207082866909a0-f69b-43d1-90f6-6804ff43cdb0";
 		request();
-		for(int i=0; i < 500; i++) {
-			try {
-				scrapt(i);
-				dumpscript(i);
-			} catch(Throwable t) {
-				t.printStackTrace();
-			}
-		}
-		//				byte[] hooks = hooks();
-		//				parseHooks(ByteBuffer.wrap(hooks));
-		//				System.out.println(hooks.length);
-		//				
-		//				System.out.println(MiscHelper.add());
-		//				if(true)
-		//					return;
+		//		for(int i=0; i < 500; i++) {
+		//			try {
+		//				scrapt(i);
+		//				dumpscript(i);
+		//			} catch(Throwable t) {
+		//				t.printStackTrace();
+		//			}
+		//		}
+		byte[] hooks = hooks();
+		parseHooks(ByteBuffer.wrap(hooks));
+		System.out.println(hooks.length);
+
+		System.out.println(MiscHelper.add());
+		if(true)
+			return;
 
 		if(true)
 			return;
@@ -811,53 +811,53 @@ public class Boot implements Opcodes {
 				sb.append("\\u00" + hex(ch));
 			} else if (ch < 32) {
 				switch (ch) {
-				case '\b':
-					sb.append('\\');
-					sb.append('b');
-					break;
-				case '\n':
-					sb.append('\\');
-					sb.append('n');
-					break;
-				case '\t':
-					sb.append('\\');
-					sb.append('t');
-					break;
-				case '\f':
-					sb.append('\\');
-					sb.append('f');
-					break;
-				case '\r':
-					sb.append('\\');
-					sb.append('r');
-					break;
-				default:
-					if (ch > 0xf) {
-						sb.append("\\u00" + hex(ch));
-					} else {
-						sb.append("\\u000" + hex(ch));
-					}
-					break;
+					case '\b':
+						sb.append('\\');
+						sb.append('b');
+						break;
+					case '\n':
+						sb.append('\\');
+						sb.append('n');
+						break;
+					case '\t':
+						sb.append('\\');
+						sb.append('t');
+						break;
+					case '\f':
+						sb.append('\\');
+						sb.append('f');
+						break;
+					case '\r':
+						sb.append('\\');
+						sb.append('r');
+						break;
+					default:
+						if (ch > 0xf) {
+							sb.append("\\u00" + hex(ch));
+						} else {
+							sb.append("\\u000" + hex(ch));
+						}
+						break;
 				}
 			} else {
 				switch (ch) {
-				case '\'':
-					if (escapeSingleQuote) {
+					case '\'':
+						if (escapeSingleQuote) {
+							sb.append('\\');
+						}
+						sb.append('\'');
+						break;
+					case '"':
 						sb.append('\\');
-					}
-					sb.append('\'');
-					break;
-				case '"':
-					sb.append('\\');
-					sb.append('"');
-					break;
-				case '\\':
-					sb.append('\\');
-					sb.append('\\');
-					break;
-				default:
-					sb.append(ch);
-					break;
+						sb.append('"');
+						break;
+					case '\\':
+						sb.append('\\');
+						sb.append('\\');
+						break;
+					default:
+						sb.append(ch);
+						break;
 				}
 			}
 		}
@@ -1352,7 +1352,7 @@ public class Boot implements Opcodes {
 		BytecodeRefactorer refactorer = new BytecodeRefactorer(dl.getJarContents().getClassContents(), new IRemapper() {
 
 			@Override
-			public String resolveMethodName(String owner, String name, String desc) {
+			public String resolveMethodName(String owner, String name, String desc, boolean isStatic) {
 				if(owner.equals(threes.owner.name) && name.equals(threes.name) && desc.equals(threes.desc)) {
 					return "threessss";
 				}

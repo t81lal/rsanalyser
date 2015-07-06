@@ -61,7 +61,13 @@ public abstract class ClassAnalyser implements Opcodes {
 		if (fs != null) {
 			for (IFieldAnalyser f : fs) {
 				try {
-					foundHook.fields().addAll(f.find(foundClass));
+					for(FieldHook fh : f.find(foundClass)) {
+						if(fh != null) {
+							foundHook.fields().add(fh);
+						} else {
+							System.out.println("NULL HOOK AFTER EXECUTING: " + f.getClass().getCanonicalName());
+						}
+					}
 				} catch (Exception e) {
 					System.err.println(f.getClass().getCanonicalName() + " -> " + e.getClass().getSimpleName());
 					e.printStackTrace();
@@ -308,6 +314,8 @@ public abstract class ClassAnalyser implements Opcodes {
 
 
 	public FieldHook asFieldHook(ClassHook c, String classAndName, String realName) {
+		if(classAndName == null)
+			return null;
 		String[] parts = classAndName.split("\\.");
 		ClassNode cn = Context.current().getClassNodes().get(parts[0]);
 		for (Object oF : cn.fields) {
@@ -503,16 +511,41 @@ public abstract class ClassAnalyser implements Opcodes {
 		}
 		return null;
 	}
+	
+	public String findField2(MethodNode m, String insName, String... pattern) {
+		InstructionIdentifier f = new InstructionIdentifier(m.instructions.toArray());
+		List<String> i = f.getInstList();
+		for (int x = getIndex(i, pattern); x < i.size(); x++)
+			if (x > 0 && i.get(x).matches(insName))
+				return f.getInstList().get(x).split(" ")[1];
+		return null;
+	}
 
 	public String findField(MethodNode m, String insName, String pattern) {
 		InstructionIdentifier f = new InstructionIdentifier(m.instructions.toArray());
 		List<String> i = f.getInstList();
 		for (int x = getIndex(i, pattern); x < i.size(); x++)
-			if (i.get(x).matches(insName))
+			if (i.get(x).matches(insName)) {
 				return f.getInstList().get(x).split(" ")[1];
+			}
 		return null;
 	}
 
+	public String findField3(MethodNode m, int match, String insName, String pattern) {
+		int c = 0;
+		InstructionIdentifier f = new InstructionIdentifier(m.instructions.toArray());
+		List<String> i = f.getInstList();
+		for (int x = getIndex(i, pattern); x < i.size(); x++)
+			if (i.get(x).matches(insName)) {
+				c++;
+				// System.out.println("match: " + i.get(x));
+				if(match == c) {
+					return f.getInstList().get(x).split(" ")[1];
+				}
+			}
+		return null;
+	}
+	
 	private int getIndex(List<String> ins, String... pat) {
 		String firstIn, secondIn;
 		int count = 0, index = -1;

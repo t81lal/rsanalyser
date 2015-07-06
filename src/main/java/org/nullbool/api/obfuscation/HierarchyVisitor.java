@@ -51,9 +51,10 @@ public class HierarchyVisitor extends Visitor {
 		superinterfaces.add(current);
 		for (final String iface : current.interfaces) {
 			final ClassStructure cs = classes.get(iface);
-			if (cs != null) {}
+			if (cs != null) { 
 				cs.delegates.add(current);
 				visitImpl(classes, superinterfaces, cs);
+			}
 			
 		}
 	}

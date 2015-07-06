@@ -51,7 +51,7 @@ public class ClassStructure extends ClassNode {
 
 	public static ClassStructure create(String name) {
 		try {
-			final ClassReader cr = new ClassReader(name);
+			final ClassReader cr = new ClassReader(name);;
 			final ClassStructure cs = new ClassStructure();
 			// TODO: edited to SKIP_FRAMES
 			cr.accept(cs, ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);

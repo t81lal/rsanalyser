@@ -10,18 +10,23 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author : MalikDz
  */
-@SupportedHooks(fields = { "getQuantities&[I", "getItemIds&[I", "getBoundsIndex&I", "getActions&[Ljava/lang/String;", "getUID&I", "getName&Ljava/lang/String;",
-		"getText&Ljava/lang/String;", "getTextColor&I", "getTextAlpha&I", "getTextureId&I", "getBorderThickness&I", "getModelType&I", "getScrollX&I",
-		"getScrollY&I", "getRelativeX&I", "getRelativeY&I", "getWidth&I", "getHeight&I", "getParentId&I", "getIndex&I", "getRotationX&I", "getRotationY&I",
-		"getRotationZ&I", "getChildren&[Widget", "getWidgetType&I", "getItemId&I", "getStackSize&I", }, methods = {})
+@SupportedHooks(fields = { "getQuantities&[I", "getItemIds&[I", "getBoundsIndex&I", "getActions&String[]", "getUID&I", "getName&String",
+		"getText&String", "getTextColor&I", "getTextAlpha&I", "getTextureId&I", "getBorderThickness&I", "getModelType&I", "getModelId&I",
+		"getRelativeX&I", "getRelativeY&I", "getWidth&I", "getHeight&I", "getParentId&I", "getIndex&I",
+		"getRotationX&I", "getRotationY&I", "getRotationZ&I", "isHidden&Z", "getInsetX&I", "getInsetY&I", "getViewportWidth&I",
+		"getViewportHeight&I", "getModelZoom&I", "getParent&Widget", "getSelectedAction&String", "getButtonType&I", "getMouseEnterListener&Object[]",
+		"getMouseExitListener&Object[]", "getMouseHoverListener&Object[]", "getConfigListenerArgs&Object[]", "getConfigTriggers&[I",
+		"getRenderListener&Object[]", "getTableListenerArgs&Object[]", "getTableModTriggers&[I", "getSkillListenerArgs&Object[]",
+		"getSkillTriggers&[I", "getScrollListeners&Object[]", "getFontId&I", "isTextShadowed&Z", "getShadowColour&I", "isFlippedVertically&Z",
+		"isFlippedHorizontally&Z", "getChildren&Widget[]", "getItemId&I", "getStackSize&I", "getTableActions&String[]", "getWidgetType&I" }, methods = {})
 public class WidgetAnalyser extends ClassAnalyser {
 
 	public WidgetAnalyser() throws AnalysisException {
@@ -39,7 +44,8 @@ public class WidgetAnalyser extends ClassAnalyser {
 
 	@Override
 	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
-		return new Builder<IFieldAnalyser>().addAll(new ItemAndStackHooks(), new BoundsIndexHooks(), new WidgetInfoHooks(), new ChildrenHooks(), new TypeHooks());
+		return new Builder<IFieldAnalyser>().addAll(new ItemAndStackHooks(), new BoundsIndexHooks(), new WidgetInfoHooks(), new ChildrenHooks(),
+				new TypeHooks(), new TableActionsAnalyser());
 	}
 
 	@Override
@@ -57,66 +63,182 @@ public class WidgetAnalyser extends ClassAnalyser {
 			MethodNode method = identifyMethod(m, false, "sipush 1601");
 
 			String h = findField(method, "getfield .*String;", "sipush 1801");
-			l.add(asFieldHook(h, "getActions"));
+			add(l, asFieldHook(h, "getActions"));
 
 			h = findField(method, true, true, 1, 'f', "dup_x1");
-			l.add(asFieldHook(h, "getUID"));
+			add(l, asFieldHook(h, "getUID"));
 
 			h = findField(method, "getfield .*String;", "sipush 1802");
-			l.add(asFieldHook(h, "getName"));
+			add(l, asFieldHook(h, "getName"));
 
 			h = findField(method, "getfield .*String;", "sipush 1112");
-			l.add(asFieldHook(h, "getText"));
+			add(l, asFieldHook(h, "getText"));
 
 			h = findField(method, "putfield .*I", "sipush 1101");
-			l.add(asFieldHook(h, "getTextColor"));
+			add(l, asFieldHook(h, "getTextColor"));
 
 			h = findField(method, "putfield .*I", "sipush 1102");
-			l.add(asFieldHook(h, "getTextAlpha"));
+			add(l, asFieldHook(h, "getTextAlpha"));
 
 			h = findField(method, "putfield .*I", "sipush 1105");
-			l.add(asFieldHook(h, "getTextureId"));
+			add(l, asFieldHook(h, "getTextureId"));
 
 			h = findField(method, "putfield .*I", "sipush 1116");
-			l.add(asFieldHook(h, "getBorderThickness"));
+			add(l, asFieldHook(h, "getBorderThickness"));
 
 			h = findField(method, "putfield .*I", "sipush 1201");
-			l.add(asFieldHook(h, "getModelType"));
+			add(l, asFieldHook(h, "getModelType"));
 
-			h = findField(method, "getfield .*I", "sipush 1100");
-			l.add(asFieldHook(h, "getScrollX"));
+			// Added 03/07/15, Bibl ///////////////////////////////
+			h = findField3(method, 2, "putfield .*I", "sipush 1108");
+			add(l, asFieldHook(h, "getModelId"));
+			// ////////////////////////////////////////////////////
 
-			h = findField(method, "getfield .*I", "sipush 1601");
-			l.add(asFieldHook(h, "getScrollY"));
+			// Scroll = Inset
+			// h = findField2(method, "getfield .*I", "sipush 1100", "if_icmpne");
+			// add(l, asFieldHook(h, "getScrollX"));
+			// h = findField(method, "getfield .*I", "sipush 1601");
+			// add(l, asFieldHook(h, "getScrollY"));
 
 			h = findField(method, "getfield .*I", "sipush 1500");
-			l.add(asFieldHook(h, "getRelativeX"));
+			add(l, asFieldHook(h, "getRelativeX"));
 
 			h = findField(method, "getfield .*I", "sipush 1501");
-			l.add(asFieldHook(h, "getRelativeY"));
+			add(l, asFieldHook(h, "getRelativeY"));
 
 			h = findField(method, "getfield .*I", "sipush 1502");
-			l.add(asFieldHook(h, "getWidth"));
+			add(l, asFieldHook(h, "getWidth"));
 
 			h = findField(method, "getfield .*I", "sipush 1503");
-			l.add(asFieldHook(h, "getHeight"));
+			add(l, asFieldHook(h, "getHeight"));
 
 			h = findField(method, "getfield .*I", "sipush 1504");
-			l.add(asFieldHook(h, "getParentId"));
+			add(l, asFieldHook(h, "getParentId"));
 
 			h = findField(method, "getfield .*I", "sipush 1702");
-			l.add(asFieldHook(h, "getIndex"));
+			add(l, asFieldHook(h, "getIndex"));
 
 			h = findField(method, "getfield .*I", "sipush 2606");
-			l.add(asFieldHook(h, "getRotationX"));
+			add(l, asFieldHook(h, "getRotationX"));
 
 			h = findField(method, "getfield .*I", "sipush 2607");
-			l.add(asFieldHook(h, "getRotationY"));
+			add(l, asFieldHook(h, "getRotationY"));
 
 			h = findField(method, "getfield .*I", "sipush 2608");
-			l.add(asFieldHook(h, "getRotationZ"));
+			add(l, asFieldHook(h, "getRotationZ"));
 
+			// Added 03/07/15, Bibl.
+			h = findField(method, "getfield .*Z", "sipush 1504");
+			add(l, asFieldHook(h, "isHidden"));
+
+			h = findField2(method, "getfield .*I", "sipush 2600", "if_icmpne");
+			add(l, asFieldHook(h, "getInsetX"));
+
+			h = findField2(method, "getfield .*I", "sipush 2601", "if_icmpne");
+			add(l, asFieldHook(h, "getInsetY"));
+
+			h = findField(method, "getfield .*I", "sipush 2603");
+			add(l, asFieldHook(h, "getViewportWidth"));
+
+			h = findField(method, "getfield .*I", "sipush 2604");
+			add(l, asFieldHook(h, "getViewportHeight"));
+
+			h = findField(method, "getfield .*I", "sipush 2605");
+			add(l, asFieldHook(h, "getModelZoom"));
+
+			h = findField(method, "putfield .*L" + cn.name + ";", "sipush 1301");
+			add(l, asFieldHook(h, "getParent"));
+
+			h = findField(method, "putfield .*Ljava/lang/String;", "sipush 1306");
+			add(l, asFieldHook(h, "getSelectedAction"));
+
+			// WRONG
+			h = findField3(method, 4, "putfield .*I", "sipush 1001");
+			add(l, asFieldHook(h, "getButtonType"));
+
+			h = findField(method, "putfield .*\\[Ljava/lang/Object;", "sipush 1403");
+			add(l, asFieldHook(h, "getMouseEnterListener"));
+
+			h = findField(method, "putfield .*\\[Ljava/lang/Object;", "sipush 1404");
+			add(l, asFieldHook(h, "getMouseExitListener"));
+
+			h = findField(method, "putfield .*\\[Ljava/lang/Object;", "sipush 1412");
+			add(l, asFieldHook(h, "getMouseHoverListener"));
+
+			h = findField(method, "putfield .*\\[Ljava/lang/Object;", "sipush 1407");
+			add(l, asFieldHook(h, "getConfigListenerArgs"));
+
+			h = findField(method, "putfield .*I", "sipush 1407");
+			add(l, asFieldHook(h, "getConfigTriggers"));
+
+			h = findField(method, "putfield .*\\[Ljava/lang/Object;", "sipush 1408");
+			add(l, asFieldHook(h, "getRenderListener"));
+
+			h = findField3(method, 1, "putfield .*\\[Ljava/lang/Object;", "sipush 1414");
+			add(l, asFieldHook(h, "getTableListenerArgs"));
+
+			h = findField3(method, 1, "putfield .*\\[I", "sipush 1414");
+			add(l, asFieldHook(h, "getTableModTriggers"));
+
+			h = findField3(method, 1, "putfield .*\\[Ljava/lang/Object;", "sipush 1415");
+			add(l, asFieldHook(h, "getSkillListenerArgs"));
+
+			h = findField3(method, 1, "putfield .*\\[I", "sipush 1415");
+			add(l, asFieldHook(h, "getSkillTriggers"));
+
+			h = findField(method, "putfield .*\\[Ljava/lang/Object;", "sipush 1417");
+			add(l, asFieldHook(h, "getScrollListeners"));
+
+			h = findField(method, "putfield .*I", "sipush 1113");
+			add(l, asFieldHook(h, "getFontId"));
+
+			h = findField(method, "putfield .*Z", "sipush 1115");
+			add(l, asFieldHook(h, "isTextShadowed"));
+
+			h = findField(method, "putfield .*I", "sipush 1117");
+			add(l, asFieldHook(h, "getShadowColour"));
+
+			h = findField(method, "putfield .*Z", "sipush 1118");
+			add(l, asFieldHook(h, "isFlippedVertically"));
+
+			h = findField(method, "putfield .*Z", "sipush 1119");
+			add(l, asFieldHook(h, "isFlippedHorizontally"));
+			
 			return l;
+		}
+
+		private void add(List<FieldHook> l, FieldHook f) {
+			if(f != null) {
+				l.add(f);
+			}
+		}
+	}
+	
+	public class TableActionsAnalyser implements IFieldAnalyser {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree
+		 * .ClassNode)
+		 */
+		@Override
+		public List<FieldHook> find(ClassNode cn) {
+			List<FieldHook> list = new ArrayList<FieldHook>();
+			for (MethodNode m : cn.methods) {
+				// aload0 // reference to self
+				// iconst_5
+				// anewarray java/lang/String
+				// putfield fu.cy:java.lang.String[]
+				String s = findField2(m, "putfield .*\\[Ljava/lang/String;", "iconst_5", "anewarray");
+				if (s != null) {
+					list.add(asFieldHook(s, "getTableActions"));
+					break;
+				}
+			}
+			
+			return list;
 		}
 	}
 
@@ -186,11 +308,10 @@ public class WidgetAnalyser extends ClassAnalyser {
 			MethodNode[] mn = findMethods(Context.current().getClassNodes(), pattern, true);
 			MethodNode m = identifyMethod(mn, false, "sipush 1107");
 
-			regex = "invokespecial " + cn.name + "\\.<init> \\(\\)V";
-
-			f = findField(m, true, true, 1, 'f', regex);
-			l.add(asFieldHook(f, "getWidgetType"));
-
+			 regex = "invokespecial " + cn.name + "\\.<init> \\(\\)V";
+			 f = findField(m, true, true, 1, 'f', regex);
+			 l.add(asFieldHook(f, "getWidgetType"));
+			 
 			f = findField(m, true, true, 1, 'f', "sipush 1701");
 			l.add(asFieldHook(f, "getItemId"));
 
