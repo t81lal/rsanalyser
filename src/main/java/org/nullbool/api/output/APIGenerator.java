@@ -17,6 +17,7 @@ import java.util.zip.ZipInputStream;
 
 import org.nullbool.api.Context;
 import org.nullbool.pi.core.hook.api.ClassHook;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.HookMap;
 import org.nullbool.pi.core.hook.api.InterfaceMapping;
@@ -149,14 +150,14 @@ public class APIGenerator {
 
 			for (FieldHook f : hook.fields()) {
 				MethodNode mn = new MethodNode(cn, Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, f.refactored(), "()"
-						+ convertSingleBytecodeStyle(hookMap.classes(), f.val(FieldHook.DESC)), null, null);
+						+ convertSingleBytecodeStyle(hookMap.classes(), f.val(Constants.DESC)), null, null);
 				cn.methods.add(mn);
 			}
 
 			for (MethodHook m : hook.methods()) {
-				String d = convertMultiBytecodeStyle(hookMap.classes(), m.val(MethodHook.DESC));
+				String d = convertMultiBytecodeStyle(hookMap.classes(), m.val(Constants.DESC));
 				MethodNode mn = new MethodNode(cn, Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, m.refactored(), d, null, null);
-				//System.out.println(m.obfuscated() + "." + m.val(MethodHook.DESC) + "  " + mn.name + "." + mn.desc);
+				//System.out.println(m.obfuscated() + "." + m.val(Constants.DESC) + "  " + mn.name + "." + mn.desc);
 				cn.methods.add(mn);
 
 				// if (m.getInstructions() != null) {

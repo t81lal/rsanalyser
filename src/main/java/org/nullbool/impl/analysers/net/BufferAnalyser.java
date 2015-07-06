@@ -19,6 +19,7 @@ import org.nullbool.api.util.NotifyNodeVisitor;
 import org.nullbool.api.util.map.NullPermeableHashMap;
 import org.nullbool.api.util.map.ValueCreator;
 import org.nullbool.pi.core.hook.api.ClassHook;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
@@ -143,7 +144,7 @@ public class BufferAnalyser extends ClassAnalyser {
 			
 			for(MethodNode m : cn.methods) {
 				if(m.desc.startsWith("(Ljava/math/BigInteger;Ljava/math/BigInteger;")) {
-					list.add(asMethodHook(m, "enableEncryption").var(MethodHook.TYPE, MethodHook.CALLBACK));
+					list.add(asMethodHook(m, "enableEncryption").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 				} else if(!Modifier.isStatic(m.access)) {
 					
 					IControlFlowGraph graph = null;
@@ -168,10 +169,10 @@ public class BufferAnalyser extends ClassAnalyser {
 							List<Integer> subs = arrayLoadVisitor.subs;
 							if(match(found, READ_UNSIGNED_16)) {
 								if(match(subs, new Object[]{1, 2})) {
-									list.add(asMethodHook(m, "readLE16").var(MethodHook.TYPE, MethodHook.CALLBACK));
+									list.add(asMethodHook(m, "readLE16").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 								} else if(match(subs, new Object[]{2, 1})) {
 									// Looks like each side of this gets swapped sometimes
-									list.add(asMethodHook(m, "read16").var(MethodHook.TYPE, MethodHook.CALLBACK));
+									list.add(asMethodHook(m, "read16").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 								}
 								//System.out.println("dong " + found);
 								//System.out.println("long " + subs);
@@ -234,77 +235,77 @@ public class BufferAnalyser extends ClassAnalyser {
 			if(m.desc.startsWith("(Ljava/lang/String;")) {
 
 				if(match(index, new Object[]{1, 1})) {
-					list.add(asMethodHook(m, "writeJagexString").var(MethodHook.TYPE, MethodHook.CALLBACK));
+					list.add(asMethodHook(m, "writeJagexString").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 					b = true;
 				} else {
-					list.add(asMethodHook(m, "writeString").var(MethodHook.TYPE, MethodHook.CALLBACK));
+					list.add(asMethodHook(m, "writeString").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 					b = true;
 				}
 			} else if(m.desc.startsWith("(Ljava/lang/CharSequence;")) {
-				list.add(asMethodHook(m, "writeCharSequence").var(MethodHook.TYPE, MethodHook.CALLBACK));
+				list.add(asMethodHook(m, "writeCharSequence").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 				b = true;
 			} else {
 				if(m.desc.startsWith("(J")) {
 					if(match(value, WRITE_LONG_SHIFTS)) {
-						list.add(asMethodHook(m, "write64").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "write64").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						b = true;
 					}
 				} else if(m.desc.startsWith("(I")) {
 					if(match(value, WRITE_INT_SHIFTS)) {
 						if(match(index, new Object[]{4, SUB2_NODE, 3, SUB2_NODE, 2, SUB2_NODE, 1, SUB2_NODE})) {
-							list.add(asMethodHook(m, "write32Weird").var(MethodHook.TYPE, MethodHook.CALLBACK));
+							list.add(asMethodHook(m, "write32Weird").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 							b = true;
 						} else if(match(index, new Object[]{1, 1, 1, 1})) {
-							list.add(asMethodHook(m, "write32").var(MethodHook.TYPE, MethodHook.CALLBACK));
+							list.add(asMethodHook(m, "write32").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 							b = true;
 						}
 
 					} else if(match(value, WRITE_INV_LE_32)) {
-						list.add(asMethodHook(m, "writeInvertedLE32").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "writeInvertedLE32").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE_LE_32)) {
-						list.add(asMethodHook(m, "writeLE32").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "writeLE32").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE_INV_32)) {
-						list.add(asMethodHook(m, "writeInverted32").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "writeInverted32").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE_24)) {
-						list.add(asMethodHook(m, "write24").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "write24").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						b = true;
 					}/* else if(match(value, WRITE_INV_24)) {
 						System.out.println("BufferAnalyser.MethodAnalyser.find() " + index);
 					}*/
 					else if(match(value, WRITE_16)) {
 						if(match(index, new Object[]{2, SUB2_NODE, 1, SUB2_NODE})) {
-							list.add(asMethodHook(m, "writeLE16A").var(MethodHook.TYPE, MethodHook.CALLBACK));
+							list.add(asMethodHook(m, "writeLE16A").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 							b = true;
 						} else if(match(index, new Object[]{1, 1})) {
-							list.add(asMethodHook(m, "write16").var(MethodHook.TYPE, MethodHook.CALLBACK));
+							list.add(asMethodHook(m, "write16").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 							b = true;
 						}
 					} else if(match(value, WRITE_LE_16)) {
-						list.add(asMethodHook(m, "writeLE16").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "writeLE16").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE_16A)) {
-						list.add(asMethodHook(m, "write16A").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "write16A").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE_16B)) {
-						list.add(asMethodHook(m, "write16B").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "write16B").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE8OFFSET128)) {
-						list.add(asMethodHook(m, "write8Offset128").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "write8Offset128").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE8NEG0)) {
-						list.add(asMethodHook(m, "write8Neg0").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "write8Neg0").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						b = true;
 					} else if(match(value, WRITE8NEG128)) {
-						list.add(asMethodHook(m, "write8Neg128").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "write8Neg128").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						b = true;
 					} else if(match(index, new Object[]{1}) && match(value, WRITE_8)) {
-						list.add(asMethodHook(m, "write8").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "write8").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						b = true;
 					} else if(match(index, new Object[]{1, SUB2_NODE}) && match(value, WRITE_8)) {
-						list.add(asMethodHook(m, "write8Weird").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "write8Weird").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						b = true;
 					} else {
 						run(treeBuilder, varIntNodeVisitor, m, graph);
@@ -312,7 +313,7 @@ public class BufferAnalyser extends ClassAnalyser {
 						List<Object> jmp = varIntNodeVisitor.found.get(VarIntNodeVisitor.JMP);
 						List<Object> add = varIntNodeVisitor.found.get(VarIntNodeVisitor.ADD);
 						if(match(jmp, WRITE_VAR_BYTE) && match(add, new Object[]{32768})) {
-							list.add(asMethodHook(m, "writeVarByte").var(MethodHook.TYPE, MethodHook.CALLBACK));
+							list.add(asMethodHook(m, "writeVarByte").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 							b = true;
 						}
 						varIntNodeVisitor.end(m);
@@ -335,7 +336,7 @@ public class BufferAnalyser extends ClassAnalyser {
 
 		public void analyseMultiByte(ArrayStoreVisitor asv, ArrayMethodVisitor amv, IControlFlowGraph graph, MethodNode m, List<MethodHook> list) {
 			if(WRITE_BYTES.equals(amv.set)) {
-				list.add(asMethodHook(m, "writeBytes").var(MethodHook.TYPE, MethodHook.CALLBACK));
+				list.add(asMethodHook(m, "writeBytes").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 			}
 		}
 	}

@@ -61,7 +61,6 @@ public class StaticMapDeserialiserImpl implements IMapDeserialiser<HookMap> {
 				FieldHook fh = new FieldHook(ch)
 					.obfuscated(fn[0])
 					.refactored(fn[1]);
-				fh.realOwner(pool.<StringEntry_0> get(dis.readInt()).value());
 				fh.variables().putAll(deserialiseMap(dis, pool));
 				ch.fields().add(fh);
 			}
@@ -70,14 +69,12 @@ public class StaticMapDeserialiserImpl implements IMapDeserialiser<HookMap> {
 			
 			for(int j=0; j < m_count; j++) {
 				String[] mn = readObfRefType(dis, pool);
-				String realOwner = pool.<StringEntry_0> get(dis.readInt()).value();
 				Map<String, String> vars = deserialiseMap(dis, pool);
 				InsnList insns = readCode(dis, pool);
 
 				MethodHook mh = new MethodHook(ch)
 					.obfuscated(mn[0])
 					.refactored(mn[1])
-					.realOwner(realOwner)
 					.insns(insns);
 				mh.variables().putAll(vars);
 				

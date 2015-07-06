@@ -12,6 +12,7 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -64,15 +65,15 @@ public class HashtableAnalyser extends ClassAnalyser {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 			
 			if(putMethod != null) {
-				list.add(asMethodHook(putMethod, "put").var(MethodHook.TYPE, MethodHook.CALLBACK));
+				list.add(asMethodHook(putMethod, "put").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 			}
 			
 			if(firstMethod != null) {
-				list.add(asMethodHook(firstMethod, "first").var(MethodHook.TYPE, MethodHook.CALLBACK));
+				list.add(asMethodHook(firstMethod, "first").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 			}
 			
 			if(nextMethod != null) {
-				list.add(asMethodHook(nextMethod, "next").var(MethodHook.TYPE, MethodHook.CALLBACK));
+				list.add(asMethodHook(nextMethod, "next").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 			}
 			
             //aload0 // reference to self
@@ -88,14 +89,14 @@ public class HashtableAnalyser extends ClassAnalyser {
 				if(m.desc.endsWith(")V")) {
 					List<AbstractInsnNode[]> ainsl = findAllOpcodePatterns(m, SET_NULL_FIELD);
 					if(ainsl.size() == 2) {
-						list.add(asMethodHook(m, "clear").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "clear").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 					}
 				} else if(m.desc.startsWith("(J") && m.desc.endsWith(nodeDesc)) {
 					List<AbstractInsnNode> ains = findAllOpcodePatternsStarts(m, KEY_CALC_PATTERN);
 					if(ains.size() == 1) {
 						List<AbstractInsnNode[]> ainsl = findAllOpcodePatterns(m, SET_NULL_FIELD);
 						if(ainsl.size() == 1) {
-							list.add(asMethodHook(m, "get").var(MethodHook.TYPE, MethodHook.CALLBACK));
+							list.add(asMethodHook(m, "get").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						}
 					}
 					//getfield Hashtable.getSize:int

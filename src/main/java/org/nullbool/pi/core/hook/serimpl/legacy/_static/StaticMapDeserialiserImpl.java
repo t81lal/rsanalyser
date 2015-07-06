@@ -15,7 +15,7 @@
 //import org.nullbool.pi.core.hook.api.FieldHook;
 //import org.nullbool.pi.core.hook.api.HookMap;
 //import org.nullbool.pi.core.hook.api.MethodHook;
-//import org.nullbool.pi.core.hook.api.MethodHook.MethodType;
+//import org.nullbool.pi.core.hook.api.Constants.MethodType;
 //import org.nullbool.pi.core.hook.api.ObfuscatedData;
 //import org.nullbool.pi.core.hook.api.serialisation.IMapDeserialiser;
 //import org.objectweb.asm.Opcodes;

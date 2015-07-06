@@ -52,6 +52,7 @@ import org.nullbool.api.util.NodedContainer;
 import org.nullbool.api.util.PatternParser;
 import org.nullbool.api.util.map.ValueCreator;
 import org.nullbool.pi.core.hook.api.ClassHook;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.HookMap;
 import org.nullbool.pi.core.hook.api.MethodHook;
@@ -174,7 +175,7 @@ public abstract class AbstractAnalysisProvider {
 			for(ClassHook ch : map.classes()) {
 				for(MethodHook mh : ch.methods()) {
 					// TODO: Get after empty param deob
-					MethodNode m = cache.get(mh.realOwner(), mh.obfuscated(), mh.val(MethodHook.DESC));
+					MethodNode m = cache.get(mh.val(Constants.REAL_OWNER), mh.obfuscated(), mh.val(Constants.DESC));
 					
 					if(m == null) {
 						System.out.println("NULL HOOK CALL?");
@@ -202,7 +203,7 @@ public abstract class AbstractAnalysisProvider {
 								break;
 						}
 					}
-					mh.var(MethodHook.SAFE_OPAQUE, Integer.toString(num));
+					mh.var(Constants.SAFE_OPAQUE, Integer.toString(num));
 				}
 			}
 			
@@ -220,11 +221,11 @@ public abstract class AbstractAnalysisProvider {
 		for(ClassHook h : hookMap.classes()){
 			classes.put(h.obfuscated(), h);
 			for(FieldHook f : h.fields()){
-				fields.put(f.owner().obfuscated() + "." + f.obfuscated() + " " + f.val(FieldHook.DESC), f);
+				fields.put(f.val(Constants.REAL_OWNER) + "." + f.obfuscated() + " " + f.val(Constants.DESC), f);
 			}
 
 			for(MethodHook m : h.methods()){
-				methods.put(m.realOwner() + "." + m.obfuscated() + m.val(MethodHook.DESC), m);
+				methods.put(m.val(Constants.REAL_OWNER) + "." + m.obfuscated() + m.val(Constants.DESC), m);
 			}
 		}
 

@@ -14,6 +14,7 @@ import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.EventCallGenerator;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -418,18 +419,18 @@ public class ClientAnalyser extends ClassAnalyser {
 			String mn, t = "L" + findObfClassName("ObjectDefinition") + ";";
 			//
 			MethodNode mNode = findMethodNode(Context.current().getClassNodes(), ";I.{0,1};" + t);
-			MethodHook mhook = getAnalyser("ObjectDefinition").asMethodHook(mNode, "loadObjDefinition").var(MethodHook.TYPE, MethodHook.CALLBACK);
+			MethodHook mhook = getAnalyser("ObjectDefinition").asMethodHook(mNode, "loadObjDefinition").var(Constants.METHOD_TYPE, Constants.CALLBACK);
 			list.add(mhook);
 			//
 			mNode = findMethodNode(Context.current().getClassNodes(), ";I.{0,1};" + v);
-			mhook = getAnalyser("ItemDefinition").asMethodHook(mNode, "loadItemDefinition").var(MethodHook.TYPE, MethodHook.CALLBACK);
+			mhook = getAnalyser("ItemDefinition").asMethodHook(mNode, "loadItemDefinition").var(Constants.METHOD_TYPE, Constants.CALLBACK);
 			list.add(mhook);
 			//
 			mn = npcClass + "." + m.name;
 			mNode = findMethodNode(Context.current().getClassNodes(), ";I.{0,1};" + v);
 			//
 			//mn = playerClass + "." + m.name;
-			//mhook = getAnalyser("Model").asMethodHook(mn, "getPlayerModel").var(MethodHook.TYPE, MethodHook.CALLBACK);
+			//mhook = getAnalyser("Model").asMethodHook(mn, "getPlayerModel").var(Constants.METHOD_TYPE, Constants.CALLBACK);
 			//list.add(mhook);
 
 			// these hooks are actually method hook, I think we should make a
@@ -529,7 +530,7 @@ public class ClientAnalyser extends ClassAnalyser {
 			for(ClassNode cn : Context.current().getClassNodes().values()) {
 				for(MethodNode m : cn.methods) {
 					if (m.desc.startsWith("(Ljava/lang/Throwable;Ljava/lang/String;)") && m.desc.contains(")L")) {
-						MethodHook mhook = asMethodHook(m, "reportException").var(MethodHook.TYPE, MethodHook.PATCH);
+						MethodHook mhook = asMethodHook(m, "reportException").var(Constants.METHOD_TYPE, Constants.PATCH);
 						hooks.add(mhook);
 						VarInsnNode beforeReturn = null;
 						try {
@@ -582,8 +583,8 @@ public class ClientAnalyser extends ClassAnalyser {
 							InsnList mInsns = m.instructions;
 							mInsns.insertBefore(beforeReturn, newInsns);
 							mhook.insns(mInsns);
-							mhook.var(MethodHook.MAX_STACK, "7");
-							mhook.var(MethodHook.MAX_LOCALS, Integer.toString(m.maxLocals));
+							mhook.var(Constants.MAX_STACK, "7");
+							mhook.var(Constants.MAX_LOCALS, Integer.toString(m.maxLocals));
 							mInsns.reset();
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -667,8 +668,8 @@ public class ClientAnalyser extends ClassAnalyser {
 						insns.add(new MethodInsnNode(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false));
 
 						MethodHook h = asMethodHook(m, "processAction")
-								.var(MethodHook.TYPE, MethodHook.PATCH)
-								.var(MethodHook.PATCH_POSITION, MethodHook.START);
+								.var(Constants.METHOD_TYPE, Constants.PATCH)
+								.var(Constants.PATCH_POSITION, Constants.START);
 						h.insns(insns);
 
 						hooks.add(h);

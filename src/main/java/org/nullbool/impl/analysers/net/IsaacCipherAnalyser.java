@@ -8,6 +8,7 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
@@ -152,14 +153,14 @@ public class IsaacCipherAnalyser extends ClassAnalyser {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 			
 			/*initMin will be set if this method is called.*/
-			list.add(asMethodHook(initMin, "init").var(MethodHook.TYPE, MethodHook.CALLBACK));
+			list.add(asMethodHook(initMin, "init").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 			
 			if(nextMethod != null) {
-				list.add(asMethodHook(nextMethod, "next").var(MethodHook.TYPE, MethodHook.CALLBACK));
+				list.add(asMethodHook(nextMethod, "next").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 			}
 			
 			if(isaacMethod != null) {
-				list.add(asMethodHook(isaacMethod, "isaac").var(MethodHook.TYPE, MethodHook.CALLBACK));
+				list.add(asMethodHook(isaacMethod, "isaac").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 			}
 	             
 			return list;

@@ -16,6 +16,7 @@ import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
 import org.nullbool.api.util.InstructionIdentifier;
 import org.nullbool.pi.core.hook.api.ClassHook;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.objectweb.asm.Opcodes;
@@ -329,11 +330,11 @@ public abstract class ClassAnalyser implements Opcodes {
 				//}
 				
 				return new FieldHook(foundHook)
-					.realOwner(f.owner.name)
 					.obfuscated(f.name)
 					.refactored(realName)
-					.var(FieldHook.DESC, f.desc)
-					.var(FieldHook.STATIC, Boolean.toString(Modifier.isStatic(f.access)));
+					.var(Constants.REAL_OWNER, f.owner.name)
+					.var(Constants.DESC, f.desc)
+					.var(Constants.STATIC, Boolean.toString(Modifier.isStatic(f.access)));
 			}
 		}
 		return null;
@@ -378,11 +379,11 @@ public abstract class ClassAnalyser implements Opcodes {
 	
 	public FieldHook asFieldHook(FieldInsnNode f, String realName, boolean isStatic) {
 		FieldHook fh = new FieldHook(new ClassHook(f.owner, foundHook.refactored()))
-			.realOwner(f.owner)
 			.obfuscated(f.name)
 			.refactored(realName)
-			.var(MethodHook.DESC, f.desc)
-			.var(FieldHook.STATIC, Boolean.toString(isStatic));
+			.var(Constants.REAL_OWNER, f.owner)
+			.var(Constants.DESC, f.desc)
+			.var(Constants.STATIC, Boolean.toString(isStatic));
 			//if(hasMulti(f.desc))
 			//	fh.var(FieldHook.MUTLI, Long.toString(multiplier));
 			return fh;
@@ -394,11 +395,11 @@ public abstract class ClassAnalyser implements Opcodes {
 			MethodNode m = (MethodNode) oM;
 			if (min.name.equals(m.name) && min.desc.equals(m.desc)) {
 				return new MethodHook(foundHook)
-					.realOwner(min.owner)
 					.obfuscated(m.name)
 					.refactored(realName)
-					.var(MethodHook.DESC, m.desc)
-					.var(MethodHook.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
+					.var(Constants.REAL_OWNER, min.owner)
+					.var(Constants.DESC, m.desc)
+					.var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
 			}
 		}
 		return null;
@@ -414,11 +415,11 @@ public abstract class ClassAnalyser implements Opcodes {
 			// System.out.println("   method " + m.name + " " + m.desc);
 			if (parts[1].equals(m.name)) {
 				return new MethodHook(foundHook)
-				.realOwner(cn.name)
 				.obfuscated(m.name)
 				.refactored(realName)
-				.var(MethodHook.DESC, m.desc)
-				.var(MethodHook.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
+				.var(Constants.REAL_OWNER, cn.name)
+				.var(Constants.DESC, m.desc)
+				.var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
 			}
 		}
 		return null;
@@ -438,11 +439,11 @@ public abstract class ClassAnalyser implements Opcodes {
 
 	public MethodHook asMethodHook(MethodNode m, String realName) {
 		return new MethodHook(foundHook)
-			.realOwner(m.owner.name)
 			.obfuscated(m.name)
 			.refactored(realName)
-			.var(MethodHook.DESC, m.desc)
-			.var(MethodHook.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
+			.var(Constants.REAL_OWNER, m.owner.name)
+			.var(Constants.DESC, m.desc)
+			.var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
 	}
 
 	public MethodNode[] findMethods(Map<String, ClassNode> nodes, String regularExpression, boolean isStatic) {

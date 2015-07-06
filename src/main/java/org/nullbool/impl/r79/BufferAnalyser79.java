@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
 import org.nullbool.impl.r77.BufferAnalyser77;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -44,10 +45,10 @@ public class BufferAnalyser79 extends BufferAnalyser77 {
 			List<Object> value = asv.found.get(ArrayStoreVisitor.VALUE);
 			if(WRITE_BYTES2.equals(amv.set) && match(value, WRITE_BYTES_SUB)) {
 				if(amv.opcode == IF_ICMPLT) {
-					list.add(asMethodHook(m, "readBytesB").var(MethodHook.TYPE, MethodHook.CALLBACK));
+					list.add(asMethodHook(m, "readBytesB").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 					b = true;
 				} else if(amv.opcode == IF_ICMPGE) {
-					list.add(asMethodHook(m, "readBytesA").var(MethodHook.TYPE, MethodHook.CALLBACK));
+					list.add(asMethodHook(m, "readBytesA").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 					b = true;
 				} else {
 					throw new RuntimeException();

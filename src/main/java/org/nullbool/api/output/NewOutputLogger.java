@@ -14,6 +14,7 @@ import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.obfuscation.number.MultiplierHandler;
 import org.nullbool.pi.core.hook.api.ClassHook;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.DynamicDesc;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.HookMap;
@@ -46,7 +47,7 @@ public class NewOutputLogger {
 		int total_correct_field_count = 0;
 		int total_method_count = 0;
 		int total_correct_method_count = 0;
-		
+
 		List<ClassHook> classes = new ArrayList<ClassHook>();
 		Map<String, String> mappedNames = new HashMap<String, String>();
 		for(ClassAnalyser analyser : analysers) {
@@ -65,7 +66,7 @@ public class NewOutputLogger {
 
 		for(ClassAnalyser analyser : analysers) {
 			total_class_count++;
-			
+
 			ClassHook ch = analyser.getFoundHook();
 			ClassNode cn = analyser.getFoundClass();
 
@@ -74,9 +75,9 @@ public class NewOutputLogger {
 				mainSb.append('\n').append('\n');
 				continue;
 			}
-			
+
 			total_correct_class_count++;
-			
+
 			StringBuilder classSb = new StringBuilder();
 			classSb.append("> ").append(ch.refactored());
 
@@ -89,7 +90,7 @@ public class NewOutputLogger {
 
 			classSb.append(" identified as ");
 			classSb.append('\'').append(ch.obfuscated()).append('\'');
-			
+
 			// =========================FIELDS===========================
 			StringBuilder fieldSb = new StringBuilder();
 
@@ -118,7 +119,7 @@ public class NewOutputLogger {
 
 					StringBuilder sb = new StringBuilder();
 					FieldHook fh = matches.get(0);
-					DynamicDesc desc = new DynamicDesc(fh.val(FieldHook.DESC), false);
+					DynamicDesc desc = new DynamicDesc(fh.val(Constants.DESC), false);
 					sb.append(" ^  ").append(fh.refactored());
 					longstring(sb, 0, col_width); // 40
 					sb.append(desc.getRefactoredDesc(classes)).append(" ");
@@ -128,7 +129,7 @@ public class NewOutputLogger {
 
 					if (printMultis) {						
 						if(hasMulti(desc.getObfuscated())) {
-							long multi = Long.parseLong(fh.val(FieldHook.ENCODER, "1"));
+							long multi = Long.parseLong(fh.val(Constants.ENCODER, "1"));
 							sb.append(" * ");
 							if (multi >= 0)
 								sb.append(" ");
@@ -147,16 +148,16 @@ public class NewOutputLogger {
 			for(FieldHook fh : ch.fields()) {
 				if(!visited_fields.contains(fh)) {
 					StringBuilder sb = new StringBuilder();
-					sb.append(" ^  Error, extra hook found: ").append(format(fh)).append(" (").append(fh.val(FieldHook.DESC)).append(")");
+					sb.append(" ^  Error, extra hook found: ").append(format(fh)).append(" (").append(fh.val(Constants.DESC)).append(")");
 					longstring(sb, 0, 80 - 1);
 					sb.append(" (").append(fh.refactored()).append(")");
 					sb.append('\n');
 
 					fieldSb.append(sb);
 				}
-				
+
 				for(FieldHook fh1 : ch.fields()) {
-					if(fh1 != fh && fh.realOwner().equals(fh1.realOwner()) && fh.obfuscated().equals(fh1.obfuscated()) && !fh.refactored().equals(fh1.refactored())) {
+					if(fh1 != fh && fh.val(Constants.REAL_OWNER).equals(fh1.val(Constants.REAL_OWNER)) && fh.obfuscated().equals(fh1.obfuscated()) && !fh.refactored().equals(fh1.refactored())) {
 						fieldSb.append(" ^  Error, field found twice as ").append(fh.refactored()).append(" and ").append(fh1.refactored());
 						fieldSb.append('\n');
 					}
@@ -191,7 +192,7 @@ public class NewOutputLogger {
 
 					StringBuilder sb = new StringBuilder();
 					MethodHook mh = matches.get(0);
-					DynamicDesc desc = new DynamicDesc(mh.val(MethodHook.DESC), true);
+					DynamicDesc desc = new DynamicDesc(mh.val(Constants.DESC), true);
 					sb.append(" º  ").append(mh.refactored());
 					longstring(sb, 0, col_width); // 40
 					sb.append(desc.getRefactoredDesc(classes)).append(" ");
@@ -210,7 +211,7 @@ public class NewOutputLogger {
 			for(MethodHook mh : ch.methods()) {
 				if(!visited_methods.contains(mh)) {
 					StringBuilder sb = new StringBuilder();
-					sb.append(" ^  Error, extra hook found: ").append(format(mh)).append(" ").append(mh.val(MethodHook.DESC)).append("");
+					sb.append(" ^  Error, extra hook found: ").append(format(mh)).append(" ").append(mh.val(Constants.DESC)).append("");
 					longstring(sb, 0, 80 - 1);
 					sb.append(" (").append(mh.refactored()).append(")");
 					sb.append('\n');
@@ -233,7 +234,7 @@ public class NewOutputLogger {
 			classSb.append(ch.methods().size()).append("mhs");
 			classSb.append(")");
 			classSb.append('\n');
-			
+
 			if(headers) {
 				mainSb.append("@SupportedHooks(");
 				mainSb.append('\n').append('\t');
@@ -243,7 +244,7 @@ public class NewOutputLogger {
 					FieldHook fh = fit.next();
 					mainSb.append('"');
 					mainSb.append(fh.refactored()).append("&");
-					String desc = fh.val(FieldHook.DESC);
+					String desc = fh.val(Constants.DESC);
 					String stripped = desc.replace("[", "");
 					if(DynamicDesc.isPrimitive(stripped)) {
 						mainSb.append(desc);
@@ -252,15 +253,15 @@ public class NewOutputLogger {
 						mainSb.append(desc);
 					}
 					mainSb.append('"');
-					
+
 					if(fit.hasNext()) {
 						mainSb.append(", ");
 					}
 				}
-				
+
 				mainSb.append("},");
 				mainSb.append('\n');
-				
+
 				mainSb.append('\t');
 				mainSb.append("methods = {");
 				ListIterator<MethodHook> mit = ch.methods().listIterator();
@@ -268,7 +269,7 @@ public class NewOutputLogger {
 					MethodHook fh = mit.next();
 					mainSb.append('"');
 					mainSb.append(fh.refactored()).append("&");
-					String desc = fh.val(FieldHook.DESC);
+					String desc = fh.val(Constants.DESC);
 					// if(DynamicDesc.isPrimitive(stripped)) {
 					// 	mainSb.append(desc);
 					// } else {
@@ -277,14 +278,14 @@ public class NewOutputLogger {
 					//}
 					mainSb.append(DynamicDesc.convertMultiJavaStyle(classes, desc));
 					mainSb.append('"');
-					
+
 					if(mit.hasNext()) {
 						mainSb.append(", ");
 					}
 				}
 				mainSb.append("}");
 				mainSb.append('\n');
-				
+
 				mainSb.append(")");
 				mainSb.append('\n');
 			}
@@ -298,7 +299,7 @@ public class NewOutputLogger {
 		if(logResults) {
 			System.out.println(mainSb.toString());
 		}
-		
+
 		System.out.printf("Found %d/%d classes.%n", total_correct_class_count, total_class_count);
 		System.out.printf("Found %d/%d fields.%n", total_correct_field_count, total_field_count);
 		System.out.printf("Found %d/%d methods.%n", total_correct_method_count, total_method_count);
@@ -314,11 +315,11 @@ public class NewOutputLogger {
 	}
 
 	private static String format(MethodHook data) {
-		return data.realOwner() + "." + data.obfuscated();
+		return data.val(Constants.REAL_OWNER) + "." + data.obfuscated();
 	}
 
 	private static String format(FieldHook data) {
-		return data.realOwner() + "." + data.obfuscated();
+		return data.val(Constants.REAL_OWNER) + "." + data.obfuscated();
 	}
 
 	private static <T extends ObfuscatedData> List<T> findMatches(List<T> allHooks, String target) {
@@ -339,9 +340,9 @@ public class NewOutputLogger {
 		MultiplierHandler mh = Context.current().getMultiplierHandler();
 		for(ClassHook ch : classes) {
 			for(FieldHook fh : ch.fields()) {
-				String desc = fh.val(FieldHook.DESC);
+				String desc = fh.val(Constants.DESC);
 				if(hasMulti(desc)) {
-					String src = fh.realOwner() + "." + fh.obfuscated();
+					String src = fh.val(Constants.REAL_OWNER) + "." + fh.obfuscated();
 
 					long m = mh.getEncoder(src);
 					if(m == 0) {
@@ -351,7 +352,7 @@ public class NewOutputLogger {
 					if(m == 0)
 						m = 1;
 
-					fh.var(FieldHook.ENCODER, Long.toString(m));
+					fh.var(Constants.ENCODER, Long.toString(m));
 				}
 			}
 		}

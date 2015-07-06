@@ -11,6 +11,7 @@ import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.InstructionUtil;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -70,21 +71,21 @@ public class PacketAnalyser extends ClassAnalyser {
 				if(m.desc.startsWith("([I") && m.desc.endsWith("V")) {
 					MethodInsnNode min = (MethodInsnNode) findOpcodePattern(m, INIT_CIPHER_PATTERN);
 					if(min != null) {
-						list.add(asMethodHook(m, "initCipher").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "initCipher").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 					}
 				} else if(m.desc.endsWith("V")) {
 					FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, INIT_BIT_ACCESS_PATTERN1);
 					if(fin != null) {
-						list.add(asMethodHook(m, "initBitAccess").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "initBitAccess").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 					} else {
 						fin = (FieldInsnNode) findOpcodePattern(m, INIT_BIT_ACCESS_PATTERN2);
 						if(fin != null) {
-							list.add(asMethodHook(m, "initBitAccess").var(MethodHook.TYPE, MethodHook.CALLBACK));
+							list.add(asMethodHook(m, "initBitAccess").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						} else {
 							IntInsnNode iin = (IntInsnNode) findOpcodePattern(m, FINISH_BIT_ACCESS_PATTERN);
 							if(iin != null) {
 								if(InstructionUtil.resolve(iin) == 8) {
-									list.add(asMethodHook(m, "finishBitAccess").var(MethodHook.TYPE, MethodHook.CALLBACK));
+									list.add(asMethodHook(m, "finishBitAccess").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 								}
 							}
 						}
@@ -95,11 +96,11 @@ public class PacketAnalyser extends ClassAnalyser {
 						fin = (FieldInsnNode) findOpcodePattern(m, READABLE_BEATS_PATTERN2);
 					
 					if(fin != null) {
-						list.add(asMethodHook(m, "readableBytes").var(MethodHook.TYPE, MethodHook.CALLBACK));
+						list.add(asMethodHook(m, "readableBytes").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 					} else {
 						AbstractInsnNode a1 = findOpcodePattern(m, READ_BITS_PATTERN);
 						if(a1 != null) {
-							list.add(asMethodHook(m, "readBits").var(MethodHook.TYPE, MethodHook.CALLBACK));
+							list.add(asMethodHook(m, "readBits").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						}
 					}
 				}

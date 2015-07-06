@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.nullbool.pi.core.hook.api.ClassHook;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.HookMap;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.nullbool.pi.core.hook.serimpl.StaticMapDeserialiserImpl;
@@ -44,7 +45,7 @@ public class Test {
 		
 		System.out.println(cn.methods.size());
 		for(MethodNode m : cn.methods) {
-			MethodHook mh = new MethodHook(m.instructions).var(MethodHook.TYPE, "callbakc").obfuscated("obf").refactored("ref").var(MethodHook.DESC, m.desc).var(MethodHook.STATIC, "true");
+			MethodHook mh = new MethodHook(m.instructions).var(Constants.METHOD_TYPE, "callbakc").obfuscated("obf").refactored("ref").var(Constants.DESC, m.desc).var(Constants.STATIC, "true");
 			s.methods().add(mh);
 		}
 		

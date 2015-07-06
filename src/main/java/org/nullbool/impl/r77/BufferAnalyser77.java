@@ -6,6 +6,7 @@ import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
 import org.nullbool.impl.analysers.net.BufferAnalyser;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.objectweb.asm.tree.MethodNode;
 import org.topdank.banalysis.filter.Filter;
@@ -46,7 +47,7 @@ public class BufferAnalyser77 extends BufferAnalyser {
 				List<Object> value = asv.found.get(ArrayStoreVisitor.VALUE);
 				if(match(value, WRITE_LONG_SHIFTS, 2)) {
 					// NOTE: ADDED IN R77
-					list.add(asMethodHook(m, "write40").var(MethodHook.TYPE, MethodHook.CALLBACK));
+					list.add(asMethodHook(m, "write40").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 					b = true;
 				}
 			} 

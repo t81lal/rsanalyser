@@ -12,6 +12,7 @@ import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.obfuscation.number.MultiplierHandler;
 import org.nullbool.pi.core.hook.api.ClassHook;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.DynamicDesc;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.HookMap;
@@ -21,6 +22,7 @@ import org.nullbool.pi.core.hook.api.MethodHook;
  * @author Bibl (don't ban me pls) <br>
  * @created 19 Apr 2015 at 09:11:53 <br>
  */
+@Deprecated
 public class OutputLogger {
 
 	public static boolean hasMulti(String desc) {
@@ -31,7 +33,7 @@ public class OutputLogger {
 		MultiplierHandler mh = Context.current().getMultiplierHandler();
 		for(ClassHook ch : classes) {
 			for(FieldHook fh : ch.fields()) {
-				String desc = fh.val(FieldHook.DESC);
+				String desc = fh.val(Constants.DESC);
 				if(hasMulti(desc)) {
 					String src = fh.owner().obfuscated() + "." + fh.obfuscated();
 					
@@ -43,7 +45,7 @@ public class OutputLogger {
 					if(m == 0)
 						m = 1;
 					
-					fh.var(FieldHook.ENCODER, Long.toString(m));
+					fh.var(Constants.ENCODER, Long.toString(m));
 				}
 			}
 		}
@@ -118,7 +120,7 @@ public class OutputLogger {
 			if (debug) {
 				sb.append("@SupportedHooks(fields = { ");
 				for (FieldHook hook : classHook.fields()) {
-					DynamicDesc dd = new DynamicDesc(hook.val(FieldHook.DESC), false);
+					DynamicDesc dd = new DynamicDesc(hook.val(Constants.DESC), false);
 					sb.append("\"").append(hook.refactored()).append("&").append(dd.getRefactoredDesc(classes)).append("\", ");
 				}
 				sb.append("},");
@@ -126,7 +128,7 @@ public class OutputLogger {
 				sb.append("\n");
 				sb.append("methods = { ");
 				for (MethodHook hook : classHook.methods()) {
-					DynamicDesc dd = new DynamicDesc(hook.val(MethodHook.DESC), true);
+					DynamicDesc dd = new DynamicDesc(hook.val(Constants.DESC), true);
 					System.out.println(dd.getClass());
 					sb.append("\"").append(hook.refactored()).append("&").append(dd.getRefactoredDesc(classes)).append("\", ");
 				}
@@ -172,7 +174,7 @@ public class OutputLogger {
 					sb1.append(" ^  ");
 					sb1.append(longstring(parts[0], maxLength));
 					// sb1.append(longstring(" " + niceDesc(parts[1]) + "", maxLength));
-					DynamicDesc fdd = new DynamicDesc(hook.val(FieldHook.DESC), false);
+					DynamicDesc fdd = new DynamicDesc(hook.val(Constants.DESC), false);
 					sb1.append(longstring(" " + fdd.getRefactoredDesc(classes) + "", maxLength));
 					if (sb1.length() > longestLine) {
 						longestLine = sb1.length();
@@ -188,7 +190,7 @@ public class OutputLogger {
 						
 						if(hasMulti(fdd.getObfuscated())) {
 							sb4.append(longstring(sb2.toString(), 10));
-							long multi = Long.parseLong(hook.val(FieldHook.ENCODER, "1"));
+							long multi = Long.parseLong(hook.val(Constants.ENCODER, "1"));
 							sb4.append(" * ");
 							if (multi >= 0)
 								sb4.append(" ");
@@ -202,7 +204,7 @@ public class OutputLogger {
 						sb.append(longstring(sb2.toString(), 12));
 					}
 					sb.append(" (");
-					sb.append(hook.val(FieldHook.DESC));
+					sb.append(hook.val(Constants.DESC));
 					sb.append(")");
 					sb.append("\n");
 				}
@@ -237,7 +239,7 @@ public class OutputLogger {
 					sb1.append(" º  ");
 					sb1.append(longstring(parts[0], maxLength));
 					// sb1.append(longstring(" " + niceDescMethod(parts[1]), maxLength));
-					DynamicDesc mdd = new DynamicDesc(hook.val(MethodHook.DESC), true);
+					DynamicDesc mdd = new DynamicDesc(hook.val(Constants.DESC), true);
 					sb1.append(longstring(" " + mdd.getRefactoredDesc(classes) + " ", maxLength));
 					if (sb1.length() > longestLine) {
 						longestLine = sb1.length();
@@ -255,7 +257,7 @@ public class OutputLogger {
 					// }
 					sb.append(longstring(sb2.toString(), printMultis ? 25 : 12));
 					sb.append(" ");
-					sb.append(hook.val(MethodHook.DESC));
+					sb.append(hook.val(Constants.DESC));
 					sb.append("");
 					sb.append("\n");
 				}
@@ -383,7 +385,7 @@ public class OutputLogger {
 	private static void verifyField(List<ClassHook> cs, FieldHook h) {
 		String owner = h.owner().obfuscated();
 		String name = h.obfuscated();
-		String desc = h.val(FieldHook.DESC);
+		String desc = h.val(Constants.DESC);
 
 		for (ClassHook c : cs) {
 			for (FieldHook f : c.fields()) {
@@ -391,7 +393,7 @@ public class OutputLogger {
 					continue;
 				String owner1 = f.owner().obfuscated();
 				String name1 = f.obfuscated();
-				String desc1 = f.val(FieldHook.DESC);
+				String desc1 = f.val(Constants.DESC);
 				if (owner1.equals(owner)) {
 					if (name1.equals(name)) {
 						if (desc1.equals(desc)) {
@@ -409,7 +411,7 @@ public class OutputLogger {
 	private static void verifyMethod(List<ClassHook> cs, MethodHook h) {
 		String owner = h.owner().obfuscated();
 		String name = h.obfuscated();
-		String desc = h.val(MethodHook.DESC);
+		String desc = h.val(Constants.DESC);
 
 		for (ClassHook c : cs) {
 			for (MethodHook m : c.methods()) {
@@ -417,7 +419,7 @@ public class OutputLogger {
 					continue;
 				String owner1 = m.owner().obfuscated();
 				String name1 = m.obfuscated();
-				String desc1 = m.val(MethodHook.DESC);
+				String desc1 = m.val(Constants.DESC);
 				if (owner1.equals(owner)) {
 					if (name1.equals(name)) {
 						if (desc1.equals(desc)) {

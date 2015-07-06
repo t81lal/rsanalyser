@@ -13,6 +13,7 @@ import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.ClassStructure;
+import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.objectweb.asm.tree.ClassNode;
@@ -60,14 +61,14 @@ public class NodeAnalyser extends ClassAnalyser {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 			
 			if(hasPreviousMethod != null) {
-				list.add(asMethodHook(hasPreviousMethod, "isLinked").var(MethodHook.TYPE, MethodHook.CALLBACK));
+				list.add(asMethodHook(hasPreviousMethod, "isLinked").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 			}
 			
 			MethodNode[] ms  = getMethodNodes(cn.methods.stream().filter(m -> !Modifier.isStatic(m.access) && m.desc.endsWith(")V") && !m.name.equals("<init>")).collect(Collectors.toList()).toArray());
 			MethodNode[] ms2 = startWithBc(new String[] { "aload", "getfield", "ifnonnull" }, ms);
 			if(ms2.length == 1) {
 				MethodNode m = ms2[0];
-				list.add(asMethodHook(m, "unlink").var(MethodHook.TYPE, MethodHook.CALLBACK));
+				list.add(asMethodHook(m, "unlink").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 			}
 						
 			return list;
