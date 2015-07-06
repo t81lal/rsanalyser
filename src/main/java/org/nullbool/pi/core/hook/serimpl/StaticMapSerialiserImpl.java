@@ -64,6 +64,7 @@ public class StaticMapSerialiserImpl implements IMapSerialiser<HookMap> {
 			
 			for(FieldHook f : fields) {
 				writeObfRefType(contentDos, pool, f);
+				contentDos.writeInt(pool.allocateString(f.realOwner()));
 				serialiseMap(contentDos, pool, f.variables());
 			}
 			
@@ -72,6 +73,7 @@ public class StaticMapSerialiserImpl implements IMapSerialiser<HookMap> {
 			
 			for(MethodHook m : methods) {
 				writeObfRefType(contentDos, pool, m);
+				contentDos.writeInt(pool.allocateString(m.realOwner()));
 				serialiseMap(contentDos, pool, m.variables());
 				writeCode(contentDos, m.insns(), pool);
 			}

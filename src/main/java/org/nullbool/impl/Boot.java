@@ -19,7 +19,6 @@ import org.nullbool.impl.AnalysisProviderRegistry.ProviderCreator;
 import org.nullbool.impl.AnalysisProviderRegistry.RegistryEntry;
 import org.nullbool.impl.r77.AnalysisProvider77Impl;
 import org.nullbool.impl.r79.AnalysisProvider79Impl;
-import org.objectweb.asm.ClassReader;
 import org.topdank.banalysis.filter.Filter;
 import org.topdank.byteio.util.Debug;
 
@@ -29,7 +28,7 @@ import org.topdank.byteio.util.Debug;
  */
 public class Boot {
 
-	private static int revision = 80;
+	private static int revision = 81;
 
 	public static void main(String[] args) throws Exception {
 		/*if(true) {
@@ -37,8 +36,6 @@ public class Boot {
 			System.out.println(k);
 			System.exit(1);
 		}*/
-		
-		new ClassReader("");
 
 		System.out.printf("Remote rev: %d.%n", RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100));
 

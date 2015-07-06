@@ -26,7 +26,7 @@ import org.objectweb.asm.tree.MethodNode;
 		"getMouseExitListener&Object[]", "getMouseHoverListener&Object[]", "getConfigListenerArgs&Object[]", "getConfigTriggers&[I",
 		"getRenderListener&Object[]", "getTableListenerArgs&Object[]", "getTableModTriggers&[I", "getSkillListenerArgs&Object[]",
 		"getSkillTriggers&[I", "getScrollListeners&Object[]", "getFontId&I", "isTextShadowed&Z", "getShadowColour&I", "isFlippedVertically&Z",
-		"isFlippedHorizontally&Z", "getChildren&Widget[]", "getItemId&I", "getStackSize&I", "getTableActions&String[]", "getWidgetType&I" }, methods = {})
+		"isFlippedHorizontally&Z", "getChildren&Widget[]", "getItemId&I", "getStackSize&I", "getWidgetType&I" }, methods = {})
 public class WidgetAnalyser extends ClassAnalyser {
 
 	public WidgetAnalyser() throws AnalysisException {
@@ -45,7 +45,7 @@ public class WidgetAnalyser extends ClassAnalyser {
 	@Override
 	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
 		return new Builder<IFieldAnalyser>().addAll(new ItemAndStackHooks(), new BoundsIndexHooks(), new WidgetInfoHooks(), new ChildrenHooks(),
-				new TypeHooks(), new TableActionsAnalyser());
+				new TypeHooks() /*, new TableActionsAnalyser()*/);
 	}
 
 	@Override

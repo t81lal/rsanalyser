@@ -156,7 +156,7 @@ public class NewOutputLogger {
 				}
 				
 				for(FieldHook fh1 : ch.fields()) {
-					if(fh1 != fh && fh.owner().obfuscated().equals(fh1.owner().obfuscated()) && fh.obfuscated().equals(fh1.obfuscated()) && !fh.refactored().equals(fh1.refactored())) {
+					if(fh1 != fh && fh.realOwner().equals(fh1.realOwner()) && fh.obfuscated().equals(fh1.obfuscated()) && !fh.refactored().equals(fh1.refactored())) {
 						fieldSb.append(" ^  Error, field found twice as ").append(fh.refactored()).append(" and ").append(fh1.refactored());
 						fieldSb.append('\n');
 					}
@@ -314,11 +314,11 @@ public class NewOutputLogger {
 	}
 
 	private static String format(MethodHook data) {
-		return data.owner().obfuscated() + "." + data.obfuscated();
+		return data.realOwner() + "." + data.obfuscated();
 	}
 
 	private static String format(FieldHook data) {
-		return data.owner().obfuscated() + "." + data.obfuscated();
+		return data.realOwner() + "." + data.obfuscated();
 	}
 
 	private static <T extends ObfuscatedData> List<T> findMatches(List<T> allHooks, String target) {
@@ -341,7 +341,7 @@ public class NewOutputLogger {
 			for(FieldHook fh : ch.fields()) {
 				String desc = fh.val(FieldHook.DESC);
 				if(hasMulti(desc)) {
-					String src = fh.owner().obfuscated() + "." + fh.obfuscated();
+					String src = fh.realOwner() + "." + fh.obfuscated();
 
 					long m = mh.getEncoder(src);
 					if(m == 0) {

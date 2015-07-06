@@ -322,11 +322,14 @@ public abstract class ClassAnalyser implements Opcodes {
 			FieldNode f = (FieldNode) oF;
 			if (parts[1].equals(f.name)) {
 				
-				//if(!foundHook.obfuscated().equals(f.owner.name)) {
-				//	System.out.printf("[%b] %s.%s doesn't match %s for %s.%n", Modifier.isStatic(f.access), f.owner.name, f.name, foundHook.obfuscated(), realName);
+				//String owner = foundHook.obfuscated();
+				//if(!owner.equals(f.owner.name)) {
+				//	// System.out.printf("[%b] %s.%s doesn't match %s for %s.%n", Modifier.isStatic(f.access), f.owner.name, f.name, foundHook.obfuscated(), realName);
+				//	owner = f.owner.name;
 				//}
 				
-				return new FieldHook(new ClassHook(f.owner.name, foundHook.refactored()))
+				return new FieldHook(foundHook)
+					.realOwner(f.owner.name)
 					.obfuscated(f.name)
 					.refactored(realName)
 					.var(FieldHook.DESC, f.desc)
@@ -375,6 +378,7 @@ public abstract class ClassAnalyser implements Opcodes {
 	
 	public FieldHook asFieldHook(FieldInsnNode f, String realName, boolean isStatic) {
 		FieldHook fh = new FieldHook(new ClassHook(f.owner, foundHook.refactored()))
+			.realOwner(f.owner)
 			.obfuscated(f.name)
 			.refactored(realName)
 			.var(MethodHook.DESC, f.desc)
@@ -389,7 +393,8 @@ public abstract class ClassAnalyser implements Opcodes {
 		for (Object oM : cn.methods) {
 			MethodNode m = (MethodNode) oM;
 			if (min.name.equals(m.name) && min.desc.equals(m.desc)) {
-				return new MethodHook(new ClassHook(m.owner.name, foundHook.refactored()))
+				return new MethodHook(foundHook)
+					.realOwner(min.owner)
 					.obfuscated(m.name)
 					.refactored(realName)
 					.var(MethodHook.DESC, m.desc)
@@ -408,7 +413,8 @@ public abstract class ClassAnalyser implements Opcodes {
 			MethodNode m = (MethodNode) oM;
 			// System.out.println("   method " + m.name + " " + m.desc);
 			if (parts[1].equals(m.name)) {
-				return new MethodHook(new ClassHook(m.owner.name, foundHook.refactored()))
+				return new MethodHook(foundHook)
+				.realOwner(cn.name)
 				.obfuscated(m.name)
 				.refactored(realName)
 				.var(MethodHook.DESC, m.desc)
@@ -431,7 +437,8 @@ public abstract class ClassAnalyser implements Opcodes {
 	}
 
 	public MethodHook asMethodHook(MethodNode m, String realName) {
-		return new MethodHook(new ClassHook(m.owner.name, foundHook.refactored()))
+		return new MethodHook(foundHook)
+			.realOwner(m.owner.name)
 			.obfuscated(m.name)
 			.refactored(realName)
 			.var(MethodHook.DESC, m.desc)

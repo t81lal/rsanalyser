@@ -18,6 +18,7 @@ public class MethodHook extends ObfuscatedData {
 	public static final String SAFE_OPAQUE = "attr.safeopaque";
 
 	private ClassHook owner;
+	private String realOwner;
 	private InsnList instructions;
 
 	public MethodHook() {
@@ -29,6 +30,15 @@ public class MethodHook extends ObfuscatedData {
 	
 	public MethodHook(InsnList instructions) {
 		this.instructions = instructions;
+	}
+	
+	public String realOwner() {
+		return realOwner;
+	}
+	
+	public MethodHook realOwner(String s) {
+		realOwner = s;
+		return this;
 	}
 
 	@Override

@@ -174,7 +174,7 @@ public abstract class AbstractAnalysisProvider {
 			for(ClassHook ch : map.classes()) {
 				for(MethodHook mh : ch.methods()) {
 					// TODO: Get after empty param deob
-					MethodNode m = cache.get(mh.owner().obfuscated(), mh.obfuscated(), mh.val(MethodHook.DESC));
+					MethodNode m = cache.get(mh.realOwner(), mh.obfuscated(), mh.val(MethodHook.DESC));
 					
 					if(m == null) {
 						System.out.println("NULL HOOK CALL?");
@@ -224,7 +224,7 @@ public abstract class AbstractAnalysisProvider {
 			}
 
 			for(MethodHook m : h.methods()){
-				methods.put(m.owner().obfuscated() + "." + m.obfuscated() + m.val(MethodHook.DESC), m);
+				methods.put(m.realOwner() + "." + m.obfuscated() + m.val(MethodHook.DESC), m);
 			}
 		}
 
