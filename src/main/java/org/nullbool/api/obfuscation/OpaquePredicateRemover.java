@@ -26,10 +26,10 @@ import org.objectweb.asm.tree.TypeInsnNode;
  * notoriously inserting opaque predicates into the code. <br>
  * In short, these are checks or conditions that should always
  * equate to true and are usually done by checking a value that
- * if passed as a parameter. Therefore most people that want to
+ * is passed as a parameter. Therefore most people that want to
  * call a method must search for the value to pass to ensure
  * the predicates false code is not executed. It is currently not
- * known is Jagex care about these failures, however, the obfuscater
+ * known if Jagex care about these failures, however, the obfuscater
  * guarantees that any calls that it makes will never fail (unless
  * the call is inside a dummy method).
  * 

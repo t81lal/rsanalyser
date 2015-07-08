@@ -27,6 +27,8 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
+import org.topdank.banalysis.asm.insn.InstructionPattern;
+import org.topdank.banalysis.asm.insn.InstructionSearcher;
 
 /**
  * @author MalikDz
@@ -52,7 +54,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
 		return new Builder<IFieldAnalyser>().addAll(new ActorArrayHook(), new CurrentRegionHook(), new WidgetPositionXY(), new CanvasPlayerHook(), new ClientArrayHooks(),
 				new MenuScreenHooks(), new GroundItemsHook(), new TileInfoHooks(), new MinimapHooks(), new CameraHooks(), new BaseXYHooks(), new WidgetsHook(),
-				new SettingsHook(), new CredentialAnalyser() , new RegionWalkingHooks() ,new ItemTableHook());
+				new SettingsHook(), new CredentialAnalyser() , new RegionWalkingHooks() ,new ItemTableHook(), new CredentialHooks());
 	}
 
 	@Override
@@ -63,6 +65,53 @@ public class ClientAnalyser extends ClassAnalyser {
 	@Override
 	public boolean matches(ClassNode c) {
 		return c.name.equalsIgnoreCase("client");
+	}
+	
+	public class CredentialHooks implements IFieldAnalyser {
+
+		/* (non-Javadoc)
+		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 */
+		@Override
+		public List<FieldHook> find(ClassNode _cn) {
+			List<FieldHook> list = new ArrayList<FieldHook>();
+			
+//            getstatic aq.ad:java.lang.String
+//            invokestatic da v((Ljava/lang/CharSequence;)I);
+//            invokestatic java/lang/Integer valueOf((I)Ljava/lang/Integer;);
+//            invokevirtual java/util/LinkedHashMap containsKey((Ljava/lang/Object;)Z);
+
+			InstructionPattern pattern = new InstructionPattern(new AbstractInsnNode[]{
+					new FieldInsnNode(GETSTATIC, null, null, "Ljava/lang/String;"),
+					new MethodInsnNode(INVOKESTATIC, null, null, "(Ljava/lang/CharSequence;)I", false),
+					new MethodInsnNode(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false),
+					new MethodInsnNode(INVOKEVIRTUAL, "java/util/LinkedHashMap", "containsKey", "(Ljava/lang/Object;)Z", false)
+			});
+			
+			MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";L.*;V", true);
+			
+			for(MethodNode m : mn) {
+				InstructionSearcher searcher = new InstructionSearcher(m.instructions, pattern);
+				if(searcher.search()) {
+					
+					System.out.println("Match in " + m.key());
+					System.out.println("match; " + searcher.size());
+					
+					for(AbstractInsnNode[] ains : searcher.getMatches()) {
+						AbstractInsnNode jin = ains[2].getNext();
+						while(jin != null) {
+							jin = jin.getNext();
+							System.out.println(jin);
+							if(jin.opcode() != -1)
+								break;
+						}
+//						AbstractInsnNode target = jin.label.getNext();
+//						System.out.println("targ: " + target.getNext());
+					}
+				}
+			}
+			return list;
+		}
 	}
 	
 	public class ItemTableHook implements IFieldAnalyser {
@@ -193,10 +242,14 @@ public class ClientAnalyser extends ClassAnalyser {
 
 			String h, regex = ";I.{0,2};V";
 			List<FieldHook> list = new ArrayList<FieldHook>();
+			// The actual pattern is getstatic, getstatic, invokevirtual but
+			// because the we inline strings and the 2nd getstatic is a 
+			// string constant, the pattern has to be changed. 
 			String[] p = { "getstatic", "getstatic", "invokevirtual" };
 			MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, false);
 
 			MethodNode[] m = startWithBc(p, mn);
+			System.out.println("m: " + m[0]);
 			AbstractInsnNode[] ins = followJump(m[0], 323);
 			final String[] pattern = { "if_icmple", "iload 6", "ifge","iconst_1" };
 			

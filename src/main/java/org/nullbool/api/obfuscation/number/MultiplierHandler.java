@@ -60,6 +60,18 @@ public class MultiplierHandler {
 		}
 		return mostUsed;
 	}
+	
+	public int inverse(long k, boolean long_) {
+		try {
+			if(!long_) {
+				k = (int)k;
+			}
+			final BigInteger num = BigInteger.valueOf(k);
+			return num.modInverse(new BigInteger(String.valueOf(1L << (long_ ? 64 : 32)))).intValue();
+		} catch (final Exception e) {
+			return 0;
+		}
+	}
 
 	public int inverseDecoder(final String key) {
 		try {

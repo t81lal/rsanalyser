@@ -293,7 +293,6 @@ public class AntiPowerbot implements Opcodes {
 
 		BytecodeRefactorer refactorer = new BytecodeRefactorer(dl.getJarContents().getClassContents(), new IRemapper() {
 
-			@Override
 			public String resolveMethodName(String owner, String name, String desc) {
 				return name;
 			}
@@ -333,6 +332,12 @@ public class AntiPowerbot implements Opcodes {
 				}
 				
 				return oldName;
+			}
+
+			@Override
+			public String resolveMethodName(String owner, String name, String desc, boolean isStatic) {
+				// TODO Auto-generated method stub
+				return null;
 			}
 		});
 

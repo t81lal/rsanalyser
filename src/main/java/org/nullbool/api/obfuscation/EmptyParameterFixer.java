@@ -135,6 +135,8 @@ public class EmptyParameterFixer extends Visitor {
 			}
 		}
 		
+		// FIXME: Is something going wrong?
+		
 		if(print) {
 			System.out.printf("   Check 1: discarding %d methods.%n", invalid.size());
 		}
@@ -223,7 +225,6 @@ public class EmptyParameterFixer extends Visitor {
 			if(paramKey.equals(newParamKey) && m2 != m) {
 				set.add(m2);
 			}
-			
 			
 			String remappedDesc = remapped.get(m2);
 			if(remappedDesc != null) {

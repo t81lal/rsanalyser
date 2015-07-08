@@ -344,9 +344,12 @@ public class NewOutputLogger {
 				if(hasMulti(desc)) {
 					String src = fh.val(Constants.REAL_OWNER) + "." + fh.obfuscated();
 
-					long m = mh.getEncoder(src);
+					long m = mh.getDecoder(src);
 					if(m == 0) {
 						m = mh.getDecoder(src);
+						if(m != 0) {
+							m = mh.inverse(m, desc.equals("J"));
+						}
 					}
 
 					if(m == 0)

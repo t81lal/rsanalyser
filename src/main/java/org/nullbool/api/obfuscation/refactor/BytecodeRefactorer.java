@@ -31,7 +31,7 @@ public class BytecodeRefactorer implements Opcodes {
 	private final Collection<ClassNode> classes;
 	private final IRemapper             remapper;
 	private final ClassTree             classTree;
-	private final MethodCache           methodCache;
+	private final DataCache<MethodNode> methodCache;
 	private final InheritedMethodMap    methodChain;
 	private final Map<String, String>   classMappings;
 	private final Map<String, String>   fieldMappings;
@@ -481,7 +481,7 @@ public class BytecodeRefactorer implements Opcodes {
 		return classTree;
 	}
 
-	public MethodCache getMethodCache() {
+	public DataCache<MethodNode> getMethodCache() {
 		return methodCache;
 	}
 

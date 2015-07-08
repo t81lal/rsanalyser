@@ -3,26 +3,26 @@ package org.nullbool.api.obfuscation.refactor;
 import java.util.Collection;
 
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.topdank.banalysis.filter.Filter;
 
 /**
  * @author Bibl (don't ban me pls)
- * @created 8 Jul 2015 03:23:35
+ * @created 8 Jul 2015 03:26:12
  */
-public class MethodCache extends DataCache<MethodNode> {
+public class FieldCache extends DataCache<FieldNode> {
 
 	/**
 	 * @param classes
 	 */
-	public MethodCache(Collection<ClassNode> classes) {
+	public FieldCache(Collection<ClassNode> classes) {
 		super(classes);
 	}
 
 	/**
 	 * @param filter
 	 */
-	public MethodCache(Filter<MethodNode> filter) {
+	public FieldCache(Filter<FieldNode> filter) {
 		super(filter);
 	}
 
@@ -30,17 +30,17 @@ public class MethodCache extends DataCache<MethodNode> {
 	 * @param filter
 	 * @param classes
 	 */
-	public MethodCache(Filter<MethodNode> filter, Collection<ClassNode> classes) {
+	public FieldCache(Filter<FieldNode> filter, Collection<ClassNode> classes) {
 		super(filter, classes);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.nullbool.api.obfuscation.refactor.DataCache#put(org.objectweb.asm.tree.ClassNode)
 	 */
 	@Override
 	public void put(ClassNode cn) {
-		for(MethodNode m : cn.methods) {
-			put(m);
+		for(FieldNode f : cn.fields) {
+			put(f);
 		}
 	}
 
@@ -48,7 +48,7 @@ public class MethodCache extends DataCache<MethodNode> {
 	 * @see org.nullbool.api.obfuscation.refactor.DataCache#makeKey(java.lang.Object)
 	 */
 	@Override
-	public String makeKey(MethodNode t) {
+	public String makeKey(FieldNode t) {
 		return makeKey(t.owner.name, t.name, t.desc);
 	}
 
@@ -56,10 +56,9 @@ public class MethodCache extends DataCache<MethodNode> {
 	 * @see org.nullbool.api.obfuscation.refactor.DataCache#put(java.lang.Object)
 	 */
 	@Override
-	public void put(MethodNode m) {
-		if(canCache(m)) {
-			put(makeKey(m), m);
-			m.cacheKey();
+	public void put(FieldNode f) {
+		if(canCache(f)) {
+			put(makeKey(f), f);
 		}
 	}
 }

@@ -29,6 +29,7 @@
  */
 package org.objectweb.asm.tree;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -515,6 +516,15 @@ public class ClassNode extends ClassVisitor {
 		return fieldCount(desc, true);
 	}
 
+	public int cstCount(String desc) {
+		int count = 0;
+		for(FieldNode f : fields) {
+			if(Modifier.isStatic(f.access) && f.desc.equals(desc))
+				count++;
+		}
+		return count;
+	}
+	
 	public int getAbnormalFieldCount(boolean ignoreStatic) {
 		int count = 0;
 		for (FieldNode fn : fields) {

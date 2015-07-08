@@ -22,7 +22,7 @@ import org.objectweb.asm.tree.MethodNode;
 		"getText&String", "getTextColor&I", "getTextAlpha&I", "getTextureId&I", "getBorderThickness&I", "getModelType&I", "getModelId&I",
 		"getRelativeX&I", "getRelativeY&I", "getWidth&I", "getHeight&I", "getParentId&I", "getIndex&I",
 		"getRotationX&I", "getRotationY&I", "getRotationZ&I", "isHidden&Z", "getInsetX&I", "getInsetY&I", "getViewportWidth&I",
-		"getViewportHeight&I", "getModelZoom&I", "getParent&Widget", "getSelectedAction&String", "getButtonType&I", "getMouseEnterListener&Object[]",
+		"getViewportHeight&I", "getModelZoom&I", "getParent&Widget", "getSelectedAction&String", "getMouseEnterListener&Object[]",
 		"getMouseExitListener&Object[]", "getMouseHoverListener&Object[]", "getConfigListenerArgs&Object[]", "getConfigTriggers&[I",
 		"getRenderListener&Object[]", "getTableListenerArgs&Object[]", "getTableModTriggers&[I", "getSkillListenerArgs&Object[]",
 		"getSkillTriggers&[I", "getScrollListeners&Object[]", "getFontId&I", "isTextShadowed&Z", "getShadowColour&I", "isFlippedVertically&Z",
@@ -153,8 +153,8 @@ public class WidgetAnalyser extends ClassAnalyser {
 			add(l, asFieldHook(h, "getSelectedAction"));
 
 			// WRONG
-			h = findField3(method, 4, "putfield .*I", "sipush 1001");
-			add(l, asFieldHook(h, "getButtonType"));
+//			h = findField3(method, 4, "putfield .*I", "sipush 1001");
+//			add(l, asFieldHook(h, "getButtonType"));
 
 			h = findField(method, "putfield .*\\[Ljava/lang/Object;", "sipush 1403");
 			add(l, asFieldHook(h, "getMouseEnterListener"));
