@@ -22,6 +22,7 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -40,10 +41,10 @@ import org.topdank.banalysis.asm.insn.InstructionSearcher;
 		"getRealLevels&[I", "getSkillsExp&[I", "getSelectedItem&I", "isMenuOpen&Z", "getMenuX&I", "getMenuY&I", "getMenuWidth&I", "getMenuHeight&I",
 		"getMenuSize&I", "getGroundItems&[[[Deque", "getTileSettings&[[[B", "getTileHeights&[[[I", "getMapScale&I", "getMapOffset&I", "getMapAngle&I",
 		"getPlane&I", "getCameraX&I", "getCameraY&I", "getCameraZ&I", "getCameraYaw&I", "getCameraPitch&I", "getBaseX&I", "getBaseY&I", "getWidgets&[[Widget",
-		"getClientSettings&[I", "getWidgetsSettings&[I","getHoveredRegionTileX&I","getHoveredRegionTileY&I","getItemTables&Hashtable"}, 
+		"getClientSettings&[I", "getWidgetsSettings&[I","getHoveredRegionTileX&I","getHoveredRegionTileY&I","getItemTables&Hashtable", "getUsername&String", "getPassword&String" }, 
 		
 		methods = { "loadObjDefinition&(I)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
-		/*"getPlayerModel&()LModel;",*/ "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&(IIIILjava/lang/String;Ljava/lang/String;II)V" })
+		/*"getPlayerModel&()LModel;",*/ "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&(IIIILjava/lang/String;Ljava/lang/String;II)V"})
 public class ClientAnalyser extends ClassAnalyser {
 
 	public ClientAnalyser() throws AnalysisException {
@@ -76,40 +77,79 @@ public class ClientAnalyser extends ClassAnalyser {
 		public List<FieldHook> find(ClassNode _cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
-//            getstatic aq.ad:java.lang.String
-//            invokestatic da v((Ljava/lang/CharSequence;)I);
-//            invokestatic java/lang/Integer valueOf((I)Ljava/lang/Integer;);
-//            invokevirtual java/util/LinkedHashMap containsKey((Ljava/lang/Object;)Z);
+			// getstatic aq.ad:java.lang.String
+			// invokestatic da v((Ljava/lang/CharSequence;)I);
+			// invokestatic java/lang/Integer valueOf((I)Ljava/lang/Integer;);
+			// invokevirtual java/util/LinkedHashMap containsKey((Ljava/lang/Object;)Z);
 
 			InstructionPattern pattern = new InstructionPattern(new AbstractInsnNode[]{
 					new FieldInsnNode(GETSTATIC, null, null, "Ljava/lang/String;"),
-					new MethodInsnNode(INVOKESTATIC, null, null, "(Ljava/lang/CharSequence;)I", false),
-					new MethodInsnNode(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false),
-					new MethodInsnNode(INVOKEVIRTUAL, "java/util/LinkedHashMap", "containsKey", "(Ljava/lang/Object;)Z", false)
+					new MethodInsnNode(INVOKEVIRTUAL, "java/lang/String", "length", "()I", false),
+					new JumpInsnNode(IFNE, null)
+					//	getstatic aq.ad:java.lang.String
+					//	invokevirtual java/lang/String length(()I);
+					//	ifle L24
+
+					//	new FieldInsnNode(GETSTATIC, null, null, "Ljava/lang/String;"),
+					//	new MethodInsnNode(INVOKESTATIC, null, null, "(Ljava/lang/CharSequence;)I", false),
+					//	new MethodInsnNode(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false),
+					//	new MethodInsnNode(INVOKEVIRTUAL, "java/util/LinkedHashMap", "containsKey", "(Ljava/lang/Object;)Z", false)
 			});
+			
+			boolean username = false;
+			boolean password = false;
 			
 			MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";L.*;V", true);
 			
-			for(MethodNode m : mn) {
+			f: for(MethodNode m : mn) {
 				InstructionSearcher searcher = new InstructionSearcher(m.instructions, pattern);
 				if(searcher.search()) {
 					
-					System.out.println("Match in " + m.key());
-					System.out.println("match; " + searcher.size());
-					
 					for(AbstractInsnNode[] ains : searcher.getMatches()) {
-						AbstractInsnNode jin = ains[2].getNext();
-						while(jin != null) {
-							jin = jin.getNext();
-							System.out.println(jin);
-							if(jin.opcode() != -1)
+						FieldInsnNode fin = (FieldInsnNode) ains[0];
+						AbstractInsnNode ain = ains[2].getNext();
+						w: while(ain != null) {
+							if(ain instanceof JumpInsnNode) {
+								JumpInsnNode jin = (JumpInsnNode) ain;
+								ain = jin.label.getNext();
+								continue;
+							}
+							ain = ain.getNext();
+							
+							if(ain instanceof LdcInsnNode) {
+								while(ain != null) {
+									if(!(ain instanceof LdcInsnNode)) {
+										break w;
+									}
+									
+									LdcInsnNode ldc = (LdcInsnNode) ain;
+									if(ldc.cst instanceof String) {
+										String s = (String) ldc.cst;
+										if(s.contains("username") && !username) {
+											list.add(asFieldHook(fin, "getUsername"));
+											username = true;
+											break w;
+										} else if(s.contains("password") && !password) {
+											list.add(asFieldHook(fin, "getPassword"));
+											password = true;
+											break w;
+										}
+									}
+									
+									ain = ain.getNext();
+								}
+							}
+							
+							if(ain.opcode() != -1)
 								break;
 						}
-//						AbstractInsnNode target = jin.label.getNext();
-//						System.out.println("targ: " + target.getNext());
+						
+						if(username && password)
+							break f;
 					}
 				}
 			}
+			
 			return list;
 		}
 	}
@@ -245,11 +285,11 @@ public class ClientAnalyser extends ClassAnalyser {
 			// The actual pattern is getstatic, getstatic, invokevirtual but
 			// because the we inline strings and the 2nd getstatic is a 
 			// string constant, the pattern has to be changed. 
-			String[] p = { "getstatic", "getstatic", "invokevirtual" };
+			String[] p = { "getstatic", "ldc", "invokevirtual", "istore"};
 			MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, false);
 
 			MethodNode[] m = startWithBc(p, mn);
-			System.out.println("m: " + m[0]);
+
 			AbstractInsnNode[] ins = followJump(m[0], 323);
 			final String[] pattern = { "if_icmple", "iload 6", "ifge","iconst_1" };
 			

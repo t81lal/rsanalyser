@@ -48,8 +48,8 @@ public class Boot {
 			System.out.println("Running " + revision.getName());
 			try {
 //				deob(AnalysisProviderRegistry.get(revision).create(revision));
-				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
-//				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
+//				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
+				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 			} catch(Throwable t) {
 				t.printStackTrace();
 			}

@@ -611,7 +611,7 @@ public abstract class AbstractAnalysisProvider {
 			fixEmptyParams();
 		}
 		
-//		inlinestrings();
+		inlinestrings();
 
 		removeEmptyPops();
 

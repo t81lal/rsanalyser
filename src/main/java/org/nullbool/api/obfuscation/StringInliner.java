@@ -69,9 +69,13 @@ public class StringInliner extends Visitor {
 			}
 		}
 
-		System.err.println("Running constant inliner.");
-		System.out.printf("   Inlined %d static final String constants.%n", statfins);
-		System.out.printf("   Inlined %d static String constants.%n", stats);
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
+			System.err.println("Running constant inliner.");
+			System.err.flush();
+			System.out.flush();
+			System.out.printf("   Inlined %d static final String constants.%n", statfins);
+			System.out.printf("   Inlined %d static String constants.%n", stats);
+		}
 	}
 
 	private static ClassNode findStringClass(List<? extends ClassNode> classes) {
@@ -80,7 +84,7 @@ public class StringInliner extends Visitor {
 				continue;
 
 			int c = cn.cstCount("Ljava/lang/String;");
-			if(c > 20 && c == cn.fields.size()) {
+			if(c > 30) {
 				return cn;
 			}
 		}

@@ -49,11 +49,11 @@ public class MethodUtil {
 		
 		// [last arg index, last arg type]
 		// return new Object[]{ args.length + (Modifier.isStatic(m.access) ? -1 : 0), args[args.length - 1]};
-		return new Object[]{calculateLastParameterIndex(args) + (Modifier.isStatic(m.access) ? -1 : 0), args[args.length - 1]};
+		return new Object[]{calculateLastParameterIndex(Modifier.isStatic(m.access), args) - 1, args[args.length - 1]};
 	}
 	
-	public static int calculateLastParameterIndex(Type[] args) {
-		int c = 0;
+	public static int calculateLastParameterIndex(boolean stat, Type[] args) {
+		int c = stat ? 0 : 1;
 		for(int i=0; i < args.length; i++) {
 			switch(args[i].getDescriptor()) {
 				case "D":

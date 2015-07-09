@@ -7,10 +7,7 @@ import java.util.List;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LineNumberNode;
 
 public class InstructionSearcher implements Opcodes {
 	
@@ -42,7 +39,9 @@ public class InstructionSearcher implements Opcodes {
 	
 	public boolean search() {
 		for(AbstractInsnNode ain : insns) {
-			if (ain instanceof LineNumberNode || ain instanceof FrameNode || ain instanceof LabelNode)
+			//if (ain instanceof LineNumberNode || ain instanceof FrameNode || ain instanceof LabelNode)
+			//	continue;
+			if(ain.opcode() == -1)
 				continue;
 			if (pattern.accept(ain)) {
 				matches.add(pattern.getLastMatch());

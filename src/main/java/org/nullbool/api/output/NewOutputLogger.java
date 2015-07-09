@@ -346,7 +346,8 @@ public class NewOutputLogger {
 
 					long m = mh.getDecoder(src);
 					if(m == 0) {
-						m = mh.getDecoder(src);
+						// if we have to decoder, inverse the encoder
+						m = mh.getEncoder(src);
 						if(m != 0) {
 							m = mh.inverse(m, desc.equals("J"));
 						}

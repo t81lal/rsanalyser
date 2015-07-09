@@ -102,6 +102,7 @@ public class EmptyParameterFixer extends Visitor {
 				}
 				
 				int targetVar = (int) objs[0];
+				// System.out.printf("%s (%b) -> %d.%n", m, Modifier.isStatic(m.access), targetVar);
 				if(isUnused(m, targetVar)) {
 					String newDesc = newDesc(m.desc);
 					//fixes.put(m.key(), newDesc);
