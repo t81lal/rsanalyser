@@ -28,7 +28,7 @@ import org.topdank.byteio.util.Debug;
  */
 public class Boot {
 
-	private static int revision = 81;
+	private static int revision = 83;
 
 	public static void main(String[] args) throws Exception {
 		/*if(true) {
@@ -42,14 +42,14 @@ public class Boot {
 		bootstrap();
 
 		// Use runLatest for full logs
-		int count = 1;
+		int count = 15;
 		for(int i=0; i < count; i++) {
 			Revision revision = rev(Boot.revision - i);
 			System.out.println("Running " + revision.getName());
 			try {
 //				deob(AnalysisProviderRegistry.get(revision).create(revision));
-//				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
-				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
+				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
+//				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 			} catch(Throwable t) {
 				t.printStackTrace();
 			}

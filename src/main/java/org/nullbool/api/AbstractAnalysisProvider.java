@@ -288,7 +288,7 @@ public abstract class AbstractAnalysisProvider {
 						for(MethodNode m : matches) {
 							Type ret1 = Type.getReturnType(m.desc);
 							if(!ret.getDescriptor().equals(ret1.getDescriptor())) {
-								System.out.println(String.format("Renaming %s.%s %s (%b) : ", owner, name, desc, Modifier.isStatic(mn.access)) + matches.toString());
+								// System.out.println(String.format("Renaming %s.%s %s (%b) : ", owner, name, desc, Modifier.isStatic(mn.access)) + matches.toString());
 								return "m_" + cn.methods.indexOf(mn);
 							}
 						}
@@ -298,9 +298,9 @@ public abstract class AbstractAnalysisProvider {
 				if(name.equals("if") || name.equals("do")) {
 					MethodNode m = cache.get(owner, name, desc);
 					if(Modifier.isStatic(m.access)) {
-						System.out.println(m.key() + " is static.");
+						// System.out.println(m.key() + " is static.");
 					} else {
-						System.out.println(m.key() + " isn't static.");
+						// System.out.println(m.key() + " isn't static.");
 					}
 					return "m1_" + name;
 				}
@@ -420,7 +420,7 @@ public abstract class AbstractAnalysisProvider {
 							for(MethodNode m : matches) {
 								Type ret1 = Type.getReturnType(m.desc);
 								if(!ret.getDescriptor().equals(ret1.getDescriptor())) {
-									System.out.println(String.format("Renaming %s.%s %s (%b) : ", owner, name, desc, Modifier.isStatic(mn.access)) + matches.toString());
+									// System.out.println(String.format("Renaming %s.%s %s (%b) : ", owner, name, desc, Modifier.isStatic(mn.access)) + matches.toString());
 									return "m_" + cn.methods.indexOf(mn);
 								}
 							}
@@ -430,9 +430,9 @@ public abstract class AbstractAnalysisProvider {
 					if(name.equals("if") || name.equals("do")) {
 						MethodNode m = cache.get(owner, name, desc);
 						if(Modifier.isStatic(m.access)) {
-							System.out.println(m.key() + " is static.");
+							// System.out.println(m.key() + " is static.");
 						} else {
-							System.out.println(m.key() + " isn't static.");
+							// System.out.println(m.key() + " isn't static.");
 						}
 						return "m1_" + name;
 					}

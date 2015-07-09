@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.nullbool.api.Context;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -46,7 +47,10 @@ public class CatchBlockFixer implements Opcodes {
                 }
             }
         }
-        System.err.println("Removed " + catchblockkills + " redundant exceptions/");
+        
+        if(Context.current().getFlags().getOrDefault("basicout", true)) {
+            System.err.println("Removed " + catchblockkills + " redundant exceptions.");
+        }
     }
  
     private static boolean isCodeKill(int opcode) {

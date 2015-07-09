@@ -1,5 +1,6 @@
 package org.nullbool.impl.analysers.entity;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -11,9 +12,9 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author MalikDz
@@ -47,13 +48,15 @@ public class RenderableAnalyser extends ClassAnalyser {
 		return goodMeth && rightSuperClass;*/
 		ClassNode nodeClass = getClassNodeByRefactoredName("Node");
 		Set<ClassNode> supers = Context.current().getClassTree().getSupers(cn);
+		
+		
 		if(supers.size() != 2)
 			return false;
 		if(!supers.contains(nodeClass))
 			return false;
 		
 		for(MethodNode m : cn.methods) {
-			if(m.desc.startsWith("(IIIIIIIII") && m.desc.endsWith("V")) {
+			if(!Modifier.isStatic(m.access) && m.desc.startsWith("(IIIIIIIII") && m.desc.endsWith("V")) {
 				return true;
 			}
 		}

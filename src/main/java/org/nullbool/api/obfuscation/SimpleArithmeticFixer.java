@@ -229,11 +229,12 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 		} else if(expr.multiplying()) {
 			/* If the first number is the constant, we move it after the other 
 			 * operand. */
-			
-			if(first.longNumber() == 1) {
-				MethodNode method = expr.method();
-				method.instructions.remove(expr.insn());
-				method.instructions.remove(first.insn());
+			Class<?> type = first.type();
+			if((type.equals(Integer.TYPE)|| type.equals(Long.TYPE)) && first.longNumber() == 1) {
+				// MethodNode method = expr.method();
+				// System.out.printf("%s : %s.%n", expr.insn(), first.insn());
+				// method.instructions.remove(expr.insn());
+				// method.instructions.remove(first.insn());
 				multiplyByOne++;
 			} else if(a1.equals(first)) {
 				if(a2.insn() instanceof FieldInsnNode || a2.insn() instanceof VarInsnNode) {
@@ -242,22 +243,8 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 					swap.insn   = a1.insn();
 					swap.marker = a2.insn();
 					inserts.add(swap);
-					/*if(expr.method().owner.name.equals("dh") && expr.method().name.equals("s")) {
-							System.out.println("ArithmeticFixer.visitOperation() " + first.number() + " " + a2.insn().getClass());
-							for(String s : new InstructionPrinter(expr.method(), new InstructionPattern(new InstructionFilter[]{
-									new InstructionFilter() {
-										@Override
-										public boolean accept(AbstractInsnNode t) {
-											return t.equals(swap.insn) || t.equals(swap.marker);
-										}
-									}
-							})).createPrint()){
-								System.out.println(s);
-							}
-						}*/
 					swappedMultis++;
 				} else {
-					// System.out.println("It's a " + Printer.OPCODES[a2.opcode()]);
 					multiWtfs++;
 				}
 			} else {
@@ -265,15 +252,6 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 			}
 		}
 	}
-
-
-	//a1.setInstruction(a2ain);
-	//a2.setInstruction(a1ain);
-	//	System.out.printf("%s, %s %s, %s %s.%n", expr.method(), a1ain, a2ain, a1.getClass().getCanonicalName(), a2.getClass().getCanonicalName());
-	//	for(AbstractInsnNode ain : a2.collapse()) {
-	//		System.out.println(Printer.OPCODES[ain.opcode()]);
-	//	}
-	//	System.out.println("last " + Printer.OPCODES[a2.opcode()]);
 
 	private static Number abs(Number n) {
 		if(n instanceof Integer) {

@@ -53,7 +53,50 @@ public class NumberNode extends AbstractNode {
 			}
 		}
 	}
-	
+
+	public Class<?> type() {
+		AbstractInsnNode insn = insn();
+		int op = insn.opcode();
+		switch (op) {
+			case NEWARRAY:
+			case BIPUSH:
+			case SIPUSH:
+			case ICONST_M1:
+			case ICONST_0:
+			case ICONST_1:
+			case ICONST_2:
+			case ICONST_3:
+			case ICONST_4:
+			case ICONST_5:
+				return Integer.TYPE;
+			case LCONST_0:
+			case LCONST_1: {
+				return Long.TYPE;
+			}
+			case FCONST_0:
+			case FCONST_1:
+			case FCONST_2: 
+				return Float.TYPE;
+			case DCONST_0:
+			case DCONST_1: 
+				return Double.TYPE;
+			case LDC: 
+				Object cst = ((LdcInsnNode) insn).cst;
+				if(cst instanceof Integer) {
+					return Integer.TYPE;
+				} else if(cst instanceof Long) {
+					return Long.TYPE;
+				} else if(cst instanceof Float) {
+					return Float.TYPE;
+				} else if(cst instanceof Double) {
+					return Double.TYPE;
+				}
+			default: {
+				return null;
+			}
+		}
+	}
+
 	public int number() {
 		AbstractInsnNode insn = insn();
 		int op = insn.opcode();
@@ -97,28 +140,28 @@ public class NumberNode extends AbstractNode {
 		}
 	}
 
-    public void setNumber(int number) {
-        AbstractInsnNode ain = insn();
-        if (ain instanceof IntInsnNode) {
-            ((IntInsnNode) insn()).operand = number;
-            ((IntInsnNode) ain).operand = number;
-        } else if (ain instanceof LdcInsnNode) {
-            ((LdcInsnNode) insn()).cst = number;
-            ((LdcInsnNode) ain).cst = number;
-        }
-    }
-    
-    public void setNumber(Number num) {
-    	AbstractInsnNode ain = insn();
-    	if(!(ain instanceof LdcInsnNode)) {
-    		setInstruction(new LdcInsnNode(num));
-    	} else{
-    		((LdcInsnNode) ain).cst = num;
-    	}
-    }
-    
-    @Override
+	public void setNumber(int number) {
+		AbstractInsnNode ain = insn();
+		if (ain instanceof IntInsnNode) {
+			((IntInsnNode) insn()).operand = number;
+			((IntInsnNode) ain).operand = number;
+		} else if (ain instanceof LdcInsnNode) {
+			((LdcInsnNode) insn()).cst = number;
+			((LdcInsnNode) ain).cst = number;
+		}
+	}
+
+	public void setNumber(Number num) {
+		AbstractInsnNode ain = insn();
+		if(!(ain instanceof LdcInsnNode)) {
+			setInstruction(new LdcInsnNode(num));
+		} else{
+			((LdcInsnNode) ain).cst = num;
+		}
+	}
+
+	@Override
 	public String toString() {
-    	return insn().toString();
-    }
+		return insn().toString();
+	}
 }
