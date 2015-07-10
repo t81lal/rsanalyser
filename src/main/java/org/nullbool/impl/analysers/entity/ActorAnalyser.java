@@ -21,8 +21,8 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getLocalX&I", "getLocalY&I", "getAnimationId&I", "getInteractingId&I", "getHealth&I", "getMaxHealth&I", "getHitTypes&[I",
-		"getMessage&Ljava/lang/String;", "getHitDamages&[I", /*"getHealthBarCycle&I" */}, methods = {})
+@SupportedHooks(fields = { "localX&I", "localY&I", "animationId&I", "interactingId&I", "health&I", "maxHealth&I", "hitTypes&[I",
+		"message&Ljava/lang/String;", "hitDamages&[I", /*"healthBarCycle&I" */}, methods = {})
 public class ActorAnalyser extends ClassAnalyser {
 
 	public ActorAnalyser() throws AnalysisException {
@@ -78,10 +78,10 @@ public class ActorAnalyser extends ClassAnalyser {
 
 			// TODO: broke on rev72, verified by: Bibl
 			h = findField(ins, false, true, 1, 'f', fieldPattern);
-			l.add(asFieldHook(h, "getLocalX"));
+			l.add(asFieldHook(h, "localX"));
 
 			h = findField(ins, false, true, 2, 'f', fieldPattern);
-			l.add(asFieldHook(h, "getLocalY"));
+			l.add(asFieldHook(h, "localY"));
 
 			healthbarcycle: for (MethodNode mn : cn.methods) {
 				if (mn.name.equals("<init>")) {
@@ -101,7 +101,7 @@ public class ActorAnalyser extends ClassAnalyser {
 									String k = fin.owner + "." + fin.name;
 									long mul = Context.current().getMultiplierHandler().getDecoder(k) * l1;
 									if (mul == -1000) {
-										l.add(asFieldHook(k, "getHealthBarCycle"));
+										l.add(asFieldHook(k, "healthBarCycle"));
 										break healthbarcycle;
 									}
 								}
@@ -126,7 +126,7 @@ public class ActorAnalyser extends ClassAnalyser {
 			MethodNode method = identifyMethod(m, false, "ldc 32768");
 
 			h = findField(method, true, false, 1, 'f', "ldc 32768");
-			list.add(asFieldHook(h, "getInteractingId"));
+			list.add(asFieldHook(h, "interactingId"));
 
 			return list;
 		}
@@ -143,7 +143,7 @@ public class ActorAnalyser extends ClassAnalyser {
 			MethodNode method = identifyMethod(m, false, "sipush 1536");
 			AbstractInsnNode[] ins = followJump(method, 40);
 			h = findField(ins, true, true, 1, 'f', "sipush 128", "if_icmplt");
-			list.add(asFieldHook(h, "getAnimationId"));
+			list.add(asFieldHook(h, "animationId"));
 
 			return list;
 		}
@@ -162,21 +162,21 @@ public class ActorAnalyser extends ClassAnalyser {
 			String reg = "invokestatic java/lang/Integer.toString .*String;";
 
 			h = findField(m, true, false, 2, 'f', "idiv", "istore 8");
-			list.add(asFieldHook(h, "getHealth"));
+			list.add(asFieldHook(h, "health"));
 			
 			// TODO:
 			// System.out.println(m.owner.name + " " + m.name + " " + m.desc);
 			h = findField(m, true, false, 1, 'f', "idiv", "istore 8");
-			list.add(asFieldHook(h, "getMaxHealth"));
+			list.add(asFieldHook(h, "maxHealth"));
 
 			h = findField(m, true, false, 1, 'f', "iload 7", "iaload", "aaload");
-			list.add(asFieldHook(h, "getHitTypes"));
+			list.add(asFieldHook(h, "hitTypes"));
 
 			h = findField(m, true, true, 1, 'f', pat);
-			list.add(asFieldHook(h, "getMessage"));
+			list.add(asFieldHook(h, "message"));
 
 			h = findField(m, true, false, 1, 'f', reg);
-			list.add(asFieldHook(h, "getHitDamages"));
+			list.add(asFieldHook(h, "hitDamages"));
 
 			// ms = findMethod(Context.current().getClassNodes(), "bipush 70", false);
 			// m = identifyMethod(ms, false, "aload 0 getfield aload 4");

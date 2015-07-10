@@ -32,7 +32,7 @@ import org.topdank.banalysis.asm.insn.InstructionSearcher;
  * @author Bibl (don't ban me pls)
  * @created 24 Jun 2015 19:49:29
  */
-@SupportedHooks(fields = { "getDisplayName&Ljava/lang/String;", "getPreviousName&Ljava/lang/String;"}, methods = { })
+@SupportedHooks(fields = { "displayName&Ljava/lang/String;", "previousName&Ljava/lang/String;"}, methods = { })
 public class IgnoredPlayerAnalyser extends ClassAnalyser {
     
 	private final InstructionPattern pattern;
@@ -222,8 +222,8 @@ public class IgnoredPlayerAnalyser extends ClassAnalyser {
 		public List<FieldHook> find(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
-			list.add(asFieldHook(displayName, "getDisplayName"));
-			list.add(asFieldHook(previousName, "getPreviousName"));
+			list.add(asFieldHook(displayName, "displayName"));
+			list.add(asFieldHook(previousName, "previousName"));
 			
 			return list;
 		}

@@ -8,13 +8,13 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
-@SupportedHooks(fields = { "getReason_&Ljava/lang/String;", "getThrowable&Ljava/lang/Throwable;" }, methods = {})
+@SupportedHooks(fields = { "reason_&Ljava/lang/String;", "throwable&Ljava/lang/Throwable;" }, methods = {})
 public class WrappedExceptionAnalyser extends ClassAnalyser {
 
 	public WrappedExceptionAnalyser() {
@@ -49,9 +49,9 @@ public class WrappedExceptionAnalyser extends ClassAnalyser {
 						if (ain.opcode() == PUTFIELD) {
 							FieldInsnNode fin = (FieldInsnNode) ain;
 							if (fin.desc.equals("Ljava/lang/String;")) {
-								hooks.add(asFieldHook(fin.owner + "." + fin.name, "getReason_"));
+								hooks.add(asFieldHook(fin.owner + "." + fin.name, "reason_"));
 							} else if (fin.desc.equals("Ljava/lang/Throwable;")) {
-								hooks.add(asFieldHook(fin.owner + "." + fin.name, "getThrowable"));
+								hooks.add(asFieldHook(fin.owner + "." + fin.name, "throwable"));
 							}
 						}
 					}

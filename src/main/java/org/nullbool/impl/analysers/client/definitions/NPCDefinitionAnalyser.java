@@ -9,17 +9,17 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getActions&[Ljava/lang/String;", "isOnMap&Z", "isVisible&Z", "isClickable&Z", "getName&Ljava/lang/String;", "getCombatLevel&I",
-		"getWidth&I", "getHeight&I", "getBrightness&I", "getContrast&I", "getHeadIcon&I", "getNpcDegToTurn&I", "getVarpId&I", "getSettingId&I",
-		"getNpcBoundDim&I", "getIdleAnimationId&I", "getWalkAnimationId&I", "getNpcTurnAround&I", "getNpcTurnRight&I", "getNpcTurnLeft&I", }, methods = {})
+@SupportedHooks(fields = { "actions&[Ljava/lang/String;", "onMap&Z", "visible&Z", "clickable&Z", "name&Ljava/lang/String;", "combatLevel&I",
+		"width&I", "height&I", "brightness&I", "contrast&I", "headIcon&I", "npcDegToTurn&I", "varpId&I", "settingId&I",
+		"npcBoundDim&I", "idleAnimationId&I", "walkAnimationId&I", "npcTurnAround&I", "npcTurnRight&I", "npcTurnLeft&I", }, methods = {})
 public class NPCDefinitionAnalyser extends ClassAnalyser {
 
 	public NPCDefinitionAnalyser() throws AnalysisException {
@@ -60,64 +60,64 @@ public class NPCDefinitionAnalyser extends ClassAnalyser {
 			String h, regex = "putfield .* \\[Ljava/lang/String;";
 
 			h = findField(i, true, true, 1, 'f', regex);
-			list.add(asFieldHook(h, "getActions"));
+			list.add(asFieldHook(h, "actions"));
 
 			h = findField(i, true, true, 2, 'f', regex);
-			list.add(asFieldHook(h, "isOnMap"));
+			list.add(asFieldHook(h, "onMap"));
 
 			h = findField(i, true, true, 6, 'f', regex);
-			list.add(asFieldHook(h, "isVisible"));
+			list.add(asFieldHook(h, "visible"));
 
 			h = findField(i, true, true, 13, 'f', regex);
-			list.add(asFieldHook(h, "isClickable"));
+			list.add(asFieldHook(h, "clickable"));
 
 			h = findField(i, false, true, 1, 'f', "putfield");
-			list.add(asFieldHook(h, "getName"));
+			list.add(asFieldHook(h, "name"));
 
 			h = findField(i, true, true, 3, 'f', regex);
-			list.add(asFieldHook(h, "getCombatLevel"));
+			list.add(asFieldHook(h, "combatLevel"));
 
 			h = findField(i, true, true, 4, 'f', regex);
-			list.add(asFieldHook(h, "getWidth"));
+			list.add(asFieldHook(h, "width"));
 
 			h = findField(i, true, true, 5, 'f', regex);
-			list.add(asFieldHook(h, "getHeight"));
+			list.add(asFieldHook(h, "height"));
 
 			h = findField(i, true, true, 7, 'f', regex);
-			list.add(asFieldHook(h, "getBrightness"));
+			list.add(asFieldHook(h, "brightness"));
 
 			h = findField(i, true, true, 8, 'f', regex);
-			list.add(asFieldHook(h, "getContrast"));
+			list.add(asFieldHook(h, "contrast"));
 
 			h = findField(i, true, true, 9, 'f', regex);
-			list.add(asFieldHook(h, "getHeadIcon"));
+			list.add(asFieldHook(h, "headIcon"));
 
 			h = findField(i, true, true, 10, 'f', regex);
-			list.add(asFieldHook(h, "getNpcDegToTurn"));
+			list.add(asFieldHook(h, "npcDegToTurn"));
 
 			h = findField(i, true, true, 11, 'f', regex);
-			list.add(asFieldHook(h, "getVarpId"));
+			list.add(asFieldHook(h, "varpId"));
 
 			h = findField(i, true, true, 12, 'f', regex);
-			list.add(asFieldHook(h, "getSettingId"));
+			list.add(asFieldHook(h, "settingId"));
 
 			h = findField(i, false, true, 2, 'f', "putfield");
-			list.add(asFieldHook(h, "getNpcBoundDim"));
+			list.add(asFieldHook(h, "npcBoundDim"));
 
 			h = findField(i, false, true, 3, 'f', "putfield");
-			list.add(asFieldHook(h, "getIdleAnimationId"));
+			list.add(asFieldHook(h, "idleAnimationId"));
 
 			h = findField(i, false, true, 6, 'f', "putfield");
-			list.add(asFieldHook(h, "getWalkAnimationId"));
+			list.add(asFieldHook(h, "walkAnimationId"));
 
 			h = findField(i, false, true, 7, 'f', "putfield");
-			list.add(asFieldHook(h, "getNpcTurnAround"));
+			list.add(asFieldHook(h, "npcTurnAround"));
 
 			h = findField(i, false, true, 8, 'f', "putfield");
-			list.add(asFieldHook(h, "getNpcTurnRight"));
+			list.add(asFieldHook(h, "npcTurnRight"));
 
 			h = findField(i, false, true, 9, 'f', "putfield");
-			list.add(asFieldHook(h, "getNpcTurnLeft"));
+			list.add(asFieldHook(h, "npcTurnLeft"));
 
 			return list;
 		}

@@ -9,16 +9,16 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author Bibl
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getNextDualNode&DualNode", "getPreviousDualNode&DualNode", }, methods = {})
+@SupportedHooks(fields = { "nextDualNode&DualNode", "previousDualNode&DualNode", }, methods = {})
 public class DualNodeAnalyser extends ClassAnalyser {
 
 	public DualNodeAnalyser() throws AnalysisException {
@@ -54,10 +54,10 @@ public class DualNodeAnalyser extends ClassAnalyser {
 			AbstractInsnNode[] i = followJump(m, 12);
 
 			String hook = findField(i, true, true, 1, 'f', "ifnonnull");
-			list.add(asFieldHook(hook, "getNextDualNode"));
+			list.add(asFieldHook(hook, "nextDualNode"));
 
 			hook = findField(i, true, true, 2, 'f', "ifnonnull");
-			list.add(asFieldHook(hook, "getPreviousDualNode"));
+			list.add(asFieldHook(hook, "previousDualNode"));
 
 			return list;
 		}

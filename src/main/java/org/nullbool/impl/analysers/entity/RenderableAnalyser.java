@@ -19,7 +19,7 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getModelHeight&I" }, methods = {})
+@SupportedHooks(fields = { "modelHeight&I" }, methods = {})
 public class RenderableAnalyser extends ClassAnalyser {
 
 	public RenderableAnalyser() throws AnalysisException {
@@ -32,7 +32,7 @@ public class RenderableAnalyser extends ClassAnalyser {
 		public List<FieldHook> find(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String hook = getFieldOfType(cn, "I", false);
-			list.add(asFieldHook(hook, "getModelHeight"));
+			list.add(asFieldHook(hook, "modelHeight"));
 			return list;
 		}
 	}

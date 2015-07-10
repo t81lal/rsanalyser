@@ -21,7 +21,7 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-@SupportedHooks(fields = {"getResults&[I", "getMem&[I", "getCount&I"}, methods = {"init&()V", "next&()I", "isaac&()V"})
+@SupportedHooks(fields = {"results&[I", "mem&[I", "count&I"}, methods = {"init&()V", "next&()I", "isaac&()V"})
 /**
  * @author Bibl (don't ban me pls)
  * @created 23 May 2015
@@ -135,12 +135,12 @@ public class IsaacCipherAnalyser extends ClassAnalyser {
 				//if it's there, the length will be 3 since there can only be full matches
 				if(ainsList.size() > 0) {
 					FieldInsnNode fin = (FieldInsnNode) ainsList.get(0)[2];
-					list.add(asFieldHook(fin, "getCount"));
+					list.add(asFieldHook(fin, "count"));
 				}
 			}
 			
-			list.add(asFieldHook(rslFin, "getResults"));
-			list.add(asFieldHook(memFin, "getMem"));
+			list.add(asFieldHook(rslFin, "results"));
+			list.add(asFieldHook(memFin, "mem"));
 			
 			return list;
 		}
@@ -208,7 +208,7 @@ public class IsaacCipherAnalyser extends ClassAnalyser {
          *}
          *L3 {
          *    aload0 // reference to self
-         *    getfield IsaacCipher.getResults:int[]
+         *    getfield IsaacCipher.results:int[]
          *    ldc 1879381903 (java.lang.Integer)
          *    aload0 // reference to self
          *    getfield IsaacCipher.w:int

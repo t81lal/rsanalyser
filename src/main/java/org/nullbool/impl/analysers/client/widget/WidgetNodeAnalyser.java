@@ -19,7 +19,7 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * @author : MalikDz
  */
-@SupportedHooks(fields = { "getWidgetId&I", "getType&I" }, methods = {})
+@SupportedHooks(fields = { "widgetId&I", "type&I" }, methods = {})
 public class WidgetNodeAnalyser extends ClassAnalyser {
 
 	public WidgetNodeAnalyser() throws AnalysisException {
@@ -53,12 +53,12 @@ public class WidgetNodeAnalyser extends ClassAnalyser {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			MethodNode[] ms = findMethods(Context.current().getClassNodes(), pattern, true);
 			String h = findField(ms[0], false, true, 1, 'f', "aload");
-			list.add(asFieldHook(h, "getWidgetId"));
+			list.add(asFieldHook(h, "widgetId"));
 
 			for (FieldNode f : cn.fields) {
 				String s = cn.name + "." + f.name;
 				if (!s.equals(h) && f.desc.equals("I") && !Modifier.isStatic(f.access)) {
-					list.add(asFieldHook(s, "getType"));
+					list.add(asFieldHook(s, "type"));
 				}
 			}
 

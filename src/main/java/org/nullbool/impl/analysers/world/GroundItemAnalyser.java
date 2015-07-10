@@ -1,5 +1,6 @@
 package org.nullbool.impl.analysers.world;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +20,7 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getId&I", "getStackSize&I", }, methods = {})
+@SupportedHooks(fields = { "id&I", "stackSize&I", }, methods = {})
 public class GroundItemAnalyser extends ClassAnalyser {
 
 	public GroundItemAnalyser() throws AnalysisException {
@@ -58,15 +59,22 @@ public class GroundItemAnalyser extends ClassAnalyser {
 		public List<FieldHook> find(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String[] pat = { "invokevirtual", "areturn", };
-			MethodNode[] m = getMethodNodes(cn.methods.toArray());
-			MethodNode method = identifyMethod(m, true, pat);
+			
+			List<MethodNode> lm = new ArrayList<MethodNode>();
+			for(MethodNode m : cn.methods) {
+				if(!Modifier.isStatic(m.access)) {
+					lm.add(m);
+				}
+			}
+			
+			MethodNode method = identifyMethod(getMethodNodes(lm.toArray()), true, pat);
 			AbstractInsnNode[] ins = followJump(method, 5);
 
 			String h = findField(ins, false, true, 1, 'f', "getfield");
-			list.add(asFieldHook(h, "getId"));
+			list.add(asFieldHook(h, "id"));
 
 			h = findField(ins, false, true, 2, 'f', "getfield");
-			list.add(asFieldHook(h, "getStackSize"));
+			list.add(asFieldHook(h, "stackSize"));
 
 			return list;
 		}

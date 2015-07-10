@@ -10,14 +10,14 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getName&Ljava/lang/String;", "getPlayerLevel&I" }, methods = {})
+@SupportedHooks(fields = { "name&Ljava/lang/String;", "playerLevel&I" }, methods = {})
 public class PlayerAnalyser extends ClassAnalyser {
 
 	public PlayerAnalyser() throws AnalysisException {
@@ -55,7 +55,7 @@ public class PlayerAnalyser extends ClassAnalyser {
 
 			pat = "getfield " + actorObj + ".\\w* \\w*\\/\\w*\\/String;";
 			hook = findField(method, true, false, 1, 'f', pat);
-			list.add(asFieldHook(hook, "getName"));
+			list.add(asFieldHook(hook, "name"));
 
 			return list;
 		}
@@ -76,7 +76,7 @@ public class PlayerAnalyser extends ClassAnalyser {
 			String[] pattern = { "getstatic \\w*.\\w* L" + player + ";", "getfield \\w*.\\w* I" };
 
 			h = findField(method, true, true, 1, 'f', pattern);
-			list.add(asFieldHook(h, "getPlayerLevel"));
+			list.add(asFieldHook(h, "playerLevel"));
 
 			return list;
 		}

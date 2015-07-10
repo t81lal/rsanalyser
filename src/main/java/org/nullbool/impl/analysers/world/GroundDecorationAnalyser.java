@@ -9,16 +9,16 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getBottomRenderable&Renderable", "getMiddleRenderable&Renderable", "getTopRenderable&Renderable", "getRegionX&I", "getRegionY&I",
-		"getPlane&I", "getUID&I", }, methods = {})
+@SupportedHooks(fields = { "bottomRenderable&Renderable", "middleRenderable&Renderable", "topRenderable&Renderable", "regionX&I", "regionY&I",
+		"plane&I", "uid&I", }, methods = {})
 public class GroundDecorationAnalyser extends ClassAnalyser {
 
 	public GroundDecorationAnalyser() throws AnalysisException {
@@ -60,32 +60,32 @@ public class GroundDecorationAnalyser extends ClassAnalyser {
 			AbstractInsnNode[] ins = followJump(m, 100);
 
 			h = findField(ins, false, true, 1, 'f', "putfield");
-			l.add(asFieldHook(h, "getBottomRenderable"));
-			// l.add(new Hook("getBottomRenderable()", h));
+			l.add(asFieldHook(h, "bottomRenderable"));
+			// l.add(new Hook("bottomRenderable()", h));
 
 			h = findField(ins, false, true, 6, 'f', "putfield");
-			l.add(asFieldHook(h, "getMiddleRenderable"));
-			// l.add(new Hook("getMiddleRenderable()", h));
+			l.add(asFieldHook(h, "middleRenderable"));
+			// l.add(new Hook("middleRenderable()", h));
 
 			h = findField(ins, false, true, 7, 'f', "putfield");
-			l.add(asFieldHook(h, "getTopRenderable"));
-			// l.add(new Hook("getTopRenderable()", h));
+			l.add(asFieldHook(h, "topRenderable"));
+			// l.add(new Hook("topRenderable()", h));
 
 			h = findField(ins, false, true, 2, 'f', "putfield");
-			l.add(asFieldHook(h, "getRegionX"));
-			// l.add(new Hook("getRegionX()", h));
+			l.add(asFieldHook(h, "regionX"));
+			// l.add(new Hook("regionX()", h));
 
 			h = findField(ins, false, true, 3, 'f', "putfield");
-			l.add(asFieldHook(h, "getRegionY"));
-			// l.add(new Hook("getRegionY()", h));
+			l.add(asFieldHook(h, "regionY"));
+			// l.add(new Hook("regionY()", h));
 
 			h = findField(ins, false, true, 4, 'f', "putfield");
-			l.add(asFieldHook(h, "getPlane"));
-			// l.add(new Hook("getPlane()", h));
+			l.add(asFieldHook(h, "plane"));
+			// l.add(new Hook("plane()", h));
 
 			h = findField(ins, false, true, 5, 'f', "putfield");
-			l.add(asFieldHook(h, "getUID"));
-			// l.add(new Hook("getUID()", h));
+			l.add(asFieldHook(h, "uid"));
+			// l.add(new Hook("uid()", h));
 			// return l.toArray(new Hook[l.size()]);
 			return l;
 		}

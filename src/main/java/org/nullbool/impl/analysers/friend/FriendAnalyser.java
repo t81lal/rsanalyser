@@ -31,7 +31,7 @@ import org.topdank.banalysis.asm.insn.InstructionSearcher;
  * @created 24 Jun 2015 14:06:29
  */
 @SupportedHooks(
-		fields = { "getDisplayName&Ljava/lang/String;", "getPreviousName&Ljava/lang/String;", "getWorld&I"}, 
+		fields = { "displayName&Ljava/lang/String;", "previousName&Ljava/lang/String;", "world&I"}, 
 		methods = { }
 )
 public class FriendAnalyser extends ClassAnalyser implements Opcodes {
@@ -219,8 +219,8 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
 		public List<FieldHook> find(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
-			list.add(asFieldHook(displayName, "getDisplayName"));
-			list.add(asFieldHook(previousName, "getPreviousName"));
+			list.add(asFieldHook(displayName, "displayName"));
+			list.add(asFieldHook(previousName, "previousName"));
 			
 			return list;
 		}
@@ -258,7 +258,7 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
 						InstructionSearcher searcher = new InstructionSearcher(ains, worldPattern);
 						if(searcher.search()) {
 							FieldInsnNode worldFin = (FieldInsnNode) searcher.getMatches().get(0)[6];
-							list.add(asFieldHook(worldFin, "getWorld"));
+							list.add(asFieldHook(worldFin, "world"));
 						}
 					}
 					

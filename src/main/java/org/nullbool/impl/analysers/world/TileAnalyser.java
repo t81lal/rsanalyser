@@ -9,14 +9,14 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
-import org.objectweb.asm.tree.ClassNode;
 import org.nullbool.pi.core.hook.api.FieldHook;
+import org.objectweb.asm.tree.ClassNode;
 
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getObjects&[GameObject", "getGroundObjects&GroundObject", "getGroundDecorations&GroundDecoration", "getWallObjects&WallObject",
-		"getWallDecorations&WallDecoration", }, methods = {})
+@SupportedHooks(fields = { "objects&[GameObject", "groundObjects&GroundObject", "groundDecorations&GroundDecoration", "wallObjects&WallObject",
+		"wallDecorations&WallDecoration", }, methods = {})
 public class TileAnalyser extends ClassAnalyser {
 
 	public TileAnalyser() throws AnalysisException {
@@ -51,23 +51,23 @@ public class TileAnalyser extends ClassAnalyser {
 
 			String t = "[L" + findObfClassName("GameObject") + ";";
 			String hook = getFieldOfType(cn, t, false);
-			list.add(asFieldHook(hook, "getObjects"));
+			list.add(asFieldHook(hook, "objects"));
 
 			t = "L" + findObfClassName("GroundObject") + ";";
 			hook = getFieldOfType(cn, t, false);
-			list.add(asFieldHook(hook, "getGroundObjects"));
+			list.add(asFieldHook(hook, "groundObjects"));
 
 			t = "L" + findObfClassName("GroundDecoration") + ";";
 			hook = getFieldOfType(cn, t, false);
-			list.add(asFieldHook(hook, "getGroundDecorations"));
+			list.add(asFieldHook(hook, "groundDecorations"));
 
 			t = "L" + findObfClassName("WallObject") + ";";
 			hook = getFieldOfType(cn, t, false);
-			list.add(asFieldHook(hook, "getWallObjects"));
+			list.add(asFieldHook(hook, "wallObjects"));
 
 			t = "L" + findObfClassName("WallDecoration") + ";";
 			hook = getFieldOfType(cn, t, false);
-			list.add(asFieldHook(hook, "getWallDecorations"));
+			list.add(asFieldHook(hook, "wallDecorations"));
 
 			return list;
 		}

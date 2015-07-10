@@ -1,22 +1,23 @@
 package org.nullbool.impl.analysers.client.widget;
 
-import java.util.List;
 import java.util.ArrayList;
-import org.nullbool.pi.core.hook.api.FieldHook;
+import java.util.List;
+
 import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
+import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
-import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.analysis.AnalysisException;
+import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
  * @author : MalikDz
  */
-@SupportedHooks(fields = { "getQuantities&[I", "getItemIds&[I" }, methods = {})
+@SupportedHooks(fields = { "quantities&[I", "itemIds&[I" }, methods = {})
 public class ItemContainerAnalyser extends ClassAnalyser {
 
 	private String className;
@@ -50,10 +51,10 @@ public class ItemContainerAnalyser extends ClassAnalyser {
 			final List<FieldHook> hooks = new ArrayList<FieldHook>();
 			
 			String field = findField(analysedMethod, true, true, 1, 'f', "aload 5", "aload 7");
-			hooks.add(asFieldHook(field, "getQuantities"));
+			hooks.add(asFieldHook(field, "quantities"));
 			
 			field = findField(analysedMethod, true, true, 1, 'f', "aload 6", "iload 8", "aload 5");
-			hooks.add(asFieldHook(field, "getItemIds"));
+			hooks.add(asFieldHook(field, "itemIds"));
 			return hooks;
 		}
 	}

@@ -42,14 +42,14 @@ public class Boot {
 		bootstrap();
 
 		// Use runLatest for full logs
-		int count = 15;
+		int count = 1;
 		for(int i=0; i < count; i++) {
 			Revision revision = rev(Boot.revision - i);
 			System.out.println("Running " + revision.getName());
 			try {
 //				deob(AnalysisProviderRegistry.get(revision).create(revision));
-				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
-//				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
+//				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
+				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 			} catch(Throwable t) {
 				t.printStackTrace();
 			}
@@ -72,6 +72,7 @@ public class Boot {
 		flags.put("verify", false);
 		flags.put("justdeob", true);
 		flags.put("paramdeob", true);
+		flags.put("aggressiveparams", false);
 
 		Context.bind(provider);
 		provider.run();

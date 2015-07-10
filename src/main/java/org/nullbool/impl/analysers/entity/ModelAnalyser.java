@@ -9,16 +9,16 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getVertexCount&I", "getIndicesCount&I", "getTriangleCount&I", "getVerticesX&[I", "getVerticesY&[I", "getVerticesZ&[I",
-		"getIndicesX&[I", "getIndicesY&[I", "getIndicesZ&[I", }, methods = {})
+@SupportedHooks(fields = { "vertexCount&I", "indicesCount&I", "triangleCount&I", "verticesX&[I", "verticesY&[I", "verticesZ&[I",
+		"indicesX&[I", "indicesY&[I", "indicesZ&[I", }, methods = {})
 public class ModelAnalyser extends ClassAnalyser {
 
 	public ModelAnalyser() throws AnalysisException {
@@ -54,31 +54,31 @@ public class ModelAnalyser extends ClassAnalyser {
 			AbstractInsnNode[] i = followJump(m, 15);
 
 			String h = findField(i, false, true, 1, 'f', "getfield");
-			list.add(asFieldHook(h, "getVertexCount"));
+			list.add(asFieldHook(h, "vertexCount"));
 
 			h = findField(i, false, true, 2, 'f', "getfield");
-			list.add(asFieldHook(h, "getIndicesCount"));
+			list.add(asFieldHook(h, "indicesCount"));
 
 			h = findField(i, false, true, 3, 'f', "getfield");
-			list.add(asFieldHook(h, "getTriangleCount"));
+			list.add(asFieldHook(h, "triangleCount"));
 
 			h = findField(i, true, true, 1, 'f', "newarray 10");
-			list.add(asFieldHook(h, "getVerticesX"));
+			list.add(asFieldHook(h, "verticesX"));
 
 			h = findField(i, true, true, 3, 'f', "newarray 10");
-			list.add(asFieldHook(h, "getVerticesY"));
+			list.add(asFieldHook(h, "verticesY"));
 
 			h = findField(i, true, true, 5, 'f', "newarray 10");
-			list.add(asFieldHook(h, "getVerticesZ"));
+			list.add(asFieldHook(h, "verticesZ"));
 
 			h = findField(i, true, true, 4, 'f', "aload 2", "aload 3");
-			list.add(asFieldHook(h, "getIndicesX"));
+			list.add(asFieldHook(h, "indicesX"));
 
 			h = findField(i, true, true, 6, 'f', "aload 2", "aload 3");
-			list.add(asFieldHook(h, "getIndicesY"));
+			list.add(asFieldHook(h, "indicesY"));
 
 			h = findField(i, true, true, 8, 'f', "aload 2", "aload 3");
-			list.add(asFieldHook(h, "getIndicesZ"));
+			list.add(asFieldHook(h, "indicesZ"));
 
 			return list;
 		}

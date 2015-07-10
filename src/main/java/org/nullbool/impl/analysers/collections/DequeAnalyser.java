@@ -10,16 +10,16 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getHead&Node", "getTail&Node", }, methods = {})
+@SupportedHooks(fields = { "head&Node", "tail&Node", }, methods = {})
 public class DequeAnalyser extends ClassAnalyser {
 
 	public DequeAnalyser() throws AnalysisException {
@@ -54,10 +54,10 @@ public class DequeAnalyser extends ClassAnalyser {
 			AbstractInsnNode[] i = followJump(m, 12);
 
 			String hook = findField(i, false, true, 1, 'f', "getfield");
-			list.add(asFieldHook(hook, "getHead"));
+			list.add(asFieldHook(hook, "head"));
 
 			hook = findFieldNotEqual(cn, hook);
-			list.add(asFieldHook(hook, "getTail"));
+			list.add(asFieldHook(hook, "tail"));
 
 			return list;
 		}

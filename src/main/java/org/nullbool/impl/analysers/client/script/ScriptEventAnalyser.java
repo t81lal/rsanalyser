@@ -23,7 +23,7 @@ import org.topdank.banalysis.asm.insn.InstructionSearcher;
  * @author Bibl (don't ban me pls)
  * @created 5 Jul 2015 00:47:22
  */
-@SupportedHooks(fields = {"getArgs&Object[]", "getOpbase&String", "isDisposable&Z", "getMouseX&I", "getMouseY&I"}, methods = { })
+@SupportedHooks(fields = {"args&Object[]", "opbase&String"/*, "isDisposable&Z"*/, "mouseX&I", "mouseY&I"}, methods = { })
 public class ScriptEventAnalyser extends ClassAnalyser {
 
 	private MethodNode method;
@@ -122,22 +122,22 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 			MethodNode m = identifyMethod(ms, false, pattern);
 			
 			String s = findField2(m, "putfield " + node.name + ".*", "iconst_1");
-			l.add(asFieldHook(s, "isDisposable"));
-			System.out.println(s);
+			// l.add(asFieldHook(s, "isDisposable"));
+			// System.out.println(s);
 			
 			
 			s = findField(method, "getfield .*I", "ldc -2147483647");
-			l.add(asFieldHook(s, "getMouseX"));
-			System.out.println(s);
+			l.add(asFieldHook(s, "mouseX"));
+			// System.out.println(s);
 			
 			s = findField(method, "getfield .*I", "ldc -2147483646");
-			l.add(asFieldHook(s, "getMouseY"));
-			System.out.println(s);
+			l.add(asFieldHook(s, "mouseY"));
+			// System.out.println(s);
 			
 
 
 			// String s = findField(method, "putfield " + cn.name + ".*Z", "new " + cn.name);
-			// l.add(asFieldHook(s, "getOpbase"));
+			// l.add(asFieldHook(s, "opbase"));
 			// System.out.println("opbase; " +s);
 
 			return l;
@@ -160,7 +160,7 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 			});
 			if(searcher.search()) {
 				AbstractInsnNode[] match = searcher.getMatches().get(0);
-				l.add(asFieldHook((FieldInsnNode) match[1], "getArgs"));
+				l.add(asFieldHook((FieldInsnNode) match[1], "args"));
 			}
 
 			return l;
@@ -177,7 +177,7 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 			List<FieldHook> l = new ArrayList<FieldHook>();
 
 			String s = findField(method, "getfield .*Ljava/lang/String;", "ldc event_opbase");
-			l.add(asFieldHook(s, "getOpbase"));
+			l.add(asFieldHook(s, "opbase"));
 
 			return l;
 		}

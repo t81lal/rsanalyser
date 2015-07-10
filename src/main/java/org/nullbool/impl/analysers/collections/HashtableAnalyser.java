@@ -26,7 +26,7 @@ import org.objectweb.asm.tree.MethodNode;
  * @author MalikDz
  */
 @SupportedHooks(
-		fields = { "getBuckets&[Node", "getHead&Node", "getFirst&Node", "getSize&I", "getIndex&I" }, 
+		fields = { "buckets&[Node", "head&Node", "firstNode&Node", "size&I", "index&I" }, 
 		methods = {"put&(LNode;J)V", "first&()LNode;", "next&()LNode;", "clear&()V", "get&(J)LNode;"})
 public class HashtableAnalyser extends ClassAnalyser {
 
@@ -78,10 +78,10 @@ public class HashtableAnalyser extends ClassAnalyser {
 			
             //aload0 // reference to self
             //aconst_null
-            //putfield Hashtable.getFirst:Node
+            //putfield Hashtable.firstNode:Node
             //aload0 // reference to self
             //aconst_null
-            //putfield Hashtable.getHead:Node
+            //putfield Hashtable.head:Node
             
 			String nodeDesc = (")L" + getAnalyser("Node").getFoundClass().name + ";");
 			
@@ -99,7 +99,7 @@ public class HashtableAnalyser extends ClassAnalyser {
 							list.add(asMethodHook(m, "get").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						}
 					}
-					//getfield Hashtable.getSize:int
+					//getfield Hashtable.size:int
 		            //iconst_1
 		            //isub
 		            //i2l
@@ -147,7 +147,7 @@ public class HashtableAnalyser extends ClassAnalyser {
 					putMethod = m;
 					
 					FieldInsnNode fin = (FieldInsnNode) ains.get(0);
-					list.add(asFieldHook(fin, "getSize"));
+					list.add(asFieldHook(fin, "size"));
 				}
 			}
 			
@@ -168,7 +168,7 @@ public class HashtableAnalyser extends ClassAnalyser {
 						if(ainsl2.size() == 1) {
 							firstMethod = m;
 							
-							list.add(asFieldHook((FieldInsnNode) ainsl1.get(0)[2], "getIndex"));
+							list.add(asFieldHook((FieldInsnNode) ainsl1.get(0)[2], "index"));
 							
 							nextMethod = (MethodInsnNode) ainsl2.get(0)[1];
 						}
@@ -194,14 +194,14 @@ public class HashtableAnalyser extends ClassAnalyser {
 			AbstractInsnNode[] i = followJump(m, 300);
 
 			String h = getFieldOfType(cn, node, false);
-			list.add(asFieldHook(h, "getBuckets"));
+			list.add(asFieldHook(h, "buckets"));
 
 			// System.out.println("with " + i.length);
 			h = findField(i, true, true, 2, 'f', "iconst_0");
-			list.add(asFieldHook(h, "getHead"));
+			list.add(asFieldHook(h, "head"));
 
 			h = findField(i, true, true, 3, 'f', "iconst_0");
-			list.add(asFieldHook(h, "getFirst"));
+			list.add(asFieldHook(h, "firstNode"));
 
 			return list;
 		}

@@ -37,9 +37,9 @@ public class MultiplierVisitor extends NodeVisitor {
 	public void visitOperation(final ArithmeticNode an) {
 		if(an.parent() instanceof FieldMemberNode) {
 			final FieldMemberNode f = (FieldMemberNode) an.parent();
-			if(f.key().equals("client.hs")) {
-				System.out.println("MultiplierVisitor.visitOperation(2)");
-			}
+			// if(f.key().equals("client.hs")) {
+			// 	System.out.println("MultiplierVisitor.visitOperation(2)");
+			// }
 		}
 		
 		if (isSetting(an)) {

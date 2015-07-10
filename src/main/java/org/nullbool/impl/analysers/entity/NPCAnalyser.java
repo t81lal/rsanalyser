@@ -12,15 +12,15 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.topdank.banalysis.asm.desc.Desciption;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getNpcDefinition&NPCDefinition", }, methods = {})
+@SupportedHooks(fields = { "npcDefinition&NPCDefinition", }, methods = {})
 public class NPCAnalyser extends ClassAnalyser {
 
 	public NPCAnalyser() throws AnalysisException {
@@ -79,7 +79,7 @@ public class NPCAnalyser extends ClassAnalyser {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String obfName = findObfClassName("NPCDefinition");
 			String hook = identify(cn, "L" + obfName + ";", 'f');
-			list.add(asFieldHook(hook, "getNpcDefinition"));
+			list.add(asFieldHook(hook, "npcDefinition"));
 			return list;
 		}
 	}

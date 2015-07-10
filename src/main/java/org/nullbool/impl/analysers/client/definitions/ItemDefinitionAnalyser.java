@@ -9,20 +9,20 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getName&Ljava/lang/String;", "getModelZoom&I", "getRotation1&I", "getRotation2&I", "getDiagonalRotation&I", "getModelOffset&I",
-		"getModelSine&I", "getValue&I", "getGroundActions&[Ljava/lang/String;", "getWidgetActions&[Ljava/lang/String;", "getMaleEquipPrimaryModel&I",
-		"getMaleEquipSecondaryModel&I", "getFemaleEquipPrimaryModel&I", "getFemaleEquipSecondaryModel&I", "getMaleEquipOffset&I", "getFemaleEquipOffset&I",
-		"getMaleEmblem&I", "getFemaleEmblem&I", "getMaleDialog&I", "getMaleDialogHat&I", "getFemaleDialog&I", "getFemaleDialogHat&I", "getNoteIndex&I",
-		"getNoteTemplateIndex&I", "getModelWidth&I", "getModelHeight&I", "getModelBreadth&I", "getStackedModelLightModifier&I",
-		"getStackedModelShadowModifier&I", "getTeamIndex&I", }, methods = {})
+@SupportedHooks(fields = { "name&Ljava/lang/String;", "modelZoom&I", "rotation1&I", "rotation2&I", "diagonalRotation&I", "modelOffset&I",
+		"modelSine&I", "value&I", "groundActions&[Ljava/lang/String;", "widgetActions&[Ljava/lang/String;", "maleEquipPrimaryModel&I",
+		"maleEquipSecondaryModel&I", "femaleEquipPrimaryModel&I", "femaleEquipSecondaryModel&I", "maleEquipOffset&I", "femaleEquipOffset&I",
+		"maleEmblem&I", "femaleEmblem&I", "maleDialog&I", "maleDialogHat&I", "femaleDialog&I", "femaleDialogHat&I", "noteIndex&I",
+		"noteTemplateIndex&I", "modelWidth&I", "modelHeight&I", "modelBreadth&I", "stackedModelLightModifier&I",
+		"stackedModelShadowModifier&I", "teamIndex&I", }, methods = {})
 public class ItemDefinitionAnalyser extends ClassAnalyser {
 
 	public ItemDefinitionAnalyser() throws AnalysisException {
@@ -62,94 +62,94 @@ public class ItemDefinitionAnalyser extends ClassAnalyser {
 			String h, regex = "putfield .* \\[Ljava/lang/String;";
 
 			h = findField(i, false, true, 1, 'f', "putfield");
-			list.add(asFieldHook(h, "getName"));
+			list.add(asFieldHook(h, "name"));
 
 			h = findField(i, false, true, 2, 'f', "putfield");
-			list.add(asFieldHook(h, "getModelZoom"));
+			list.add(asFieldHook(h, "modelZoom"));
 
 			h = findField(i, false, true, 3, 'f', "putfield");
-			list.add(asFieldHook(h, "getRotation1"));
+			list.add(asFieldHook(h, "rotation1"));
 
 			h = findField(i, false, true, 4, 'f', "putfield");
-			list.add(asFieldHook(h, "getRotation2"));
+			list.add(asFieldHook(h, "rotation2"));
 
 			h = findField(i, false, true, 5, 'f', "putfield");
-			list.add(asFieldHook(h, "getDiagonalRotation"));
+			list.add(asFieldHook(h, "diagonalRotation"));
 
 			h = findField(i, false, true, 6, 'f', "putfield");
-			list.add(asFieldHook(h, "getModelOffset"));
+			list.add(asFieldHook(h, "modelOffset"));
 
 			h = findField(i, false, true, 7, 'f', "putfield");
-			list.add(asFieldHook(h, "getModelSine"));
+			list.add(asFieldHook(h, "modelSine"));
 
 			h = findField(i, false, true, 9, 'f', "putfield");
-			list.add(asFieldHook(h, "getValue"));
+			list.add(asFieldHook(h, "value"));
 
 			h = findField(i, true, true, 1, 'f', regex);
-			list.add(asFieldHook(h, "getGroundActions"));
+			list.add(asFieldHook(h, "groundActions"));
 
 			h = findField(i, true, true, 2, 'f', regex);
-			list.add(asFieldHook(h, "getWidgetActions"));
+			list.add(asFieldHook(h, "widgetActions"));
 
 			h = findField(i, true, true, 3, 'f', regex);
-			list.add(asFieldHook(h, "getMaleEquipPrimaryModel"));
+			list.add(asFieldHook(h, "maleEquipPrimaryModel"));
 
 			h = findField(i, true, true, 4, 'f', regex);
-			list.add(asFieldHook(h, "getMaleEquipSecondaryModel"));
+			list.add(asFieldHook(h, "maleEquipSecondaryModel"));
 
 			h = findField(i, true, true, 6, 'f', regex);
-			list.add(asFieldHook(h, "getFemaleEquipPrimaryModel"));
+			list.add(asFieldHook(h, "femaleEquipPrimaryModel"));
 
 			h = findField(i, true, true, 7, 'f', regex);
-			list.add(asFieldHook(h, "getFemaleEquipSecondaryModel"));
+			list.add(asFieldHook(h, "femaleEquipSecondaryModel"));
 
 			h = findField(i, true, true, 5, 'f', regex);
-			list.add(asFieldHook(h, "getMaleEquipOffset"));
+			list.add(asFieldHook(h, "maleEquipOffset"));
 
 			h = findField(i, true, true, 8, 'f', regex);
-			list.add(asFieldHook(h, "getFemaleEquipOffset"));
+			list.add(asFieldHook(h, "femaleEquipOffset"));
 
 			h = findField(i, true, true, 9, 'f', regex);
-			list.add(asFieldHook(h, "getMaleEmblem"));
+			list.add(asFieldHook(h, "maleEmblem"));
 
 			h = findField(i, true, true, 10, 'f', regex);
-			list.add(asFieldHook(h, "getFemaleEmblem"));
+			list.add(asFieldHook(h, "femaleEmblem"));
 
 			h = findField(i, true, true, 11, 'f', regex);
-			list.add(asFieldHook(h, "getMaleDialog"));
+			list.add(asFieldHook(h, "maleDialog"));
 
 			h = findField(i, true, true, 12, 'f', regex);
-			list.add(asFieldHook(h, "getMaleDialogHat"));
+			list.add(asFieldHook(h, "maleDialogHat"));
 
 			h = findField(i, true, true, 13, 'f', regex);
-			list.add(asFieldHook(h, "getFemaleDialog"));
+			list.add(asFieldHook(h, "femaleDialog"));
 
 			h = findField(i, true, true, 14, 'f', regex);
-			list.add(asFieldHook(h, "getFemaleDialogHat"));
+			list.add(asFieldHook(h, "femaleDialogHat"));
 
 			h = findField(i, true, true, 15, 'f', regex);
-			list.add(asFieldHook(h, "getNoteIndex"));
+			list.add(asFieldHook(h, "noteIndex"));
 
 			h = findField(i, true, true, 16, 'f', regex);
-			list.add(asFieldHook(h, "getNoteTemplateIndex"));
+			list.add(asFieldHook(h, "noteTemplateIndex"));
 
 			h = findField(i, true, true, 17, 'f', regex);
-			list.add(asFieldHook(h, "getModelWidth"));
+			list.add(asFieldHook(h, "modelWidth"));
 
 			h = findField(i, true, true, 18, 'f', regex);
-			list.add(asFieldHook(h, "getModelHeight"));
+			list.add(asFieldHook(h, "modelHeight"));
 
 			h = findField(i, true, true, 19, 'f', regex);
-			list.add(asFieldHook(h, "getModelBreadth"));
+			list.add(asFieldHook(h, "modelBreadth"));
 
 			h = findField(i, true, true, 20, 'f', regex);
-			list.add(asFieldHook(h, "getStackedModelLightModifier"));
+			list.add(asFieldHook(h, "stackedModelLightModifier"));
 
 			h = findField(i, true, true, 21, 'f', regex);
-			list.add(asFieldHook(h, "getStackedModelShadowModifier"));
+			list.add(asFieldHook(h, "stackedModelShadowModifier"));
 
 			h = findField(i, true, true, 22, 'f', regex);
-			list.add(asFieldHook(h, "getTeamIndex"));
+			list.add(asFieldHook(h, "teamIndex"));
 
 			return list;
 		}

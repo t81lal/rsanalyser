@@ -39,7 +39,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.util.Printer;
 import org.topdank.banalysis.filter.Filter;
 
-@SupportedHooks(fields  = { "getPayload&[B", "getCaret&I", }, 
+@SupportedHooks(fields  = { "payload&[B", "caret&I", }, 
 methods = { "enableEncryption&(Ljava/math/BigInteger;Ljava/math/BigInteger;)V",
 		"writeVarByte&(I)V", "writeBytes&([BIII)V",
 		"write8&(I)V", "write8Weird&(I)V", "write16&(I)V", "write16A&(I)V", "write16B&(I)V", "write24&(I)V", "write32&(I)V", /*"write40&(J)V", */ "write64&(J)V",
@@ -935,9 +935,9 @@ public class BufferAnalyser extends ClassAnalyser {
 							FieldInsnNode fin = (FieldInsnNode) ain;
 							// String source = String.format("%s.%s", fin.owner, fin.name);
 							if(ain.getPrevious().opcode() == ICONST_0) {
-								list.add(asFieldHook(fin, "getCaret", false));
+								list.add(asFieldHook(fin, "caret", false));
 							} else {
-								list.add(asFieldHook(fin, "getPayload", false));
+								list.add(asFieldHook(fin, "payload", false));
 							}
 						}
 					}

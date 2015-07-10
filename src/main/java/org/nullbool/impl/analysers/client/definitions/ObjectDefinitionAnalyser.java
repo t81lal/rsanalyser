@@ -10,17 +10,17 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getName&Ljava/lang/String;", "getWidth&I", "getHeight&I", "getAnimationId&I", "getObjMapScene&I", "getModelWidth&I",
-		"getModelHeight&I", "getModelBreadth&I", "getTranslationX&I", "getTranslationY&I", "getTranslationZ&I", "isWalkable&Z",
-		"getActions&[Ljava/lang/String;", "getIcon&I", "isRotated&Z", "hasCastedShadow&Z", }, methods = {})
+@SupportedHooks(fields = { "name&Ljava/lang/String;", "width&I", "height&I", "animationId&I", "objMapScene&I", "modelWidth&I",
+		"modelHeight&I", "modelBreadth&I", "translationX&I", "translationY&I", "translationZ&I", "walkable&Z",
+		"actions&[Ljava/lang/String;", "icon&I", "rotated&Z", "hasCastedShadow&Z", }, methods = {})
 public class ObjectDefinitionAnalyser extends ClassAnalyser {
 
 	public ObjectDefinitionAnalyser() throws AnalysisException {
@@ -60,49 +60,49 @@ public class ObjectDefinitionAnalyser extends ClassAnalyser {
 
 			String h, regex = "putfield .* \\[Ljava/lang/String;";
 			h = findField(i, false, true, 1, 'f', "putfield");
-			list.add(asFieldHook(h, "getName"));
+			list.add(asFieldHook(h, "name"));
 
 			h = findField(i, false, true, 2, 'f', "putfield");
-			list.add(asFieldHook(h, "getWidth"));
+			list.add(asFieldHook(h, "width"));
 
 			h = findField(i, false, true, 3, 'f', "putfield");
-			list.add(asFieldHook(h, "getHeight"));
+			list.add(asFieldHook(h, "height"));
 
 			h = findField(i, false, true, 10, 'f', "putfield");
-			list.add(asFieldHook(h, "getAnimationId"));
+			list.add(asFieldHook(h, "animationId"));
 
 			h = findField(i, true, true, 3, 'f', regex);
-			list.add(asFieldHook(h, "getObjMapScene"));
+			list.add(asFieldHook(h, "objMapScene"));
 
 			h = findField(i, true, true, 6, 'f', regex);
-			list.add(asFieldHook(h, "getModelWidth"));
+			list.add(asFieldHook(h, "modelWidth"));
 
 			h = findField(i, true, true, 7, 'f', regex);
-			list.add(asFieldHook(h, "getModelHeight"));
+			list.add(asFieldHook(h, "modelHeight"));
 
 			h = findField(i, true, true, 8, 'f', regex);
-			list.add(asFieldHook(h, "getModelBreadth"));
+			list.add(asFieldHook(h, "modelBreadth"));
 
 			h = findField(i, true, true, 9, 'f', regex);
-			list.add(asFieldHook(h, "getTranslationX"));
+			list.add(asFieldHook(h, "translationX"));
 
 			h = findField(i, true, true, 10, 'f', regex);
-			list.add(asFieldHook(h, "getTranslationY"));
+			list.add(asFieldHook(h, "translationY"));
 
 			h = findField(i, true, true, 11, 'f', regex);
-			list.add(asFieldHook(h, "getTranslationZ"));
+			list.add(asFieldHook(h, "translationZ"));
 
 			h = findField(i, false, true, 5, 'f', "putfield");
-			list.add(asFieldHook(h, "isWalkable"));
+			list.add(asFieldHook(h, "walkable"));
 
 			h = findField(i, true, true, 1, 'f', regex);
-			list.add(asFieldHook(h, "getActions"));
+			list.add(asFieldHook(h, "actions"));
 
 			h = findField(i, true, true, 2, 'f', regex);
-			list.add(asFieldHook(h, "getIcon"));
+			list.add(asFieldHook(h, "icon"));
 
 			h = findField(i, true, true, 4, 'f', regex);
-			list.add(asFieldHook(h, "isRotated"));
+			list.add(asFieldHook(h, "rotated"));
 
 			h = findField(i, true, true, 5, 'f', regex);
 			list.add(asFieldHook(h, "hasCastedShadow"));

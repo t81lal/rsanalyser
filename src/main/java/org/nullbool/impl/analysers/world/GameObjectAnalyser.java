@@ -9,16 +9,16 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getHash&I", "getPlane&I", "getStrictX&I", "getStrictY&I", "getLocalX&I", "getLocalY&I", "getWidth&I", "getHeight&I",
-		"getOrientation&I", "getFlags&I", "getMarkedRenderable&Renderable", }, methods = {})
+@SupportedHooks(fields = { "hash&I", "plane&I", "strictX&I", "strictY&I", "localX&I", "localY&I", "width&I", "height&I",
+		"orientation&I", "flags&I", "markedRenderable&Renderable", }, methods = {})
 public class GameObjectAnalyser extends ClassAnalyser {
 
 	public GameObjectAnalyser() throws AnalysisException {
@@ -60,34 +60,34 @@ public class GameObjectAnalyser extends ClassAnalyser {
 			AbstractInsnNode[] i = followJump(m, 300);
 
 			String h = findField(i, true, true, 1, 'f', "iload 1", "ldc .*");
-			l.add(asFieldHook(h, "getPlane"));
+			l.add(asFieldHook(h, "plane"));
 
 			h = findField(i, true, true, 1, 'f', "iload 6", "ldc .*");
-			l.add(asFieldHook(h, "getStrictX"));
+			l.add(asFieldHook(h, "strictX"));
 
 			h = findField(i, true, true, 1, 'f', "iload 7", "ldc .*");
-			l.add(asFieldHook(h, "getStrictY"));
+			l.add(asFieldHook(h, "strictY"));
 
 			h = findField(i, true, true, 1, 'f', "iload 2", "ldc .*");
-			l.add(asFieldHook(h, "getLocalX"));
+			l.add(asFieldHook(h, "localX"));
 
 			h = findField(i, true, true, 1, 'f', "iload 3", "ldc .*");
-			l.add(asFieldHook(h, "getLocalY"));
+			l.add(asFieldHook(h, "localY"));
 
 			h = findField(i, true, true, 1, 'f', "iload 4", "iadd", "iconst_1");
-			l.add(asFieldHook(h, "getWidth"));
+			l.add(asFieldHook(h, "width"));
 
 			h = findField(i, true, true, 1, 'f', "iload 5", "iadd", "iconst_1");
-			l.add(asFieldHook(h, "getHeight"));
+			l.add(asFieldHook(h, "height"));
 
 			h = findField(i, true, true, 1, 'f', "iload 10", "ldc .*");
-			l.add(asFieldHook(h, "getOrientation"));
+			l.add(asFieldHook(h, "orientation"));
 
 			h = findField(i, true, true, 1, 'f', "iload 13", "ldc .*");
-			l.add(asFieldHook(h, "getFlags"));
+			l.add(asFieldHook(h, "flags"));
 
 			h = findField(i, true, true, 1, 'f', "aload 14", "aload 9");
-			l.add(asFieldHook(h, "getMarkedRenderable"));
+			l.add(asFieldHook(h, "markedRenderable"));
 
 			return l;
 		}
@@ -102,7 +102,7 @@ public class GameObjectAnalyser extends ClassAnalyser {
 			AbstractInsnNode[] i = followJump(method, 100);
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String h = findField(i, false, true, 1, 'f', "putfield");
-			list.add(asFieldHook(h, "getHash"));
+			list.add(asFieldHook(h, "hash"));
 			return list;
 		}
 	}

@@ -9,15 +9,15 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.nullbool.pi.core.hook.api.FieldHook;
 
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getMarkedRenderable&Renderable", "getStrictX&I", "getStrictY&I", "getPlane&I", "getUID&I", "getFlags&I", }, methods = {})
+@SupportedHooks(fields = { "markedRenderable&Renderable", "strictX&I", "strictY&I", "plane&I", "uid&I", "flags&I", }, methods = {})
 public class GroundObjectAnalyser extends ClassAnalyser {
 
 	public GroundObjectAnalyser() throws AnalysisException {
@@ -58,22 +58,22 @@ public class GroundObjectAnalyser extends ClassAnalyser {
 			AbstractInsnNode[] ins = followJump(m, 100);
 
 			h = findField(ins, false, true, 1, 'f', "putfield");
-			l.add(asFieldHook(h, "getMarkedRenderable"));
+			l.add(asFieldHook(h, "markedRenderable"));
 
 			h = findField(ins, false, true, 2, 'f', "putfield");
-			l.add(asFieldHook(h, "getStrictX"));
+			l.add(asFieldHook(h, "strictX"));
 
 			h = findField(ins, false, true, 3, 'f', "putfield");
-			l.add(asFieldHook(h, "getStrictY"));
+			l.add(asFieldHook(h, "strictY"));
 
 			h = findField(ins, false, true, 4, 'f', "putfield");
-			l.add(asFieldHook(h, "getPlane"));
+			l.add(asFieldHook(h, "plane"));
 
 			h = findField(ins, false, true, 5, 'f', "putfield");
-			l.add(asFieldHook(h, "getUID"));
+			l.add(asFieldHook(h, "uid"));
 
 			h = findField(ins, false, true, 6, 'f', "putfield");
-			l.add(asFieldHook(h, "getFlags"));
+			l.add(asFieldHook(h, "flags"));
 
 			return l;
 		}

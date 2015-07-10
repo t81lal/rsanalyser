@@ -9,13 +9,13 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
-import org.objectweb.asm.tree.ClassNode;
 import org.nullbool.pi.core.hook.api.FieldHook;
+import org.objectweb.asm.tree.ClassNode;
 
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "getTiles&[[[Tile", }, methods = {})
+@SupportedHooks(fields = { "tiles&[[[Tile", }, methods = {})
 public class RegionAnalyser extends ClassAnalyser {
 
 	public RegionAnalyser() throws AnalysisException {
@@ -46,7 +46,7 @@ public class RegionAnalyser extends ClassAnalyser {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String t = "[[[L" + findObfClassName("Tile") + ";";
 			String hook = getFieldOfType(cn, t, false);
-			list.add(asFieldHook(hook, "getTiles"));
+			list.add(asFieldHook(hook, "tiles"));
 			return list;
 		}
 	}

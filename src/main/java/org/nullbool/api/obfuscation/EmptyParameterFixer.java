@@ -1,6 +1,5 @@
 package org.nullbool.api.obfuscation;
 
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -141,25 +140,30 @@ public class EmptyParameterFixer extends Visitor {
 		if(print) {
 			System.out.printf("   Check 1: discarding %d methods.%n", invalid.size());
 		}
-		topFor: for(Entry<MethodNode, String> e : map.entrySet()) {
-			MethodNode m = e.getKey();
-			String newKey = calculateParamKey(m.name, e.getValue());
-			
-			Set<MethodNode> ms = mmp.getData(m).getAggregates();
-
-			Set<MethodNode> collisions = checkCollisions(map, m, newKey);
-			if(!collisions.isEmpty()) {
-				add(invalid, m, collisions, ms);
-				//continue topFor;
-			}
-			
-			if(ms.size() > 0) {
-				for(MethodNode m1 : ms) {
-					/* Collision, don't rename any of the methods. */
-					collisions = checkCollisions(map, m1, newKey);
-					if(!collisions.isEmpty()) {
-						add(invalid, m1, collisions, ms);
-						//continue topFor;
+		
+		/* If we want a deob for src code, then we don't want to be
+		 * aggressive as we won't get recompilable code (duplicate
+		 * parameter methods) but for analysis, it's fine. */
+		boolean aggressive = Context.current().getFlags().getOrDefault("aggressiveparams", true);
+		if(!aggressive) {
+			for(Entry<MethodNode, String> e : map.entrySet()) {
+				MethodNode m = e.getKey();
+				String newKey = calculateParamKey(m.name, e.getValue());
+				Set<MethodNode> ms = mmp.getData(m).getAggregates();
+				
+				Set<MethodNode> collisions = checkCollisions(map, m, newKey);
+				if(!collisions.isEmpty()) {
+					add(invalid, m, collisions, ms);
+					//continue topFor;
+				}
+				
+				if(ms.size() > 0) {
+					for(MethodNode m1 : ms) {
+						/* Collision, don't rename any of the methods. */
+						collisions = checkCollisions(map, m1, newKey);
+						if(!collisions.isEmpty()) {
+							add(invalid, m1, collisions, ms);
+						}
 					}
 				}
 			}
@@ -219,7 +223,37 @@ public class EmptyParameterFixer extends Visitor {
 		return sb.toString();
 	}
 	
+	private Set<MethodNode> checkCollisions2(Map<MethodNode, String> remapped, MethodNode m, String newParamKey) {
+		
+		System.out.println("Running for " + m.key());
+		System.out.println("NewParamkey= " + newParamKey);
+		
+		Set<MethodNode> set = new HashSet<MethodNode>();
+		for(MethodNode m2 : m.owner.methods) {
+			String paramKey = calculateParamKey(m2);
+			if(paramKey.equals(newParamKey) && m2 != m) {
+				System.out.printf("Match for %s: %s.%n", paramKey, m2.key());
+				set.add(m2);
+			}
+			
+			String remappedDesc = remapped.get(m2);
+			if(remappedDesc != null) {
+				String remappedKey = calculateParamKey(m2.name, remappedDesc);
+				if(remappedKey.equals(newParamKey) && m2 != m) {
+					System.out.printf("Match0 for %s: %s.%n", remappedKey, m2.key());
+					set.add(m2);
+				}
+			}
+			
+		}
+		return set;
+	}
+	
 	private Set<MethodNode> checkCollisions(Map<MethodNode, String> remapped, MethodNode m, String newParamKey) {
+		// if(m.owner.name.equals("s") && m.name.equals("n")) {
+		// 	return checkCollisions2(remapped, m, newParamKey);
+		// }
+		
 		Set<MethodNode> set = new HashSet<MethodNode>();
 		for(MethodNode m2 : m.owner.methods) {
 			String paramKey = calculateParamKey(m2);
@@ -371,9 +405,9 @@ public class EmptyParameterFixer extends Visitor {
 	 * @return
 	 */
 	private boolean isUnused(MethodNode m, int targetVar) {
-		if(m.owner.name.equals("bf") && m.name.equals("j")) {
-			System.out.println(m.desc + " targ= " + targetVar + " " + Modifier.isStatic(m.access));
-		}
+		// if(m.owner.name.equals("bf") && m.name.equals("j")) {
+		// 	System.out.println(m.desc + " targ= " + targetVar + " " + Modifier.isStatic(m.access));
+		// }
 		int count = 0;
 		for (AbstractInsnNode ain : m.instructions.toArray()) {
 			if (ain instanceof VarInsnNode) {
@@ -389,9 +423,9 @@ public class EmptyParameterFixer extends Visitor {
 			}
 		}
 		
-		if(m.owner.name.equals("bf") && m.name.equals("j")) {
-			System.out.println("Couunt "  + count);
-		}
+		// if(m.owner.name.equals("bf") && m.name.equals("j")) {
+		// 	System.out.println("Couunt "  + count);
+		// }
 		
 		return count == 0;
 	}
