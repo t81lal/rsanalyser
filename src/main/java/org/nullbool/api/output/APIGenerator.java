@@ -125,6 +125,34 @@ public class APIGenerator {
 			e.printStackTrace();
 		}
 	}
+	
+	private static String upper(String name) {
+		char first = name.charAt(0);
+		char upper = Character.toUpperCase(first);
+		name = name.substring(1);
+		return upper + name;
+	}
+	
+	private static String getterName(String name, String desc) {
+		if(name.startsWith("has")) {
+			char first = name.charAt(3);
+			if(Character.isUpperCase(first))
+				return name;
+		}
+		
+		if(desc.equals("Z")) {
+			return "is" + upper(name);
+		} else {
+			return "get" + upper(name);
+		}
+	}
+	
+	private static String setterName(String name, String desc) {
+//		if(name.startsWith("set"))
+//			return name;
+		
+		return "set" + upper(name);
+	}
 
 	public static void createAPI(HookMap hookMap) {
 		JarContents<ClassNode> contents = new JarContents<ClassNode>();
@@ -149,28 +177,23 @@ public class APIGenerator {
 			}
 
 			for (FieldHook f : hook.fields()) {
-				MethodNode mn = new MethodNode(cn, Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, f.refactored(), "()"
-						+ convertSingleBytecodeStyle(hookMap.classes(), f.val(Constants.DESC)), null, null);
-				cn.methods.add(mn);
+				String name = f.refactored();
+				String desc = f.val(Constants.DESC);
+				MethodNode getter = new MethodNode(cn, Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, getterName(name, desc), "()"
+						+ convertSingleBytecodeStyle(hookMap.classes(), desc), null, null);
+				cn.methods.add(getter);
+				
+				String stripped = desc.replace("[", "");
+				if(isPrimitive(stripped) || stripped.indexOf('/') != -1) {
+					MethodNode setter = new MethodNode(cn, Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, setterName(name, desc), "(" + desc + ")V", null, null);
+					cn.methods.add(setter);
+				}
 			}
 
 			for (MethodHook m : hook.methods()) {
 				String d = convertMultiBytecodeStyle(hookMap.classes(), m.val(Constants.DESC));
 				MethodNode mn = new MethodNode(cn, Opcodes.ACC_PUBLIC + Opcodes.ACC_ABSTRACT, m.refactored(), d, null, null);
-				//System.out.println(m.obfuscated() + "." + m.val(Constants.DESC) + "  " + mn.name + "." + mn.desc);
 				cn.methods.add(mn);
-
-				// if (m.getInstructions() != null) {
-				// System.out.println(mn.key());
-				// MethodNode temp = new MethodNode(mn.owner);
-				// temp.instructions = m.getInstructions();
-				//
-				// for (String s : new InstructionPrinter(temp).createPrint()) {
-				// System.out.println("   " + s);
-				// }
-				//
-				// temp.instructions.reset();
-				// }
 			}
 
 			contents.getClassContents().add(cn);

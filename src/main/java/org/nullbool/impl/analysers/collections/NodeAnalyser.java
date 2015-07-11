@@ -24,7 +24,7 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "key&J", "previousNode&Node", "next&Node", }, methods = {"isLinked&()Z", "unlink&()V"})
+@SupportedHooks(fields = { "key&J", "previous&Node", "next&Node", }, methods = {"isLinked&()Z", "unlink&()V"})
 public class NodeAnalyser extends ClassAnalyser {
 
 	public NodeAnalyser() throws AnalysisException {
@@ -91,7 +91,7 @@ public class NodeAnalyser extends ClassAnalyser {
 				
 				FieldInsnNode prevFin = (FieldInsnNode) Arrays.asList(m.instructions.toArray()).stream().filter(ain -> ain.opcode() == GETFIELD).findFirst()
 						.get();
-				list.add(asFieldHook(cn.name + "." + prevFin.name, "previousNode"));
+				list.add(asFieldHook(cn.name + "." + prevFin.name, "previous"));
 
 				FieldNode nextFn = cn.fields.stream().filter(f -> f.desc.equals(prevFin.desc) && !f.name.equals(prevFin.name)).findFirst().get();
 				list.add(asFieldHook(nextFn.owner.name + "." + nextFn.name, "next"));

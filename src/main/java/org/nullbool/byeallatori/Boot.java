@@ -111,7 +111,7 @@ public class Boot implements Opcodes {
 			os = "Unknown";
 		}
 
-		payload = (new StringBuilder()).insert(0, "name=").append("willie lynch")
+		payload = (new StringBuilder()).insert(0, "name=").append("jketelaar")
 				.append("&password=").append(pass)
 				.append("&identifier=").append(mac)
 				.append("&v1=").append(2)
@@ -561,19 +561,19 @@ public class Boot implements Opcodes {
 
 		// SESSION = "655207082866909a0-f69b-43d1-90f6-6804ff43cdb0";
 		request();
-		//		for(int i=0; i < 500; i++) {
-		//			try {
-		//				scrapt(i);
-		//				dumpscript(i);
-		//			} catch(Throwable t) {
-		//				t.printStackTrace();
-		//			}
-		//		}
-		byte[] hooks = hooks();
-		parseHooks(ByteBuffer.wrap(hooks));
-		System.out.println(hooks.length);
+				for(int i=0; i < 1000; i++) {
+					try {
+						scrapt(i);
+						dumpscript(i);
+					} catch(Throwable t) {
+						t.printStackTrace();
+					}
+				}
+//		byte[] hooks = hooks();
+//		parseHooks(ByteBuffer.wrap(hooks));
+//		System.out.println(hooks.length);
 
-		System.out.println(MiscHelper.add());
+//		System.out.println(MiscHelper.add());
 		if(true)
 			return;
 
@@ -1501,5 +1501,5 @@ public class Boot implements Opcodes {
 
 
 	//TODO: remove
-	static String pass = "mop";
+	static String pass = "ATNFAimpnP9RdWwc8ijtXEWkHzB2id";
 }

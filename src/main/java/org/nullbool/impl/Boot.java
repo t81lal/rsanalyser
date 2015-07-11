@@ -36,6 +36,7 @@ public class Boot {
 			System.out.println(k);
 			System.exit(1);
 		}*/
+		
 
 		System.out.printf("Remote rev: %d.%n", RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100));
 
@@ -47,9 +48,9 @@ public class Boot {
 			Revision revision = rev(Boot.revision - i);
 			System.out.println("Running " + revision.getName());
 			try {
-//				deob(AnalysisProviderRegistry.get(revision).create(revision));
+				deob(AnalysisProviderRegistry.get(revision).create(revision));
 //				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
-				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
+//				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 			} catch(Throwable t) {
 				t.printStackTrace();
 			}
@@ -181,6 +182,7 @@ public class Boot {
 		flags.put("superDebug", false);
 		flags.put("basicout", false);
 		flags.put("out", false);
+		flags.put("paramdeob", true);
 		// flags.put("nodump", true);
 		runFlags(provider, flags);
 	}
