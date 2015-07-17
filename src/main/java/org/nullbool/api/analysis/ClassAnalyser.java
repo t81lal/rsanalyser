@@ -130,6 +130,14 @@ public abstract class ClassAnalyser implements Opcodes {
 		Stream<MethodNode> s = cn.methods.stream();
 		return s.filter(m -> ((MethodNode) m).desc.matches((regex))).count();
 	}
+	
+	public static boolean contains(List<Integer> list, int[] ints) {
+		for(int i : ints) {
+			if(!list.contains(i))
+				return false;
+		}
+		return true;
+	}
 
 	public boolean containMethodWithName(ClassNode classnode, String t) {
 		Stream<MethodNode> stream = classnode.methods.stream();

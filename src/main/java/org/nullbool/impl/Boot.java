@@ -19,6 +19,7 @@ import org.nullbool.impl.AnalysisProviderRegistry.ProviderCreator;
 import org.nullbool.impl.AnalysisProviderRegistry.RegistryEntry;
 import org.nullbool.impl.r77.AnalysisProvider77Impl;
 import org.nullbool.impl.r79.AnalysisProvider79Impl;
+import org.nullbool.impl.r82.AnalysisProvider82Impl;
 import org.topdank.banalysis.filter.Filter;
 import org.topdank.byteio.util.Debug;
 
@@ -28,7 +29,7 @@ import org.topdank.byteio.util.Debug;
  */
 public class Boot {
 
-	private static int revision = 83;
+	private static int revision = 84;
 
 	public static void main(String[] args) throws Exception {
 		/*if(true) {
@@ -49,8 +50,8 @@ public class Boot {
 			System.out.println("Running " + revision.getName());
 			try {
 //				deob(AnalysisProviderRegistry.get(revision).create(revision));
-//				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
-				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
+				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
+//				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 			} catch(Throwable t) {
 				t.printStackTrace();
 			}
@@ -213,6 +214,7 @@ public class Boot {
 			}
 		}));
 
+		/* Adds it before the default implementation. */
 		AnalysisProviderRegistry.register(new RegistryEntry(new ProviderCreator() {
 			@Override
 			public AbstractAnalysisProvider create(Revision rev) throws Exception {
@@ -234,7 +236,6 @@ public class Boot {
 			}
 		}));
 
-		/* Adds it before the default implementation. */
 		AnalysisProviderRegistry.register(new RegistryEntry(new ProviderCreator() {
 			@Override
 			public AbstractAnalysisProvider create(Revision rev) throws Exception {
@@ -249,6 +250,27 @@ public class Boot {
 				try {
 					int val = Integer.parseInt(t.getName());
 					return val >= 79;
+				} catch(NumberFormatException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}));		
+		
+		AnalysisProviderRegistry.register(new RegistryEntry(new ProviderCreator() {
+			@Override
+			public AbstractAnalysisProvider create(Revision rev) throws Exception {
+				return new AnalysisProvider82Impl(rev);
+			}
+		}).addFilter(new Filter<Revision>() {
+			@Override
+			public boolean accept(Revision t) {
+				if(t == null)
+					return false;
+
+				try {
+					int val = Integer.parseInt(t.getName());
+					return val >= 82;
 				} catch(NumberFormatException e) {
 					e.printStackTrace();
 					return false;

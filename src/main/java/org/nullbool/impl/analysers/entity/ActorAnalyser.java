@@ -14,6 +14,9 @@ import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
+import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
+import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
 import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
 import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
 import org.objectweb.asm.commons.cfg.tree.node.VariableNode;
@@ -34,7 +37,7 @@ import org.topdank.banalysis.asm.insn.InstructionSearcher;
  * @author MalikDz
  */
 @SupportedHooks(fields = { "localX&I", "localY&I", "animationId&I", "interactingId&I", "health&I", "maxHealth&I", "hitTypes&[I",
-		"message&Ljava/lang/String;", "hitDamages&[I" /*"healthBarCycle&I" */, 
+		"message&Ljava/lang/String;", "hitDamages&[I", "hitCycle&I", /*"healthBarCycle&I" */
 		"queueX&[I", "queueY&[I", "queueLength&I", "queueRun&[Z"}, 
 				methods = { "queuePosition&(IIZ)V", "move&(IZ)V"})
 public class ActorAnalyser extends ClassAnalyser {
@@ -70,7 +73,7 @@ public class ActorAnalyser extends ClassAnalyser {
 
 	@Override
 	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
-		return new Builder<IFieldAnalyser>().addAll(new XYHooks(), new AnimationHooks(), new InteractingHooks(), new HealthAndDamageHooks(), new QueueFieldsAnalyser());
+		return new Builder<IFieldAnalyser>().addAll(new XYHooks(), new AnimationHooks(), new InteractingHooks(), new HealthAndDamageHooks(), new QueueFieldsAnalyser(), new CycleHookAnalyser());
 	}
 
 	@Override
@@ -117,14 +120,6 @@ public class ActorAnalyser extends ClassAnalyser {
 			
 			return list;
 		}
-	}
-	
-	private static boolean contains(List<Integer> list, int[] ints) {
-		for(int i : ints) {
-			if(!list.contains(i))
-				return false;
-		}
-		return true;
 	}
 	
 	private MethodNode moveMethod;
@@ -290,6 +285,65 @@ public class ActorAnalyser extends ClassAnalyser {
 			return list;
 		}
 	}
+	
+	public class CycleHookAnalyser implements IFieldAnalyser {
+
+		/* (non-Javadoc)
+		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 */
+		@Override
+		public List<FieldHook> find(ClassNode cn) {
+			List<FieldHook> list = new ArrayList<FieldHook>();
+			
+			//aload0 // reference to self
+            //getfield rs/Actor.ae:int[]
+            //iload5
+            //bipush 70
+            //iload3
+            //iadd
+            //iastore
+
+//			InstructionPattern pattern = new InstructionPattern(new AbstractInsnNode[]{
+//					new VarInsnNode(ALOAD, 0),
+//					new FieldInsnNode(GETFIELD, cn.name, null, "[I"),
+//					new VarInsnNode(ILOAD, 5),
+//					new IntInsnNode(BIPUSH, 70),
+//					new VarInsnNode(ILOAD, 3),
+//					new InsnNode(IADD),
+//					new InsnNode(IASTORE)
+//			});
+			
+			TreeBuilder tb = new TreeBuilder();
+			for(MethodNode m : cn.methods) {
+				if(m.desc.equals("(III)V")) {
+					NodeVisitor nv = new NodeVisitor() {
+						@Override
+						public void visit(AbstractNode an) {
+							if(an.opcode() == IASTORE) {
+								ArithmeticNode arn = an.firstOperation();
+								if(arn != null && arn.opcode() == IADD) {
+									NumberNode nn = arn.firstNumber();
+									if(nn != null && nn.number() == 70) {
+										FieldMemberNode fmn = an.firstField();
+										if(fmn != null && fmn.opcode() == GETFIELD && fmn.desc().equals("[I")) {
+											list.add(asFieldHook(fmn.fin(), "hitCycle"));
+										}
+									}
+								}
+							}
+						}
+					};
+					tb.build(m).accept(nv);
+//					InstructionSearcher searcher = new InstructionSearcher(m.instructions, pattern);
+//					if(searcher.search()) {
+//						FieldInsnNode fin = (FieldInsnNode) searcher.getMatches().get(0)[1];
+//					}
+				}
+			}
+			
+			return list;
+		}
+	}
 
 	public class XYHooks implements IFieldAnalyser {
 
@@ -406,6 +460,8 @@ public class ActorAnalyser extends ClassAnalyser {
 			h = findField(m, true, false, 1, 'f', reg);
 			list.add(asFieldHook(h, "hitDamages"));
 
+			System.out.println("dank  " + m);
+			
 			// ms = findMethod(Context.current().getClassNodes(), "bipush 70", false);
 			// m = identifyMethod(ms, false, "aload 0 getfield aload 4");
 			// h = findField(m, true, false, 1, 'f', "iload 4");

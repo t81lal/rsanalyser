@@ -17,7 +17,7 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "vertexCount&I", "indicesCount&I", "triangleCount&I", "verticesX&[I", "verticesY&[I", "verticesZ&[I",
+@SupportedHooks(fields = { "vertexCount&I", "triangleCount&I", "verticesX&[I", "verticesY&[I", "verticesZ&[I",
 		"indicesX&[I", "indicesY&[I", "indicesZ&[I", }, methods = {})
 public class ModelAnalyser extends ClassAnalyser {
 
@@ -57,7 +57,7 @@ public class ModelAnalyser extends ClassAnalyser {
 			list.add(asFieldHook(h, "vertexCount"));
 
 			h = findField(i, false, true, 2, 'f', "getfield");
-			list.add(asFieldHook(h, "indicesCount"));
+//			list.add(asFieldHook(h, "indicesCount"));
 
 			h = findField(i, false, true, 3, 'f', "getfield");
 			list.add(asFieldHook(h, "triangleCount"));
