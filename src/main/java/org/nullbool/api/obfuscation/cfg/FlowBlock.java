@@ -2,7 +2,17 @@ package org.nullbool.api.obfuscation.cfg;
 
 import static org.objectweb.asm.commons.util.Assembly.OPCODES;
 import static org.objectweb.asm.commons.util.Assembly.pad;
-import static org.objectweb.asm.tree.AbstractInsnNode.*;
+import static org.objectweb.asm.tree.AbstractInsnNode.FIELD_INSN;
+import static org.objectweb.asm.tree.AbstractInsnNode.IINC_INSN;
+import static org.objectweb.asm.tree.AbstractInsnNode.INT_INSN;
+import static org.objectweb.asm.tree.AbstractInsnNode.JUMP_INSN;
+import static org.objectweb.asm.tree.AbstractInsnNode.LDC_INSN;
+import static org.objectweb.asm.tree.AbstractInsnNode.LOOKUPSWITCH_INSN;
+import static org.objectweb.asm.tree.AbstractInsnNode.METHOD_INSN;
+import static org.objectweb.asm.tree.AbstractInsnNode.MULTIANEWARRAY_INSN;
+import static org.objectweb.asm.tree.AbstractInsnNode.TABLESWITCH_INSN;
+import static org.objectweb.asm.tree.AbstractInsnNode.TYPE_INSN;
+import static org.objectweb.asm.tree.AbstractInsnNode.VAR_INSN;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -233,7 +243,9 @@ public class FlowBlock {
 	
 	public void transfer(InsnList list) {
 		for(AbstractInsnNode ain : insns) {
-			list.add(ain);
+//			if(!(ain instanceof LabelNode)) {
+				list.add(ain);
+//			}
 		}
 	}
 	

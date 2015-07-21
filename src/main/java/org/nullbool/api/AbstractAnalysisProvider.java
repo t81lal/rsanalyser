@@ -27,7 +27,6 @@ import org.nullbool.api.obfuscation.EmptyParameterFixer;
 import org.nullbool.api.obfuscation.EmptyPopRemover;
 import org.nullbool.api.obfuscation.FieldOpener;
 import org.nullbool.api.obfuscation.HierarchyVisitor;
-import org.nullbool.api.obfuscation.MultiplicativeModifierDestroyer;
 import org.nullbool.api.obfuscation.OpaquePredicateRemover;
 import org.nullbool.api.obfuscation.OpaquePredicateRemover.Opaque;
 import org.nullbool.api.obfuscation.RedunantGotoTransformer;
@@ -45,6 +44,7 @@ import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
 import org.nullbool.api.obfuscation.refactor.ClassTree;
 import org.nullbool.api.obfuscation.refactor.IRemapper;
 import org.nullbool.api.obfuscation.refactor.MethodCache;
+import org.nullbool.api.obfuscation.stuffthatdoesntwork.MultiplicativeModifierDestroyer;
 import org.nullbool.api.output.APIGenerator;
 import org.nullbool.api.output.NewOutputLogger;
 import org.nullbool.api.rs.CaseAnalyser;
@@ -554,6 +554,8 @@ public abstract class AbstractAnalysisProvider {
 		for (ClassAnalyser a : analysers) {
 			if(haltRequested)
 				return;
+			
+			// System.out.println("Running " + a.getName());
 
 			try {
 				a.preRun(classNodes);
@@ -612,7 +614,6 @@ public abstract class AbstractAnalysisProvider {
 		}
 		
 		inlinestrings();
-
 		removeEmptyPops();
 
 		CatchBlockFixer.rek(contents.getClassContents());
@@ -622,6 +623,9 @@ public abstract class AbstractAnalysisProvider {
 		// destroyMultis();
 		// removeMultis();
 		buildCfgs();
+		// reorderBlocks();
+		// buildCfgs();
+		transformRedundantGotos();
 		// transformGotos();
 		// reorderBlocks();
 	}
@@ -631,7 +635,7 @@ public abstract class AbstractAnalysisProvider {
 		inliner.accept(contents);
 	}
 	
-	private void transformGotos() {
+	private void transformRedundantGotos() {
 		RedunantGotoTransformer transformer = new RedunantGotoTransformer();
 
 		for(ClassNode cn : contents.getClassContents()) {
@@ -645,6 +649,8 @@ public abstract class AbstractAnalysisProvider {
 				}
 			}
 		}
+		
+		transformer.output();
 	}
 
 	private void destroyMultis() {
@@ -688,31 +694,33 @@ public abstract class AbstractAnalysisProvider {
 	}
 
 	private void reorderBlocks() {
-		int j = 0;
-
-		//BlockReorderer reorderer = new BlockReorderer();
-
 		ControlFlowFixer fixer = new ControlFlowFixer();
 
 		for(ClassNode cn : contents.getClassContents()) {
 			for(MethodNode m : cn.methods) {
-				if(m.instructions.size() > 0 && m.tryCatchBlocks.size() <= 1) {
+				if(m.instructions.size() > 0) {
+//					if(cn.name.equals("ck") && m.name.equals("c") && m.desc.startsWith("(Ljava/lang/CharSequence")) {
+//						
+//					}
 					try {
 						IControlFlowGraph oldGraph = cfgCache.get(m);
 						fixer.fix(m, oldGraph);
-						//reorderer.reorder(m, oldGraph);
+						
+						cfgCache.remove(m);
+						oldGraph.destroy();
+						
+						cfgCache.get(m);
 					} catch (ControlFlowException e) {
 						e.printStackTrace();
 					}
 				}
 			}
 		}
-
-		if(true) {
-			System.exit(1);
-		}
-
-		System.out.printf("Fixed %d methods.%n", j);
+//		if(true) {
+//			System.exit(1);
+//		}
+//
+//		System.out.printf("Fixed %d methods.%n", j);
 		//reorderer.output();
 	}
 

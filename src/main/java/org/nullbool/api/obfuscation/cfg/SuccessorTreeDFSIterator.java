@@ -1,11 +1,16 @@
 package org.nullbool.api.obfuscation.cfg;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+
+import org.nullbool.api.obfuscation.cfg.SuccessorTree.Successor;
+import org.nullbool.api.obfuscation.cfg.SuccessorTree.SuccessorType;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -13,14 +18,40 @@ import java.util.Set;
  */
 public class SuccessorTreeDFSIterator implements Iterator<FlowBlock> {
 
+	private final SuccessorTree tree;
 	private final Set<FlowBlock> visited;
 	private final Deque<Iterator<FlowBlock>> stack;
 	private transient FlowBlock next;
 
-	public SuccessorTreeDFSIterator(FlowBlock entry) {
-		visited = new HashSet<FlowBlock>();
-		stack   = new LinkedList<Iterator<FlowBlock>>();
-		next    = entry;
+	public SuccessorTreeDFSIterator(SuccessorTree tree, FlowBlock entry) {
+		this.tree = tree;
+		visited   = new HashSet<FlowBlock>();
+		stack     = new LinkedList<Iterator<FlowBlock>>();
+		next      = entry;
+		
+		add(next);
+	}
+	
+	void add(FlowBlock next) {
+		stack.push(next.exceptionSuccessors().iterator());
+		List<FlowBlock> succs = next.successors();
+		List<FlowBlock> prioritised = new ArrayList<FlowBlock>();
+		
+		for(FlowBlock b : succs) {
+			if(!(b instanceof DummyExitBlock)) {
+				Successor succ = tree.findRelationship(next, b);
+				if(succ.type() == SuccessorType.IMMEDIATE) {
+					prioritised.add(succ.block());
+				}
+			}
+		}
+
+		for(FlowBlock b : succs) {
+			if(!prioritised.contains(b) && !(b instanceof DummyExitBlock))
+				prioritised.add(b);
+		}
+		
+		stack.push(prioritised.iterator());
 	}
 
 	@Override
@@ -61,8 +92,7 @@ public class SuccessorTreeDFSIterator implements Iterator<FlowBlock> {
 			next = successors.next();
 		} while (visited.contains(next));
 
-		stack.push(next.successors().iterator());
-		stack.push(next.exceptionSuccessors().iterator());
+		add(next);
 	}
 
 	public Set<FlowBlock> visited() {

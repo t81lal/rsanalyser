@@ -6,8 +6,9 @@ import org.nullbool.api.Builder;
 import org.nullbool.api.Revision;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.impl.analysers.world.WorldAnalyser;
+import org.nullbool.impl.analysers.ClientAnalyser;
 import org.nullbool.impl.r79.AnalysisProvider79Impl;
+import org.topdank.banalysis.filter.Filter;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -25,6 +26,11 @@ public class AnalysisProvider82Impl extends AnalysisProvider79Impl {
 
 	@Override
 	public Builder<ClassAnalyser> registerAnalysers() throws AnalysisException {
-		return super.registerAnalysers().add(new WorldAnalyser());
+		return super.registerAnalysers().replaceAfter(new Filter<ClassAnalyser>() {
+			@Override
+			public boolean accept(ClassAnalyser t) {
+				return ClientAnalyser.class.isAssignableFrom(t.getClass());
+			}
+		}, new ClientAnalyser82());
 	}
 }

@@ -1,5 +1,8 @@
 package org.nullbool.api.rs;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.nullbool.api.util.InstructionUtil;
 import org.objectweb.asm.Opcodes;
@@ -18,12 +21,18 @@ public abstract class BlockTraverser implements Opcodes {
 	}
 	
 	public void traverseFully() {
+		Set<FlowBlock> visited = new HashSet<FlowBlock>();
 		while(next != null) {
-			step();
+			if(!visited.contains(next)) {
+				step(visited);
+				visited.add(next);
+			} else {
+				break;
+			}
 		}
 	}
 	
-	public void step() {
+	public void step(Set<FlowBlock> visited) {
 		int op = next.lastOpcode();
 		if(InstructionUtil.isExit(op)) {
 			exit(next);
@@ -37,8 +46,12 @@ public abstract class BlockTraverser implements Opcodes {
 			next = conditional(next);
 		} else if(next.last() instanceof MethodInsnNode) {
 			next = basic(next);
+		} else if(next.size() == 0){
+//			if(!(next instanceof DummyExitBlock)) {
+//				step();
+//			}
 		} else {
-			throw new RuntimeException();
+			throw new RuntimeException(String.format("Block %s (%d), insn:%s", next.id(), next.size(), next.last() != null ? next.last().getClass().getSimpleName() : "null"));
 		}
 	}
 	

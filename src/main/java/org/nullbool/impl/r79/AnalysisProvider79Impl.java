@@ -7,8 +7,8 @@ import org.nullbool.api.Revision;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.impl.analysers.ClientAnalyser;
+import org.nullbool.impl.analysers.net.BufferAnalyser;
 import org.nullbool.impl.r77.AnalysisProvider77Impl;
-import org.nullbool.impl.r77.BufferAnalyser77;
 import org.topdank.banalysis.filter.Filter;
 
 /**
@@ -26,12 +26,12 @@ public class AnalysisProvider79Impl extends AnalysisProvider77Impl {
 		return super.registerAnalysers().replace(new Filter<ClassAnalyser>() {
 			@Override
 			public boolean accept(ClassAnalyser t) {
-				return t.getClass().equals(ClientAnalyser.class);
+				return ClientAnalyser.class.isAssignableFrom(t.getClass());
 			}
 		}, new ClientAnalyser79()).replace(new Filter<ClassAnalyser>(){
 			@Override
 			public boolean accept(ClassAnalyser t) {
-				return t.getClass().equals(BufferAnalyser77.class);
+				return BufferAnalyser.class.isAssignableFrom(t.getClass());
 			}
 		}, new BufferAnalyser79()).sort();
 	}

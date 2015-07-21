@@ -266,6 +266,13 @@ public class AbstractNode extends Tree<AbstractNode> implements Opcodes {
 	public int index() {
 		return method().instructions.indexOf(insn());//insn.insnIndex;
 	}
+	
+	public <T extends AbstractNode> T t_first(int opcode) {
+		for (AbstractNode n : this) {
+			if (n.opcode() == opcode) return (T) n;
+		}
+		return null;
+	}
 
 	public AbstractNode first(int opcode) {
 		for (AbstractNode n : this) {
@@ -320,6 +327,10 @@ public class AbstractNode extends Tree<AbstractNode> implements Opcodes {
 			}
 		}
 		return null;
+	}
+	
+	public IincNode firstIinc() {
+		return first(IincNode.class);
 	}
 
 	public VariableNode firstVariable() {
@@ -433,6 +444,14 @@ public class AbstractNode extends Tree<AbstractNode> implements Opcodes {
 
 	public AbstractNode previous(int opcode) {
 		return previous(opcode, 5);
+	}
+
+	public <T extends AbstractNode> List<T> t_findChildren(int opcode) {
+		List<T> children = new ArrayList<T>();
+		for (AbstractNode n : this) {
+			if (n.opcode() == opcode) children.add((T) n);
+		}
+		return !children.isEmpty() ? children : null;
 	}
 
 	public List<AbstractNode> findChildren(int opcode) {

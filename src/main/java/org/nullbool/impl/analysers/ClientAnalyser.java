@@ -14,9 +14,15 @@ import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.EventCallGenerator;
+import org.nullbool.impl.analysers.world.WorldAnalyser;
 import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
+import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
+import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
+import org.objectweb.asm.commons.cfg.tree.node.TypeNode;
+import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -41,9 +47,10 @@ import org.topdank.banalysis.asm.insn.InstructionSearcher;
 		"realLevels&[I", "skillsExp&[I", "selectedItem&I", "menuOpen&Z", "menuX&I", "menuY&I", "menuWidth&I", "menuHeight&I",
 		"menuSize&I", "groundItems&[[[Deque", "tileSettings&[[[B", "tileHeights&[[[I", "mapScale&I", "mapOffset&I", "mapAngle&I",
 		"plane&I", "cameraX&I", "cameraY&I", "cameraZ&I", "cameraYaw&I", "cameraPitch&I", "baseX&I", "baseY&I", "widgets&[[Widget",
-		"clientSettings&[I", "widgetsSettings&[I","hoveredRegionTileX&I","hoveredRegionTileY&I","itemTables&Hashtable", "username&String", "password&String" }, 
-		
-		methods = { "loadObjDefinition&(I)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
+		"clientSettings&[I", "widgetsSettings&[I","hoveredRegionTileX&I","hoveredRegionTileY&I","itemTables&Hashtable", "username&String", "password&String", 
+		"worldCount&I", "worlds&[World",
+		},
+		methods = { "loadWorlds&Z", "loadObjDefinition&(I)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
 		/*"getPlayerModel&()LModel;",*/ "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&(IIIILjava/lang/String;Ljava/lang/String;II)V"})
 public class ClientAnalyser extends ClassAnalyser {
 
@@ -55,17 +62,77 @@ public class ClientAnalyser extends ClassAnalyser {
 	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
 		return new Builder<IFieldAnalyser>().addAll(new ActorArrayHook(), new CurrentRegionHook(), new WidgetPositionXY(), new CanvasPlayerHook(), new ClientArrayHooks(),
 				new MenuScreenHooks(), new GroundItemsHook(), new TileInfoHooks(), new MinimapHooks(), new CameraHooks(), new BaseXYHooks(), new WidgetsHook(),
-				new SettingsHook(), new CredentialAnalyser() , new RegionWalkingHooks() ,new ItemTableHook(), new CredentialHooks());
+				new SettingsHook(), new CredentialAnalyser() , new RegionWalkingHooks() ,new ItemTableHook(), new CredentialHooks(), new StaticWorldFieldsAnalyser());
 	}
 
 	@Override
 	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
-		return new Builder<IMethodAnalyser>().addAll(new LoadDefinitionHook(), new ReportMethodHookAnalyser(), new ProccessActionMethodHookAnalyser());
+		return new Builder<IMethodAnalyser>().addAll(new LoadDefinitionHook(), new ReportMethodHookAnalyser(), new ProccessActionMethodHookAnalyser(), new LoadMethodAnalyser());
 	}
 
 	@Override
 	public boolean matches(ClassNode c) {
 		return c.name.equalsIgnoreCase("client");
+	}
+	
+	public class LoadMethodAnalyser implements IMethodAnalyser {
+
+		/* (non-Javadoc)
+		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 */
+		@Override
+		public List<MethodHook> find(ClassNode cn) {
+			List<MethodHook> list = new ArrayList<MethodHook>();
+			WorldAnalyser wa = ((WorldAnalyser) getAnalyser("World"));
+			if(wa != null) {
+				MethodNode lm = wa.loadMethod;
+				list.add(asMethodHook(lm, "loadWorlds"));
+			}
+			return list;
+		}
+	}
+	
+	public class StaticWorldFieldsAnalyser implements IFieldAnalyser {
+
+		/* (non-Javadoc)
+		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 */
+		@Override
+		public List<FieldHook> find(ClassNode _cn) {
+			List<FieldHook> list = new ArrayList<FieldHook>();
+			
+			ClassNode world = getClassNodeByRefactoredName("World");
+			if(world == null)
+				return list;
+						
+			TreeBuilder tb = new TreeBuilder();
+			NodeVisitor nv = new NodeVisitor() {
+				@Override
+				public void visitField(FieldMemberNode fmn) {
+					if(fmn.opcode() == PUTSTATIC) {
+						TypeNode newarr = fmn.firstType();
+						if(newarr != null && newarr.type().equals(world.name)) {
+							for(AbstractNode an : fmn.traverse()) {
+								if(an != fmn) {
+									if(an instanceof FieldMemberNode) {
+										FieldMemberNode fmn2 = (FieldMemberNode) an;
+										if(fmn2.opcode() == GETSTATIC) {
+											list.add(asFieldHook(fmn.fin(), "worlds"));
+											list.add(asFieldHook(fmn2.fin(), "worldCount"));
+											break;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+			MethodNode lm = ((WorldAnalyser) getAnalyser("World")).loadMethod;
+			tb.build(lm).accept(nv);
+			
+			return list;
+		}
 	}
 	
 	public class CredentialHooks implements IFieldAnalyser {

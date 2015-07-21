@@ -1,4 +1,4 @@
-package org.nullbool.api.obfuscation;
+package org.nullbool.api.obfuscation.stuffthatdoesntwork;
 
 import java.util.HashSet;
 import java.util.Map.Entry;

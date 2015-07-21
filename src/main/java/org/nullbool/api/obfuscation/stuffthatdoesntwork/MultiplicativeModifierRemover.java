@@ -1,4 +1,4 @@
-package org.nullbool.api.obfuscation;
+package org.nullbool.api.obfuscation.stuffthatdoesntwork;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

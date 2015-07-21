@@ -1,4 +1,4 @@
-package org.nullbool.api.obfuscation;
+package org.nullbool.api.obfuscation.stuffthatdoesntwork;
 
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;

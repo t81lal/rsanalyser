@@ -59,8 +59,10 @@ public class SuccessorTree implements Iterable<Successor> {
 
 	public void mapSuccessors(IControlFlowGraph graph, FlowBlock parent, List<FlowBlock> blockSuccs){
 		for(FlowBlock succ : blockSuccs) {
-			Successor successor = new Successor(parent, succ, typeOf(graph, parent, succ));
-			tree.getNotNull(parent).add(successor);
+			if(!(succ instanceof DummyExitBlock)) {
+				Successor successor = new Successor(parent, succ, typeOf(graph, parent, succ));
+				tree.getNotNull(parent).add(successor);
+			}
 		}
 	}
 
@@ -84,7 +86,7 @@ public class SuccessorTree implements Iterable<Successor> {
 		int index = blocks.indexOf(b);
 		int targetIndex = blocks.indexOf(target);
 		if(index == -1 || targetIndex == -1) 
-			throw new RuntimeException();
+			throw new RuntimeException(String.format("%s:%d, %s:%d.", b.id(), index, target.id(), targetIndex));
 		boolean immediate = (index + 1) == targetIndex;
 
 		int lastOpcode = b.lastOpcode();
@@ -161,6 +163,7 @@ public class SuccessorTree implements Iterable<Successor> {
 				return s;
 		}
 
+		System.out.println("No succ for " + block);
 		return null;
 	}
 
