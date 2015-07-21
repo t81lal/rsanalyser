@@ -36,4 +36,9 @@ public class DummyExitBlock extends FlowBlock {
 				pred.successors().add(this);
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return "{dummy} " + super.toString();
+	}
 }

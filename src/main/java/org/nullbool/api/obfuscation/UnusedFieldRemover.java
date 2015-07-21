@@ -37,8 +37,8 @@ public class UnusedFieldRemover extends Visitor {
 						FieldInsnNode fin = (FieldInsnNode) ain;
 						FieldNode ref = findReference(tree, fin.owner, fin.halfKey());
 						if(ref == null) {
-							if(debug)
-								System.err.printf("%s is null.%n", fin.key());
+							// if(debug)
+							// System.err.printf("%s is null.%n", fin.key());
 							
 							untraceable++;
 						} else {

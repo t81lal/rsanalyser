@@ -40,6 +40,7 @@ public class NewOutputLogger {
 
 		int col_width = 40;
 
+		List<String> errors = new ArrayList<String>();
 
 		int total_class_count = 0;
 		int total_correct_class_count = 0;
@@ -101,6 +102,7 @@ public class NewOutputLogger {
 				String[] parts = sf.split("&");
 				if(parts.length != 2) {
 					fieldSb.append(" ^  Malformed supported field input: ").append(sf);
+					errors.add(sf);
 					continue;
 				}
 
@@ -110,10 +112,12 @@ public class NewOutputLogger {
 					for(FieldHook fh : matches) {
 						fieldSb.append(" ^  Error, found ").append(fh.refactored()).append(" multiple times (").append(format(fh)).append(")");
 						fieldSb.append('\n');
+						errors.add(sf);
 					}
 				} else if(matches.size() == 0){
 					fieldSb.append(" ^  Error, ").append(parts[0]).append(" (").append(parts[1]).append(") couldn't be identified.");
 					fieldSb.append('\n');
+					errors.add(sf);
 				} else {
 					correct_field_counter++;
 
@@ -154,12 +158,16 @@ public class NewOutputLogger {
 					sb.append('\n');
 
 					fieldSb.append(sb);
+
+					errors.add(fh.refactored() + "&" + fh.val(Constants.DESC));
 				}
 
 				for(FieldHook fh1 : ch.fields()) {
 					if(fh1 != fh && fh.val(Constants.REAL_OWNER).equals(fh1.val(Constants.REAL_OWNER)) && fh.obfuscated().equals(fh1.obfuscated()) && !fh.refactored().equals(fh1.refactored())) {
 						fieldSb.append(" ^  Error, field found twice as ").append(fh.refactored()).append(" and ").append(fh1.refactored());
 						fieldSb.append('\n');
+						
+						errors.add(fh.refactored() + "&" + fh.val(Constants.DESC));
 					}
 				}
 			}
@@ -174,6 +182,7 @@ public class NewOutputLogger {
 				String[] parts = sm.split("&");
 				if(parts.length != 2) {
 					methodSb.append(" ^  Malformed supported method input: ").append(sm);
+					errors.add(sm);
 					continue;
 				}
 
@@ -183,10 +192,12 @@ public class NewOutputLogger {
 					for(MethodHook mh : matches) {
 						methodSb.append(" ^  Error, found ").append(mh.refactored()).append(" multiple times (").append(format(mh)).append(")");
 						methodSb.append('\n');
+						errors.add(sm);
 					}
 				} else if(matches.size() == 0){
 					methodSb.append(" ^  Error, ").append(parts[0]).append(" (").append(parts[1]).append(") couldn't be identified.");
 					methodSb.append('\n');
+					errors.add(sm);
 				} else {
 					correct_method_counter++;
 
@@ -217,6 +228,7 @@ public class NewOutputLogger {
 					sb.append('\n');
 
 					methodSb.append(sb);
+					errors.add(mh.refactored() + "&" + mh.val(Constants.DESC));
 				}
 			}
 
@@ -303,6 +315,13 @@ public class NewOutputLogger {
 		System.out.printf("Found %d/%d classes.%n", total_correct_class_count, total_class_count);
 		System.out.printf("Found %d/%d fields.%n", total_correct_field_count, total_field_count);
 		System.out.printf("Found %d/%d methods.%n", total_correct_method_count, total_method_count);
+		
+		if(errors.size() > 0) {
+			System.out.println("===ERRORS===");
+			for(String s : errors) {
+				System.out.println(" " + s);
+			}
+		}
 
 		return new HookMap(classes);
 	}

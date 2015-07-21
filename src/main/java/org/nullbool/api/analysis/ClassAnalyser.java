@@ -45,7 +45,7 @@ public abstract class ClassAnalyser implements Opcodes {
 
 	public void preRun(Map<String, ClassNode> classes) throws AnalysisException {
 		foundClass = analyse(classes);
-		if(foundClass != null)
+		if (foundClass != null)
 			foundHook = new ClassHook(foundClass.name, name);
 	}
 
@@ -62,8 +62,8 @@ public abstract class ClassAnalyser implements Opcodes {
 		if (fs != null) {
 			for (IFieldAnalyser f : fs) {
 				try {
-					for(FieldHook fh : f.find(foundClass)) {
-						if(fh != null) {
+					for (FieldHook fh : f.find(foundClass)) {
+						if (fh != null) {
 							foundHook.fields().add(fh);
 						} else {
 							System.out.println("NULL HOOK AFTER EXECUTING: " + f.getClass().getCanonicalName());
@@ -92,7 +92,7 @@ public abstract class ClassAnalyser implements Opcodes {
 	private SupportedHooks getSupportedHooksAnno() {
 		SupportedHooks anno = null;
 		Class<?> klass = getClass();
-		while(anno == null && klass != null && !klass.equals(Object.class)) {
+		while (anno == null && klass != null && !klass.equals(Object.class)) {
 			anno = klass.getAnnotation(SupportedHooks.class);
 			klass = klass.getSuperclass();
 		}
@@ -131,12 +131,20 @@ public abstract class ClassAnalyser implements Opcodes {
 		return s.filter(m -> ((MethodNode) m).desc.matches((regex))).count();
 	}
 
+	public static boolean contains(List<Integer> list, int[] ints) {
+		for (int i : ints) {
+			if (!list.contains(i))
+				return false;
+		}
+		return true;
+	}
+
 	public boolean containMethodWithName(ClassNode classnode, String t) {
 		Stream<MethodNode> stream = classnode.methods.stream();
 		return stream.filter(m -> ((MethodNode) m).name.equals(t)).count() != 0;
 	}
 
-	private List<String> getCleanList(MethodNode node) {
+	public List<String> getCleanList(MethodNode node) {
 		List<String> opList = new ArrayList<String>();
 		AbstractInsnNode[] ins = node.instructions.toArray();
 		Stream<String> s = new InstructionIdentifier(ins).getInstCleanList().stream();
@@ -167,6 +175,8 @@ public abstract class ClassAnalyser implements Opcodes {
 		Stream<ClassAnalyser> stream = provider.getAnalysers().stream();
 		stream = stream.filter(a -> a.foundHook.refactored().equals(name));
 		ClassAnalyser a = stream.findFirst().orElse(null);
+		if (a == null || a.foundHook == null)
+			return null;
 		return provider.getClassNodes().get(a.foundHook.obfuscated());
 	}
 
@@ -186,11 +196,11 @@ public abstract class ClassAnalyser implements Opcodes {
 		s = s.filter(f -> Modifier.isStatic(((FieldNode) f).access) == is);
 		return s.count();
 	}
-	
+
 	public int getFieldCount(ClassNode cn, Filter<FieldNode> filter) {
 		int count = 0;
-		for(FieldNode f : cn.fields) {
-			if(filter.accept(f)) {
+		for (FieldNode f : cn.fields) {
+			if (filter.accept(f)) {
 				count++;
 			}
 		}
@@ -247,6 +257,56 @@ public abstract class ClassAnalyser implements Opcodes {
 		return null;
 	}
 
+	public boolean identifyMethod(MethodNode methodNode,  String... pattern) {
+		int count = 0;
+		String firstIn, secondIn;
+		int size = pattern.length;
+
+		InstructionIdentifier i = new InstructionIdentifier(methodNode.instructions.toArray());
+		List<String> opcodeList = i.getInstList();
+		if ((opcodeList.size() > 0) && ((opcodeList.size() - size) >= 0)) {
+			for (int x = 0; x <= (opcodeList.size() - size); x++) {
+				for (int index = 0; index < size; index++) {
+					firstIn = opcodeList.get(x + index);
+					secondIn = pattern[index];
+					count += secondIn.matches(firstIn) ? 1 : 0;
+				}
+				if(size == count)
+					return true;
+				
+				count = 0;
+			}
+		}
+		
+		return false;
+	}
+
+	public MethodNode identifyMethod(MethodNode[] methodNodes,  String... pattern) {
+		int count = 0;
+		InstructionIdentifier i;
+		String firstIn, secondIn;
+		MethodNode result = null;
+		List<String> opcodeList;
+		int size = pattern.length;
+
+		for (MethodNode methodNode : methodNodes) {
+			i = new InstructionIdentifier(methodNode.instructions.toArray());
+			opcodeList = i.getInstList();
+			if ((opcodeList.size() > 0) && ((opcodeList.size() - size) >= 0)) {
+				for (int x = 0; x <= (opcodeList.size() - size); x++) {
+					for (int index = 0; index < size; index++) {
+						firstIn = opcodeList.get(x + index);
+						secondIn = pattern[index];
+						count += secondIn.matches(firstIn) ? 1 : 0;
+					}
+					result = size == count ? methodNode : result;
+					count = 0;
+				}
+			}
+		}
+		return result;
+	}
+
 	public MethodNode identifyMethod(MethodNode[] methodNodes, boolean clean, String... pattern) {
 		int count = 0;
 		InstructionIdentifier i;
@@ -271,6 +331,29 @@ public abstract class ClassAnalyser implements Opcodes {
 			}
 		}
 		return result;
+	}
+
+	public boolean findMethod(ClassNode cn, MethodNode m, String... pattern) {
+		int count = 0;
+		boolean p = false;
+		String firstIn, secondIn;
+		List<String> opcodeList;
+		int size = pattern.length;
+
+		opcodeList = getCleanList(m);
+		if ((opcodeList.size() > 0) && ((opcodeList.size() - size) >= 0)) {
+			for (int x = 0; x <= (opcodeList.size() - size); x++) {
+				for (int index = 0; index < size; index++) {
+					firstIn = opcodeList.get(x + index);
+					secondIn = pattern[index];
+					count += secondIn.equals(firstIn) ? 1 : 0;
+				}
+				p = size == count ? true : p;
+				count = 0;
+			}
+
+		}
+		return p;
 	}
 
 	
@@ -340,98 +423,98 @@ public abstract class ClassAnalyser implements Opcodes {
 		return null;
 	}
 
-
 	public FieldHook asFieldHook(ClassHook c, String classAndName, String realName) {
-		if(classAndName == null)
+		if (classAndName == null)
 			return null;
 		String[] parts = classAndName.split("\\.");
 		ClassNode cn = Context.current().getClassNodes().get(parts[0]);
 		for (Object oF : cn.fields) {
 			FieldNode f = (FieldNode) oF;
 			if (parts[1].equals(f.name)) {
-				
-				//String owner = foundHook.obfuscated();
-				//if(!owner.equals(f.owner.name)) {
-				//	// System.out.printf("[%b] %s.%s doesn't match %s for %s.%n", Modifier.isStatic(f.access), f.owner.name, f.name, foundHook.obfuscated(), realName);
-				//	owner = f.owner.name;
-				//}
-				
-				return new FieldHook(foundHook)
-					.obfuscated(f.name)
-					.refactored(realName)
-					.var(Constants.REAL_OWNER, f.owner.name)
-					.var(Constants.DESC, f.desc)
-					.var(Constants.STATIC, Boolean.toString(Modifier.isStatic(f.access)));
+
+				// String owner = foundHook.obfuscated();
+				// if(!owner.equals(f.owner.name)) {
+				// // System.out.printf("[%b] %s.%s doesn't match %s for %s.%n", Modifier.isStatic(f.access), f.owner.name, f.name,
+				// foundHook.obfuscated(), realName);
+				// owner = f.owner.name;
+				// }
+
+				return new FieldHook(foundHook).obfuscated(f.name).refactored(realName).var(Constants.REAL_OWNER, f.owner.name)
+						.var(Constants.DESC, f.desc).var(Constants.STATIC, Boolean.toString(Modifier.isStatic(f.access)));
 			}
 		}
 		return null;
 	}
-	
+
 	public FieldHook asFieldHook(String classAndName, String realName) {
 		return asFieldHook(foundHook, classAndName, realName);
 	}
 
-//	public FieldHook asFieldHook(String classAndName, String realName, long multiplier) {
-//		return asFieldHook(foundHook, classAndName, realName, multiplier);
-//	}
-	
-//	public FieldHook asFieldHook(ClassHook foundHook, String classAndName, String realName, long multiplier) {
-//		String[] parts = classAndName.split("\\.");
-//		ClassNode cn = Context.current().getClassNodes().get(parts[0]);
-//		for (Object oF : cn.fields) {
-//			FieldNode f = (FieldNode) oF;
-//			if (parts[1].equals(f.name)) {
-//				FieldHook fh = new FieldHook(foundHook)
-//					.obfuscated(f.name)
-//					.refactored(realName)
-//					.var(FieldHook.DESC, f.desc)
-//					.var(FieldHook.STATIC, Boolean.toString(Modifier.isStatic(f.access)));
-//				if(hasMulti(f.desc)) {
-//					fh.var(FieldHook.MUTLI, Long.toString(multiplier));
-//				}
-//				return fh;
-//			}
-//		}
-//		return null;
-//	}
-	
-//	public FieldHook asFieldHook(FieldInsnNode f, String realName) {
-//		boolean isStatic = f.opcode() == PUTSTATIC || f.opcode() == GETSTATIC;
-//		return asFieldHook(f, realName, isStatic, findMultiplier(source(f), isStatic));
-//	}
-	
+	// public FieldHook asFieldHook(String classAndName, String realName, long multiplier) {
+	// return asFieldHook(foundHook, classAndName, realName, multiplier);
+	// }
+
+	// public FieldHook asFieldHook(ClassHook foundHook, String classAndName, String realName, long multiplier) {
+	// String[] parts = classAndName.split("\\.");
+	// ClassNode cn = Context.current().getClassNodes().get(parts[0]);
+	// for (Object oF : cn.fields) {
+	// FieldNode f = (FieldNode) oF;
+	// if (parts[1].equals(f.name)) {
+	// FieldHook fh = new FieldHook(foundHook)
+	// .obfuscated(f.name)
+	// .refactored(realName)
+	// .var(FieldHook.DESC, f.desc)
+	// .var(FieldHook.STATIC, Boolean.toString(Modifier.isStatic(f.access)));
+	// if(hasMulti(f.desc)) {
+	// fh.var(FieldHook.MUTLI, Long.toString(multiplier));
+	// }
+	// return fh;
+	// }
+	// }
+	// return null;
+	// }
+
+	// public FieldHook asFieldHook(FieldInsnNode f, String realName) {
+	// boolean isStatic = f.opcode() == PUTSTATIC || f.opcode() == GETSTATIC;
+	// return asFieldHook(f, realName, isStatic, findMultiplier(source(f), isStatic));
+	// }
+
+	public FieldHook asFieldHook(FieldNode f, String realName) {
+		return asFieldHook(f, realName, Modifier.isStatic(f.access));
+	}
+
+	public FieldHook asFieldHook(FieldNode f, String realName, boolean isStatic) {
+		FieldHook fh = new FieldHook(new ClassHook(f.owner.name, foundHook.refactored())).obfuscated(f.name).refactored(realName)
+				.var(Constants.REAL_OWNER, f.owner.name).var(Constants.DESC, f.desc).var(Constants.STATIC, Boolean.toString(isStatic));
+		// if(hasMulti(f.desc))
+		// fh.var(FieldHook.MUTLI, Long.toString(multiplier));
+		return fh;
+	}
+
 	public FieldHook asFieldHook(FieldInsnNode f, String realName) {
 		return asFieldHook(f, realName, f.opcode() == PUTSTATIC || f.opcode() == GETSTATIC);
 	}
-	
+
 	public FieldHook asFieldHook(FieldInsnNode f, String realName, boolean isStatic) {
-		FieldHook fh = new FieldHook(new ClassHook(f.owner, foundHook.refactored()))
-			.obfuscated(f.name)
-			.refactored(realName)
-			.var(Constants.REAL_OWNER, f.owner)
-			.var(Constants.DESC, f.desc)
-			.var(Constants.STATIC, Boolean.toString(isStatic));
-			//if(hasMulti(f.desc))
-			//	fh.var(FieldHook.MUTLI, Long.toString(multiplier));
-			return fh;
+		FieldHook fh = new FieldHook(new ClassHook(f.owner, foundHook.refactored())).obfuscated(f.name).refactored(realName)
+				.var(Constants.REAL_OWNER, f.owner).var(Constants.DESC, f.desc).var(Constants.STATIC, Boolean.toString(isStatic));
+		// if(hasMulti(f.desc))
+		// fh.var(FieldHook.MUTLI, Long.toString(multiplier));
+		return fh;
 	}
-	
+
 	public MethodHook asMethodHook(MethodInsnNode min, String realName) {
 		ClassNode cn = Context.current().getClassNodes().get(min.owner);
 		for (Object oM : cn.methods) {
 			MethodNode m = (MethodNode) oM;
 			if (min.name.equals(m.name) && min.desc.equals(m.desc)) {
-				return new MethodHook(foundHook)
-					.obfuscated(m.name)
-					.refactored(realName)
-					.var(Constants.REAL_OWNER, min.owner)
-					.var(Constants.DESC, m.desc)
-					.var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
+				return new MethodHook(foundHook).obfuscated(m.name).refactored(realName).var(Constants.REAL_OWNER, min.owner)
+						.var(Constants.DESC, m.desc).var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
 			}
 		}
 		return null;
 	}
-	
+
 	// TODO:
 	public MethodHook asMethodHook(String classAndName, String realName) {
 		String[] parts = classAndName.split("\\.");
@@ -441,12 +524,8 @@ public abstract class ClassAnalyser implements Opcodes {
 			MethodNode m = (MethodNode) oM;
 			// System.out.println("   method " + m.name + " " + m.desc);
 			if (parts[1].equals(m.name)) {
-				return new MethodHook(foundHook)
-				.obfuscated(m.name)
-				.refactored(realName)
-				.var(Constants.REAL_OWNER, cn.name)
-				.var(Constants.DESC, m.desc)
-				.var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
+				return new MethodHook(foundHook).obfuscated(m.name).refactored(realName).var(Constants.REAL_OWNER, cn.name)
+						.var(Constants.DESC, m.desc).var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
 			}
 		}
 		return null;
@@ -465,12 +544,8 @@ public abstract class ClassAnalyser implements Opcodes {
 	}
 
 	public MethodHook asMethodHook(MethodNode m, String realName) {
-		return new MethodHook(foundHook)
-			.obfuscated(m.name)
-			.refactored(realName)
-			.var(Constants.REAL_OWNER, m.owner.name)
-			.var(Constants.DESC, m.desc)
-			.var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
+		return new MethodHook(foundHook).obfuscated(m.name).refactored(realName).var(Constants.REAL_OWNER, m.owner.name).var(Constants.DESC, m.desc)
+				.var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
 	}
 
 	public MethodNode[] findMethods(Map<String, ClassNode> nodes, String regularExpression, boolean isStatic) {
@@ -546,7 +621,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		}
 		return null;
 	}
-	
+
 	public String findField2(MethodNode m, String insName, String... pattern) {
 		InstructionIdentifier f = new InstructionIdentifier(m.instructions.toArray());
 		List<String> i = f.getInstList();
@@ -574,13 +649,13 @@ public abstract class ClassAnalyser implements Opcodes {
 			if (i.get(x).matches(insName)) {
 				c++;
 				// System.out.println("match: " + i.get(x));
-				if(match == c) {
+				if (match == c) {
 					return f.getInstList().get(x).split(" ")[1];
 				}
 			}
 		return null;
 	}
-	
+
 	private int getIndex(List<String> ins, String... pat) {
 		String firstIn, secondIn;
 		int count = 0, index = -1;
@@ -630,64 +705,64 @@ public abstract class ClassAnalyser implements Opcodes {
 	public long findMultiplier(String source, boolean isStatic) {
 		return Context.current().getMultiplierHandler().getDecoder(source);
 	}
-	
+
 	public static Set<MethodNode> findMethodsByPattern(MethodNode[] methods, int[] opcodes) {
 		Set<MethodNode> set = new HashSet<MethodNode>();
-		
-		for(MethodNode m : methods) {
-			for(AbstractInsnNode[] ains : findAllOpcodePatterns(m, opcodes)) {
+
+		for (MethodNode m : methods) {
+			for (AbstractInsnNode[] ains : findAllOpcodePatterns(m, opcodes)) {
 				AbstractInsnNode ain = ains[0];
 				set.add(ain.method);
 			}
 		}
-		
+
 		return set;
 	}
-	
+
 	public static Set<MethodNode> findMethodsByPattern(ClassNode cn, int[] opcodes) {
 		Set<MethodNode> set = new HashSet<MethodNode>();
-		
-		for(MethodNode m : cn.methods) {
-			for(AbstractInsnNode[] ains : findAllOpcodePatterns(m, opcodes)) {
+
+		for (MethodNode m : cn.methods) {
+			for (AbstractInsnNode[] ains : findAllOpcodePatterns(m, opcodes)) {
 				AbstractInsnNode ain = ains[0];
 				set.add(ain.method);
 			}
 		}
-		
+
 		return set;
 	}
-	
+
 	public static List<AbstractInsnNode[]> findAllOpcodePatterns(MethodNode m, int[] opcodes) {
 		List<AbstractInsnNode[]> set = new ArrayList<AbstractInsnNode[]>();
 		AbstractInsnNode[] array = new AbstractInsnNode[opcodes.length];
-		
+
 		AbstractInsnNode[] insns = m.instructions.toArray();
 		int j = 0;
-		for(int i=0; i < insns.length; i++) {
+		for (int i = 0; i < insns.length; i++) {
 			AbstractInsnNode ain = insns[i];
-			
+
 			int target = opcodes[j++];
-			
-			if(target == -1) {			
-				//System.out.println("ClassAnalyser.findOpcodePattern() -1 target");
+
+			if (target == -1) {
+				// System.out.println("ClassAnalyser.findOpcodePattern() -1 target");
 				continue;
-			} else if(target == -2) {
-				//distance to the next one
+			} else if (target == -2) {
+				// distance to the next one
 				int next = nextDefined(opcodes, j);
 				int dist = getDistance(insns, i, next);
-				if(dist != -1) {
+				if (dist != -1) {
 					System.out.println("next " + next);
 					System.out.println("ClassAnalyser.findOpcodePattern() -1 dist");
 				}
-				
+
 				i = i - 1;
 				continue;
 			}
-			
-			if(ain.opcode() != -1) {
-				if(ain.opcode() == target) {
+
+			if (ain.opcode() != -1) {
+				if (ain.opcode() == target) {
 					array[j - 1] = ain;
-					if(j == opcodes.length) { 
+					if (j == opcodes.length) {
 						set.add(array);
 						array = new AbstractInsnNode[opcodes.length];
 						j = 0;
@@ -701,72 +776,72 @@ public abstract class ClassAnalyser implements Opcodes {
 				continue;
 			}
 		}
-		
+
 		return set;
 	}
-	
+
 	public static List<AbstractInsnNode> findAllOpcodePatternsStarts(List<AbstractInsnNode[]> list, int[] opcodes) {
-		if(list.isEmpty())
+		if (list.isEmpty())
 			return null;
 		List<AbstractInsnNode> list2 = new ArrayList<AbstractInsnNode>();
-		
-		for(AbstractInsnNode[] ains : list) {
+
+		for (AbstractInsnNode[] ains : list) {
 			list2.add(ains[0]);
 		}
-		
+
 		return list2;
 	}
-	
+
 	public static List<AbstractInsnNode> findAllOpcodePatternsStarts(MethodNode m, int[] opcodes) {
 		List<AbstractInsnNode[]> list = findAllOpcodePatterns(m, opcodes);
-		if(list.isEmpty())
+		if (list.isEmpty())
 			return null;
 		List<AbstractInsnNode> list2 = new ArrayList<AbstractInsnNode>();
-		
-		for(AbstractInsnNode[] ains : list) {
+
+		for (AbstractInsnNode[] ains : list) {
 			list2.add(ains[0]);
 		}
-		
+
 		return list2;
 	}
-	
+
 	public static AbstractInsnNode findOpcodePattern(MethodNode m, int[] opcodes) {
 		List<AbstractInsnNode[]> list = findAllOpcodePatterns(m, opcodes);
-		if(list.isEmpty())
+		if (list.isEmpty())
 			return null;
 		return list.get(0)[0];
 	}
-	
+
 	public static AbstractInsnNode[] findOpcodePatternArr(MethodNode m, int[] opcodes) {
 		List<AbstractInsnNode[]> list = findAllOpcodePatterns(m, opcodes);
-		if(list.isEmpty())
+		if (list.isEmpty())
 			return null;
 		return list.get(0);
 	}
-	
+
 	public static int countOpcodePatterns(MethodNode m, int[] opcodes) {
 		return findAllOpcodePatterns(m, opcodes).size();
 	}
-	
+
 	public static int nextDefined(int[] opcodes, int offset) {
-		for(int i=offset; i < opcodes.length; i++) {
+		for (int i = offset; i < opcodes.length; i++) {
 			int op = opcodes[i];
-			if(op >= 0)
+			if (op >= 0)
 				return i;
 		}
 		return offset;
 	}
-	
+
 	public static int getDistance(AbstractInsnNode[] insns, int offset, int target) {
-		for(int i=offset; i < insns.length; i++) {
+		for (int i = offset; i < insns.length; i++) {
 			AbstractInsnNode ain = insns[i];
-			if(ain.opcode() == target)
+			if (ain.opcode() == target)
 				return i;
 		}
-		
+
 		return -1;
 	}
-	
+
 	public static String source(FieldInsnNode fin) {
 		return String.format("%s.%s", fin.owner, fin.name);
 	}

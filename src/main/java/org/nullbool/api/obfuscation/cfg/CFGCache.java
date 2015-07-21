@@ -20,6 +20,10 @@ public class CFGCache {
 		this.graphCreator = graphCreator;
 	}
 	
+	public boolean contains(MethodNode m) {
+		return cache.containsKey(m);
+	}
+	
 	public void add(MethodNode m, IControlFlowGraph graph) {
 		cache.put(m, graph);
 	}
@@ -37,5 +41,13 @@ public class CFGCache {
 	
 	public int size() {
 		return cache.size();
+	}
+	
+	public void clear() {
+		cache.clear();
+	}
+	
+	public void remove(MethodNode m) {
+		cache.remove(m);
 	}
 }

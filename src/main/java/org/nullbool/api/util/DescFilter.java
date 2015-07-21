@@ -10,7 +10,7 @@ public class DescFilter implements Filter<FieldNode> {
 	public DescFilter(String desc) {
 		this.desc = desc;
 	}
-
+	
 	@Override
 	public boolean accept(FieldNode t) {
 		return t.desc.equals(desc);

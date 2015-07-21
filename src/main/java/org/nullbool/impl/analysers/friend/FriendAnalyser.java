@@ -9,22 +9,19 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
-import org.nullbool.api.obfuscation.cfg.ControlFlowException;
-import org.nullbool.api.obfuscation.cfg.FlowBlock;
-import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
-import org.nullbool.api.rs.BlockTraverser;
 import org.nullbool.api.rs.CaseAnalyser;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
+import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
+import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
+import org.objectweb.asm.commons.cfg.tree.node.IincNode;
+import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
+import org.objectweb.asm.commons.cfg.tree.node.VariableNode;
+import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.IincInsnNode;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
-import org.topdank.banalysis.asm.insn.InstructionPattern;
-import org.topdank.banalysis.asm.insn.InstructionSearcher;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -36,11 +33,9 @@ import org.topdank.banalysis.asm.insn.InstructionSearcher;
 )
 public class FriendAnalyser extends ClassAnalyser implements Opcodes {
 
-	private final InstructionPattern classPattern;
 	private String className;
-	private FieldInsnNode displayName;
-	private FieldInsnNode previousName;
-	private final InstructionPattern worldPattern;
+	private final FieldInsnNode[] insns = new FieldInsnNode[2];
+	// private final InstructionPattern worldPattern;
 	
 	/**
 	 * @param name
@@ -69,16 +64,16 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
         //   aastore
 
             
-		classPattern = new InstructionPattern(InstructionPattern.translate(new AbstractInsnNode[]{
-				new FieldInsnNode(GETSTATIC, null, null, "[Ljava/lang/String;"),
-				new VarInsnNode(ILOAD, 7),
-				new IincInsnNode(7, 1),
-				new FieldInsnNode(GETSTATIC, "client", null, null),
-				new VarInsnNode(ILOAD, 16),
-				new InsnNode(AALOAD),
-				new FieldInsnNode(GETFIELD, null, null, "Ljava/lang/String;"),
-				new InsnNode(AASTORE)
-		}));
+		// classPattern = new InstructionPattern(InstructionPattern.translate(new AbstractInsnNode[]{
+		//		new FieldInsnNode(GETSTATIC, null, null, "[Ljava/lang/String;"),
+		//		new VarInsnNode(ILOAD, 7),
+		//		new IincInsnNode(7, 1),
+		//		new FieldInsnNode(GETSTATIC, "client", null, null),
+		//		new VarInsnNode(ILOAD, 16),
+		//		new InsnNode(AALOAD),
+		//		new FieldInsnNode(GETFIELD, null, null, "Ljava/lang/String;"),
+		//		new InsnNode(AASTORE)
+		//}));
 		
         //getstatic al.u:int[]
         //iload6
@@ -91,17 +86,15 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
         //imul
         //iastore
 		
-		worldPattern = new InstructionPattern(InstructionPattern.translate(new AbstractInsnNode[]{
-				new FieldInsnNode(GETSTATIC, null, null, "[I"),
-				new VarInsnNode(ILOAD, 6),
-				new IincInsnNode(6, 1),
-				new FieldInsnNode(GETSTATIC, "client", null, null),
-				new VarInsnNode(ILOAD, 16),
-				new InsnNode(AALOAD),
-				new FieldInsnNode(GETFIELD, null, null, "I"),
-		}));
-
-        
+		// worldPattern = new InstructionPattern(InstructionPattern.translate(new AbstractInsnNode[]{
+		//		new FieldInsnNode(GETSTATIC, null, null, "[I"),
+		//		new VarInsnNode(ILOAD, 6),
+		//		new IincInsnNode(6, 1),
+		//		new FieldInsnNode(GETSTATIC, "client", null, null),
+		//		new VarInsnNode(ILOAD, 16),
+		//		new InsnNode(AALOAD),
+		//		new FieldInsnNode(GETFIELD, null, null, "I"),
+		//}));
 	}
 
 	/* (non-Javadoc)
@@ -111,80 +104,77 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
 	protected boolean matches(ClassNode cn) {
 		if(className == null) {
 			
-			try {
+			// try {
 				CaseAnalyser caseAnalyser = Context.current().getCaseAnalyser();
-				IControlFlowGraph graph = Context.current().getCFGCache().get(caseAnalyser.getMethod());
-				FlowBlock checkBlock = caseAnalyser.findBlock(3601).iterator().next();
-				FlowBlock next = null;
-				if(checkBlock.lastOpcode() == IF_ICMPEQ) {
-					next = checkBlock.target();
-				} else if(checkBlock.lastOpcode() == IF_ICMPNE) {
-					next = checkBlock.next();
-				} else {
-					throw new RuntimeException();
-				}
-				
-				if(next.cleansize() == 1 && next.lastOpcode() == GOTO) {
-					next = next.next();
-				}
-				
-				BlockTraverser traverser = new BlockTraverser(next) {
-				
-					void doStuff(List<AbstractInsnNode> ains) {
-						InstructionSearcher searcher = new InstructionSearcher(ains, classPattern);
-						if(searcher.search()) {
-							displayName = (FieldInsnNode) searcher.getMatches().get(0)[6];
-							previousName = (FieldInsnNode) searcher.getMatches().get(1)[6];
-							className = displayName.owner;
+				// IControlFlowGraph graph = Context.current().getCFGCache().get(caseAnalyser.getMethod());
+				// FlowBlock checkBlock = caseAnalyser.findBlock(3601).iterator().next();
+				NodeVisitor nv = new NodeVisitor() {
+					boolean stopped = false;
+					boolean started = false;
+					int pos = 0;
+					
+					@Override
+					public void visitAny(AbstractNode an) {
+						if(pos >= 2) {
+							stopped = true;
 						}
 					}
 					
 					@Override
-					protected FlowBlock unconditional(FlowBlock block) {
-						doStuff(block.insns());
-						return graph.findTarget(block);
+					public void visitNumber(NumberNode nn) {
+						if(stopped || started)
+							return;
+						if(nn.number() == 3601) {
+							started = true;
+						}
 					}
 					
 					@Override
-					protected FlowBlock tableswitch(FlowBlock block) {
-						doStuff(block.insns());
-						return null;
-					}
-					
-					@Override
-					protected FlowBlock lookupswitch(FlowBlock block) {
-						doStuff(block.insns());
-						return null;
-					}
-					
-					@Override
-					protected void exit(FlowBlock block) {
-						doStuff(block.insns());
-					}
-					
-					@Override
-					protected FlowBlock conditional(FlowBlock block) {						
-						JumpInsnNode jin = (JumpInsnNode) block.last();
-						if(jin.opcode() == IF_ICMPNE && jin.getPrevious().opcode() == ICONST_2)
-							return block.next();
-						
-						if(jin.opcode() == IF_ICMPGE && jin.getPrevious().opcode() == IMUL)
-							return block.next();
-						
-						return null;
-					}
-					
-					@Override
-					protected FlowBlock basic(FlowBlock block) {
-						doStuff(block.insns());				
-						return null;
+					public void visit(AbstractNode an) {
+						if(stopped || !started)
+							return;
+						if(an.opcode() == AASTORE) {
+							FieldMemberNode _fmn = an.t_first(GETSTATIC);
+							if(_fmn == null || !_fmn.desc().equals("[Ljava/lang/String;")) {
+								return;
+							}
+							FieldMemberNode fmn = an.t_first(GETFIELD);
+							if(fmn == null || !fmn.desc().equals("Ljava/lang/String;")) {
+								return;
+							}
+							IincNode inc = an.firstIinc();
+							VariableNode vn = an.firstVariable();
+							if(inc == null || inc.increment() != 1 || vn == null || vn.opcode() != ILOAD || vn.var() != inc.var()) {
+								return;
+							}
+							
+							AbstractNode load = fmn.t_first(AALOAD);
+							if(load != null) {
+								
+								FieldMemberNode f = load.firstField();
+								VariableNode v = load.firstVariable();
+								if(f == null || v == null || f.opcode() != GETSTATIC || !f.desc().startsWith("[L")) {
+									return;
+								}
+								
+								insns[pos++] = fmn.fin();
+							}
+							
+						}
 					}
 				};
+				TreeBuilder tb = new TreeBuilder();
+				tb.build(caseAnalyser.getMethod()).accept(nv);
+
+				FieldInsnNode f0 = insns[0];
+				FieldInsnNode f1 = insns[1];
+				if(f0 != null && f1 != null && f0.owner.equals(f1.owner)) {
+					className = f0.owner;
+				}
 				
-				traverser.traverseFully();
-			} catch (ControlFlowException e) {
-				e.printStackTrace();
-			}
+			// } catch(ControlFlowException e) {
+			// 	e.printStackTrace();
+			// }
 			
 			if(className == null) {
 				className = "";
@@ -219,8 +209,8 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
 		public List<FieldHook> find(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
-			list.add(asFieldHook(displayName, "displayName"));
-			list.add(asFieldHook(previousName, "previousName"));
+			list.add(asFieldHook(insns[0], "displayName"));
+			list.add(asFieldHook(insns[1], "previousName"));
 			
 			return list;
 		}
@@ -235,79 +225,60 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
 		public List<FieldHook> find(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 
-			try {
-				CaseAnalyser caseAnalyser = Context.current().getCaseAnalyser();
-				IControlFlowGraph graph = Context.current().getCFGCache().get(caseAnalyser.getMethod());
-				FlowBlock checkBlock = caseAnalyser.findBlock(3602).iterator().next();
-				FlowBlock next = null;
-				if(checkBlock.lastOpcode() == IF_ICMPEQ) {
-					next = checkBlock.target();
-				} else if(checkBlock.lastOpcode() == IF_ICMPNE) {
-					next = checkBlock.next();
-				} else {
-					throw new RuntimeException();
+			CaseAnalyser caseAnalyser = Context.current().getCaseAnalyser();
+			NodeVisitor nv = new NodeVisitor() {
+				boolean stopped = false;
+				boolean started = false;
+				
+				@Override
+				public void visitNumber(NumberNode nn) {
+					if(stopped || started)
+						return;
+					if(nn.number() == 3602) {
+						started = true;
+					}
 				}
 				
-				if(next.cleansize() == 1 && next.lastOpcode() == GOTO) {
-					next = next.next();
-				}
-				
-				BlockTraverser traverser = new BlockTraverser(next) {
-				
-					void doStuff(List<AbstractInsnNode> ains) {
-						InstructionSearcher searcher = new InstructionSearcher(ains, worldPattern);
-						if(searcher.search()) {
-							FieldInsnNode worldFin = (FieldInsnNode) searcher.getMatches().get(0)[6];
-							list.add(asFieldHook(worldFin, "world"));
+				@Override
+				public void visit(AbstractNode an) {
+					if(stopped || !started)
+						return;
+					if(an.opcode() == IASTORE) {
+						FieldMemberNode _fmn = an.t_first(GETSTATIC);
+						if(_fmn == null || !_fmn.desc().equals("[I")) {
+							return;
 						}
-					}
-					
-					@Override
-					protected FlowBlock unconditional(FlowBlock block) {
-						doStuff(block.insns());
-						return graph.findTarget(block);
-					}
-					
-					@Override
-					protected FlowBlock tableswitch(FlowBlock block) {
-						doStuff(block.insns());
-						return null;
-					}
-					
-					@Override
-					protected FlowBlock lookupswitch(FlowBlock block) {
-						doStuff(block.insns());
-						return null;
-					}
-					
-					@Override
-					protected void exit(FlowBlock block) {
-						doStuff(block.insns());
-					}
-					
-					@Override
-					protected FlowBlock conditional(FlowBlock block) {						
-						JumpInsnNode jin = (JumpInsnNode) block.last();
-						if(jin.opcode() == IF_ICMPNE && jin.getPrevious().opcode() == ICONST_2)
-							return block.next();
+						ArithmeticNode arn = an.t_first(IMUL);
+						if(arn == null) {
+							return;
+						}
+						FieldMemberNode fmn = arn.t_first(GETFIELD);
+						if(fmn == null || !fmn.owner().equals(cn.name) || !fmn.desc().equals("I")) {
+							return;
+						}
+						IincNode inc = an.firstIinc();
+						VariableNode vn = an.firstVariable();
+						if(inc == null || inc.increment() != 1 || vn == null || vn.opcode() != ILOAD || vn.var() != inc.var()) {
+							return;
+						}
 						
-						if(jin.opcode() == IF_ICMPGE && jin.getPrevious().opcode() == IMUL)
-							return block.next();
+						AbstractNode load = fmn.t_first(AALOAD);
+						if(load != null) {
+							FieldMemberNode f = load.firstField();
+							VariableNode v = load.firstVariable();
+							if(f == null || v == null || f.opcode() != GETSTATIC || !f.desc().startsWith("[L")) {
+								return;
+							}
+							
+							list.add(asFieldHook(fmn.fin(), "world"));
+							stopped = true;
+						}
 						
-						return null;
 					}
-					
-					@Override
-					protected FlowBlock basic(FlowBlock block) {
-						doStuff(block.insns());				
-						return null;
-					}
-				};
-				
-				traverser.traverseFully();
-			} catch (ControlFlowException e) {
-				e.printStackTrace();
-			}
+				}
+			};
+			TreeBuilder tb = new TreeBuilder();
+			tb.build(caseAnalyser.getMethod()).accept(nv);
 			
 			return list;
 		}
