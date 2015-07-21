@@ -356,33 +356,6 @@ public abstract class ClassAnalyser implements Opcodes {
 		return p;
 	}
 
-	
-	
-	public MethodNode identifyMethod(MethodNode[] methodNodes,  String... pattern) {
-		int count = 0;
-		InstructionIdentifier i;
-		String firstIn, secondIn;
-		MethodNode result = null;
-		List<String> opcodeList;
-		int size = pattern.length;
-
-		for (MethodNode methodNode : methodNodes) {
-			i = new InstructionIdentifier(methodNode.instructions.toArray());
-			opcodeList = i.getInstList();
-			if ((opcodeList.size() > 0) && ((opcodeList.size() - size) >= 0)) {
-				for (int x = 0; x <= (opcodeList.size() - size); x++) {
-					for (int index = 0; index < size; index++) {
-						firstIn = opcodeList.get(x + index);
-						secondIn = pattern[index];
-						count += secondIn.matches(firstIn) ? 1 : 0;
-					}
-					result = size == count ? methodNode : result;
-					count = 0;
-				}
-			}
-		}
-		return result;
-	}
 	public boolean findMethod(ClassNode cn, String mName, String... pattern) {
 		int count = 0;
 		boolean p = false;
