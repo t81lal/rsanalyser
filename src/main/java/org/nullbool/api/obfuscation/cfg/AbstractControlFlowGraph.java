@@ -217,11 +217,14 @@ private static int graphCount = 0;
 				 * gamepack. */
 
 				/* the blocks (supposedly) first instruction. */
-				AbstractInsnNode bStart = ain.getNext();
-				if(bStart == null) {
+				/* 21/7/15, 10:02: Since we add labels to the blocks instructions,
+				 *                 the real start is not next, it's the label.*/
+				// AbstractInsnNode bStart = ain.getNext();
+				AbstractInsnNode bStart = ain;
+				// if(bStart == null) {
 					//System.err.println("TardASM put a LabelNode before a null insn (end)");
-					continue;
-				}
+					//continue;
+				// }
 				
 				FlowBlock block = blockStarts.get(bStart);
 				
@@ -231,6 +234,7 @@ private static int graphCount = 0;
 						if(b.insns().contains(bStart)) {
 							block = b;
 							blockStarts.put(bStart, b);
+							break;
 						}
 					}
 				}

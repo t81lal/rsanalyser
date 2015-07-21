@@ -14,7 +14,9 @@ import java.util.stream.Stream;
 import org.nullbool.api.AbstractAnalysisProvider;
 import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
+import org.nullbool.api.util.BoundedInstructionIdentifier;
 import org.nullbool.api.util.InstructionIdentifier;
+import org.nullbool.api.util.BoundedInstructionIdentifier.DataPoint;
 import org.nullbool.pi.core.hook.api.ClassHook;
 import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
@@ -256,6 +258,36 @@ public abstract class ClassAnalyser implements Opcodes {
 		}
 		return null;
 	}
+	
+	public DataPoint pointOf(MethodNode m, String... pattern) {
+		// TODO: Find from cache
+		BoundedInstructionIdentifier i = new BoundedInstructionIdentifier(m.instructions.toArray());
+		int count = 0;
+		DataPoint start = null;
+		String secondIn;
+		int size = pattern.length;
+
+		List<DataPoint> opcodeList = i.getPoints();
+		if ((opcodeList.size() > 0) && ((opcodeList.size() - size) >= 0)) {
+			for (int x = 0; x <= (opcodeList.size() - size); x++) {
+				for (int index = 0; index < size; index++) {
+					DataPoint firstIn = opcodeList.get(x + index);
+					if(start == null) {
+						start = firstIn;
+					}
+					secondIn = pattern[index];
+					count += firstIn.toString().matches(secondIn) ? 1 : 0;
+				}
+				if(size == count) // if the size == count return true (found)
+					return start;
+				
+				count = 0;
+				start = null;
+			}
+		}
+		
+		return null;
+	}
 
 	public boolean identifyMethod(MethodNode methodNode,  String... pattern) {
 		int count = 0;
@@ -269,9 +301,9 @@ public abstract class ClassAnalyser implements Opcodes {
 				for (int index = 0; index < size; index++) {
 					firstIn = opcodeList.get(x + index);
 					secondIn = pattern[index];
-					count += secondIn.matches(firstIn) ? 1 : 0;
+					count += firstIn.matches(secondIn) ? 1 : 0;
 				}
-				if(size == count)
+				if(size == count) // if the size == count return true (found)
 					return true;
 				
 				count = 0;
@@ -299,7 +331,7 @@ public abstract class ClassAnalyser implements Opcodes {
 						secondIn = pattern[index];
 						count += secondIn.matches(firstIn) ? 1 : 0;
 					}
-					result = size == count ? methodNode : result;
+					result = size == count ? methodNode : result; // if size == count then set the result to the current method
 					count = 0;
 				}
 			}

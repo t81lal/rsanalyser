@@ -1,34 +1,46 @@
 package org.nullbool.api.obfuscation.cfg;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-public class DFSIterator implements Iterator<FlowBlock> {
+public class PriorityDFSIterator implements Iterator<FlowBlock> {
 
-	protected final Set<FlowBlock> visited;
-	protected final Deque<Iterator<FlowBlock>> stack;
+	private final Comparator<FlowBlock> comparator;
+	private final Set<FlowBlock> visited;
+	private final Deque<Iterator<FlowBlock>> stack;
 	private transient FlowBlock next;
 
-	public DFSIterator(FlowBlock entry, boolean exceptions) {
-		visited = new HashSet<FlowBlock>();
-		stack   = new LinkedList<Iterator<FlowBlock>>();
-		next    = entry;
+	public PriorityDFSIterator(Comparator<FlowBlock> comparator, FlowBlock entry) {
+		this.comparator = comparator;
+		visited         = new HashSet<FlowBlock>();
+		stack           = new LinkedList<Iterator<FlowBlock>>();
+		next            = entry;
 		
-		init(exceptions);
+		add(next);
 	}
 	
-	public DFSIterator(FlowBlock entry) {
-		this(entry, true);
-	}
-	
-	public void init(boolean exceptions) {
-		stack.push(next.successors().iterator());
-		if(exceptions)
-			stack.push(next.exceptionSuccessors().iterator());
+	void add(FlowBlock next) {
+		stack.push(next.exceptionSuccessors().iterator());
+		List<FlowBlock> succs = new ArrayList<FlowBlock>(next.successors());
+		
+		ListIterator<FlowBlock> it = succs.listIterator();
+		while(it.hasNext()) {
+			if(it.next() instanceof DummyExitBlock) {
+				it.remove();
+			}
+		}
+		
+		Collections.sort(succs, comparator);
+		stack.push(succs.iterator());
 	}
 
 	@Override
@@ -68,19 +80,18 @@ public class DFSIterator implements Iterator<FlowBlock> {
 
 			next = successors.next();
 		} while (visited.contains(next));
-		
-		stack.push(next.successors().iterator());
-		stack.push(next.exceptionSuccessors().iterator());
+
+		add(next);
 	}
-	
+
 	public Set<FlowBlock> visited() {
 		return visited;
 	}
-	
+
 	public FlowBlock last() {
 		return next;
 	}
-	
+
 	public Deque<Iterator<FlowBlock>> stack() {
 		return stack;
 	}

@@ -9,6 +9,7 @@ import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
 import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
 import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
@@ -56,7 +57,26 @@ public class ComparisonReorderer extends NodeVisitor {
 				OperandSwap swap = new OperandSwap(first.method(), new AbstractInsnNode[]{first.insn(), jn.child(1).insn()}, OperandSwapType.CST);
 				swaps.add(swap);
 			}
-		}
+		}/* else if(jn.opcode() == IFNONNULL) {
+			*
+			 * L1: aconst_null
+			 *     ifnonnull L3
+			 * L2: do stuff
+			 * L3: thing thing
+			 * 
+			 *  if(null != null)
+			 *      thing thing
+			 *  else
+			 *      do stuff
+			 *  
+			 *  
+			 *  L1: aconst_null
+			 *      ifnull L2
+			 *  
+			 *
+			LabelNode target = jn.insn().label;
+			
+		}*/
 	}
 
 	public void output() {

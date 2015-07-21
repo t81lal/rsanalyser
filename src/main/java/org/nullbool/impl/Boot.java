@@ -44,8 +44,10 @@ public class Boot {
 		bootstrap();
 
 		// Use runLatest for full logs
-		int count = 10;
+		int count = 1;
 		for(int i=0; i < count; i++) {
+			
+			//System.out.println("Match condition : " + "getfield gk.ca Lgk;".matches());
 			Revision revision = rev(Boot.revision - i);
 			System.out.println("Running " + revision.getName());
 			try {

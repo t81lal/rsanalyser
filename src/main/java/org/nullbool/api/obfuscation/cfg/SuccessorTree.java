@@ -163,7 +163,7 @@ public class SuccessorTree implements Iterable<Successor> {
 				return s;
 		}
 
-		System.out.println("No succ for " + block);
+		// System.out.println("No succ for " + block);
 		return null;
 	}
 
