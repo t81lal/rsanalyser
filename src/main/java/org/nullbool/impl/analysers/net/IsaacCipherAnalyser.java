@@ -7,6 +7,7 @@ import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
@@ -125,7 +126,7 @@ public class IsaacCipherAnalyser extends ClassAnalyser {
 	private class FieldAnalyser implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
 			findNext(cn);
@@ -149,7 +150,7 @@ public class IsaacCipherAnalyser extends ClassAnalyser {
 	private class MethodAnalyser implements IMethodAnalyser {
 
 		@Override
-		public List<MethodHook> find(ClassNode cn) {
+		public List<MethodHook> findMethods(ClassNode cn) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 			
 			/*initMin will be set if this method is called.*/
@@ -307,5 +308,14 @@ public class IsaacCipherAnalyser extends ClassAnalyser {
 				}
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

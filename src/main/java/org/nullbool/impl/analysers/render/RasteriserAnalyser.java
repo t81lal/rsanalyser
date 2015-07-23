@@ -9,6 +9,7 @@ import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.objectweb.asm.tree.ClassNode;
 import org.nullbool.pi.core.hook.api.FieldHook;
@@ -49,12 +50,21 @@ public class RasteriserAnalyser extends ClassAnalyser {
 	private class FieldAnalyser implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
 			
 			
 			return list;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

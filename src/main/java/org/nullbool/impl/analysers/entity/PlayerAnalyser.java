@@ -9,6 +9,7 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.ClassNode;
@@ -46,7 +47,7 @@ public class PlayerAnalyser extends ClassAnalyser {
 	public class NameHook implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String pat, hook, actorObj = findObfClassName("Player");
 			String regex = ";\\w*" + "L" + actorObj + ";" + "\\w*;\\w";
@@ -64,7 +65,7 @@ public class PlayerAnalyser extends ClassAnalyser {
 	public class LevelHook implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 
 			String h, definitionObj = cn.name;
 			String player = findObfClassName("Player");
@@ -80,5 +81,14 @@ public class PlayerAnalyser extends ClassAnalyser {
 
 			return list;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

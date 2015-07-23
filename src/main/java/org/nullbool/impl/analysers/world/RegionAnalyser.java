@@ -8,6 +8,7 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.ClassNode;
@@ -42,12 +43,21 @@ public class RegionAnalyser extends ClassAnalyser {
 	public class TilesHook implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String t = "[[[L" + findObfClassName("Tile") + ";";
 			String hook = getFieldOfType(cn, t, false);
 			list.add(asFieldHook(hook, "tiles"));
 			return list;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

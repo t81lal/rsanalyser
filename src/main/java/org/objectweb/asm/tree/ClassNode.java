@@ -559,6 +559,16 @@ public class ClassNode extends ClassVisitor {
 		return superName.equals("java/lang/Object");
 	}
 	
+	public int countNonStatic() {
+		int n = 0;
+		for(FieldNode f : fields) {
+			if(!Modifier.isStatic(f.access)) {
+				n++;
+			}
+		}
+		return n;
+	}
+	
 	@Override
 	public String toString(){
 		return name;

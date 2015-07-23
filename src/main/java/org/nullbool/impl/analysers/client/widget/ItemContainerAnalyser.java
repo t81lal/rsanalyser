@@ -9,6 +9,7 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.ClassNode;
@@ -47,7 +48,7 @@ public class ItemContainerAnalyser extends ClassAnalyser {
 
 	public class ItemAndStackHooks implements IFieldAnalyser {
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			final List<FieldHook> hooks = new ArrayList<FieldHook>();
 			
 			String field = findField(analysedMethod, true, true, 1, 'f', "aload 5", "aload 7");
@@ -57,5 +58,14 @@ public class ItemContainerAnalyser extends ClassAnalyser {
 			hooks.add(asFieldHook(field, "itemIds"));
 			return hooks;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

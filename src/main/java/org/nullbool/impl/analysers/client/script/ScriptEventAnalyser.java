@@ -9,6 +9,7 @@ import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.Type;
@@ -100,7 +101,7 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<FieldHook> find(ClassNode node) {
+		public List<FieldHook> findFields(ClassNode node) {
 			List<FieldHook> l = new ArrayList<FieldHook>();
 
 			// static final void cl(Widget[] var0, int var1, int var2, int var3,
@@ -150,7 +151,7 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> l = new ArrayList<FieldHook>();
 
 			InstructionSearcher searcher = new InstructionSearcher(method.instructions, new AbstractInsnNode[]{
@@ -173,7 +174,7 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> l = new ArrayList<FieldHook>();
 
 			String s = findField(method, "getfield .*Ljava/lang/String;", "ldc event_opbase");
@@ -181,5 +182,14 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 
 			return l;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -9,6 +9,7 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -56,7 +57,7 @@ public class WidgetAnalyser extends ClassAnalyser {
 	public class WidgetInfoHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String pattern = ";.*;.*;V";
 			List<FieldHook> l = new ArrayList<FieldHook>();
 			MethodNode[] m = findMethods(Context.current().getClassNodes(), pattern, true);
@@ -224,7 +225,7 @@ public class WidgetAnalyser extends ClassAnalyser {
 		 * .ClassNode)
 		 */
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			for (MethodNode m : cn.methods) {
 				// aload0 // reference to self
@@ -245,7 +246,7 @@ public class WidgetAnalyser extends ClassAnalyser {
 	public class ItemAndStackHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String f, regex = ";II.{0,1};V";
 			List<FieldHook> l = new ArrayList<FieldHook>();
 			String[] pattern = { "iload 2", "iaload", "istore 4" };
@@ -267,7 +268,7 @@ public class WidgetAnalyser extends ClassAnalyser {
 	public class ChildrenHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> l = new ArrayList<FieldHook>();
 			String f, pattern = ";II.{0,1};L" + cn.name + ";";
 			String[] p = { "aload", "getfield", "arraylength", "if_icmplt" };
@@ -286,7 +287,7 @@ public class WidgetAnalyser extends ClassAnalyser {
 	public class BoundsIndexHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> l = new ArrayList<FieldHook>();
 			String f, pattern = ";L" + cn.name + ";.{0,1};V";
 			MethodNode[] mn = findMethods(Context.current().getClassNodes(), pattern, true);
@@ -302,7 +303,7 @@ public class WidgetAnalyser extends ClassAnalyser {
 	public class TypeHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String regex, f, pattern = ";.{1,7};V";
 			List<FieldHook> l = new ArrayList<FieldHook>();
 			MethodNode[] mn = findMethods(Context.current().getClassNodes(), pattern, true);
@@ -320,5 +321,14 @@ public class WidgetAnalyser extends ClassAnalyser {
 
 			return l;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

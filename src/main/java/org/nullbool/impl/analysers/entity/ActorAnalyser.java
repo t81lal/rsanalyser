@@ -10,6 +10,7 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
@@ -87,7 +88,7 @@ public class ActorAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<MethodHook> find(ClassNode cn) {
+		public List<MethodHook> findMethods(ClassNode cn) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 			
 			TreeBuilder tb = new TreeBuilder();
@@ -186,7 +187,7 @@ public class ActorAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<MethodHook> find(ClassNode cn) {
+		public List<MethodHook> findMethods(ClassNode cn) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 
 			MethodNode m = findMoveMethod(cn);
@@ -204,7 +205,7 @@ public class ActorAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
 			MethodNode m = findMoveMethod(cn);
@@ -292,7 +293,7 @@ public class ActorAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
 			//aload0 // reference to self
@@ -348,7 +349,7 @@ public class ActorAnalyser extends ClassAnalyser {
 	public class XYHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> l = new ArrayList<FieldHook>();
 			String h, actorObj = findObfClassName("Actor");
 			String regexPat = ";\\w*" + "L" + actorObj + ";" + "\\w*;V";
@@ -400,7 +401,7 @@ public class ActorAnalyser extends ClassAnalyser {
 	public class InteractingHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String h, actorObj = findObfClassName("Actor");
 			String regex = ";\\w*" + "L" + actorObj + ";" + "\\w*;V";
@@ -417,7 +418,7 @@ public class ActorAnalyser extends ClassAnalyser {
 	public class AnimationHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String h, actorObj = findObfClassName("Actor");
 			String regex = ";\\w*" + "L" + actorObj + ";" + "\\w*;V";
@@ -434,7 +435,7 @@ public class ActorAnalyser extends ClassAnalyser {
 	public class HealthAndDamageHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String h, actorObj = findObfClassName("Actor");
 			String r = ";.*" + "L" + actorObj + ";III" + ".*;V";
@@ -469,5 +470,14 @@ public class ActorAnalyser extends ClassAnalyser {
 
 			return list;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

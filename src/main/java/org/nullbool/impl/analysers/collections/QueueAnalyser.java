@@ -2,25 +2,14 @@ package org.nullbool.impl.analysers.collections;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
-import javax.management.RuntimeErrorException;
-
 import org.nullbool.api.Builder;
-import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
-import org.nullbool.api.obfuscation.cfg.ControlFlowException;
-import org.nullbool.api.obfuscation.cfg.FlowBlock;
-import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
-import org.nullbool.api.obfuscation.cfg.PriorityDFSIterator;
-import org.nullbool.api.obfuscation.cfg.SuccessorTree;
-import org.nullbool.api.obfuscation.cfg.SuccessorTree.Successor;
-import org.nullbool.api.obfuscation.cfg.SuccessorTree.SuccessorType;
-import org.nullbool.api.util.LabelHelper;
 import org.nullbool.api.util.StaticDescFilter;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
@@ -41,7 +30,8 @@ import org.topdank.banalysis.asm.insn.InstructionSearcher;
  * @created 21 Jul 2015 02:55:01
  */
 @SupportedHooks(fields = { "head&DualNode" }, 
-methods = { "get&()DualNode", "remove&()DualNode" })
+				methods = { "get&()DualNode", "remove&()DualNode", 
+							"insertHead&(DualNode)V", "insertTail&(DualNode)V" })
 public class QueueAnalyser extends ClassAnalyser {
 
 	private ClassNode dual;
@@ -110,7 +100,7 @@ public class QueueAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 
 			List<FieldHook> list = new ArrayList<FieldHook>();
 
@@ -136,7 +126,7 @@ public class QueueAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<MethodHook> find(ClassNode cn) {
+		public List<MethodHook> findMethods(ClassNode cn) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 
 			String desc = "()L" + dual() + ";";
@@ -157,16 +147,19 @@ public class QueueAnalyser extends ClassAnalyser {
 		}
 	}
 
-	public class InsertMethodAnalyser implements IMethodAnalyser {
+	public class InsertMethodsAnalyser implements IMethodAnalyser {
 
 		/* (non-Javadoc)
 		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<MethodHook> find(ClassNode cn) {
+		public List<MethodHook> findMethods(ClassNode cn) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 
 			String fdesc = "L" + dual().name + ";";
+			
+			FieldHook prev = getAnalyser("DualNode").getFoundHook().fbyRefactoredName("previousDualNode");
+			FieldHook next = getAnalyser("DualNode").getFoundHook().fbyRefactoredName("nextDualNode");
 			//System.out.println(fdesc);
 			// cant get this getfield to work
 			
@@ -185,6 +178,7 @@ public class QueueAnalyser extends ClassAnalyser {
 			// the difference between the two methods is that two lines
 			// look like they are switched
 			// so we gotta match them in the right order
+			// fuck that, different fields used.
 			
 			String[] pat1 = new String[]{"aload 1", "aload 0", "getfield " + cn.name + ".*" + fdesc, "getfield .*" + fdesc, "putfield .*" + fdesc};
 			String[] pat2 = new String[]{"aload 1", "aload 0", "getfield " + cn.name + ".*" + fdesc, "putfield .*" + fdesc};
@@ -194,57 +188,18 @@ public class QueueAnalyser extends ClassAnalyser {
 					
 					AbstractInsnNode ain1 = pointOf(m, pat1).instruction();
 					AbstractInsnNode ain2 = pointOf(m, pat2).instruction();
-					int i1 = 0;
-					int i2= 0;
 					
-					try {
-						IControlFlowGraph graph = Context.current().getCFGCache().get(m);
-						//System.out.println(m);
-						//System.out.println(graph);
+					if(ain1 != null && ain2 != null) {
+						FieldInsnNode fin = (FieldInsnNode) ain1.getNext().getNext().getNext();
 						
-						SuccessorTree tree = new SuccessorTree();
-						tree.map(graph);
-
-						Comparator<FlowBlock> comparator = new Comparator<FlowBlock>() {
-							@Override
-							public int compare(FlowBlock o1, FlowBlock o2) {
-								Successor s = tree.findRelationship(o1, o2);
-								if(s == null) {
-									// System.out.println("No fucking relationship between " + o1.id() + " and " + o2.id());
-									return 0;
-								}
-								if(s.type() == SuccessorType.IMMEDIATE)
-									return 1;
-								if(o1.lastOpcode() == IFNULL)
-									return 1;
-								return -1;
-							}
-						};
-						
-						PriorityDFSIterator it = new PriorityDFSIterator(comparator, graph.entry());
-						int i = 0;
-						while(it.hasNext()) {
-							i++;
-							FlowBlock b = it.next();
-							if(b.insns().contains(ain1)) {
-								i1 = i;
-							} else if(b.insns().contains(ain2)) {
-								i2 = i;
-							}
-						}
-						
-						if(i1 > i2) {
-							list.add(asMethodHook(m, "insert"))
-						} else if(i2 < i1) {
-							
+						if(fin.name.equals(next.obfuscated())) {
+							list.add(asMethodHook(m, "insertHead"));
+						} else if(fin.name.equals(prev.obfuscated())) {
+							list.add(asMethodHook(m, "insertTail"));
 						} else {
 							throw new RuntimeException();
-						}
-					} catch (ControlFlowException e) {
-						e.printStackTrace();
+						}	
 					}
-					
-					//System.out.println(new InstructionIdentifier(m.instructions.toArray()).getInstList());
 				}
 			}
 
@@ -266,6 +221,15 @@ public class QueueAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
-		return new Builder<IMethodAnalyser>().addAll(new GetRemoveMethodAnalysers(), new InsertMethodAnalyser());
+		return new Builder<IMethodAnalyser>().addAll(new GetRemoveMethodAnalysers(), new InsertMethodsAnalyser());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -11,6 +11,7 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
@@ -61,7 +62,7 @@ public class HashtableAnalyser extends ClassAnalyser {
 	private class MethodAnalyser implements IMethodAnalyser {
 
 		@Override
-		public List<MethodHook> find(ClassNode cn) {
+		public List<MethodHook> findMethods(ClassNode cn) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 			
 			if(putMethod != null) {
@@ -120,7 +121,7 @@ public class HashtableAnalyser extends ClassAnalyser {
 	private class IntFieldAnalyser implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 
             //aload1 // reference to arg0
@@ -183,7 +184,7 @@ public class HashtableAnalyser extends ClassAnalyser {
 	public class HeadHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String[] pat = { "iconst_0", "istore" };
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String node = "[L" + findObfClassName("Node") + ";";
@@ -205,5 +206,14 @@ public class HashtableAnalyser extends ClassAnalyser {
 
 			return list;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

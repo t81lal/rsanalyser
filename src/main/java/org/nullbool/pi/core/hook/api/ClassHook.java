@@ -40,6 +40,14 @@ public class ClassHook extends ObfuscatedData {
 		return this;
 	}
 	
+	public FieldHook fbyRefactoredName(String name) {
+		for(FieldHook fh : fields) {
+			if(fh.refactored().equals(name))
+				return fh;
+		}
+		return null;
+	}
+	
 	public List<InterfaceMapping> interfaces() {
 		return interfaces;
 	}

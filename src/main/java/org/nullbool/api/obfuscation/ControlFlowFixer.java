@@ -16,15 +16,14 @@ import java.util.Set;
 import org.nullbool.api.obfuscation.cfg.ExceptionData;
 import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
-import org.nullbool.api.obfuscation.cfg.SuccessorTree;
-import org.nullbool.api.obfuscation.cfg.SuccessorTreeDFSIterator;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)
  * @created 20 Jun 2015 14:53:51
  */
-public class ControlFlowFixer {
+public class ControlFlowFixer implements Opcodes {
 
 	public void fix(MethodNode m, IControlFlowGraph graph) {
 		// DFSIterator it = new DFSIterator(graph.entry(), true);
@@ -50,21 +49,26 @@ public class ControlFlowFixer {
 //
 //		System.out.println(((SaneControlFlowGraph) graph).toString(re));
 		
-		if(m.owner.name.equals("af") && m.name.equals("bf")) {
-
-			System.out.println(graph.toString());
-		}
+//		if(m.owner.name.equals("af") && m.name.equals("bf")) {
+//
+//			System.out.println(graph.toString());
+//		}
+//		m.instructions.removeAll(true);
+//		
+//		while(it.hasNext()) {
+//			FlowBlock b = it.next();
+//			b.transfer(m.instructions);
+//		}
+//		
 		
-		SuccessorTree tree = new SuccessorTree();
-		tree.map(graph);
-		SuccessorTreeDFSIterator it = new SuccessorTreeDFSIterator(tree, graph.entry());
-		m.instructions.removeAll(true);
-		List<FlowBlock> re = new ArrayList<FlowBlock>();
-		while(it.hasNext()) {
-			FlowBlock n = it.next();
-			re.add(n);
-			n.transfer(m.instructions);
-		}
+//		SuccessorTreeDFSIterator it = new SuccessorTreeDFSIterator(tree, graph.entry());
+//		m.instructions.removeAll(true);
+//		List<FlowBlock> re = new ArrayList<FlowBlock>();
+//		while(it.hasNext()) {
+//			FlowBlock n = it.next();
+//			re.add(n);
+//			n.transfer(m.instructions);
+//		}
 
 
 		
@@ -163,12 +167,22 @@ public class ControlFlowFixer {
 		while(!stack.isEmpty()) {
 			FlowBlock v = stack.pop();
 			if(!dfs.contains(v)) {
-				//TODO:
 				dfs.add(v);
+				
 			}
 		}
 		
 		return dfs;
+	}
+	
+	private static void pushSuccessors(Deque<FlowBlock> stack, List<FlowBlock> visited, FlowBlock v) {
+		for(FlowBlock b : v.exceptionSuccessors()) {
+			if(!visited.contains(b)) {
+				stack.push(b); // visited after
+			}
+		}
+		
+		
 	}
 	
 	private void removeDeadBlocks(MethodNode m, IControlFlowGraph graph, List<FlowBlock> dfs) {		

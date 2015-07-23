@@ -9,6 +9,7 @@ import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.InstructionUtil;
 import org.nullbool.api.util.StaticDescFilter;
@@ -98,7 +99,7 @@ public class WorldAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
 			return list;
@@ -111,7 +112,7 @@ public class WorldAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<FieldHook> find(ClassNode _cn) {
+		public List<FieldHook> findFields(ClassNode _cn) {
 			TreeBuilder tb = new TreeBuilder();
 			for(ClassNode cn : Context.current().getClassNodes().values()) {
 				for(MethodNode m : cn.methods) {
@@ -153,6 +154,15 @@ public class WorldAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

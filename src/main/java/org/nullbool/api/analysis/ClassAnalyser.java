@@ -15,12 +15,13 @@ import org.nullbool.api.AbstractAnalysisProvider;
 import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
 import org.nullbool.api.util.BoundedInstructionIdentifier;
-import org.nullbool.api.util.InstructionIdentifier;
 import org.nullbool.api.util.BoundedInstructionIdentifier.DataPoint;
+import org.nullbool.api.util.InstructionIdentifier;
 import org.nullbool.pi.core.hook.api.ClassHook;
 import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
+import org.nullbool.pi.core.hook.api.ObfuscatedData;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -64,7 +65,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		if (fs != null) {
 			for (IFieldAnalyser f : fs) {
 				try {
-					for (FieldHook fh : f.find(foundClass)) {
+					for (FieldHook fh : f.findFields(foundClass)) {
 						if (fh != null) {
 							foundHook.fields().add(fh);
 						} else {
@@ -82,7 +83,37 @@ public abstract class ClassAnalyser implements Opcodes {
 		if (ms != null) {
 			for (IMethodAnalyser m : ms) {
 				try {
-					foundHook.methods().addAll(m.find(foundClass));
+					for(MethodHook mh : m.findMethods(foundClass)) {
+						if(mh != null) {
+							foundHook.methods().add(mh);
+						} else {
+							System.out.println("NULL HOOK AFTER EXECUTING: " + m.getClass().getCanonicalName());
+						}
+					}
+				} catch (Exception e) {
+					System.err.println(m.getClass().getCanonicalName() + " -> " + e.getClass().getSimpleName());
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		Builder<IMultiAnalyser> mas = registerMultiAnalysers();
+		if (mas != null) {
+			for (IMultiAnalyser m : mas) {
+				try {
+					for(ObfuscatedData od : m.findAny(foundClass)) {
+						if(od != null) {
+							if(od instanceof MethodHook) {
+								foundHook.methods().add((MethodHook) od);
+							} else if(od instanceof FieldHook) {
+								foundHook.fields().add((FieldHook) od);
+							} else {
+								System.out.println(od.getClass().getCanonicalName() + " AFTER EXECUTING MULTIANALYSER FOR " + m.getClass().getCanonicalName());
+							}
+						} else {
+							System.out.println("NULL HOOK AFTER EXECUTING: " + m.getClass().getCanonicalName());
+						}
+					}
 				} catch (Exception e) {
 					System.err.println(m.getClass().getCanonicalName() + " -> " + e.getClass().getSimpleName());
 					e.printStackTrace();
@@ -128,6 +159,8 @@ public abstract class ClassAnalyser implements Opcodes {
 
 	protected abstract Builder<IMethodAnalyser> registerMethodAnalysers();
 
+	public abstract Builder<IMultiAnalyser> registerMultiAnalysers();
+	
 	public long getMethodDescCount(ClassNode cn, String regex) {
 		Stream<MethodNode> s = cn.methods.stream();
 		return s.filter(m -> ((MethodNode) m).desc.matches((regex))).count();
@@ -277,6 +310,9 @@ public abstract class ClassAnalyser implements Opcodes {
 					}
 					secondIn = pattern[index];
 					count += firstIn.toString().matches(secondIn) ? 1 : 0;
+					
+					// System.out.printf("[%b] %s matches %s.%n", firstIn.toString().matches(secondIn), firstIn, secondIn);
+					
 				}
 				if(size == count) // if the size == count return true (found)
 					return start;
@@ -302,6 +338,9 @@ public abstract class ClassAnalyser implements Opcodes {
 					firstIn = opcodeList.get(x + index);
 					secondIn = pattern[index];
 					count += firstIn.matches(secondIn) ? 1 : 0;
+					
+					 // System.out.printf("[%b] %s matches %s.%n", firstIn.toString().matches(secondIn), firstIn, secondIn);
+
 				}
 				if(size == count) // if the size == count return true (found)
 					return true;

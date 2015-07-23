@@ -16,13 +16,19 @@ import org.nullbool.impl.analysers.client.definitions.ItemDefinitionAnalyser;
 import org.nullbool.impl.analysers.client.definitions.NPCDefinitionAnalyser;
 import org.nullbool.impl.analysers.client.definitions.ObjectDefinitionAnalyser;
 import org.nullbool.impl.analysers.client.script.ScriptEventAnalyser;
+import org.nullbool.impl.analysers.client.task.TaskAnalyser;
+import org.nullbool.impl.analysers.client.task.TaskHandlerAnalyser;
 import org.nullbool.impl.analysers.client.widget.ItemContainerAnalyser;
 import org.nullbool.impl.analysers.client.widget.WidgetAnalyser;
 import org.nullbool.impl.analysers.client.widget.WidgetNodeAnalyser;
 import org.nullbool.impl.analysers.collections.DequeAnalyser;
 import org.nullbool.impl.analysers.collections.DualNodeAnalyser;
+import org.nullbool.impl.analysers.collections.DualNodeIteratorAnalyser;
 import org.nullbool.impl.analysers.collections.HashtableAnalyser;
+import org.nullbool.impl.analysers.collections.IterableDualNodeAnalyser;
+import org.nullbool.impl.analysers.collections.IterableNodeAnalyser;
 import org.nullbool.impl.analysers.collections.NodeAnalyser;
+import org.nullbool.impl.analysers.collections.NodeIteratorAnalyser;
 import org.nullbool.impl.analysers.collections.QueueAnalyser;
 import org.nullbool.impl.analysers.entity.ActorAnalyser;
 import org.nullbool.impl.analysers.entity.ModelAnalyser;
@@ -56,8 +62,9 @@ public class AnalysisProviderImpl extends AbstractAnalysisProvider {
 	protected Builder<ClassAnalyser> registerAnalysers() throws AnalysisException {
 		Builder<ClassAnalyser> builder = new Builder<ClassAnalyser>();
 		builder.addAll(new ClassAnalyser[]
-				{	new WrappedExceptionAnalyser(), /* deprecated new ExceptionReporterAnalyser(),*/ new CanvasAnalyser(), 
-					new NodeAnalyser(), new DualNodeAnalyser(), new QueueAnalyser(),
+				{	new WrappedExceptionAnalyser(), /* deprecated new ExceptionReporterAnalyser(),*/ new CanvasAnalyser(),
+					new TaskHandlerAnalyser(), new TaskAnalyser(),
+					new NodeAnalyser(), new DualNodeAnalyser(), new QueueAnalyser(), new IterableNodeAnalyser(), new NodeIteratorAnalyser(), new IterableDualNodeAnalyser(), new DualNodeIteratorAnalyser(),
 					new RasteriserAnalyser(), new RenderableAnalyser(), new ActorAnalyser(), new DequeAnalyser(), new NPCAnalyser(), new IsaacCipherAnalyser(), 
 					new BufferAnalyser(), new PacketAnalyser(), new HashtableAnalyser(), new GroundItemAnalyser(), new RegionAnalyser(), 
 					new VarpbitAnalyser(), new WorldListDownloaderAnalyser(), new WorldAnalyser(),

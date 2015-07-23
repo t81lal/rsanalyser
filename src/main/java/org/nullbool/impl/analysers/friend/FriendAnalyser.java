@@ -8,6 +8,7 @@ import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.rs.CaseAnalyser;
 import org.nullbool.pi.core.hook.api.FieldHook;
@@ -206,7 +207,7 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
 		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
 			list.add(asFieldHook(insns[0], "displayName"));
@@ -222,7 +223,7 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
 		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 
 			CaseAnalyser caseAnalyser = Context.current().getCaseAnalyser();
@@ -282,5 +283,14 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
 			
 			return list;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

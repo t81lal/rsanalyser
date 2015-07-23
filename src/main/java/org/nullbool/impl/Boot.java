@@ -29,7 +29,7 @@ import org.topdank.byteio.util.Debug;
  */
 public class Boot {
 
-	private static int revision = 84;
+	private static int revision = 85;
 
 	public static void main(String[] args) throws Exception {
 		/*if(true) {
@@ -44,7 +44,7 @@ public class Boot {
 		bootstrap();
 
 		// Use runLatest for full logs
-		int count = 1;
+		int count = 10;
 		for(int i=0; i < count; i++) {
 			
 			//System.out.println("Match condition : " + "getfield gk.ca Lgk;".matches());

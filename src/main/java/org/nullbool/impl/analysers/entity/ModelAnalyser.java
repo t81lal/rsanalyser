@@ -8,6 +8,7 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -46,7 +47,7 @@ public class ModelAnalyser extends ClassAnalyser {
 	public class ModelInfo implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String[] pattern = { "aload", "aload" };
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			MethodNode[] ms = getMethodNodes(cn.methods.toArray());
@@ -82,5 +83,14 @@ public class ModelAnalyser extends ClassAnalyser {
 
 			return list;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

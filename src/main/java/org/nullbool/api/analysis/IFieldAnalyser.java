@@ -11,5 +11,5 @@ import org.nullbool.pi.core.hook.api.FieldHook;
  */
 public abstract interface IFieldAnalyser {
 
-	public abstract List<FieldHook> find(ClassNode cn);
+	public abstract List<FieldHook> findFields(ClassNode cn);
 }

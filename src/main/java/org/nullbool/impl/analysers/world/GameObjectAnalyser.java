@@ -8,6 +8,7 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -50,7 +51,7 @@ public class GameObjectAnalyser extends ClassAnalyser {
 	public class ObjectInfoHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String[] pattern = { "iload", "istore" };
 			List<FieldHook> l = new ArrayList<FieldHook>();
 			ClassNode c = getClassNodeByRefactoredName("Region");
@@ -96,7 +97,7 @@ public class GameObjectAnalyser extends ClassAnalyser {
 	public class HashHook implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			MethodNode[] m = getMethodNodes(cn.methods.toArray());
 			MethodNode method = searchMethod(m, "<init>");
 			AbstractInsnNode[] i = followJump(method, 100);
@@ -105,5 +106,14 @@ public class GameObjectAnalyser extends ClassAnalyser {
 			list.add(asFieldHook(h, "hash"));
 			return list;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -11,6 +11,7 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.ClassNode;
@@ -29,7 +30,7 @@ public class RenderableAnalyser extends ClassAnalyser {
 	public class HeightHook implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String hook = getFieldOfType(cn, "I", false);
 			list.add(asFieldHook(hook, "modelHeight"));
@@ -71,6 +72,15 @@ public class RenderableAnalyser extends ClassAnalyser {
 
 	@Override
 	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

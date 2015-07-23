@@ -11,6 +11,7 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.ClassStructure;
 import org.nullbool.pi.core.hook.api.Constants;
@@ -57,7 +58,7 @@ public class NodeAnalyser extends ClassAnalyser {
 	private class MethodsAnalyser implements IMethodAnalyser {
 
 		@Override
-		public List<MethodHook> find(ClassNode cn) {
+		public List<MethodHook> findMethods(ClassNode cn) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 			
 			if(hasPreviousMethod != null) {
@@ -80,7 +81,7 @@ public class NodeAnalyser extends ClassAnalyser {
 	private class NodeInfoHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			MethodNode[] ms  = getMethodNodes(cn.methods.stream().filter(element -> element.desc.endsWith("Z")).collect(Collectors.toList()).toArray());
 			MethodNode[] ms2 = startWithBc(new String[] { "aload", "getfield", "ifnonnull" }, ms);
@@ -102,5 +103,14 @@ public class NodeAnalyser extends ClassAnalyser {
 
 			return list;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

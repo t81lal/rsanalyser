@@ -11,5 +11,5 @@ import org.nullbool.pi.core.hook.api.MethodHook;
  */
 public abstract interface IMethodAnalyser {
 
-	public abstract List<MethodHook> find(ClassNode cn);
+	public abstract List<MethodHook> findMethods(ClassNode cn);
 }

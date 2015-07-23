@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.nullbool.api.util.InstructionUtil;
 import org.objectweb.asm.commons.util.Assembly;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -60,6 +61,10 @@ public class FlowBlock {
 		successors      = new ArrayList<FlowBlock>();
 		excPredecessors = new ArrayList<FlowBlock>();
 		excSuccessors   = new ArrayList<FlowBlock>();
+	}
+	
+	public boolean branches() {
+		return InstructionUtil.isConditional(lastOpcode()) || InstructionUtil.isSwitch(lastOpcode());
 	}
 	
 	public String id() {

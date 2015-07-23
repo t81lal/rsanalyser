@@ -12,6 +12,7 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.EventCallGenerator;
 import org.nullbool.impl.analysers.world.WorldAnalyser;
@@ -81,7 +82,7 @@ public class ClientAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<MethodHook> find(ClassNode cn) {
+		public List<MethodHook> findMethods(ClassNode cn) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 			WorldAnalyser wa = ((WorldAnalyser) getAnalyser("World"));
 			if(wa != null) {
@@ -98,7 +99,7 @@ public class ClientAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<FieldHook> find(ClassNode _cn) {
+		public List<FieldHook> findFields(ClassNode _cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
 			ClassNode world = getClassNodeByRefactoredName("World");
@@ -141,7 +142,7 @@ public class ClientAnalyser extends ClassAnalyser {
 		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<FieldHook> find(ClassNode _cn) {
+		public List<FieldHook> findFields(ClassNode _cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
 			// getstatic aq.ad:java.lang.String
@@ -224,7 +225,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class ItemTableHook implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn){
+		public List<FieldHook> findFields(ClassNode cn){
 			List<FieldHook> hooks = new ArrayList<FieldHook>();
 			MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";IIII.{0,2};V", false);
 			final MethodNode[] m = startWithBc(new String []{ "getstatic", "iload", "i2l" } , mn);
@@ -238,7 +239,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class RegionWalkingHooks implements IFieldAnalyser {
  
 		@Override
-		public List<FieldHook> find(ClassNode cn){
+		public List<FieldHook> findFields(ClassNode cn){
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";L.{0,3};IIIIII.{0,2};V", false);
 			final MethodNode m = identifyMethod(mn, false, "iload 7", "bipush 7", "ishl");
@@ -256,7 +257,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class CanvasPlayerHook implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String type = "L" + "java/awt/Canvas" + ";";
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String hook = identifyField(Context.current().getClassNodes(), type);
@@ -273,7 +274,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class ActorArrayHook implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String hook, tempo;
 			List<FieldHook> list = new ArrayList<FieldHook>();
 
@@ -292,7 +293,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class MinimapHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String h, regex = ";.{0,1};V";
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
@@ -314,7 +315,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class CameraHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String h, regex = ";III\\w{0,1};V";
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
@@ -345,7 +346,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class MenuScreenHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 
 			String h, regex = ";I.{0,2};V";
 			List<FieldHook> list = new ArrayList<FieldHook>();
@@ -385,7 +386,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class ClientArrayHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String h, regex = ";;V";
 			String[] p = { "iconst_1", "putstatic" };
 			String[] pattern = { "bipush 9", "iconst_2", "iastore" };
@@ -442,7 +443,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class TileInfoHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String hook, regex = ";III\\w{0,1};I";
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String bytesPattern = "getstatic \\w*.\\w* \\[\\[\\[B";
@@ -464,7 +465,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class BaseXYHooks implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String obj = "L" + findObfClassName("Actor");
 			String h, regex = ";\\w*" + obj + ";" + "\\w*;V";
 			List<FieldHook> list = new ArrayList<FieldHook>();
@@ -486,7 +487,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class SettingsHook implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String hook, r = ";;V";
 			String[] pat = { "bipush", "newarray" };
 			String[] pat2 = { "sipush 2000", "newarray 10" };
@@ -508,7 +509,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class WidgetPositionXY implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			//TODO: WIDGETS
 			
 			// String hook, regex = ";;V";
@@ -568,7 +569,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class LoadDefinitionHook implements IMethodAnalyser {
 
 		@Override
-		public List<MethodHook> find(ClassNode _unused) {
+		public List<MethodHook> findMethods(ClassNode _unused) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 			String npcClass = findObfClassName("NPC");
 			ClassNode cn = getClassNodeByRefactoredName("Renderable");
@@ -645,7 +646,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class WidgetsHook implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String t = "[[L" + findObfClassName("Widget") + ";";
 			String widgetField = identifyField(Context.current().getClassNodes(), t);
@@ -658,7 +659,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class GroundItemsHook implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			String t = "[[[L" + findObfClassName("Deque") + ";";
 			String p = identifyField(Context.current().getClassNodes(), t);
 			List<FieldHook> list = new ArrayList<FieldHook>();
@@ -671,7 +672,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class CurrentRegionHook implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 
 			String type = "L" + findObfClassName("Region") + ";";
@@ -685,7 +686,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class ReportMethodHookAnalyser implements IMethodAnalyser {
 
 		@Override
-		public List<MethodHook> find(ClassNode _cn) {
+		public List<MethodHook> findMethods(ClassNode _cn) {
 			List<MethodHook> hooks = new ArrayList<MethodHook>();
 			for(ClassNode cn : Context.current().getClassNodes().values()) {
 				for(MethodNode m : cn.methods) {
@@ -766,7 +767,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class ProccessActionMethodHookAnalyser implements IMethodAnalyser {
 
 		@Override
-		public List<MethodHook> find(ClassNode _cn) {
+		public List<MethodHook> findMethods(ClassNode _cn) {
 			List<MethodHook> hooks = new ArrayList<MethodHook>();
 			String descStart = "(IIIILjava/lang/String;Ljava/lang/String;II";
 			for (ClassNode cn : Context.current().getClassNodes().values()) {
@@ -847,7 +848,7 @@ public class ClientAnalyser extends ClassAnalyser {
 	public class CredentialAnalyser implements IFieldAnalyser {
 		 
 		@Override
-		public List<FieldHook> find(ClassNode cn){
+		public List<FieldHook> findFields(ClassNode cn){
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
 			//TODO: FIX
@@ -875,5 +876,14 @@ public class ClientAnalyser extends ClassAnalyser {
 	static final void processAction(int arg1, int arg2, int opcode, int arg0, String action, String target, int mouseX, int mouseY, int DUMMY) {
 		System.out.println("[doAction] Op: " + opcode + ", Arg1: " + arg1 + ", Arg2: " + arg2 + ", Arg0: " + arg0 + ", Action: " + action + ", Target: "
 				+ target + ", var6: " + mouseX + ", var7: " + mouseY);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

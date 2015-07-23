@@ -9,6 +9,7 @@ import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.InstructionUtil;
 import org.nullbool.pi.core.hook.api.Constants;
@@ -64,7 +65,7 @@ public class PacketAnalyser extends ClassAnalyser {
 	private class MethodAnalyser implements IMethodAnalyser {
 
 		@Override
-		public List<MethodHook> find(ClassNode cn) {
+		public List<MethodHook> findMethods(ClassNode cn) {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 
 			for(MethodNode m : cn.methods) {
@@ -129,7 +130,7 @@ public class PacketAnalyser extends ClassAnalyser {
 	private class FieldAnalyser implements IFieldAnalyser {
 
 		@Override
-		public List<FieldHook> find(ClassNode cn) {
+		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			
 //			MethodNode[] classMethods = getMethodNodes(cn.methods.toArray());
@@ -167,5 +168,14 @@ public class PacketAnalyser extends ClassAnalyser {
 			
 			return list;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

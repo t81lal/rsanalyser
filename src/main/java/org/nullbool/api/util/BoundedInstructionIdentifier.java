@@ -105,6 +105,7 @@ public class BoundedInstructionIdentifier implements Iterable<DataPoint> {
 		abstract String create(AbstractInsnNode ain);
 
 
+		@Override
 		public AbstractInsnNode instruction() {
 			return ain;
 		}
@@ -157,7 +158,7 @@ public class BoundedInstructionIdentifier implements Iterable<DataPoint> {
 				extra = String.valueOf(m.operand);
 			}
 
-			return super.create(ain) + " " + extra;
+			return super.create(ain) + (extra.length() > 0 ? " " + extra : "");
 		}
 	}
 }

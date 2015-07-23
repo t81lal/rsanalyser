@@ -623,8 +623,8 @@ public abstract class AbstractAnalysisProvider {
 		// destroyMultis();
 		// removeMultis();
 		buildCfgs();
-		// reorderBlocks();
-		// buildCfgs();
+//		 reorderBlocks();
+//		 buildCfgs();
 		transformRedundantGotos();
 		// transformGotos();
 		// reorderBlocks();
