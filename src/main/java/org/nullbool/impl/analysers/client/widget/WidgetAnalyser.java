@@ -17,15 +17,15 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
- * @author : MalikDz
+ * @author : Bibl
  */
 @SupportedHooks(fields = { "quantities&[I", "itemIds&[I", "boundsIndex&I", "actions&String[]", "uid&I", "name&String",
 		"text&String", "textColor&I", "textAlpha&I", "textureId&I", "borderThickness&I", "modelType&I", "modelId&I",
 		"relativeX&I", "relativeY&I", "width&I", "height&I", "parentId&I", "index&I",
 		"rotationX&I", "rotationY&I", "rotationZ&I", "hidden&Z", "insetX&I", "insetY&I", "viewportWidth&I",
-		"viewportHeight&I", "modelZoom&I", "parent&Widget", "selectedAction&String", "mouseEnterListener&Object[]",
-		"mouseExitListener&Object[]", "mouseHoverListener&Object[]", "configListenerArgs&Object[]", "configTriggers&[I",
-		"renderListener&Object[]", "tableListenerArgs&Object[]", "tableModTriggers&[I", "skillListenerArgs&Object[]",
+		"viewportHeight&I", "modelZoom&I", "parent&Widget", "selectedAction&String", "mouseEnterListeners&Object[]",
+		"mouseExitListeners&Object[]", "mouseHoverListeners&Object[]", "configListenerArgs&Object[]", "configTriggers&[I",
+		"renderListeners&Object[]", "tableListenerArgs&Object[]", "tableModTriggers&[I", "skillListenerArgs&Object[]",
 		"skillTriggers&[I", "scrollListeners&Object[]", "fontId&I", "textShadowed&Z", "shadowColour&I", "flippedVertically&Z",
 		"flippedHorizontally&Z", "children&Widget[]", "itemId&I", "stackSize&I", "widgetType&I" }, methods = {})
 public class WidgetAnalyser extends ClassAnalyser {
@@ -158,13 +158,13 @@ public class WidgetAnalyser extends ClassAnalyser {
 //			add(l, asFieldHook(h, "getButtonType"));
 
 			h = findField(method, "putfield .*\\[Ljava/lang/Object;", "sipush 1403");
-			add(l, asFieldHook(h, "mouseEnterListener"));
+			add(l, asFieldHook(h, "mouseEnterListeners"));
 
 			h = findField(method, "putfield .*\\[Ljava/lang/Object;", "sipush 1404");
-			add(l, asFieldHook(h, "mouseExitListener"));
+			add(l, asFieldHook(h, "mouseExitListeners"));
 
 			h = findField(method, "putfield .*\\[Ljava/lang/Object;", "sipush 1412");
-			add(l, asFieldHook(h, "mouseHoverListener"));
+			add(l, asFieldHook(h, "mouseHoverListeners"));
 
 			h = findField(method, "putfield .*\\[Ljava/lang/Object;", "sipush 1407");
 			add(l, asFieldHook(h, "configListenerArgs"));
@@ -173,7 +173,7 @@ public class WidgetAnalyser extends ClassAnalyser {
 			add(l, asFieldHook(h, "configTriggers"));
 
 			h = findField(method, "putfield .*\\[Ljava/lang/Object;", "sipush 1408");
-			add(l, asFieldHook(h, "renderListener"));
+			add(l, asFieldHook(h, "renderListeners"));
 
 			h = findField3(method, 1, "putfield .*\\[Ljava/lang/Object;", "sipush 1414");
 			add(l, asFieldHook(h, "tableListenerArgs"));

@@ -1001,7 +1001,7 @@ public class CheckMethodAdapter extends MethodVisitor {
         endCode = true;
         for (Label l : usedLabels) {
             if (labels.get(l) == null) {
-                throw new IllegalStateException("Undefined label used");
+                throw new IllegalStateException(String.format("Undefined label used: %s.%n", l.toString()));
             }
         }
         for (int i = 0; i < handlers.size();) {

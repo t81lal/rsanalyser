@@ -7,6 +7,7 @@ import org.nullbool.api.Revision;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.impl.analysers.ClientAnalyser;
+import org.nullbool.impl.analysers.world.WorldAnalyser;
 import org.nullbool.impl.r79.AnalysisProvider79Impl;
 import org.topdank.banalysis.filter.Filter;
 
@@ -31,6 +32,11 @@ public class AnalysisProvider82Impl extends AnalysisProvider79Impl {
 			public boolean accept(ClassAnalyser t) {
 				return ClientAnalyser.class.isAssignableFrom(t.getClass());
 			}
-		}, new ClientAnalyser82());
+		}, new ClientAnalyser82()).replace(new Filter<ClassAnalyser>() {
+			@Override
+			public boolean accept(ClassAnalyser t) {
+				return WorldAnalyser.class.isAssignableFrom(t.getClass());
+			}
+		}, new WorldAnalyser82());
 	}
 }

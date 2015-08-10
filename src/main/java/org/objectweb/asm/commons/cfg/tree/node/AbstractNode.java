@@ -446,6 +446,14 @@ public class AbstractNode extends Tree<AbstractNode> implements Opcodes {
 		return previous(opcode, 5);
 	}
 
+	public <T extends AbstractNode> List<T> t_deepFindChildren(int opcode) {
+		List<T> children = new ArrayList<T>();
+		for (AbstractNode n : traverse()) {
+			if (n.opcode() == opcode) children.add((T) n);
+		}
+		return !children.isEmpty() ? children : null;
+	}
+	
 	public <T extends AbstractNode> List<T> t_findChildren(int opcode) {
 		List<T> children = new ArrayList<T>();
 		for (AbstractNode n : this) {

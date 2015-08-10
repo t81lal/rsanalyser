@@ -298,7 +298,7 @@ public class AntiPowerbot implements Opcodes {
 			}
 
 			@Override
-			public String resolveFieldName(String owner, String name, String desc) {
+			public String resolveFieldName(String owner, String name, String desc, boolean isStatic) {
 				//if(KEYWORDS.contains(name))
 				//	return "field_" + name;
 				

@@ -1,3 +1,4 @@
+
 package org.nullbool.impl;
 
 import java.io.BufferedReader;
@@ -29,7 +30,7 @@ import org.topdank.byteio.util.Debug;
  */
 public class Boot {
 
-	private static int revision = 85;
+	private static int revision = 87;
 
 	public static void main(String[] args) throws Exception {
 		/*if(true) {
@@ -44,7 +45,7 @@ public class Boot {
 		bootstrap();
 
 		// Use runLatest for full logs
-		int count = 10;
+		int count = 1;
 		for(int i=0; i < count; i++) {
 			
 			//System.out.println("Match condition : " + "getfield gk.ca Lgk;".matches());
@@ -53,9 +54,9 @@ public class Boot {
 			try {
 //				deob(AnalysisProviderRegistry.get(revision).create(revision));
 //				runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
-				fast_runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
+//				fast_runQuiet(AnalysisProviderRegistry.get(revision).create(revision));
 //				fast_runLatest(AnalysisProviderRegistry.get(revision).create(revision));
-//				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
+				runLatest(AnalysisProviderRegistry.get(revision).create(revision));
 			} catch(Throwable t) {
 				t.printStackTrace();
 			}
@@ -66,6 +67,8 @@ public class Boot {
 		//runTest(revision);
 		//run(70, revision, 2);
 		//deob(revision);
+		
+		System.exit(1);
 	}
 
 	private static void deob(AbstractAnalysisProvider provider) throws Exception {
@@ -313,7 +316,7 @@ public class Boot {
 		}));
 	}
 
-	private static Revision rev(int revision) throws Exception {
+	public static Revision rev(int revision) throws Exception {
 		return new Revision(Integer.toString(revision), new File(Boot.class.getResource(
 				"/jars/gamepack" + revision + ".jar").toURI()));
 	}

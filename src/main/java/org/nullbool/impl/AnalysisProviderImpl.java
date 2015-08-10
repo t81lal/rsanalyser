@@ -11,6 +11,7 @@ import org.nullbool.impl.analysers.ClientAnalyser;
 import org.nullbool.impl.analysers.GameshellAnalyser;
 import org.nullbool.impl.analysers.client.CanvasAnalyser;
 import org.nullbool.impl.analysers.client.VarpbitAnalyser;
+import org.nullbool.impl.analysers.client.VerificationDataAnalyser;
 import org.nullbool.impl.analysers.client.WrappedExceptionAnalyser;
 import org.nullbool.impl.analysers.client.definitions.ItemDefinitionAnalyser;
 import org.nullbool.impl.analysers.client.definitions.NPCDefinitionAnalyser;
@@ -24,7 +25,7 @@ import org.nullbool.impl.analysers.client.widget.WidgetNodeAnalyser;
 import org.nullbool.impl.analysers.collections.DequeAnalyser;
 import org.nullbool.impl.analysers.collections.DualNodeAnalyser;
 import org.nullbool.impl.analysers.collections.DualNodeIteratorAnalyser;
-import org.nullbool.impl.analysers.collections.HashtableAnalyser;
+import org.nullbool.impl.analysers.collections.HashTableAnalyser;
 import org.nullbool.impl.analysers.collections.IterableDualNodeAnalyser;
 import org.nullbool.impl.analysers.collections.IterableNodeAnalyser;
 import org.nullbool.impl.analysers.collections.NodeAnalyser;
@@ -34,6 +35,7 @@ import org.nullbool.impl.analysers.entity.ActorAnalyser;
 import org.nullbool.impl.analysers.entity.ModelAnalyser;
 import org.nullbool.impl.analysers.entity.NPCAnalyser;
 import org.nullbool.impl.analysers.entity.PlayerAnalyser;
+import org.nullbool.impl.analysers.entity.ProjectileAnalyser;
 import org.nullbool.impl.analysers.entity.RenderableAnalyser;
 import org.nullbool.impl.analysers.friend.FriendAnalyser;
 import org.nullbool.impl.analysers.friend.IgnoredPlayerAnalyser;
@@ -62,11 +64,11 @@ public class AnalysisProviderImpl extends AbstractAnalysisProvider {
 	protected Builder<ClassAnalyser> registerAnalysers() throws AnalysisException {
 		Builder<ClassAnalyser> builder = new Builder<ClassAnalyser>();
 		builder.addAll(new ClassAnalyser[]
-				{	new WrappedExceptionAnalyser(), /* deprecated new ExceptionReporterAnalyser(),*/ new CanvasAnalyser(),
+				{	new VerificationDataAnalyser(), new WrappedExceptionAnalyser(), /* deprecated new ExceptionReporterAnalyser(),*/ new CanvasAnalyser(),
 					new TaskHandlerAnalyser(), new TaskAnalyser(),
-					new NodeAnalyser(), new DualNodeAnalyser(), new QueueAnalyser(), new IterableNodeAnalyser(), new NodeIteratorAnalyser(), new IterableDualNodeAnalyser(), new DualNodeIteratorAnalyser(),
-					new RasteriserAnalyser(), new RenderableAnalyser(), new ActorAnalyser(), new DequeAnalyser(), new NPCAnalyser(), new IsaacCipherAnalyser(), 
-					new BufferAnalyser(), new PacketAnalyser(), new HashtableAnalyser(), new GroundItemAnalyser(), new RegionAnalyser(), 
+					new NodeAnalyser(), new DualNodeAnalyser(), new QueueAnalyser(), new DequeAnalyser(), new IterableNodeAnalyser(), new NodeIteratorAnalyser(), new IterableDualNodeAnalyser(), new DualNodeIteratorAnalyser(),
+					new RasteriserAnalyser(), new RenderableAnalyser(), new ActorAnalyser(), new ProjectileAnalyser(), new NPCAnalyser(), new IsaacCipherAnalyser(), 
+					new BufferAnalyser(), new PacketAnalyser(), new HashTableAnalyser(), new GroundItemAnalyser(), new RegionAnalyser(), 
 					new VarpbitAnalyser(), new WorldListDownloaderAnalyser(), new WorldAnalyser(),
 					new FriendAnalyser(), new IgnoredPlayerAnalyser(),
 					new NPCDefinitionAnalyser(), new ObjectDefinitionAnalyser(), new ItemDefinitionAnalyser(), new ModelAnalyser(),

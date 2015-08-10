@@ -93,6 +93,8 @@ import org.objectweb.asm.tree.TypeInsnNode;
  * once the empty goto remover is fixed.
  * </p>
  * 
+ * FIXME: *b city voice* "eyo nigga i think this shit here is broke, right quick nigga"
+ * 
  * @author Bibl (don't ban me pls)
  * @created 30 May 2015
  */
@@ -178,6 +180,14 @@ public class OpaquePredicateRemover extends NodeVisitor {
 
 				for(ComparisonPair pair : pairs) {
 					List<AbstractInsnNode> block = block(pair);
+					
+					/* if(method.key().startsWith("fz.o")) {
+						System.out.println("================");
+						for(AbstractInsnNode ain : block) {
+							System.out.println(ain);
+						}
+					} */
+					
 					if(block == null) {
 						b = true;
 						break;
@@ -225,7 +235,7 @@ public class OpaquePredicateRemover extends NodeVisitor {
 						 * to the target. */
 						method.instructions.insert(jump.jin, new JumpInsnNode(GOTO, jump.jin.label));
 						method.instructions.remove(jump.jin);
-
+						
 						for(AbstractInsnNode a : jump.insns) {
 							method.instructions.remove(a);
 						}

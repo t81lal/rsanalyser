@@ -32,6 +32,7 @@ package org.objectweb.asm.tree;
 import java.util.Map;
 
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.util.Printer;
 
 /**
  * A node that represents a local variable instruction. A local variable
@@ -72,7 +73,8 @@ public class VarInsnNode extends AbstractInsnNode {
      *            FLOAD, DLOAD, ALOAD, ISTORE, LSTORE, FSTORE, DSTORE, ASTORE or
      *            RET.
      */
-    public void setOpcode(final int opcode) {
+    @Override
+	public void setOpcode(final int opcode) {
         this.opcode = opcode;
     }
 
@@ -90,5 +92,10 @@ public class VarInsnNode extends AbstractInsnNode {
     @Override
     public AbstractInsnNode clone(final Map<LabelNode, LabelNode> labels) {
         return new VarInsnNode(opcode, var).cloneAnnotations(this);
+    }
+    
+    @Override
+	public String toString() {
+    	return Printer.OPCODES[opcode()] + " " + var;
     }
 }

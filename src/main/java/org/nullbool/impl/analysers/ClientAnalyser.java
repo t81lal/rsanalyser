@@ -1,5 +1,9 @@
 package org.nullbool.impl.analysers;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -15,15 +19,10 @@ import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.EventCallGenerator;
-import org.nullbool.impl.analysers.world.WorldAnalyser;
+import org.nullbool.api.util.InstructionIdentifier;
 import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
-import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
-import org.objectweb.asm.commons.cfg.tree.node.TypeNode;
-import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -43,16 +42,16 @@ import org.topdank.banalysis.asm.insn.InstructionSearcher;
  */
 @SupportedHooks(
 		fields = { "npcs&[NPC", "players&[Player", "region&Region", /*"getWidgetPositionsX&[I", "getWidgetPositionsY&[I",*/
-		"canvas&Ljava/awt/Canvas;", "localPlayer&Player", "widgetNodes&Hashtable", "menuActions&[Ljava/lang/String;", "spellSelected&Z",
-		"selectionState&I", "menuOptions&[Ljava/lang/String;", "loopCycle&I", "currentWorld&I", "gameState&I", "currentLevels&[I",
-		"realLevels&[I", "skillsExp&[I", "selectedItem&I", "menuOpen&Z", "menuX&I", "menuY&I", "menuWidth&I", "menuHeight&I",
-		"menuSize&I", "groundItems&[[[Deque", "tileSettings&[[[B", "tileHeights&[[[I", "mapScale&I", "mapOffset&I", "mapAngle&I",
-		"plane&I", "cameraX&I", "cameraY&I", "cameraZ&I", "cameraYaw&I", "cameraPitch&I", "baseX&I", "baseY&I", "widgets&[[Widget",
-		"clientSettings&[I", "widgetsSettings&[I","hoveredRegionTileX&I","hoveredRegionTileY&I","itemTables&Hashtable", "username&String", "password&String", 
-		"worldCount&I", "worlds&[World",
+				"canvas&Ljava/awt/Canvas;", "localPlayer&Player", "widgetNodes&HashTable", "menuActions&[Ljava/lang/String;", "spellSelected&Z",
+				"selectionState&I", "menuOptions&[Ljava/lang/String;", "loopCycle&I", "currentWorld&I", "gameState&I", "currentLevels&[I",
+				"realLevels&[I", "skillsExp&[I", "selectedItem&I", "menuOpen&Z", "menuX&I", "menuY&I", "menuWidth&I", "menuHeight&I",
+				"menuSize&I", "groundItems&[[[Deque", "tileSettings&[[[B", "tileHeights&[[[I", "mapScale&I", "mapOffset&I", "mapAngle&I",
+				"plane&I", "cameraX&I", "cameraY&I", "cameraZ&I", "cameraYaw&I", "cameraPitch&I", "baseX&I", "baseY&I", "widgets&[[Widget",
+				"clientSettings&[I", "widgetsSettings&[I","hoveredRegionTileX&I","hoveredRegionTileY&I","itemTables&HashTable", "username&String", "password&String", 
+				"widgetPositionsX&I", "widgetPositionsY&I"
 		},
-		methods = { "loadWorlds&Z", "loadObjDefinition&(I)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
-		/*"getPlayerModel&()LModel;",*/ "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&(IIIILjava/lang/String;Ljava/lang/String;II)V"})
+		methods = { "loadObjDefinition&(I)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
+				/*"getPlayerModel&()LModel;",*/ "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&(IIIILjava/lang/String;Ljava/lang/String;II)V"})
 public class ClientAnalyser extends ClassAnalyser {
 
 	public ClientAnalyser() throws AnalysisException {
@@ -63,79 +62,27 @@ public class ClientAnalyser extends ClassAnalyser {
 	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
 		return new Builder<IFieldAnalyser>().addAll(new ActorArrayHook(), new CurrentRegionHook(), new WidgetPositionXY(), new CanvasPlayerHook(), new ClientArrayHooks(),
 				new MenuScreenHooks(), new GroundItemsHook(), new TileInfoHooks(), new MinimapHooks(), new CameraHooks(), new BaseXYHooks(), new WidgetsHook(),
-				new SettingsHook(), new CredentialAnalyser() , new RegionWalkingHooks() ,new ItemTableHook(), new CredentialHooks(), new StaticWorldFieldsAnalyser());
+				new SettingsHook(), new CredentialAnalyser() , new RegionWalkingHooks() ,new ItemTableHook(), new CredentialHooks());
 	}
 
 	@Override
 	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
-		return new Builder<IMethodAnalyser>().addAll(new LoadDefinitionHook(), new ReportMethodHookAnalyser(), new ProccessActionMethodHookAnalyser(), new LoadMethodAnalyser());
+		return new Builder<IMethodAnalyser>().addAll(new LoadDefinitionHook(), new ReportMethodHookAnalyser(), new ProccessActionMethodHookAnalyser());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		return null;
 	}
 
 	@Override
 	public boolean matches(ClassNode c) {
 		return c.name.equalsIgnoreCase("client");
 	}
-	
-	public class LoadMethodAnalyser implements IMethodAnalyser {
 
-		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
-		 */
-		@Override
-		public List<MethodHook> findMethods(ClassNode cn) {
-			List<MethodHook> list = new ArrayList<MethodHook>();
-			WorldAnalyser wa = ((WorldAnalyser) getAnalyser("World"));
-			if(wa != null) {
-				MethodNode lm = wa.loadMethod;
-				list.add(asMethodHook(lm, "loadWorlds"));
-			}
-			return list;
-		}
-	}
-	
-	public class StaticWorldFieldsAnalyser implements IFieldAnalyser {
-
-		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
-		 */
-		@Override
-		public List<FieldHook> findFields(ClassNode _cn) {
-			List<FieldHook> list = new ArrayList<FieldHook>();
-			
-			ClassNode world = getClassNodeByRefactoredName("World");
-			if(world == null)
-				return list;
-						
-			TreeBuilder tb = new TreeBuilder();
-			NodeVisitor nv = new NodeVisitor() {
-				@Override
-				public void visitField(FieldMemberNode fmn) {
-					if(fmn.opcode() == PUTSTATIC) {
-						TypeNode newarr = fmn.firstType();
-						if(newarr != null && newarr.type().equals(world.name)) {
-							for(AbstractNode an : fmn.traverse()) {
-								if(an != fmn) {
-									if(an instanceof FieldMemberNode) {
-										FieldMemberNode fmn2 = (FieldMemberNode) an;
-										if(fmn2.opcode() == GETSTATIC) {
-											list.add(asFieldHook(fmn.fin(), "worlds"));
-											list.add(asFieldHook(fmn2.fin(), "worldCount"));
-											break;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			};
-			MethodNode lm = ((WorldAnalyser) getAnalyser("World")).loadMethod;
-			tb.build(lm).accept(nv);
-			
-			return list;
-		}
-	}
-	
 	public class CredentialHooks implements IFieldAnalyser {
 
 		/* (non-Javadoc)
@@ -144,7 +91,7 @@ public class ClientAnalyser extends ClassAnalyser {
 		@Override
 		public List<FieldHook> findFields(ClassNode _cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
-			
+
 			// getstatic aq.ad:java.lang.String
 			// invokestatic da v((Ljava/lang/CharSequence;)I);
 			// invokestatic java/lang/Integer valueOf((I)Ljava/lang/Integer;);
@@ -163,16 +110,16 @@ public class ClientAnalyser extends ClassAnalyser {
 					//	new MethodInsnNode(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false),
 					//	new MethodInsnNode(INVOKEVIRTUAL, "java/util/LinkedHashMap", "containsKey", "(Ljava/lang/Object;)Z", false)
 			});
-			
+
 			boolean username = false;
 			boolean password = false;
-			
+
 			MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";L.*;V", true);
-			
+
 			f: for(MethodNode m : mn) {
 				InstructionSearcher searcher = new InstructionSearcher(m.instructions, pattern);
 				if(searcher.search()) {
-					
+
 					for(AbstractInsnNode[] ains : searcher.getMatches()) {
 						FieldInsnNode fin = (FieldInsnNode) ains[0];
 						AbstractInsnNode ain = ains[2].getNext();
@@ -183,13 +130,13 @@ public class ClientAnalyser extends ClassAnalyser {
 								continue;
 							}
 							ain = ain.getNext();
-							
+
 							if(ain instanceof LdcInsnNode) {
 								while(ain != null) {
 									if(!(ain instanceof LdcInsnNode)) {
 										break w;
 									}
-									
+
 									LdcInsnNode ldc = (LdcInsnNode) ain;
 									if(ldc.cst instanceof String) {
 										String s = (String) ldc.cst;
@@ -203,25 +150,25 @@ public class ClientAnalyser extends ClassAnalyser {
 											break w;
 										}
 									}
-									
+
 									ain = ain.getNext();
 								}
 							}
-							
+
 							if(ain.opcode() != -1)
 								break;
 						}
-						
+
 						if(username && password)
 							break f;
 					}
 				}
 			}
-			
+
 			return list;
 		}
 	}
-	
+
 	public class ItemTableHook implements IFieldAnalyser {
 
 		@Override
@@ -235,21 +182,21 @@ public class ClientAnalyser extends ClassAnalyser {
 			return hooks;
 		}
 	}
-	
+
 	public class RegionWalkingHooks implements IFieldAnalyser {
- 
+
 		@Override
 		public List<FieldHook> findFields(ClassNode cn){
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";L.{0,3};IIIIII.{0,2};V", false);
 			final MethodNode m = identifyMethod(mn, false, "iload 7", "bipush 7", "ishl");
- 
+
 			String h = findField(m, true, true, 1, 's', "iload 8","putstatic .* I");//wheres the class name?
 			list.add(asFieldHook(getNew(h.split("\\.")[0]), h,"hoveredRegionTileX"));
- 
+
 			h = findField(m, true, true, 1, 's', "iload 7","putstatic .* I");
 			list.add(asFieldHook(getNew(h.split("\\.")[0]), h,"hoveredRegionTileY"));
- 
+
 			return list;
 		}
 	}
@@ -360,7 +307,7 @@ public class ClientAnalyser extends ClassAnalyser {
 
 			AbstractInsnNode[] ins = followJump(m[0], 323);
 			final String[] pattern = { "if_icmple", "iload 6", "ifge","iconst_1" };
-			
+
 			h = findField(ins, true, true, 1, 's', pattern);
 			list.add(asFieldHook(h, "menuOpen"));
 
@@ -511,8 +458,8 @@ public class ClientAnalyser extends ClassAnalyser {
 		@Override
 		public List<FieldHook> findFields(ClassNode cn) {
 			//TODO: WIDGETS
-			
-			// String hook, regex = ";;V";
+
+			String hook, regex = ";;V";
 			List<FieldHook> list = new ArrayList<FieldHook>();
 
 			/*List<MethodNode> methods = new ArrayList<MethodNode>();
@@ -535,20 +482,35 @@ public class ClientAnalyser extends ClassAnalyser {
 					e.printStackTrace();
 				}
 			}*/
-			// String[] mPattern = { "iconst_1", "putstatic" };
-			// MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
-			// MethodNode method = startWithBc(mPattern, mn)[0];
+//			String[] mPattern = { "iconst_1", "putstatic" };
+//			MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
+//			MethodNode method = startWithBc(mPattern, mn)[0];
+						
+			MethodNode method = cn.getMethodByName("<clinit>");
+			
+//			AbstractInsnNode[] ins = followJump(method, 220);
+//			System.out.println(new InstructionIdentifier(ins).getInstList());
+			
+			String[] p = { "bipush 100", "newarray 10", "putstatic client\\.\\w* \\[I", "bipush 100", "newarray 10", "putstatic client\\.\\w* \\[I"
+			};
 
-			// AbstractInsnNode[] ins = followJump(method, 220);
-			// String[] p = { "bipush 100", "newarray 10", "putstatic client\\.\\w* \\[I", "bipush 100", "newarray 10", "putstatic client\\.\\w* \\[I"
-			// };
-			//
-			// hook = findField(ins, true, true, 1, 's', p);
-			//
-			// list.add(asFieldHook(hook, "getWidgetPositionsX"));
-			//
-			// hook = findField(ins, true, true, 2, 's', p);
-			// list.add(asFieldHook(hook, "getWidgetPositionsY"));
+			AbstractInsnNode[] ins = method.instructions.toArray();
+			try(BufferedWriter bw = new BufferedWriter(new FileWriter(new File("C:/Users/Bibl/Desktop/test.txt")))) {
+				for(String s : new InstructionIdentifier(ins).getInstList()) {
+					bw.write(s);
+					bw.newLine();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+//			String[] p = new String[]{"bipush 100", "newarray 10", "putstatic client.*\\[I", "bipush 100", "newarray 10", "putstatic client.*\\[I"};
+			hook = findField(ins, true, true, 1, 's', p);
+
+			list.add(asFieldHook(hook, "widgetPositionsX"));
+
+			hook = findField(ins, true, true, 2, 's', p);
+			list.add(asFieldHook(hook, "widgetPositionsY"));
 
 			return list;
 		}
@@ -753,13 +715,13 @@ public class ClientAnalyser extends ClassAnalyser {
 					}
 				}
 			}
-			
-			
-			
+
+
+
 			//for (MethodNode m : getClassNodeByRefactoredName("ExceptionReporter").methods) {
 			//
 			//}
-			
+
 			return hooks;
 		}
 	}
@@ -844,26 +806,26 @@ public class ClientAnalyser extends ClassAnalyser {
 			// )
 		}
 	}
-	
+
 	public class CredentialAnalyser implements IFieldAnalyser {
-		 
+
 		@Override
 		public List<FieldHook> findFields(ClassNode cn){
 			List<FieldHook> list = new ArrayList<FieldHook>();
-			
+
 			//TODO: FIX
 			/*
 			final String methodPattern = ";L" + findObfClassName("Gameshell") + ";.{0,1};V";
 			MethodNode[] filteredMethods = findMethods(Context.current().getClassNodes(), methodPattern, true);
 			MethodNode method = startWithBc(new String[] { "getstatic", "ifeq" }, filteredMethods)[0];
 			final String[] fieldPattern = { "iconst_0", "putstatic", "ldc", "putstatic", "ldc", "putstatic", "iconst_0" };
- 
+
 			String h = findField(method, false, true, 2, 's', fieldPattern);
 			list.add(asFieldHook("username()", h));
- 
+
 			h = findField(method, false, true, 3, 's', fieldPattern);
 			list.add(asFieldHook("password()", h));*/
-			
+
 			return list;
 		}
 	}
@@ -876,14 +838,5 @@ public class ClientAnalyser extends ClassAnalyser {
 	static final void processAction(int arg1, int arg2, int opcode, int arg0, String action, String target, int mouseX, int mouseY, int DUMMY) {
 		System.out.println("[doAction] Op: " + opcode + ", Arg1: " + arg1 + ", Arg2: " + arg2 + ", Arg0: " + arg0 + ", Action: " + action + ", Target: "
 				+ target + ", var6: " + mouseX + ", var7: " + mouseY);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
-	 */
-	@Override
-	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

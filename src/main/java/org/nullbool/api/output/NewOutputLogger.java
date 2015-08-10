@@ -13,6 +13,8 @@ import org.nullbool.api.AbstractAnalysisProvider;
 import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.obfuscation.number.MultiplierHandler;
+import org.nullbool.api.obfuscation.refactor.MethodCache;
+import org.nullbool.api.obfuscation.refactor.ReverseMethodDescCache;
 import org.nullbool.pi.core.hook.api.ClassHook;
 import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.DynamicDesc;
@@ -21,6 +23,7 @@ import org.nullbool.pi.core.hook.api.HookMap;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.nullbool.pi.core.hook.api.ObfuscatedData;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -62,6 +65,8 @@ public class NewOutputLogger {
 		if(printMultis) {
 			resolveMultis(classes);
 		}
+		
+		resolveDescs(classes);
 
 		StringBuilder mainSb = new StringBuilder();
 
@@ -203,7 +208,7 @@ public class NewOutputLogger {
 
 					StringBuilder sb = new StringBuilder();
 					MethodHook mh = matches.get(0);
-					DynamicDesc desc = new DynamicDesc(mh.val(Constants.DESC), true);
+					DynamicDesc desc = new DynamicDesc(mh.val(Constants.REFACTORED_DESC), true);
 					sb.append(" º  ").append(mh.refactored());
 					longstring(sb, 0, col_width); // 40
 					sb.append(desc.getRefactoredDesc(classes)).append(" ");
@@ -228,7 +233,7 @@ public class NewOutputLogger {
 					sb.append('\n');
 
 					methodSb.append(sb);
-					errors.add(mh.refactored() + "&" + mh.val(Constants.DESC));
+					errors.add(mh.refactored() + "&" + mh.val(Constants.REFACTORED_DESC));
 				}
 			}
 
@@ -278,10 +283,10 @@ public class NewOutputLogger {
 				mainSb.append("methods = {");
 				ListIterator<MethodHook> mit = ch.methods().listIterator();
 				while(mit.hasNext()) {
-					MethodHook fh = mit.next();
+					MethodHook mh = mit.next();
 					mainSb.append('"');
-					mainSb.append(fh.refactored()).append("&");
-					String desc = fh.val(Constants.DESC);
+					mainSb.append(mh.refactored()).append("&");
+					String desc = mh.val(Constants.REFACTORED_DESC);
 					// if(DynamicDesc.isPrimitive(stripped)) {
 					// 	mainSb.append(desc);
 					// } else {
@@ -353,6 +358,32 @@ public class NewOutputLogger {
 
 	public static boolean hasMulti(String desc) {
 		return desc.equals("I") || desc.equals("B") || desc.equals("S") || desc.equals("J");
+	}
+	
+	public static void resolveDescs(List<ClassHook> classes) {
+		ReverseMethodDescCache cache = Context.current().getMethodCache();
+		Map<String, ClassNode> cns = Context.current().getClassNodes();
+		MethodCache currentCache = new MethodCache(cns.values());
+		for(ClassHook ch : classes) {
+			for(MethodHook m : ch.methods()) {
+				ClassNode cn = cns.get(m.val(Constants.REAL_OWNER));
+				if(cn != null) {
+					MethodNode mn = currentCache.get(cn.name, m.obfuscated(), m.val(Constants.DESC));
+					if(mn == null) {
+						System.out.println("NULL METHODNODE? " + m);
+					} else {
+						String newDesc = cache.get(mn);
+						if(newDesc == null) {
+							System.out.println("NULL NEW DESC? " + m);
+						} else {
+							m.var(Constants.DESC, newDesc);
+						}
+					}
+				} else {
+					System.out.println("NULL CLASSNODE? " + ch.obfuscated());
+				}
+			}
+		}
 	}
 
 	public static void resolveMultis(List<ClassHook> classes) {

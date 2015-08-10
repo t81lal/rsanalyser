@@ -1,5 +1,6 @@
 package org.nullbool.impl.analysers.net;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +25,8 @@ import org.objectweb.asm.tree.MethodNode;
 
 @SupportedHooks(
 		fields = { "cipher&IsaacCipher", "bitCaret&I"}, 
-		methods = { "initCipher&([I)V", "initBitAccess&()V", "finishBitAccess&()V", "readableBytes&(I)I", "readBits&(I)I"})
+		methods = { "initCipher&([I)V", "initBitAccess&()V", "finishBitAccess&()V", "readableBytes&(I)I", "readBits&(I)I",
+					"writePacketHeader&(I)V", "readPacketHeader&()I" })
 /**
  * @author Bibl (don't ban me pls)
  * @created 23 May 2015
@@ -37,10 +39,13 @@ public class PacketAnalyser extends ClassAnalyser {
 	private static final int[] FINISH_BIT_ACCESS_PATTERN = new int[]{BIPUSH, IDIV};
 	private static final int[] READABLE_BEATS_PATTERN1 = new int[]{GETFIELD, IMUL, ISUB, IRETURN};
 	private static final int[] READABLE_BEATS_PATTERN2 = new int[]{GETFIELD, LDC, IMUL, ISUB, IRETURN};
-	private static final int[] READ_BITS_PATTERN = new int[]{ICONST_3, ISHR, ISTORE};
-	
+	private static final int[] READ_BITS_PATTERN = new int[]{ICONST_3, ISHR, ISTORE};			//		      iload1
+
+	private static final int[] WRITE_HEADER_PATTERN = new int[]{ALOAD, GETFIELD, INVOKEVIRTUAL, IADD, I2B, BASTORE};
+	private static final int[] READ_HEADER_PATTERN = new int[]{BALOAD, ALOAD, GETFIELD, INVOKEVIRTUAL, ISUB, SIPUSH, IAND, IRETURN};
+
 	private static final int[] GETFIELD_PATTERN = new int[]{GETFIELD};
-	
+
 	public PacketAnalyser() {
 		super("Packet");
 	}
@@ -59,10 +64,63 @@ public class PacketAnalyser extends ClassAnalyser {
 
 	@Override
 	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
-		return new Builder<IMethodAnalyser>().add(new MethodAnalyser());
+		return new Builder<IMethodAnalyser>().addAll(new MethodAnalyser(), new HeaderMethodAnalyser());
 	}
-	
-	private class MethodAnalyser implements IMethodAnalyser {
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		return null;
+	}
+
+	public class HeaderMethodAnalyser implements IMethodAnalyser {
+
+		/* (non-Javadoc)
+		 * @see org.nullbool.api.analysis.IMethodAnalyser#findMethods(org.objectweb.asm.tree.ClassNode)
+		 */
+		@Override
+		public List<MethodHook> findMethods(ClassNode cn) {
+			List<MethodHook> list = new ArrayList<MethodHook>();
+			//			  write
+			//		      iload1
+			//            aload0 // reference to self
+			//            getfield rs/Packet.cipher:rs.IsaacCipher
+			//            invokevirtual rs/IsaacCipher y(()I);
+			//            iadd
+			//            i2b
+			//            bastore
+
+			// read
+			//            baload
+			//            aload0 // reference to self
+			//            getfield rs/Packet.cipher:rs.IsaacCipher
+			//            invokevirtual rs/IsaacCipher y(()I);
+			//            isub
+			//            sipush 255
+			//            iand
+			//            ireturn
+
+
+			for(MethodNode m : cn.methods) {
+				if(!Modifier.isStatic(m.access)) {
+					if(m.desc.equals("(I)V")) {
+						if(findOpcodePattern(m, WRITE_HEADER_PATTERN) != null) {
+							list.add(asMethodHook(m, "writePacketHeader"));
+						}
+					} else if(m.desc.equals("()I")) {
+						if(findOpcodePattern(m, READ_HEADER_PATTERN) != null) {
+							list.add(asMethodHook(m, "readPacketHeader"));
+						}
+					}
+				}
+			}
+			return list;
+		}
+	}
+
+	public class MethodAnalyser implements IMethodAnalyser {
 
 		@Override
 		public List<MethodHook> findMethods(ClassNode cn) {
@@ -95,7 +153,7 @@ public class PacketAnalyser extends ClassAnalyser {
 					FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, READABLE_BEATS_PATTERN1);
 					if(fin == null) 
 						fin = (FieldInsnNode) findOpcodePattern(m, READABLE_BEATS_PATTERN2);
-					
+
 					if(fin != null) {
 						list.add(asMethodHook(m, "readableBytes").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 					} else {
@@ -107,37 +165,37 @@ public class PacketAnalyser extends ClassAnalyser {
 				}
 			}
 
-//            aload0 // reference to self
-//            aload0 // reference to self
-//            getfield Packet.getCaret:int
-//            ldc -619618920 (java.lang.Integer)
-//            imul
-//            putfield Packet.bitCaret:int
+			//            aload0 // reference to self
+			//            aload0 // reference to self
+			//            getfield Packet.getCaret:int
+			//            ldc -619618920 (java.lang.Integer)
+			//            imul
+			//            putfield Packet.bitCaret:int
 
-            
-//            aload0 // reference to self
-//            aload0 // reference to self
-//            getfield Packet.getCaret:int
-//            ldc -960061224 (java.lang.Integer)
-//            imul
-//            putfield Packet.n:int
 
-			
+			//            aload0 // reference to self
+			//            aload0 // reference to self
+			//            getfield Packet.getCaret:int
+			//            ldc -960061224 (java.lang.Integer)
+			//            imul
+			//            putfield Packet.n:int
+
+
 			return list;
 		}
 	}
-	
-	private class FieldAnalyser implements IFieldAnalyser {
+
+	public class FieldAnalyser implements IFieldAnalyser {
 
 		@Override
 		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
-			
-//			MethodNode[] classMethods = getMethodNodes(cn.methods.toArray());
-//			final MethodNode caretMethod = startWithBc(new String[] { "bipush","iload" }, classMethods)[0];
-//			final MethodNode cipherMethod = startWithBc(new String[] { "aload","getfield", "aload" }, classMethods)[0];
-			
-//			String h = findField(cipherMethod, true, true, 1, 'f', "isub");
+
+			//			MethodNode[] classMethods = getMethodNodes(cn.methods.toArray());
+			//			final MethodNode caretMethod = startWithBc(new String[] { "bipush","iload" }, classMethods)[0];
+			//			final MethodNode cipherMethod = startWithBc(new String[] { "aload","getfield", "aload" }, classMethods)[0];
+
+			//			String h = findField(cipherMethod, true, true, 1, 'f', "isub");
 			for(MethodNode m : cn.methods) {
 				if(m.desc.startsWith("([I") && m.desc.endsWith(")V")) {
 					AbstractInsnNode ain = findOpcodePattern(m, INIT_CIPHER_PATTERN);
@@ -161,21 +219,12 @@ public class PacketAnalyser extends ClassAnalyser {
 					}
 				}
 			}
-			
-			
-//			String h = findField(caretMethod, true, true, 1, 'f', "iload 1");
-//			list.add(asFieldHook(h, "bitCaret"));
-			
+
+
+			//			String h = findField(caretMethod, true, true, 1, 'f', "iload 1");
+			//			list.add(asFieldHook(h, "bitCaret"));
+
 			return list;
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
-	 */
-	@Override
-	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

@@ -32,6 +32,7 @@ import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.LookupSwitchInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MultiANewArrayInsnNode;
+import org.objectweb.asm.tree.TableSwitchInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
@@ -311,6 +312,10 @@ public class FlowBlock {
 		}
 		int op = insn.opcode();
 		if (op == -1) {
+			if(insn instanceof LabelNode) {
+				LabelNode label = (LabelNode) insn;
+				return "#" + labels.get(label);
+			}
 			return insn.toString();
 		}
 		StringBuilder sb = new StringBuilder();
@@ -357,21 +362,26 @@ public class FlowBlock {
 				sb.append('#').append(iin.var).append(' ').append(iin.incr);
 				break;
 			case TABLESWITCH_INSN: {
-//				TableSwitchInsnNode tsin = (TableSwitchInsnNode) insn;
-				sb.append("TODO: implement");
-//				sb.append("def: #").append(labels.get(tsin.dflt).id);
+				TableSwitchInsnNode tsin = (TableSwitchInsnNode) insn;
+				sb.append("[def -> #").append(labels.get(tsin.dflt) != null ? labels.get(tsin.dflt).id : "null").append("]");
 				
+				for(int i=tsin.min; i <= tsin.max; i++) {
+					sb.append(", ");
+					LabelNode l = tsin.labels.get(i - tsin.min);
+					sb.append("[").append(i).append(" -> #").append(labels.get(l) != null ? labels.get(l).id : "null").append("]");
+				
+				}
 			}
 				break;
 			case LOOKUPSWITCH_INSN: {
 				LookupSwitchInsnNode lsin = (LookupSwitchInsnNode) insn;
-				sb.append("[def -> #").append(labels.get(lsin.dflt).id).append("]");
+				sb.append("[def -> #").append(labels.get(lsin.dflt) != null ? labels.get(lsin.dflt).id : "null").append("]");
 				
 				for(int i=0; i < lsin.keys.size(); i++) {
 					sb.append(", ");
 					int k = lsin.keys.get(i);
 					LabelNode l = lsin.labels.get(i);
-					sb.append("[").append(k).append(" -> #").append(labels.get(l).id).append("]");
+					sb.append("[").append(k).append(" -> #").append(labels.get(l) != null ? labels.get(l).id : "null").append("]");
 				}
 			}
 				break;

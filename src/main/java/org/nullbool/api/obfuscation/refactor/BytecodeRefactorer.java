@@ -96,7 +96,7 @@ public class BytecodeRefactorer implements Opcodes {
 					if(ain instanceof FieldInsnNode) {
 						FieldInsnNode fin = (FieldInsnNode) ain;
 						String newOwner = getMappedClassName(fin.owner);
-						String newName  = getMappedFieldName(fin.owner, fin.name, fin.desc);
+						String newName  = getMappedFieldName(fin.owner, fin.name, fin.desc, ain.opcode() == PUTSTATIC || ain.opcode() == GETSTATIC);
 						String newDesc  = transformFieldDesc(fin.desc);
 						Tuple3 t2 = new Tuple3(newOwner, newName, newDesc);
 						finMappings.put(fin, t2);
@@ -315,10 +315,10 @@ public class BytecodeRefactorer implements Opcodes {
 	}
 	
 	public String getMappedFieldName(FieldNode f){
-		return getMappedFieldName(f.owner.name, f.name, f.desc);
+		return getMappedFieldName(f.owner.name, f.name, f.desc, Modifier.isStatic(f.access));
 	}
 	
-	public String getMappedFieldName(String owner, String name, String desc) {
+	public String getMappedFieldName(String owner, String name, String desc, boolean isStatic) {
 		String fullKey = String.format("%s.%s %s", owner, name, desc);
 		
 		if(fieldMappings.containsKey(fullKey)){
@@ -328,7 +328,7 @@ public class BytecodeRefactorer implements Opcodes {
 			return fieldMappings.get(fullKey);
 		}
 		
-		String newName = remapper.resolveFieldName(owner, name, desc);
+		String newName = remapper.resolveFieldName(owner, name, desc, isStatic);
 		
 		/* If the newName is null, it means that the remapper may not be doing deep mapping,
 		 * ie. if we have a class gm which has a field ec and another class fe which extends
@@ -352,7 +352,7 @@ public class BytecodeRefactorer implements Opcodes {
 						if(next == null)
 							break;
 						
-						newName = remapper.resolveFieldName(next.name, name, desc);
+						newName = remapper.resolveFieldName(next.name, name, desc, isStatic);
 						if(newName != null)
 							break;
 					}
@@ -376,8 +376,8 @@ public class BytecodeRefactorer implements Opcodes {
 		if(isStatic && owner.lastIndexOf('/') == -1) {
 			m = searchTree(owner, name, desc, isStatic);
 			if(m == null)
-//				return name;
-				 throw new RuntimeException(String.format("Can't find %s.%s %s %b.%n", owner, name, desc, isStatic));
+				return name;
+//				 throw new RuntimeException(String.format("Can't find %s.%s %s %b.%n", owner, name, desc, isStatic));
 			// System.out.printf("Can't find %s.%s %s %b.%n", owner, name, desc, isStatic);
 			else
 				return getMappedMethodName(m);

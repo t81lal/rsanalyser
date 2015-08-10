@@ -541,6 +541,7 @@ private static int graphCount = 0;
 		return deletedRanges;
 	}
 	
+	@Override
 	public void removeBlock(FlowBlock block) {
 		if(debug) {
 			System.out.println("Removing " + block.id());

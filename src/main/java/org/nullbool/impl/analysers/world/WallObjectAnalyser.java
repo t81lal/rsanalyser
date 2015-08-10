@@ -18,7 +18,8 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "markedRenderable1&Renderable", "markedRenderable2&Renderable", "strictX&I", "strictY&I", "plane&I", "uid&I",
+@SupportedHooks(
+		fields = { "markedRenderable1&Renderable", "markedRenderable2&Renderable", "localX&I", "localY&I", "plane&I", "hash&I",
 		"flags&I", "orientation1&I", "orientation2&I", }, methods = {})
 public class WallObjectAnalyser extends ClassAnalyser {
 
@@ -69,16 +70,16 @@ public class WallObjectAnalyser extends ClassAnalyser {
 			l.add(asFieldHook(h, "markedRenderable2"));
 
 			h = findField(ins, false, true, 3, 'f', "putfield");
-			l.add(asFieldHook(h, "strictX"));
+			l.add(asFieldHook(h, "localX"));
 
 			h = findField(ins, false, true, 4, 'f', "putfield");
-			l.add(asFieldHook(h, "strictY"));
+			l.add(asFieldHook(h, "localY"));
 
 			h = findField(ins, false, true, 5, 'f', "putfield");
 			l.add(asFieldHook(h, "plane"));
 
 			h = findField(ins, false, true, 1, 'f', "putfield");
-			l.add(asFieldHook(h, "uid"));
+			l.add(asFieldHook(h, "hash"));
 
 			h = findField(ins, false, true, 2, 'f', "putfield");
 			l.add(asFieldHook(h, "flags"));

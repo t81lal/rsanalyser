@@ -55,7 +55,6 @@ public class HierarchyVisitor extends Visitor {
 				cs.delegates.add(current);
 				visitImpl(classes, superinterfaces, cs);
 			}
-			
 		}
 	}
 }

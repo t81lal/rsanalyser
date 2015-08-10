@@ -182,7 +182,7 @@ public class InstructionPrinter {
 		String line = nameOpcode(tin.opcode()) + " \n";
 		List<?> labels = tin.labels;
 		int count = 0;
-		for(int i = tin.min; i < tin.max; i++) {
+		for(int i = tin.min; i <= tin.max; i++) {
 			line += "           val: " + i + " -> " + "L" + resolveLabel((LabelNode) labels.get(count++)) + "\n";
 		}
 		line += "           default" + " -> L" + resolveLabel(tin.dflt) + "";

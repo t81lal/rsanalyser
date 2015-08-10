@@ -13,9 +13,11 @@ import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.BoundedInstructionIdentifier.DataPoint;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
+import org.nullbool.pi.core.hook.api.ObfuscatedData;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -24,7 +26,7 @@ import org.objectweb.asm.tree.MethodNode;
  * @created 22 Jul 2015 23:10:47
  */
 @SupportedHooks(
-		fields = { "next&Task" }, 
+		fields = { "killed&Z", "thread&Ljava/lang/Thread;", "eventQueue&Ljava/awt/EventQueue;", "currentTask&Task", "nextTask&Task" }, 
 		methods = { "schedule&(IIILjava/lang/Object;)Task", "scheduleSocketTask&(Ljava/lang/String;I)Task",
 				"scheduleRunnableTask&(Ljava/lang/Runnable;I)V", "scheduleINetTask&(I)Task",
 				"scheduleDataInputStreamTask&(Ljava/net/URL;)Task", "stop&()V"
@@ -100,7 +102,15 @@ public class TaskHandlerAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
-		return new Builder<IMethodAnalyser>().addAll(new ScheduleMethodsAnalyser(), new StopMethodAnalyser());
+		return new Builder<IMethodAnalyser>().addAll(new ScheduleMethodsAnalyser());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
+	 */
+	@Override
+	public Builder<IMultiAnalyser> registerMultiAnalysers() {
+		return new Builder<IMultiAnalyser>().add(new StopMethodAnalyser());
 	}
 
 	public class FieldsAnalysers implements IFieldAnalyser {
@@ -111,22 +121,38 @@ public class TaskHandlerAnalyser extends ClassAnalyser {
 		@Override
 		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
-			//          aload0 // reference to self
-			//          getfield rs/TaskHandler.t:rs.ej
-			//          aconst_null
-			//          if_acmpeq L10
-			String[] nextpattern = new String[]{"aload 0", "getfield.*L.*;", "aconst_null"};
+
+			for(FieldNode f : cn.fields) {
+				if(!Modifier.isStatic(f.access)) {
+					if(f.desc.equals("Ljava/awt/EventQueue;")) {
+						list.add(asFieldHook(f, "eventQueue"));
+					}
+				}
+			}
+
+			// aload0 // reference to self
+			// getfield df.n:ej
+			// astore1
+			String[] currentpattern = new String[]{"aload 0", "getfield.*" + cn.name + ".*", "astore 1"};
 			
+			// aload0 // reference to self
+			// aconst_null
+			// putfield df.t:ej
+
+			String[] nextpattern = new String[]{"aload 0", "aconst_null", "putfield.*" + cn.name + ".*"};
+
 			for(MethodNode m : cn.methods) {
-				if(!Modifier.isStatic(m.access)) {
-					if(m.desc.contains(")L")) {
-						if(m.desc.startsWith("(IIILjava/lang/Object;)")) {
-							DataPoint p = pointOf(m, nextpattern);
-							if(p != null) {
-								FieldInsnNode fin = (FieldInsnNode) p.instruction().getNext();
-								list.add(asFieldHook(fin, "next"));
-							}
-						}
+				if(m.name.equals("run") && m.desc.equals("()V")) {
+					DataPoint p = pointOf(m, currentpattern);
+					if(p != null) {
+						FieldInsnNode fin = (FieldInsnNode) p.instruction().getNext();
+						list.add(asFieldHook(fin, "currentTask"));
+					}
+					
+					DataPoint p2 = pointOf(m, nextpattern);
+					if(p2 != null) {
+						FieldInsnNode fin = (FieldInsnNode) p2.instruction().getNext().getNext();
+						list.add(asFieldHook(fin, "nextTask"));
 					}
 				}
 			}
@@ -135,40 +161,43 @@ public class TaskHandlerAnalyser extends ClassAnalyser {
 		}
 
 	}
-	
-	public class StopMethodAnalyser implements IMethodAnalyser {
+
+	public class StopMethodAnalyser implements IMultiAnalyser {
 
 		/* (non-Javadoc)
 		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
 		 */
 		@Override
-		public List<MethodHook> findMethods(ClassNode cn) {
-			List<MethodHook> list = new ArrayList<MethodHook>();
-//            aload0 // reference to self
-//            iconst_1
-//            putfield rs/TaskHandler.q:boolean
-			
+		public List<ObfuscatedData> findAny(ClassNode cn) {
+			List<ObfuscatedData> list = new ArrayList<ObfuscatedData>();
+			//            aload0 // reference to self
+			//            iconst_1
+			//            putfield rs/TaskHandler.q:boolean
+
 			String[] pattern1 = new String[]{"aload 0", "iconst_1", "putfield.*" + cn.name + ".*Z"};
 
-//            aload0 // reference to self
-//            getfield rs/TaskHandler.e:java.lang.Thread
-//            invokevirtual java/lang/Thread join(()V);
+			//            aload0 // reference to self
+			//            getfield rs/TaskHandler.e:java.lang.Thread
+			//            invokevirtual java/lang/Thread join(()V);
 
 			String[] pattern2 = new String[]{"aload 0", "getfield.*Ljava/lang/Thread;", "invokevirtual java/lang/Thread.*join.*()V"};
-			
+
 			for(MethodNode m : cn.methods) {
 				DataPoint p1 = pointOf(m, pattern1);
 				if(p1 != null) {
 					DataPoint p2 = pointOf(m, pattern2);
 					if(p2 != null) {
 						list.add(asMethodHook(m, "stop"));
-						
+
 						FieldInsnNode fin = (FieldInsnNode) p1.instruction().getNext().getNext();
-						
+						list.add(asFieldHook(fin, "killed"));
+
+						fin = (FieldInsnNode) p2.instruction().getNext();
+						list.add(asFieldHook(fin, "thread"));
 					}
 				}
 			}
-			
+
 			return list;
 		}
 	}
@@ -259,14 +288,5 @@ public class TaskHandlerAnalyser extends ClassAnalyser {
 
 			return list;
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
-	 */
-	@Override
-	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

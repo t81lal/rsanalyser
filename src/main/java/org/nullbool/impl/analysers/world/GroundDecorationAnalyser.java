@@ -18,8 +18,10 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "bottomRenderable&Renderable", "middleRenderable&Renderable", "topRenderable&Renderable", "regionX&I", "regionY&I",
-		"plane&I", "uid&I", }, methods = {})
+@SupportedHooks(
+		fields = { "bottomRenderable&Renderable", "middleRenderable&Renderable", "topRenderable&Renderable", "localX&I", "localY&I",
+		"plane&I", "hash&I", }, 
+		methods = {})
 public class GroundDecorationAnalyser extends ClassAnalyser {
 
 	public GroundDecorationAnalyser() throws AnalysisException {
@@ -73,20 +75,20 @@ public class GroundDecorationAnalyser extends ClassAnalyser {
 			// l.add(new Hook("topRenderable()", h));
 
 			h = findField(ins, false, true, 2, 'f', "putfield");
-			l.add(asFieldHook(h, "regionX"));
-			// l.add(new Hook("regionX()", h));
+			l.add(asFieldHook(h, "localX"));
+			// l.add(new Hook("localX()", h));
 
 			h = findField(ins, false, true, 3, 'f', "putfield");
-			l.add(asFieldHook(h, "regionY"));
-			// l.add(new Hook("regionY()", h));
+			l.add(asFieldHook(h, "localY"));
+			// l.add(new Hook("localY()", h));
 
 			h = findField(ins, false, true, 4, 'f', "putfield");
 			l.add(asFieldHook(h, "plane"));
 			// l.add(new Hook("plane()", h));
 
 			h = findField(ins, false, true, 5, 'f', "putfield");
-			l.add(asFieldHook(h, "uid"));
-			// l.add(new Hook("uid()", h));
+			l.add(asFieldHook(h, "hash"));
+			// l.add(new Hook("hash()", h));
 			// return l.toArray(new Hook[l.size()]);
 			return l;
 		}

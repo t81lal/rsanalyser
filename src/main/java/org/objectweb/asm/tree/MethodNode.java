@@ -477,7 +477,9 @@ public class MethodNode extends MethodVisitor {
         }
         MethodInsnNode min = new MethodInsnNode(opcode, owner, name, desc);
         min.method = this;
-        this.owner.references.add(min.key());
+        if(this.owner != null) {
+        	this.owner.references.add(min.key());
+        }
         instructions.add(min);
     }
 
@@ -490,7 +492,9 @@ public class MethodNode extends MethodVisitor {
         }
         MethodInsnNode min = new MethodInsnNode(opcode, owner, name, desc, itf);
         min.method = this;
-        this.owner.references.add(min.key());
+        if(this.owner != null) {
+        	this.owner.references.add(min.key());
+        }
         instructions.add(min);
     }
 
@@ -953,7 +957,7 @@ public class MethodNode extends MethodVisitor {
 	}
 	
 	public String key() {
-		return owner.name + "." + name + desc;
+		return (owner != null ? owner.name : "null") + "." + name + desc;
 	}
 
 	public String halfKey() {

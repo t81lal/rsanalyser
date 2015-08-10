@@ -23,7 +23,7 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
 /**
- * @author MalikDz
+ * @author Bibl
  */
 @SupportedHooks(fields = { "key&J", "previous&Node", "next&Node", }, methods = {"isLinked&()Z", "unlink&()V"})
 public class NodeAnalyser extends ClassAnalyser {

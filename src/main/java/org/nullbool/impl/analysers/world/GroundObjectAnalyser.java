@@ -18,7 +18,9 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "markedRenderable&Renderable", "strictX&I", "strictY&I", "plane&I", "uid&I", "flags&I", }, methods = {})
+@SupportedHooks(
+		fields = { "markedRenderable&Renderable", "localX&I", "localY&I", "plane&I", "hash&I", "flags&I", }, 
+		methods = {})
 public class GroundObjectAnalyser extends ClassAnalyser {
 
 	public GroundObjectAnalyser() throws AnalysisException {
@@ -62,16 +64,16 @@ public class GroundObjectAnalyser extends ClassAnalyser {
 			l.add(asFieldHook(h, "markedRenderable"));
 
 			h = findField(ins, false, true, 2, 'f', "putfield");
-			l.add(asFieldHook(h, "strictX"));
+			l.add(asFieldHook(h, "localX"));
 
 			h = findField(ins, false, true, 3, 'f', "putfield");
-			l.add(asFieldHook(h, "strictY"));
+			l.add(asFieldHook(h, "localY"));
 
 			h = findField(ins, false, true, 4, 'f', "putfield");
 			l.add(asFieldHook(h, "plane"));
 
 			h = findField(ins, false, true, 5, 'f', "putfield");
-			l.add(asFieldHook(h, "uid"));
+			l.add(asFieldHook(h, "hash"));
 
 			h = findField(ins, false, true, 6, 'f', "putfield");
 			l.add(asFieldHook(h, "flags"));

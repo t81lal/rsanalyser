@@ -82,6 +82,36 @@ public class ActorAnalyser extends ClassAnalyser {
 		return new Builder<IMethodAnalyser>().addAll(new QueuePositionMethodAnalyser(), new MoveMethodAnalyser());
 	}
 	
+	public class OrientationAnalser implements IFieldAnalyser {
+
+		/* (non-Javadoc)
+		 * @see org.nullbool.api.analysis.IFieldAnalyser#findFields(org.objectweb.asm.tree.ClassNode)
+		 */
+		@Override
+		public List<FieldHook> findFields(ClassNode cn) {
+			List<FieldHook> list = new ArrayList<FieldHook>();
+
+//			NodeVisitor nv = new NodeVisitor() {
+//				@Override
+//			    public boolean validateBlock(Block block) {
+//			        return block.count(new NumberQuery(SIPUSH, 2048)) > 0 && block.count(LDC) > 0;
+//			    }
+//
+//			    @Override
+//			    public void visitNumber(final NumberNode nn) {
+//			        if (nn.parent().opcode() == ISUB) {
+//			            final FieldMemberNode fmn = (FieldMemberNode) nn.parent().layer(IMUL, GETFIELD);
+//			            if (fmn != null && fmn.desc().equals("I")) {
+////			                Hook.CHARACTER.put(new RSField(fmn, "orientation"));
+//			            }
+//			        }
+//			    }
+//			};
+			
+			return list;
+		}
+	}
+	
 	public class MoveMethodAnalyser implements IMethodAnalyser {
 
 		/* (non-Javadoc)

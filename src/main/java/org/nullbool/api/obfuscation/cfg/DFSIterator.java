@@ -26,7 +26,7 @@ public class DFSIterator implements Iterator<FlowBlock> {
 	}
 	
 	public void init(boolean exceptions) {
-		stack.push(next.successors().iterator());
+		stack.push(next.successors().listIterator());
 		if(exceptions)
 			stack.push(next.exceptionSuccessors().iterator());
 	}
@@ -70,7 +70,6 @@ public class DFSIterator implements Iterator<FlowBlock> {
 		} while (visited.contains(next));
 		
 		stack.push(next.successors().iterator());
-		stack.push(next.exceptionSuccessors().iterator());
 	}
 	
 	public Set<FlowBlock> visited() {

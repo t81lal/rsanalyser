@@ -43,50 +43,71 @@ public class APIGenerator {
 	public static final Map<String, String> API_CANONICAL_NAMES = new HashMap<String, String>();
 
 	static {
-		API_CANONICAL_NAMES.put("Client", "IOldschoolClient");
-		API_CANONICAL_NAMES.put("Canvas", "ICanvas");
-		API_CANONICAL_NAMES.put("WrappedException", "IWrappedException");
-		API_CANONICAL_NAMES.put("ExceptionReporter", "IExceptionReporter");
+
+		API_CANONICAL_NAMES.put("Node",             "collections/INode");
+		API_CANONICAL_NAMES.put("DualNode",         "collections/IDualNode");
+		API_CANONICAL_NAMES.put("IterableNode",     "collections/IIterableNode");
+		API_CANONICAL_NAMES.put("IterableDualNode", "collections/IIterableDualNode");
+		API_CANONICAL_NAMES.put("Deque",            "collections/IDeque");
+		API_CANONICAL_NAMES.put("Queue",            "collections/IQueue");
+		API_CANONICAL_NAMES.put("HashTable",        "collections/IHashTable");
+		API_CANONICAL_NAMES.put("NodeIterator",     "collections/INodeIterator");
+		API_CANONICAL_NAMES.put("DualNodeIterator", "collections/IDualNodeIterator");
 		
-		API_CANONICAL_NAMES.put("Rasteriser", "render/IRasteriser");
-		
-		API_CANONICAL_NAMES.put("IsaacCipher", "network/IIsaacCipher");
-		API_CANONICAL_NAMES.put("Buffer", "network/IBuffer");
-		API_CANONICAL_NAMES.put("Packet", "network/IPacket");
-
-		API_CANONICAL_NAMES.put("Node", "collections/INode");
-		API_CANONICAL_NAMES.put("DualNode", "collections/IDualNode");
-		API_CANONICAL_NAMES.put("Hashtable", "collections/IHashTable");
-		API_CANONICAL_NAMES.put("Deque", "collections/IDeque");
-
-		API_CANONICAL_NAMES.put("NPCDefinition", "definitions/INPCDefinition");
-		API_CANONICAL_NAMES.put("ItemDefinition", "definitions/IItemDefinition");
-		API_CANONICAL_NAMES.put("ObjectDefinition", "definitions/IObjectDefinition");
-
-		API_CANONICAL_NAMES.put("Widget", "widgets/IWidget");
-		API_CANONICAL_NAMES.put("WidgetNode", "widgets/IWidgetNode");
-		API_CANONICAL_NAMES.put("ItemContainer", "widgets/IItemContainer");
-
+		API_CANONICAL_NAMES.put("Actor",      "entity/IActor");
+		API_CANONICAL_NAMES.put("Model",      "entity/IModel");
+		API_CANONICAL_NAMES.put("NPC",        "entity/INPC");
+		API_CANONICAL_NAMES.put("Player",     "entity/IPlayer");
 		API_CANONICAL_NAMES.put("Renderable", "entity/IRenderable");
-		API_CANONICAL_NAMES.put("Actor", "entity/IActor");
-		API_CANONICAL_NAMES.put("Model", "entity/IModel");
-		API_CANONICAL_NAMES.put("NPC", "entity/INPC");
-		API_CANONICAL_NAMES.put("Player", "entity/IPlayer");
+		API_CANONICAL_NAMES.put("Projectile", "entity/IProjectile");
+		
+		API_CANONICAL_NAMES.put("Friend",        "friend/IFriend");
+		API_CANONICAL_NAMES.put("IgnoredPlayer", "friend/IIgnoredPlayer");
+		
+		API_CANONICAL_NAMES.put("Buffer",      "net/IBuffer");
+		API_CANONICAL_NAMES.put("IsaacCipher", "net/IIsaacCipher");
+		API_CANONICAL_NAMES.put("Packet",      "net/IPacket");
+		
+		API_CANONICAL_NAMES.put("Rasteriser", "render/Rasteriser");
+		
+		API_CANONICAL_NAMES.put("GameObject",          "world/IGameObject");
+		API_CANONICAL_NAMES.put("GroundDecoration",    "world/IGroundDecoration");
+		API_CANONICAL_NAMES.put("GroundItem",          "world/IGroundItem");
+		API_CANONICAL_NAMES.put("GroundObject",        "world/IGroundObject");
+		API_CANONICAL_NAMES.put("Region",              "world/IRegion");
+		API_CANONICAL_NAMES.put("Tile",                "world/ITile");
+		API_CANONICAL_NAMES.put("WallDecoration",      "world/IWallDecoration");
+		API_CANONICAL_NAMES.put("WallObject",          "world/IWallObject");
+		API_CANONICAL_NAMES.put("World",               "world/IWorld");
+		API_CANONICAL_NAMES.put("WorldListDownloader", "world/IWorldListDownloader");
+		
+		API_CANONICAL_NAMES.put("ItemDefinition",   "definitions/IItemDefinition");
+		API_CANONICAL_NAMES.put("NPCDefinition",    "definitions/INPCDefinition");
+		API_CANONICAL_NAMES.put("ObjectDefinition", "definitions/IObjectDefinition");
+		
+		API_CANONICAL_NAMES.put("ScriptEvent", "script/IScriptEvent");
+		
+		API_CANONICAL_NAMES.put("Task",        "task/ITask");
+		API_CANONICAL_NAMES.put("TaskHandler", "task/ITaskHandler");
+		
+		API_CANONICAL_NAMES.put("ItemContainer", "widget/IItemContainer");
+		API_CANONICAL_NAMES.put("Widget",        "widget/IWidget");
+		API_CANONICAL_NAMES.put("WidgetNode",    "widget/IWidgetNode");
+		
+		API_CANONICAL_NAMES.put("Canvas",            "ICanvas");
+		API_CANONICAL_NAMES.put("ExceptionReporter", "IExceptionReporter");
+		API_CANONICAL_NAMES.put("Varpbit",           "IVarpbit");
+		API_CANONICAL_NAMES.put("VerificationData",  "IVerificationData");
+		API_CANONICAL_NAMES.put("WrappedException",  "IWrappedException");
 
-		API_CANONICAL_NAMES.put("Tile", "world/ITile");
-		API_CANONICAL_NAMES.put("GroundItem", "world/IGroundItem");
-		API_CANONICAL_NAMES.put("GameObject", "world/IGameObject");
-		API_CANONICAL_NAMES.put("GroundObject", "world/IGroundObject");
-		API_CANONICAL_NAMES.put("GroundDecoration", "world/IGroundDecoration");
-		API_CANONICAL_NAMES.put("WallObject", "world/IWallObject");
-		API_CANONICAL_NAMES.put("WallDecoration", "world/IWallDecoration");
-		API_CANONICAL_NAMES.put("Region", "world/IRegion");
-
+		API_CANONICAL_NAMES.put("Client", "IOldschoolClient");
+		
 		// Client must extend org/zbot/api/IGameClient which is the client accessor base
 		// NEW BASE
 		// org/nullbool/piexternal/game/api/IGameClient
 		
-		SUPER_INTERFACES.put("Client", "org/nullbool/piexternal/game/api/IGameClient");
+		
+		SUPER_INTERFACES.put("Client", "org/nullbool/core/piexternal/game/api/IGameClient");
 		SUPER_INTERFACES.put("DualNode", API_CANONICAL_NAMES.get("Node"));
 		SUPER_INTERFACES.put("Tile", API_CANONICAL_NAMES.get("Node"));
 		SUPER_INTERFACES.put("WidgetNode", API_CANONICAL_NAMES.get("Node"));
@@ -110,6 +131,10 @@ public class APIGenerator {
 		
 		SUPER_INTERFACES.put("Buffer", API_CANONICAL_NAMES.get("Node"));
 		SUPER_INTERFACES.put("Packet", API_CANONICAL_NAMES.get("Buffer"));
+		
+
+		SUPER_INTERFACES.put("ScriptEvent", API_CANONICAL_NAMES.get("Node"));
+		SUPER_INTERFACES.put("Varpbit", API_CANONICAL_NAMES.get("DualNode"));
 		
 		DefaultAPIHelper helper = new DefaultAPIHelper(ACCESSOR_BASE);
 		for(Entry<String, String> e : API_CANONICAL_NAMES.entrySet()) {

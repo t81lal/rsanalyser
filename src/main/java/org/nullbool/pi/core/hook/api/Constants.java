@@ -8,6 +8,7 @@ public abstract interface Constants {
 
 	// Shared
 	public static final String DESC = "desc.obfuscated";
+	public static final String REFACTORED_DESC = "desc.refactored";
 	public static final String STATIC = "attr.static";
 	
 	// Field
@@ -25,4 +26,5 @@ public abstract interface Constants {
 	public static final String START = "attr.type.patch.pos.start";
 	public static final String END = "attr.type.patch.pos.end";
 	public static final String SAFE_OPAQUE = "attr.safeopaque";
+	public static final String HAS_OPAQUE = "attr.hassafe";
 }

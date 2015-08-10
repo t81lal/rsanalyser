@@ -67,6 +67,8 @@ import org.topdank.byteengineer.commons.data.JarContents;
  * the stack before the method is called. <br>
  * </p>
  * 
+ * FIXME: *b city voice* "eyo nigga i think this shit here is broke, right quick nigga"
+ * 
  * @author Bibl (don't ban me pls)
  * @created 31 May 2015
  */
@@ -75,6 +77,7 @@ public class EmptyParameterFixer extends Visitor {
 	private int startSize, endSize;
 	private int callnames, unchanged, nulls;
 	private final List<MethodNode> skipped = new ArrayList<MethodNode>();
+	private final Set<MethodNode> changed = new HashSet<MethodNode>();
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -299,10 +302,15 @@ public class EmptyParameterFixer extends Visitor {
 		 */
 
 		for(Entry<MethodNode, String> e : map.entrySet()) {
-			e.getKey().desc = e.getValue();
-			for(MethodNode m : mmp.getData(e.getKey()).getAggregates()) {
+			MethodNode mn = e.getKey();
+			mn.desc = e.getValue();
+			Set<MethodNode> agg = mmp.getData(e.getKey()).getAggregates();
+			for(MethodNode m : agg) {
 				m.desc = e.getValue();
 			}
+			
+			changed.add(mn);
+			changed.addAll(agg);
 		}
 
 		for(ClassNode cn : classes) {
@@ -428,5 +436,9 @@ public class EmptyParameterFixer extends Visitor {
 		// }
 		
 		return count == 0;
+	}
+	
+	public Set<MethodNode> getChanged() {
+		return changed;
 	}
 }

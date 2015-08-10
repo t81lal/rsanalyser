@@ -22,7 +22,6 @@ import org.nullbool.api.obfuscation.CallVisitor;
 import org.nullbool.api.obfuscation.CatchBlockFixer;
 import org.nullbool.api.obfuscation.ComparisonReorderer;
 import org.nullbool.api.obfuscation.ComplexNumberVisitor;
-import org.nullbool.api.obfuscation.ControlFlowFixer;
 import org.nullbool.api.obfuscation.EmptyParameterFixer;
 import org.nullbool.api.obfuscation.EmptyPopRemover;
 import org.nullbool.api.obfuscation.FieldOpener;
@@ -44,6 +43,7 @@ import org.nullbool.api.obfuscation.refactor.BytecodeRefactorer;
 import org.nullbool.api.obfuscation.refactor.ClassTree;
 import org.nullbool.api.obfuscation.refactor.IRemapper;
 import org.nullbool.api.obfuscation.refactor.MethodCache;
+import org.nullbool.api.obfuscation.refactor.ReverseMethodDescCache;
 import org.nullbool.api.obfuscation.stuffthatdoesntwork.MultiplicativeModifierDestroyer;
 import org.nullbool.api.output.APIGenerator;
 import org.nullbool.api.output.NewOutputLogger;
@@ -84,9 +84,11 @@ public abstract class AbstractAnalysisProvider {
 	private List<ClassAnalyser> analysers;
 	private MultiplierHandler multiplierHandler;
 	private OpaquePredicateRemover opaqueRemover;
+	private EmptyParameterFixer emptyParameterFixer;
 	private CFGCache cfgCache;
 	private TreeBuilder builder;
 	private CaseAnalyser caseAnalyser;
+	private ReverseMethodDescCache methodCache;
 
 	private volatile boolean haltRequested;
 
@@ -109,6 +111,8 @@ public abstract class AbstractAnalysisProvider {
 		classTree         = new ClassTree(contents.getClassContents());
 		classTree.output();
 
+		methodCache = new ReverseMethodDescCache(contents.getClassContents());
+		
 		multiplierHandler = new MultiplierHandler();
 		builder = new TreeBuilder();
 		deobfuscate();
@@ -176,7 +180,7 @@ public abstract class AbstractAnalysisProvider {
 			for(ClassHook ch : map.classes()) {
 				for(MethodHook mh : ch.methods()) {
 					// TODO: Get after empty param deob
-					MethodNode m = cache.get(mh.val(Constants.REAL_OWNER), mh.obfuscated(), mh.val(Constants.DESC));
+					MethodNode m = cache.get(mh.val(Constants.REAL_OWNER), mh.obfuscated(), mh.val(Constants.REFACTORED_DESC));
 
 					if(m == null) {
 						System.out.println("NULL HOOK CALL?");
@@ -203,8 +207,15 @@ public abstract class AbstractAnalysisProvider {
 								// no change.
 								break;
 						}
+						mh.var(Constants.HAS_OPAQUE, "true");
+						mh.var(Constants.SAFE_OPAQUE, Integer.toString(num));
+					} else {
+						if(emptyParameterFixer.getChanged().contains(m)) {
+							// unused param.
+							mh.var(Constants.HAS_OPAQUE, "true");
+							mh.var(Constants.SAFE_OPAQUE, "0");
+						}
 					}
-					mh.var(Constants.SAFE_OPAQUE, Integer.toString(num));
 				}
 			}
 
@@ -239,6 +250,9 @@ public abstract class AbstractAnalysisProvider {
 		IRemapper remapper = new IRemapper() {
 			@Override
 			public String resolveMethodName(String owner, String name, String desc, boolean isStatic) {
+				if(true)
+					return name;
+				
 				if(name.length() > 2)
 					return name;
 
@@ -309,7 +323,7 @@ public abstract class AbstractAnalysisProvider {
 			}
 
 			@Override
-			public String resolveFieldName(String owner, String name, String desc) {
+			public String resolveFieldName(String owner, String name, String desc, boolean isStatic) {
 				String key = owner + "." + name + " " + desc;
 				if(fields.containsKey(key)){
 					return fields.get(key).refactored();
@@ -441,7 +455,7 @@ public abstract class AbstractAnalysisProvider {
 				}
 
 				@Override
-				public String resolveFieldName(String owner, String name, String desc) {
+				public String resolveFieldName(String owner, String name, String desc, boolean isStatic) {
 					if(name.equals("do") || name.equals("if")) {
 						return "f_" + name;
 					}
@@ -622,10 +636,10 @@ public abstract class AbstractAnalysisProvider {
 
 		// destroyMultis();
 		// removeMultis();
-		buildCfgs();
+//		buildCfgs();
 //		 reorderBlocks();
-//		 buildCfgs();
-		transformRedundantGotos();
+		 buildCfgs();
+//		transformRedundantGotos();
 		// transformGotos();
 		// reorderBlocks();
 	}
@@ -668,60 +682,6 @@ public abstract class AbstractAnalysisProvider {
 	private void removeMultis() {
 		ComplexNumberVisitor visitor = new ComplexNumberVisitor();
 		visitor.run(contents.getClassContents(), builder);
-
-		//		MultiplicativeModifierCollector collector = new MultiplicativeModifierCollector();
-		//
-		//		for(ClassNode cn : contents.getClassContents()) {
-		//			for(MethodNode m : cn.methods) {
-		//				if(m.instructions.size() > 0) {
-		//					builder.build(m).accept(collector);
-		//				}
-		//			}
-		//		}
-		//
-		//		collector.output();
-		//
-		//		MultiplicativeModifierRemover remover = new MultiplicativeModifierRemover(collector);
-		//		for(ClassNode cn : contents.getClassContents()) {
-		//			for(MethodNode m : cn.methods) {
-		//				if(m.instructions.size() > 0) {
-		//					builder.build(m).accept(remover);
-		//				}
-		//			}
-		//		}
-		//
-		//		remover.output();
-	}
-
-	private void reorderBlocks() {
-		ControlFlowFixer fixer = new ControlFlowFixer();
-
-		for(ClassNode cn : contents.getClassContents()) {
-			for(MethodNode m : cn.methods) {
-				if(m.instructions.size() > 0) {
-//					if(cn.name.equals("ck") && m.name.equals("c") && m.desc.startsWith("(Ljava/lang/CharSequence")) {
-//						
-//					}
-					try {
-						IControlFlowGraph oldGraph = cfgCache.get(m);
-						fixer.fix(m, oldGraph);
-						
-						cfgCache.remove(m);
-						oldGraph.destroy();
-						
-						cfgCache.get(m);
-					} catch (ControlFlowException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-//		if(true) {
-//			System.exit(1);
-//		}
-//
-//		System.out.printf("Fixed %d methods.%n", j);
-		//reorderer.output();
 	}
 
 	private void buildCfgs() {
@@ -776,8 +736,8 @@ public abstract class AbstractAnalysisProvider {
 	}
 
 	private void fixEmptyParams() {
-		EmptyParameterFixer fixer = new EmptyParameterFixer();
-		fixer.visit(contents);
+		emptyParameterFixer = new EmptyParameterFixer();
+		emptyParameterFixer.visit(contents);
 
 		//System.exit(0);
 	}
@@ -951,5 +911,9 @@ public abstract class AbstractAnalysisProvider {
 
 	public CaseAnalyser getCaseAnalyser() {
 		return caseAnalyser;
+	}
+	
+	public ReverseMethodDescCache getMethodCache() {
+		return methodCache;
 	}
 }

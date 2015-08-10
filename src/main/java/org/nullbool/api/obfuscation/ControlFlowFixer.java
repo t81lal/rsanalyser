@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.nullbool.api.obfuscation.cfg.DominatorTree;
 import org.nullbool.api.obfuscation.cfg.ExceptionData;
 import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
@@ -38,14 +39,13 @@ public class ControlFlowFixer implements Opcodes {
 		
 //		System.out.println(graph.toString());
 		
-//		DominatorTree dt = new DominatorTree(graph);
-//		m.instructions.removeAll(true);
-//		List<FlowBlock> re = new ArrayList<FlowBlock>();
-//		for(FlowBlock b : dt.topologicalTraversal()) {
-//			System.out.println(b);
-//			re.add(b);
-//			b.transfer(m.instructions);
-//		}
+		DominatorTree dt = new DominatorTree(graph);
+		m.instructions.removeAll(true);
+		List<FlowBlock> re = new ArrayList<FlowBlock>();
+		for(FlowBlock b : dt.topologicalTraversal()) {
+			re.add(b);
+			b.transfer(m.instructions);
+		}
 //
 //		System.out.println(((SaneControlFlowGraph) graph).toString(re));
 		

@@ -292,6 +292,40 @@ public abstract class ClassAnalyser implements Opcodes {
 		return null;
 	}
 	
+	public List<DataPoint> pointsOf(MethodNode m, String... pattern) {
+		List<DataPoint> points = new ArrayList<DataPoint>();
+		// TODO: Find from cache
+		BoundedInstructionIdentifier i = new BoundedInstructionIdentifier(m.instructions.toArray());
+		int count = 0;
+		DataPoint start = null;
+		String secondIn;
+		int size = pattern.length;
+
+		List<DataPoint> opcodeList = i.getPoints();
+		if ((opcodeList.size() > 0) && ((opcodeList.size() - size) >= 0)) {
+			for (int x = 0; x <= (opcodeList.size() - size); x++) {
+				for (int index = 0; index < size; index++) {
+					DataPoint firstIn = opcodeList.get(x + index);
+					if(start == null) {
+						start = firstIn;
+					}
+					secondIn = pattern[index];
+					count += firstIn.toString().matches(secondIn) ? 1 : 0;
+					
+					// System.out.printf("[%b] %s matches %s.%n", firstIn.toString().matches(secondIn), firstIn, secondIn);
+					
+				}
+				if(size == count) // if the size == count return true (found)
+					points.add(start);
+				
+				count = 0;
+				start = null;
+			}
+		}
+		
+		return points;
+	}
+	
 	public DataPoint pointOf(MethodNode m, String... pattern) {
 		// TODO: Find from cache
 		BoundedInstructionIdentifier i = new BoundedInstructionIdentifier(m.instructions.toArray());
@@ -553,7 +587,7 @@ public abstract class ClassAnalyser implements Opcodes {
 			MethodNode m = (MethodNode) oM;
 			if (min.name.equals(m.name) && min.desc.equals(m.desc)) {
 				return new MethodHook(foundHook).obfuscated(m.name).refactored(realName).var(Constants.REAL_OWNER, min.owner)
-						.var(Constants.DESC, m.desc).var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
+						.var(Constants.DESC, m.desc).var(Constants.REFACTORED_DESC, m.desc).var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
 			}
 		}
 		return null;
@@ -569,7 +603,7 @@ public abstract class ClassAnalyser implements Opcodes {
 			// System.out.println("   method " + m.name + " " + m.desc);
 			if (parts[1].equals(m.name)) {
 				return new MethodHook(foundHook).obfuscated(m.name).refactored(realName).var(Constants.REAL_OWNER, cn.name)
-						.var(Constants.DESC, m.desc).var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
+						.var(Constants.DESC, m.desc).var(Constants.REFACTORED_DESC, m.desc).var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
 			}
 		}
 		return null;
@@ -588,7 +622,7 @@ public abstract class ClassAnalyser implements Opcodes {
 	}
 
 	public MethodHook asMethodHook(MethodNode m, String realName) {
-		return new MethodHook(foundHook).obfuscated(m.name).refactored(realName).var(Constants.REAL_OWNER, m.owner.name).var(Constants.DESC, m.desc)
+		return new MethodHook(foundHook).obfuscated(m.name).refactored(realName).var(Constants.REAL_OWNER, m.owner.name).var(Constants.DESC, m.desc).var(Constants.REFACTORED_DESC, m.desc)
 				.var(Constants.STATIC, Boolean.toString(Modifier.isStatic(m.access)));
 	}
 

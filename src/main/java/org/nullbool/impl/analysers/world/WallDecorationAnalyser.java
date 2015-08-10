@@ -18,8 +18,9 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "markerRenderable1&Renderable", "markerRenderable2&Renderable", "strictX&I", "strictY&I", "plane&I", "hash&I",
-		"uid&I", "orientation1&I", "orientation2&I", }, methods = {})
+@SupportedHooks(
+		fields = { "markerRenderable1&Renderable", "markerRenderable2&Renderable", "localX&I", "localY&I", "plane&I", "hash&I",
+		"flags&I", "orientation1&I", "orientation2&I", }, methods = {})
 public class WallDecorationAnalyser extends ClassAnalyser {
 
 	public WallDecorationAnalyser() throws AnalysisException {
@@ -68,10 +69,10 @@ public class WallDecorationAnalyser extends ClassAnalyser {
 			l.add(asFieldHook(h, "markerRenderable2"));
 
 			h = findField(ins, false, true, 3, 'f', "putfield");
-			l.add(asFieldHook(h, "strictX"));
+			l.add(asFieldHook(h, "localX"));
 
 			h = findField(ins, false, true, 4, 'f', "putfield");
-			l.add(asFieldHook(h, "strictY"));
+			l.add(asFieldHook(h, "localY"));
 
 			h = findField(ins, false, true, 5, 'f', "putfield");
 			l.add(asFieldHook(h, "plane"));
@@ -80,7 +81,7 @@ public class WallDecorationAnalyser extends ClassAnalyser {
 			l.add(asFieldHook(h, "hash"));
 
 			h = findField(ins, false, true, 2, 'f', "putfield");
-			l.add(asFieldHook(h, "uid"));
+			l.add(asFieldHook(h, "flags"));
 
 			h = findField(ins, false, true, 8, 'f', "putfield");
 			l.add(asFieldHook(h, "orientation1"));
