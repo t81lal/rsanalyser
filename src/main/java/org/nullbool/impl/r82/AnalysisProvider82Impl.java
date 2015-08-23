@@ -17,10 +17,6 @@ import org.topdank.banalysis.filter.Filter;
  */
 public class AnalysisProvider82Impl extends AnalysisProvider79Impl {
 
-	/**
-	 * @param revision
-	 * @throws IOException
-	 */
 	public AnalysisProvider82Impl(Revision revision) throws IOException {
 		super(revision);
 	}

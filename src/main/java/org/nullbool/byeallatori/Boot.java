@@ -560,25 +560,25 @@ public class Boot implements Opcodes {
 		//		System.out.println(iIIiIIIiiI("rd_\u007fTee\u0006eraN"));
 
 		// SESSION = "655207082866909a0-f69b-43d1-90f6-6804ff43cdb0";
-		request();
-				for(int i=0; i < 1000; i++) {
-					try {
-						scrapt(i);
-						dumpscript(i);
-					} catch(Throwable t) {
-						t.printStackTrace();
-					}
-				}
+//		request();
+//				for(int i=0; i < 1000; i++) {
+//					try {
+//						scrapt(i);
+//						dumpscript(i);
+//					} catch(Throwable t) {
+//						t.printStackTrace();
+//					}
+//				}
 //		byte[] hooks = hooks();
 //		parseHooks(ByteBuffer.wrap(hooks));
 //		System.out.println(hooks.length);
 
 //		System.out.println(MiscHelper.add());
-		if(true)
-			return;
-
-		if(true)
-			return;
+//		if(true)
+//			return;
+//
+//		if(true)
+//			return;
 		//		
 		//		if(true)
 		//			return;
@@ -587,8 +587,8 @@ public class Boot implements Opcodes {
 		//		if(true)
 		//			return;
 
-		File dir = new File("C:/Users/Bibl/Desktop/BACKUP/osbots shit nigga");
-		pb = new File(dir, "osbot 2.3.77.jar");
+		File dir = new File("C:/Users/Bibl/Desktop/test");
+		pb = new File(dir, "OSBot 2.3.99");
 		out = new File(dir, "osbout.jar");
 
 		dl = new SingleJarDownloader<ClassNode>(new JarInfo(pb));
@@ -599,7 +599,7 @@ public class Boot implements Opcodes {
 		cache = new MethodCache(classList);
 
 		nottheasshol();
-		removeUnreachableCode();
+//		removeUnreachableCode();
 
 		complex = findComplex();
 		//Map<MethodNode, Set<MethodNode>> complexCalls = graphCalls(complex);
@@ -665,15 +665,15 @@ public class Boot implements Opcodes {
 
 		//System.out.println("dec: " + org.osbot.D.method_2("0J>H<K \b0J>U!@ V"));
 
-		patchgc();
-		intercept_append();
-		loaded_map();
+//		patchgc();
+//		intercept_append();
+//		loaded_map();
 
-		reflectno();
+//		reflectno();
 
 		dump();
 
-		patchClient();
+//		patchClient();
 	}
 
 	private static void loaded_map() {

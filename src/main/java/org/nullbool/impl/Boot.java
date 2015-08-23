@@ -1,4 +1,3 @@
-
 package org.nullbool.impl;
 
 import java.io.BufferedReader;
@@ -21,6 +20,7 @@ import org.nullbool.impl.AnalysisProviderRegistry.RegistryEntry;
 import org.nullbool.impl.r77.AnalysisProvider77Impl;
 import org.nullbool.impl.r79.AnalysisProvider79Impl;
 import org.nullbool.impl.r82.AnalysisProvider82Impl;
+import org.nullbool.impl.r90.AnalysisProvider90Impl;
 import org.topdank.banalysis.filter.Filter;
 import org.topdank.byteio.util.Debug;
 
@@ -30,25 +30,16 @@ import org.topdank.byteio.util.Debug;
  */
 public class Boot {
 
-	private static int revision = 87;
+	private static int revision = 90;
 
 	public static void main(String[] args) throws Exception {
-		/*if(true) {
-			int k = 1986473181 * 180709093;
-			System.out.println(k);
-			System.exit(1);
-		}*/
-		
-
 		System.out.printf("Remote rev: %d.%n", RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100));
-
+		
 		bootstrap();
 
 		// Use runLatest for full logs
 		int count = 1;
 		for(int i=0; i < count; i++) {
-			
-			//System.out.println("Match condition : " + "getfield gk.ca Lgk;".matches());
 			Revision revision = rev(Boot.revision - i);
 			System.out.println("Running " + revision.getName());
 			try {
@@ -308,6 +299,27 @@ public class Boot {
 				try {
 					int val = Integer.parseInt(t.getName());
 					return val >= 82;
+				} catch(NumberFormatException e) {
+					e.printStackTrace();
+					return false;
+				}
+			}
+		}));
+		
+		AnalysisProviderRegistry.register(new RegistryEntry(new ProviderCreator() {
+			@Override
+			public AbstractAnalysisProvider create(Revision rev) throws Exception {
+				return new AnalysisProvider90Impl(rev);
+			}
+		}).addFilter(new Filter<Revision>(){
+			@Override
+			public boolean accept(Revision t) {
+				if(t == null)
+					return false;
+
+				try {
+					int val = Integer.parseInt(t.getName());
+					return val >= 90;
 				} catch(NumberFormatException e) {
 					e.printStackTrace();
 					return false;

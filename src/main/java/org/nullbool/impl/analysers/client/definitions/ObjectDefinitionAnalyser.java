@@ -34,7 +34,7 @@ public class ObjectDefinitionAnalyser extends ClassAnalyser {
 		String npcDefinition = findObfClassName("NPCDefinition");
 		String superClassName = findObfClassName("DualNode");
 		boolean rightSuperClass = cn.superName.equals(superClassName);
-		boolean containFourInts = getFieldOfTypeCount(cn, "\\[I") >= 4;
+		boolean containFourInts = getFieldOfTypeCount(cn, "\\[S") >= 4;
 		boolean containOneString = getFieldOfTypeCount(cn, obj) == 1;
 		boolean gName = !npcDefinition.equals(cn.name);
 		return containFourInts && rightSuperClass && containOneString && gName;

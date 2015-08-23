@@ -2,7 +2,6 @@ package org.nullbool.impl.analysers.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
@@ -45,24 +44,25 @@ public class ActorAnalyser extends ClassAnalyser {
 
 	public ActorAnalyser() throws AnalysisException {
 		super("Actor");
-
 	}
 
 	@Override
 	protected boolean matches(ClassNode cn) {
+		ClassNode renderable = getClassNodeByRefactoredName("Renderable");
+		return cn.superName.equals(renderable.name) && (cn.access & ACC_ABSTRACT) == ACC_ABSTRACT;
+		
 		// FIXME: BREAKS ON REV 70 AND 75
-		Set<ClassNode> supers = Context.current().getClassTree().getSupers(cn);
-		ClassNode actorClass = getClassNodeByRefactoredName("Renderable");
-		if(!supers.contains(actorClass))
-			return false;
-		
-		if(getFieldOfTypeCount(cn, "\\[Z") != 1)
-			return false;
-		
-		if(getFieldOfTypeCount(cn, "\\[I") < 3)
-			return false;
-		
-		return true;
+//		Set<ClassNode> supers = Context.current().getClassTree().getSupers(cn);
+//		if(!supers.contains(actorClass))
+//			return false;
+//		
+//		if(getFieldOfTypeCount(cn, "\\[Z") != 1)
+//			return false;
+//		
+//		if(getFieldOfTypeCount(cn, "\\[I") < 3)
+//			return false;
+//		
+//		return true;
 		
 		/*String[] pattern = Context.current().getPattern("Actor");
 		String superClassName = findObfClassName("Renderable");
