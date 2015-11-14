@@ -22,6 +22,7 @@ import org.nullbool.api.obfuscation.CallVisitor;
 import org.nullbool.api.obfuscation.CatchBlockFixer;
 import org.nullbool.api.obfuscation.ComparisonReorderer;
 import org.nullbool.api.obfuscation.ComplexNumberVisitor;
+import org.nullbool.api.obfuscation.ConstantAppropriator;
 import org.nullbool.api.obfuscation.EmptyParameterFixer;
 import org.nullbool.api.obfuscation.EmptyPopRemover;
 import org.nullbool.api.obfuscation.FieldOpener;
@@ -60,6 +61,7 @@ import org.nullbool.pi.core.hook.api.MethodHook;
 import org.nullbool.pi.core.hook.serimpl.StaticMapSerialiserImpl;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
@@ -669,14 +671,7 @@ public abstract class AbstractAnalysisProvider {
 
 	private void destroyMultis() {
 		MultiplicativeModifierDestroyer destroyer = new MultiplicativeModifierDestroyer();
-
-		for(ClassNode cn : contents.getClassContents()) {
-			for(MethodNode m : cn.methods) {
-				if(m.instructions.size() > 0) {
-					builder.build(m).accept(destroyer);
-				}
-			}
-		}
+		visit(destroyer);
 	}
 
 	private void removeMultis() {
@@ -709,29 +704,13 @@ public abstract class AbstractAnalysisProvider {
 
 	private void replaceCharStringBuilders() {
 		StringBuilderCharReplacer replacer = new StringBuilderCharReplacer();
-
-		for(ClassNode cn : contents.getClassContents()) {
-			for(MethodNode m : cn.methods) {
-				if(m.instructions.size() > 0) {
-					builder.build(m).accept(replacer);
-				}
-			}
-		}
-
+		visit(replacer);
 		replacer.output();
 	}
 
 	private void removeEmptyPops() {
 		EmptyPopRemover remover = new EmptyPopRemover();
-
-		for(ClassNode cn : contents.getClassContents()) {
-			for(MethodNode m : cn.methods) {
-				if(m.instructions.size() > 0) {
-					builder.build(m).accept(remover);
-				}
-			}
-		}
-
+		visit(remover);
 		remover.output();
 	}
 
@@ -761,32 +740,20 @@ public abstract class AbstractAnalysisProvider {
 
 	private void reorderNullChecks() {
 		ComparisonReorderer fixer = new ComparisonReorderer();
-
-		for(ClassNode cn : contents.getClassContents()) {
-			for(MethodNode m : cn.methods) {
-				if(m.instructions.size() > 0) {
-					builder.build(m).accept(fixer);
-				}
-			}
-		}
-
+		visit(fixer);
 		fixer.output();
 	}
 
 	private void reorderOperations() {
+		ConstantAppropriator propagator = new ConstantAppropriator();
 		SimpleArithmeticFixer fixer = new SimpleArithmeticFixer();
 
-		if(Context.current().getFlags().getOrDefault("basicout", true))
+		if(Context.current().getFlags().getOrDefault("basicout", true)) {
 			System.err.println("Running Simple Arithmetic Fixer.");
-
-		for(ClassNode cn : contents.getClassContents()) {
-			for(MethodNode m : cn.methods) {
-				if(m.instructions.size() > 0) {
-					builder.build(m).accept(fixer);
-				}
-			}
 		}
 
+		visit(propagator);
+		visit(fixer);
 		fixer.output();
 	}
 
@@ -825,12 +792,26 @@ public abstract class AbstractAnalysisProvider {
 
 	private void analyseMultipliers() {
 		MultiplierVisitor mutliVisitor = new MultiplierVisitor(multiplierHandler);
-		for (ClassNode cn : contents.getClassContents()) {
-			for (MethodNode m : cn.methods) {
-				builder.build(m).accept(mutliVisitor);
-			}
-		}
+		visit(mutliVisitor);
 		mutliVisitor.log();
+	}
+	
+	private void visit(NodeVisitor nv) {
+		for(ClassNode cn : contents.getClassContents()) {
+			visit(cn, nv);
+		}
+	}
+	
+	private void visit(ClassNode cn, NodeVisitor nv) {
+		for(MethodNode m : cn.methods) {
+			visit(m, nv);
+		}
+	}
+	
+	private void visit(MethodNode m, NodeVisitor nv) {
+		if(m.instructions.size() > 0) {
+			builder.build(m).accept(nv);;
+		}
 	}
 
 	protected abstract Builder<ClassAnalyser> registerAnalysers() throws AnalysisException;

@@ -24,6 +24,7 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 	private final Set<InstructionSwap> inserts = new HashSet<InstructionSwap>();
 
 	private int generalWtfs;
+	private int addMins, subMins;
 	
 	private int complexAddSwitch, addSwitch = 0;
 	private int simpleAddSwap, correctAdds = 0;
@@ -44,8 +45,8 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 		if(a1 == null || a2 == null)
 			return;
 
-		NumberNode first = expr.firstNumber();
-		if(first == null)
+		NumberNode nn = expr.firstNumber();
+		if(nn == null)
 			return;
 
 		if(a1 instanceof NumberNode && a2 instanceof NumberNode) {
@@ -55,8 +56,15 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 		
 		if(a2.opcode() == -1) {
 			generalWtfs++;
+			System.out.printf("a2.opcode == -1, type=[%s].%n", a2.insn().getClass().getSimpleName());
 			//if(Context.current().getFlags().getOrDefault("basicout", true))
 			//	System.err.printf("   %s [%s, %d] [children=%d] at %s.%n", Printer.OPCODES[expr.opcode()], Printer.OPCODES[a1.opcode()], a2.opcode(), expr.children(), expr.method());
+			return;
+		}
+		
+		boolean fnum = a1 == nn;
+		if(!fnum && !(a2 == nn)) {
+			// if this operation isn't a const +-*/ something
 			return;
 		}
 
@@ -118,21 +126,23 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 			 *  variable +   -const
 			 *          and
 			 *  -const   +   variable */
-			Number val = constVal(first.insn());
+			Number val = constVal(nn.insn());
 
 			if(val.intValue() == Integer.MIN_VALUE) {
-				if(Context.current().getFlags().getOrDefault("basicout", true))
+				if(Context.current().getFlags().getOrDefault("basicout", true)) {
+					addMins++;
 					System.err.println("   SimpleArithmeticFixer.visitOperation(add)");
+				}
 				return;
 			}
 
 			if(shouldSwitchOperation(val)) {
 				/* Switch the numbers sign and the opcode. */
 				Number newVal = abs(val);
-				first.setNumber(newVal);
+				nn.setNumber(newVal);
 				expr.insn().setOpcode(newOpcode(ISUB, newVal));
 
-				if(a1.equals(first)) {
+				if(fnum) {
 					/* -const   +   variable
 					 *  =
 					 * variable + -const
@@ -150,7 +160,7 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 					insert.insn   = a1ain;
 					inserts.add(insert);
 					complexAddSwitch++;
-				} else if(a2.equals(first)) {
+				} else {
 					/* variable + -const 
 					 *  =
 					 * variable - +const 
@@ -159,8 +169,6 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 					 * operands and we've already changed the sign of the number
 					 * and the opcode. */
 					addSwitch++;
-				} else {
-					throw new RuntimeException("huh");
 				}
 			} else {
 				/* Here the sign doesn't have to be changed nor does
@@ -170,35 +178,52 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 				 *  =
 				 * variable + const */
 
-				if(a1.equals(first)) {
+				if(fnum) {
 					InstructionSwap swap = new InstructionSwap();
 					swap.method = expr.method();
 					swap.marker = a2.insn();
-					swap.insn   = first.insn();
+					swap.insn   = nn.insn();
 					simpleAddSwap++;
-				} else if(a2.equals(first)) {
+				} else {
 					// Already correct
 					correctAdds++;
-				} else {
-					if(Context.current().getFlags().getOrDefault("basicout", true))
-						System.err.printf("   Unhandleable operation add at %s (%d).%n", expr.method(), val);
-					awtfs++;
-					//throw new RuntimeException("huh x3: " + first.getClass().getSimpleName());
 				}
 			}
 		} else if(expr.subtracting()) {
-			Number val = constVal(first.insn());
+			Number val = constVal(nn.insn());
 
 			if(val.intValue() == Integer.MIN_VALUE) {
-				if(Context.current().getFlags().getOrDefault("basicout", true))
+				/* y = INTEGER.MIN_VALUE - x;
+				 * y = x - Integer.MIN_VALUE;
+				 * 
+				 * when x = +ve
+				 * 
+				 * y = Integer.MIN_VALUE - (+x);
+				 * y = (+x) - Integer.MIN_VALUE;
+				 * 
+				 * when x = -ve
+				 * 
+				 * y = Integer.MIN_VALUE - (-x);
+				 *    so
+				 * y = Integer.MIN_VALUE + x;
+				 * 
+				 * y = (-x) - Integer.MIN_VALUE;
+				 * 
+				 * 
+				 */
+				
+				
+				if(Context.current().getFlags().getOrDefault("basicout", true)) {
+					subMins++;
 					System.err.println("   SimpleArithmeticFixer.visitOperation(sub)");
+				}
 				return;
 			}
 
 			if(shouldSwitchOperation(val)) {
-				if(a1.equals(first)) {
+				if(fnum) {
 					unswitchableSubs++;
-				} else if(a2.equals(first)) {
+				} else {
 					/* variable - -const
 					 *  =
 					 * variable + +const
@@ -208,11 +233,9 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 					 * 
 					 * Switch the numbers sign and the opcode. */
 					Number newVal = abs(val);
-					first.setNumber(newVal);
+					nn.setNumber(newVal);
 					expr.insn().setOpcode(newOpcode(IADD, newVal));
 					complexSubSwitch++;
-				} else {
-					throw new RuntimeException("huh x2");
 				}
 			} else {
 				/* This means we don't need to change the sign
@@ -229,14 +252,14 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 		} else if(expr.multiplying()) {
 			/* If the first number is the constant, we move it after the other 
 			 * operand. */
-			Class<?> type = first.type();
-			if((type.equals(Integer.TYPE)|| type.equals(Long.TYPE)) && first.longNumber() == 1) {
+			Class<?> type = nn.type();
+			if((type.equals(Integer.TYPE)|| type.equals(Long.TYPE)) && nn.longNumber() == 1) {
 				// MethodNode method = expr.method();
 				// System.out.printf("%s : %s.%n", expr.insn(), first.insn());
 				// method.instructions.remove(expr.insn());
 				// method.instructions.remove(first.insn());
 				multiplyByOne++;
-			} else if(a1.equals(first)) {
+			} else if(a1.equals(nn)) {
 				if(a2.insn() instanceof FieldInsnNode || a2.insn() instanceof VarInsnNode) {
 					InstructionSwap swap = new InstructionSwap();
 					swap.method = expr.method();
@@ -324,6 +347,8 @@ public class SimpleArithmeticFixer extends NodeVisitor {
 
 		if(Context.current().getFlags().getOrDefault("basicout", true)) {
 			System.out.printf("   Hit %d general wtfs...%n", generalWtfs);
+			System.out.printf("   Found %d addition Integer.MIN_VALUE's.%n", addMins);
+			System.out.printf("   Found %d subtraction Integer.MIN_VALUE's.%n", subMins);
 			System.out.printf("   Switched %4d negative addition constants             (variable + -const).%n", addSwitch);
 			System.out.printf("   Switched %4d complex negative addition constants     (-const + variable).%n", complexAddSwitch);
 			System.out.printf("   Switched %4d simple operand orders                   (const + variable).%n", simpleAddSwap);

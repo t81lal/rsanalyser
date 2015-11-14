@@ -30,14 +30,12 @@ import org.topdank.byteengineer.commons.data.JarContents;
  * inserted by Jagex's obfuscater. Strict parameter validation
  * is done to ensure that the parameter is indeed a dummy and
  * is not actually a real parameter.
- * </p>
  * 
  * <p>
  * Firstly all of the methods in the gamepack are checked to see if
  * their last parameter is a either a byte, short or integer as these
  * are currently the only dummy parameter types that the obfuscater
  * adds.
- * </p>
  * 
  * <p>
  * We then have to calculate the index of the local parameter in the
@@ -48,7 +46,6 @@ import org.topdank.byteengineer.commons.data.JarContents;
  * Note that some dummy
  * parameters are used to fulfil opaque predicate checks and so these
  * must be removed before calling this transformer.
- * </p>
  * 
  * <p>
  * Then a chain is built of all of the methods so that each method is
@@ -56,7 +53,6 @@ import org.topdank.byteengineer.commons.data.JarContents;
  * to check if the parameter is used in a super or subclass. If this
  * fails, the entire method chain is dropped and none of those methods
  * are changed.
- * </p>
  * 
  * <p>
  * Then once we are sure that we can change the method description,
@@ -65,7 +61,6 @@ import org.topdank.byteengineer.commons.data.JarContents;
  * description of the method and then add a POP before the call to 
  * make sure that the value that was previously passed is taken from
  * the stack before the method is called. <br>
- * </p>
  * 
  * FIXME: *b city voice* "eyo nigga i think this shit here is broke, right quick nigga"
  * 

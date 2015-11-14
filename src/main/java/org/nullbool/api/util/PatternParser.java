@@ -8,7 +8,9 @@ import java.nio.file.Paths;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.nullbool.impl.Boot;
+import org.nullbool.Boot;
+
+import org.nullbool.Boot;
 
 public class PatternParser {
 

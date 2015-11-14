@@ -32,13 +32,13 @@ public class CallVisitor extends Visitor {
 			entries.addAll(cs.getMethods(m -> m.name.length() > 2)); // need to do this to check methods inherited from jdk
 			entries.addAll(cs.getMethods(cs::isInherited)); // inherited methods from within the client
 		}
-		if(Context.current().getFlags().getOrDefault("basicout", true))
+//		if(Context.current().getFlags().getOrDefault("basicout", true))
 			System.out.printf("   %d prospect methods.%n", entries.size());
-		
+
 		entries.forEach(e -> search(classesMap, e));
 		classesMap.values().forEach(cs -> cs.getMethods(mn -> !cs.callGraph.containsVertex(mn)).forEach(cs.methods::remove));
-		
-		if(Context.current().getFlags().getOrDefault("basicout", true))
+
+//		if(Context.current().getFlags().getOrDefault("basicout", true))
 			System.out.printf("   Found %d/%d used methods (removed %d dummy methods).%n", used, total, total - used);
 	}
 
@@ -66,9 +66,6 @@ public class CallVisitor extends Visitor {
 							continue aParnyLoop;
 						}
 					}
-					/* for (final ClassStructure delegate : cs.delegates) { //trace downwards to verify
-					 * 
-					 * } */
 				}
 			}
 		}
