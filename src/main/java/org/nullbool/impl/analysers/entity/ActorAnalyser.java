@@ -47,7 +47,7 @@ public class ActorAnalyser extends ClassAnalyser {
 //		return true;
 
 		/*String[] pattern = Context.current().getPattern("Actor");
-		String superClassName = findObfClassName("Renderable");
+        String superClassName = findObfClassName("Renderable");
 		boolean rightSuperClass = cn.superName.equals(superClassName);
 		boolean rightFields = getFieldOfTypeCount(cn, "\\[Z") == 1;
 		boolean goodPattern = findMethod(cn, "init", pattern);
@@ -56,7 +56,7 @@ public class ActorAnalyser extends ClassAnalyser {
 
     @Override
     protected Builder<IFieldAnalyser> registerFieldAnalysers() {
-        return new Builder<IFieldAnalyser>().addAll(new XYHooks(), new QueueFieldsAnalyser(), new AnimationHooks(), new InteractingHooks(), /*new HealthAndDamageHooks(), */new CycleHookAnalyser());
+        return new Builder<IFieldAnalyser>().addAll(new XYHooks(), new QueueFieldsAnalyser(), new AnimationHooks(), new InteractingHooks(), new HealthAndDamageHooks(), new CycleHookAnalyser());
     }
 
     @Override

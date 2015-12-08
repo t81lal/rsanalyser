@@ -25,8 +25,11 @@ import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.impl.analysers.entity.ActorAnalyser;
 import org.nullbool.pi.core.hook.api.FieldHook;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.cfg.tree.NodeTree;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
+import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
 import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
 import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.*;
@@ -88,7 +91,12 @@ public class ActorAnalyser90 extends ActorAnalyser {
             public boolean accept(IFieldAnalyser t) {
                 return t instanceof QueueFieldsAnalyser;
             }
-        }, new QueueFieldsAnalyser90());
+        }, new QueueFieldsAnalyser90()).replace(new Filter<IFieldAnalyser>() {
+            @Override
+            public boolean accept(IFieldAnalyser t) {
+                return t instanceof HealthAndDamageHooks;
+            }
+        }, new HealthAndDamageHooks90());
     }
 
     public class QueueFieldsAnalyser90 extends QueueFieldsAnalyser {
@@ -175,6 +183,35 @@ public class ActorAnalyser90 extends ActorAnalyser {
             }
 
             return list;
+        }
+    }
+
+    private class HealthAndDamageHooks90 implements IFieldAnalyser {
+        @Override
+        public List<FieldHook> findFields(ClassNode cn) {
+            ArrayList<FieldHook> fieldHooks = new ArrayList<>();
+            String actorObj = findObfClassName("Actor");
+            String r = ";.*" + "L" + actorObj + ";III" + ".*;V";
+            MethodNode[] ms = findMethods(Context.current().getClassNodes(), r, true);
+            for (MethodNode methodNode : ms) {
+                NodeTree tree = new TreeBuilder().build(methodNode);
+                tree.accept(new NodeVisitor() {
+                    @Override
+                    public void visitOperation(ArithmeticNode an) {
+                        if (an.opcode() == Opcodes.IDIV) {
+                            AbstractNode parent = an.parent();
+                            List<FieldMemberNode> abstractNodes = parent.t_deepFindChildren(Opcodes.GETFIELD);
+                            if (abstractNodes != null && abstractNodes.size() == 2) {
+                                FieldMemberNode healthMemberNode = abstractNodes.get(0);
+                                FieldMemberNode maxHealthMemberNode = abstractNodes.get(1);
+                                fieldHooks.add(asFieldHook(healthMemberNode.fin(), "health"));
+                                fieldHooks.add(asFieldHook(maxHealthMemberNode.fin(), "maxHealth"));
+                            }
+                        }
+                    }
+                });
+            }
+            return fieldHooks;
         }
     }
 }
