@@ -23,6 +23,7 @@ import org.nullbool.api.Builder;
 import org.nullbool.api.Revision;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
+import org.nullbool.impl.analysers.ClientAnalyser;
 import org.nullbool.impl.analysers.entity.ActorAnalyser;
 import org.nullbool.impl.r82.AnalysisProvider82Impl;
 import org.topdank.banalysis.filter.Filter;
@@ -39,11 +40,8 @@ public class AnalysisProvider90Impl extends AnalysisProvider82Impl {
 	
 	@Override
 	public Builder<ClassAnalyser> registerAnalysers() throws AnalysisException {
-		return super.registerAnalysers().replace(new Filter<ClassAnalyser>() {
-			@Override
-			public boolean accept(ClassAnalyser t) {
-				return ActorAnalyser.class.isAssignableFrom(t.getClass());
-			}
-		}, new ActorAnalyser90());
+		return super.registerAnalysers()
+				.replace(t -> ActorAnalyser.class.isAssignableFrom(t.getClass()), new ActorAnalyser90())
+				.replace(t -> ClientAnalyser.class.isAssignableFrom(t.getClass()), new ClientAnalyser90());
 	}
 }

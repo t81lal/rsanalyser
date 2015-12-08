@@ -32,7 +32,7 @@ import org.topdank.byteio.util.Debug;
  */
 public class Boot {
 
-	private static int revision = 95;
+	private static int revision = 102;
 
 	public static void main(String[] args) throws Exception {
 		System.out.printf("Remote rev: %d.%n", RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100));

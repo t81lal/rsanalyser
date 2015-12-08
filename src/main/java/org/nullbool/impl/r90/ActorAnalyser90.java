@@ -25,6 +25,7 @@ import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.impl.analysers.entity.ActorAnalyser;
 import org.nullbool.pi.core.hook.api.FieldHook;
+import org.objectweb.asm.commons.cfg.tree.NodeTree;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
 import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
@@ -94,8 +95,6 @@ public class ActorAnalyser90 extends ActorAnalyser {
         @Override
         public List<FieldHook> findFields(ClassNode actor) {
             List<FieldHook> list = new ArrayList<FieldHook>();
-
-
             for (ClassNode cn : Context.current().getClassNodes().values()) {
                 for (MethodNode m : cn.methods) {
                     if (Modifier.isStatic(m.access)) {
@@ -112,11 +111,12 @@ public class ActorAnalyser90 extends ActorAnalyser {
                                     }
                                 }
                             }
+                            final FieldHook[] queueXHook = {null};
+                            final FieldHook[] queueYHook = {null};
+                            final FieldHook[] queueLengthHook = {null};
                             if (found) {
                                 FieldHook localX = getFoundHook().fields().stream().filter(v -> v.refactored().equals("localX")).findFirst().get();
                                 FieldHook localY = getFoundHook().fields().stream().filter(v -> v.refactored().equals("localY")).findFirst().get();
-                                final boolean[] queueXFound = {false};
-                                final boolean[] queueYFound = {false};
                                 NodeVisitor nv = new NodeVisitor() {
                                     @Override
                                     public void visitField(FieldMemberNode fmn) {
@@ -126,12 +126,10 @@ public class ActorAnalyser90 extends ActorAnalyser {
                                                 if (previous.opcode() == GETFIELD) {
                                                     final FieldInsnNode node = (FieldInsnNode) previous;
                                                     if (node.owner.equals(actor.name) && node.desc.equals("[I") && node.getNext().opcode() == ICONST_0) {
-                                                        if (fmn.name().equals(localX.obfuscated()) && !queueXFound[0]) {
-                                                            queueXFound[0] = true;
-                                                            list.add(asFieldHook(node, "queueX"));
-                                                        } else if (fmn.name().equals(localY.obfuscated()) && !queueYFound[0]) {
-                                                            queueYFound[0] = true;
-                                                            list.add(asFieldHook(node, "queueY"));
+                                                        if (fmn.name().equals(localX.obfuscated()) && queueXHook[0] == null) {
+                                                            list.add(queueXHook[0] = asFieldHook(node, "queueX"));
+                                                        } else if (fmn.name().equals(localY.obfuscated()) && queueYHook[0] == null) {
+                                                            list.add(queueYHook[0] = asFieldHook(node, "queueY"));
                                                         }
                                                     }
                                                 }
@@ -141,7 +139,35 @@ public class ActorAnalyser90 extends ActorAnalyser {
                                     }
                                 };
                                 TreeBuilder tb = new TreeBuilder();
-                                tb.build(m).accept(nv);
+                                NodeTree tree = tb.build(m);
+                                tree.accept(nv);
+
+                                if (queueXHook[0] != null || queueYHook[0] != null) {
+                                    FieldHook arrayHook = queueXHook[0] != null ? queueXHook[0] : queueYHook[0];
+
+                                    tree.accept(new NodeVisitor() {
+                                        @Override
+                                        public void visitField(FieldMemberNode fmn) {
+                                            if (fmn.getting() && fmn.owner().equals(actor.name) && fmn.name().equals(arrayHook.obfuscated())) {
+                                                if (queueLengthHook[0] == null) {
+                                                    AbstractInsnNode next = fmn.insn().getNext();
+                                                    for (int i = 0; i < 8 && next != null; i++) {
+                                                        if (next.opcode() == GETFIELD) {
+                                                            FieldInsnNode node = (FieldInsnNode) next;
+                                                            if (node.desc.equals("I") && node.owner.equals(actor.name)) {
+                                                                list.add(queueLengthHook[0] = asFieldHook(node, "queueLength"));
+                                                                break;
+                                                            }
+                                                        }
+                                                        next = next.getNext();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+
+
                             }
 
 //                            tb.build(m).accept(nv);
