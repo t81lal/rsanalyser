@@ -28,9 +28,7 @@ import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.cfg.tree.NodeTree;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
-import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
-import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
+import org.objectweb.asm.commons.cfg.tree.node.*;
 import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.*;
 import org.topdank.banalysis.filter.Filter;
@@ -207,6 +205,35 @@ public class ActorAnalyser90 extends ActorAnalyser {
                                 FieldMemberNode maxHealthMemberNode = abstractNodes.get(1);
                                 fieldHooks.add(asFieldHook(healthMemberNode.fin(), "health"));
                                 fieldHooks.add(asFieldHook(maxHealthMemberNode.fin(), "maxHealth"));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void visitMethod(MethodMemberNode mmn) {
+                        //hit damages
+                        if (mmn.owner().equals("java/lang/Integer") && mmn.name().equals("toString")) {
+                            List<FieldMemberNode> abstractNodes = mmn.t_deepFindChildren(Opcodes.GETFIELD);
+                            if (abstractNodes != null && abstractNodes.size() == 1) {
+                                FieldMemberNode hitDamagesMemberNode = abstractNodes.get(0);
+                                if (hitDamagesMemberNode.owner().equals(actorObj) && hitDamagesMemberNode.desc().equals("[I")) {//sanity check
+                                    fieldHooks.add(asFieldHook(hitDamagesMemberNode.fin(), "hitDamages"));
+                                } else {
+                                    throw new RuntimeException("hitDamageMemberNode = " + hitDamagesMemberNode);
+                                }
+
+                                //hit types
+                                MethodMemberNode updateRenderHitsplatTypeCall = (MethodMemberNode) mmn.parent().previous();
+                                abstractNodes = updateRenderHitsplatTypeCall.t_deepFindChildren(Opcodes.GETFIELD);
+                                if (abstractNodes != null && abstractNodes.size() == 1) {
+                                    FieldMemberNode hitTypesMemberNode = abstractNodes.get(0);
+                                    if (hitTypesMemberNode.owner().equals(actorObj) && hitTypesMemberNode.desc().equals("[I")) {//sanity check
+                                        fieldHooks.add(asFieldHook(hitTypesMemberNode.fin(), "hitTypes"));
+                                    } else {
+                                        throw new RuntimeException("hitDamageMemberNode = " + hitTypesMemberNode);
+                                    }
+                                }
+
                             }
                         }
                     }
