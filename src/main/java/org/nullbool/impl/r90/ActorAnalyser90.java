@@ -39,6 +39,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -96,7 +97,7 @@ public class ActorAnalyser90 extends ActorAnalyser {
             public boolean accept(IFieldAnalyser t) {
                 return t instanceof HealthAndDamageHooks;
             }
-        }, new HealthAndDamageHooks90());
+        }, new HealthAndDamageHooks90()).add(new OverheadMessageHook90());
     }
 
     public class QueueFieldsAnalyser90 extends QueueFieldsAnalyser {
@@ -210,6 +211,20 @@ public class ActorAnalyser90 extends ActorAnalyser {
                         }
                     }
                 });
+            }
+            return fieldHooks;
+        }
+    }
+
+    private class OverheadMessageHook90 implements IFieldAnalyser {
+        @Override
+        public List<FieldHook> findFields(ClassNode cn) {
+            ArrayList<FieldHook> fieldHooks = new ArrayList<>();
+            List<FieldNode> stringFields = cn.fields.stream().filter(v -> !Modifier.isStatic(v.access) && v.desc.equals("Ljava/lang/String;")).collect(Collectors.toList());
+            if (stringFields.size() == 1) {
+                fieldHooks.add(asFieldHook(stringFields.get(0), "message"));
+            } else {
+                throw new RuntimeException("Multiple string fields on actor node " + cn.name);
             }
             return fieldHooks;
         }
