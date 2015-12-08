@@ -169,22 +169,6 @@ public class ActorAnalyser90 extends ActorAnalyser {
 
 
                             }
-
-//                            tb.build(m).accept(nv);
-//                            System.out.println("fmns = " + fmns.size());
-//                            if (fmns.size() == 2) {
-//                                List<Integer> keys = new ArrayList<Integer>(fmns.keySet());
-//                                Collections.sort(keys);
-//                                FieldMemberNode x = fmns.get(keys.get(0));
-//                                FieldMemberNode y = fmns.get(keys.get(1));
-//                                list.add(asFieldHook(x.fin(), "queueX"));
-//                                list.add(asFieldHook(y.fin(), "queueY"));
-//
-//                                AbstractNode parent = x.parent();
-//                                ArithmeticNode sub = parent.t_first(ISUB);
-//                                FieldMemberNode length = sub.<FieldMemberNode>t_deepFindChildren(GETFIELD).get(0);
-//                                list.add(asFieldHook(length.fin(), "queueLength"));
-//                            }
                         }
                     }
                 }
