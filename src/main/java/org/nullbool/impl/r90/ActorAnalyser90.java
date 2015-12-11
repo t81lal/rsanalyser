@@ -26,9 +26,13 @@ import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.impl.analysers.entity.ActorAnalyser;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.cfg.tree.NodeTree;
 import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.*;
+import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
+import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
+import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
+import org.objectweb.asm.commons.cfg.tree.node.MethodMemberNode;
 import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.*;
 import org.topdank.banalysis.filter.Filter;
@@ -221,19 +225,30 @@ public class ActorAnalyser90 extends ActorAnalyser {
                                 } else {
                                     throw new RuntimeException("hitDamageMemberNode = " + hitDamagesMemberNode);
                                 }
+                            }
+                        }
+                    }
 
-                                //hit types
-                                MethodMemberNode updateRenderHitsplatTypeCall = (MethodMemberNode) mmn.parent().previous();
-                                abstractNodes = updateRenderHitsplatTypeCall.t_deepFindChildren(Opcodes.GETFIELD);
-                                if (abstractNodes != null && abstractNodes.size() == 1) {
-                                    FieldMemberNode hitTypesMemberNode = abstractNodes.get(0);
-                                    if (hitTypesMemberNode.owner().equals(actorObj) && hitTypesMemberNode.desc().equals("[I")) {//sanity check
-                                        fieldHooks.add(asFieldHook(hitTypesMemberNode.fin(), "hitTypes"));
-                                    } else {
-                                        throw new RuntimeException("hitDamageMemberNode = " + hitTypesMemberNode);
-                                    }
+                    @Override
+                    public void visitField(FieldMemberNode fmn) {
+                        //hittypes
+                        /*
+                            getstatic      ap.eb [Lco;
+	                        iaload
+		                        getfield       aj.ag [I <- dis
+			                        aload          #0
+		                        iload          #9
+                         */
+                        if (fmn.opcode() == Opcodes.GETSTATIC &&
+                                Type.getType(fmn.desc()).getSort() == Type.ARRAY && Type.getType(fmn.desc()).getDimensions() == 1
+                                && Context.current().getClassNodes().containsKey(Type.getType(fmn.desc()).getClassName().replace("[", "").replace("]", ""))
+                                && fmn.parent().opcode() == Opcodes.AALOAD) {
+                            List<FieldMemberNode> fieldMemberNodes = fmn.parent().t_deepFindChildren(Opcodes.GETFIELD);
+                            if (fieldMemberNodes != null && fieldMemberNodes.size() == 1) {
+                                FieldMemberNode fieldMemberNode = fieldMemberNodes.get(0);
+                                if (fieldMemberNode.owner().equals(actorObj) && fieldMemberNode.desc().equals("[I")) {
+                                    fieldHooks.add(asFieldHook(fieldMemberNode.fin(), "hitTypes"));
                                 }
-
                             }
                         }
                     }
