@@ -68,7 +68,7 @@ public class SourceInterpreter extends Interpreter<SourceValue> implements
     @Override
     public SourceValue newOperation(final AbstractInsnNode insn) {
         int size;
-        switch (insn.opcode()) {
+        switch (insn.getOpcode()) {
         case LCONST_0:
         case LCONST_1:
         case DCONST_0:
@@ -98,7 +98,7 @@ public class SourceInterpreter extends Interpreter<SourceValue> implements
     public SourceValue unaryOperation(final AbstractInsnNode insn,
             final SourceValue value) {
         int size;
-        switch (insn.opcode()) {
+        switch (insn.getOpcode()) {
         case LNEG:
         case DNEG:
         case I2L:
@@ -122,7 +122,7 @@ public class SourceInterpreter extends Interpreter<SourceValue> implements
     public SourceValue binaryOperation(final AbstractInsnNode insn,
             final SourceValue value1, final SourceValue value2) {
         int size;
-        switch (insn.opcode()) {
+        switch (insn.getOpcode()) {
         case LALOAD:
         case DALOAD:
         case LADD:
@@ -160,7 +160,7 @@ public class SourceInterpreter extends Interpreter<SourceValue> implements
     public SourceValue naryOperation(final AbstractInsnNode insn,
             final List<? extends SourceValue> values) {
         int size;
-        int opcode = insn.opcode();
+        int opcode = insn.getOpcode();
         if (opcode == MULTIANEWARRAY) {
             size = 1;
         } else {

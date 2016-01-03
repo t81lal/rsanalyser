@@ -563,7 +563,7 @@ public class MethodNode extends MethodVisitor {
         // Finds the last real instruction, i.e. the instruction targeted by
         // this annotation.
         AbstractInsnNode insn = instructions.getLast();
-        while (insn.opcode() == -1) {
+        while (insn.getOpcode() == -1) {
             insn = insn.getPrevious();
         }
         // Adds the annotation to this instruction.
@@ -899,7 +899,7 @@ public class MethodNode extends MethodVisitor {
 	public int count(int opcode) {
 		int count = 0;
 		for (AbstractInsnNode ain : instructions.toArray()) {
-			if (ain.opcode() == opcode)
+			if (ain.getOpcode() == opcode)
 				count++;
 		}
 		return count;

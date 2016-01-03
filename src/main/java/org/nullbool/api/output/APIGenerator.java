@@ -29,7 +29,6 @@ import org.objectweb.asm.tree.MethodNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 import org.topdank.byteio.out.CompleteJarDumper;
 
-import com.google.gson.GsonBuilder;
 
 /**
  * @author Bibl (don't ban me pls) <br>
@@ -143,12 +142,6 @@ public class APIGenerator {
 		for(Entry<String, String> e : SUPER_INTERFACES.entrySet()) {
 			helper.mapSuperInterfaces(e.getKey(), new String[]{e.getValue()}, false);
 		}
-		
-		try(BufferedWriter bw = new BufferedWriter(new FileWriter(new File("out/translate.json")))) {
-			bw.write(new GsonBuilder().setPrettyPrinting().create().toJson(helper));
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	private static String upper(String name) {
@@ -231,49 +224,11 @@ public class APIGenerator {
 		if (file.exists())
 			file.delete();
 		file.mkdirs();
-
-		runFern(file, new File(baseDir, "apisrc"));
 		try {
 			dumper.dump(file);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private static void runFern(File inJar, File outDir) {
-		if (outDir.exists())
-			outDir.delete();
-		outDir.mkdirs();
-
-		new Thread() {
-			@Override
-			public void run() {
-				List<String> list = new ArrayList<String>();
-				try {
-					list.add("Decompiling api sourcecode to " + outDir.getAbsolutePath() + "...");
-					File fern = new File(APIGenerator.class.getResource("/fernflower.jar").toURI());
-					ProcessBuilder pb = new ProcessBuilder("java", "-jar", quote(fern.getAbsolutePath()), quote(inJar.getAbsolutePath()),
-							quote(outDir.getAbsolutePath()));
-					// pb = pb.inheritIO();
-					Process p = pb.start();
-					p.waitFor();
-					list.add("   ... done. (" + p.exitValue() + ")");
-					list.add("Unpacking...");
-					unpack(new File(outDir, inJar.getName()), outDir);
-					list.add("   ... done. ");
-					// new File(outDir, inJar.getName()).delete();
-				} catch (Throwable t) {
-					list.add("   ... failed. (" + t.getMessage() + ")");
-					t.printStackTrace();
-				}
-
-				if(log) {
-					for (String s : list) {
-						System.err.println(s);
-					}
-				}
-			}
-		}.start();
 	}
 
 	private static void unpack(File zip, File outDir) throws IOException {

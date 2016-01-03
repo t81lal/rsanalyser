@@ -91,7 +91,7 @@ public class BasicInterpreter extends Interpreter<BasicValue> implements
     @Override
     public BasicValue newOperation(final AbstractInsnNode insn)
             throws AnalyzerException {
-        switch (insn.opcode()) {
+        switch (insn.getOpcode()) {
         case ACONST_NULL:
             return newValue(Type.getObjectType("null"));
         case ICONST_M1:
@@ -165,7 +165,7 @@ public class BasicInterpreter extends Interpreter<BasicValue> implements
     @Override
     public BasicValue unaryOperation(final AbstractInsnNode insn,
             final BasicValue value) throws AnalyzerException {
-        switch (insn.opcode()) {
+        switch (insn.getOpcode()) {
         case INEG:
         case IINC:
         case L2I:
@@ -254,7 +254,7 @@ public class BasicInterpreter extends Interpreter<BasicValue> implements
     public BasicValue binaryOperation(final AbstractInsnNode insn,
             final BasicValue value1, final BasicValue value2)
             throws AnalyzerException {
-        switch (insn.opcode()) {
+        switch (insn.getOpcode()) {
         case IALOAD:
         case BALOAD:
         case CALOAD:
@@ -331,7 +331,7 @@ public class BasicInterpreter extends Interpreter<BasicValue> implements
     @Override
     public BasicValue naryOperation(final AbstractInsnNode insn,
             final List<? extends BasicValue> values) throws AnalyzerException {
-        int opcode = insn.opcode();
+        int opcode = insn.getOpcode();
         if (opcode == MULTIANEWARRAY) {
             return newValue(Type.getType(((MultiANewArrayInsnNode) insn).desc));
         } else if (opcode == INVOKEDYNAMIC) {

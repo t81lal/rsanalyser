@@ -448,7 +448,7 @@ public class ProjectileAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
@@ -457,7 +457,7 @@ public class ProjectileAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 

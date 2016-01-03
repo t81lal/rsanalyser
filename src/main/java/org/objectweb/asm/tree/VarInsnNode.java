@@ -79,7 +79,7 @@ public class VarInsnNode extends AbstractInsnNode {
     }
 
     @Override
-    public int type() {
+    public int getType() {
         return VAR_INSN;
     }
 
@@ -96,6 +96,6 @@ public class VarInsnNode extends AbstractInsnNode {
     
     @Override
 	public String toString() {
-    	return Printer.OPCODES[opcode()] + " " + var;
+    	return Printer.OPCODES[getOpcode()] + " " + var;
     }
 }

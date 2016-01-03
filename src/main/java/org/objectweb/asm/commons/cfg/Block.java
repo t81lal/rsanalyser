@@ -81,7 +81,7 @@ public class Block implements Comparable<Block> {
     public int count(int opcode) {
         int count = 0;
         for (AbstractInsnNode ain : instructions) {
-            if (ain.opcode() == opcode)
+            if (ain.getOpcode() == opcode)
                 count++;
         }
         return count;
@@ -112,7 +112,7 @@ public class Block implements Comparable<Block> {
     public AbstractInsnNode get(int opcode, int index) {
         int i = 0;
         for (AbstractInsnNode ain : instructions) {
-            if (ain.opcode() == opcode) {
+            if (ain.getOpcode() == opcode) {
                 if (i == index)
                     return ain;
                 i++;

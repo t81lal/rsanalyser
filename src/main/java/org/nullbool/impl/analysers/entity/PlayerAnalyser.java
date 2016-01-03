@@ -1,24 +1,21 @@
 package org.nullbool.impl.analysers.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
-import org.nullbool.api.analysis.AnalysisException;
-import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.api.analysis.IFieldAnalyser;
-import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.analysis.IMultiAnalyser;
-import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.api.analysis.*;
 import org.nullbool.pi.core.hook.api.FieldHook;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "name&Ljava/lang/String;", "playerLevel&I" }, methods = {})
+@SupportedHooks(fields = { "name&Ljava/lang/String;", "playerLevel&I" , "playerSkull&I", "playerOverhead&I"}, methods = {})
 public class PlayerAnalyser extends ClassAnalyser {
 
 	public PlayerAnalyser() throws AnalysisException {
@@ -36,7 +33,7 @@ public class PlayerAnalyser extends ClassAnalyser {
 
 	@Override
 	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
-		return new Builder<IFieldAnalyser>().addAll(new NameHook(), new LevelHook());
+		return new Builder<IFieldAnalyser>().addAll(new NameHook(), new LevelHook(), new EmblemHook());
 	}
 
 	@Override
@@ -53,7 +50,6 @@ public class PlayerAnalyser extends ClassAnalyser {
 			String regex = ";\\w*" + "L" + actorObj + ";" + "\\w*;\\w";
 			MethodNode[] m = findMethods(Context.current().getClassNodes(), regex, true);
 			MethodNode method = identifyMethod(m, false, "sipush 400");
-
 			pat = "getfield " + actorObj + ".\\w* \\w*\\/\\w*\\/String;";
 			hook = findField(method, true, false, 1, 'f', pat);
 			list.add(asFieldHook(hook, "name"));
@@ -73,11 +69,33 @@ public class PlayerAnalyser extends ClassAnalyser {
 			String regex = ";\\w*" + "L" + definitionObj + ";" + "\\w*;\\w";
 			MethodNode[] m = findMethods(Context.current().getClassNodes(), regex, true);
 			MethodNode method = identifyMethod(m, false, "sipush 400");
-
 			String[] pattern = { "getstatic \\w*.\\w* L" + player + ";", "getfield \\w*.\\w* I" };
 
 			h = findField(method, true, true, 1, 'f', pattern);
 			list.add(asFieldHook(h, "playerLevel"));
+
+			return list;
+		}
+	}
+
+	public class EmblemHook implements IFieldAnalyser {
+
+		@Override
+		public List<FieldHook> findFields(ClassNode cn) {
+			String h, buffer = findObfClassName("Buffer"), player = findObfClassName("Player");
+
+			List<FieldHook> list = new ArrayList<FieldHook>();
+			MethodNode[] ms = getMethodNodes(cn.methods.stream().filter(methodNode -> methodNode.desc.replaceAll("[()]", ";").matches(";L" + buffer +";.{0,2};V") &&
+                    !Modifier.isStatic(methodNode.access)).toArray());
+
+			MethodNode method = startWithBc(new String[] { "aload", "iconst_0", "putfield" }, ms)[0];
+			AbstractInsnNode[] i = followJump(method,120);
+
+			h = findField(i, true, true, 1, 'f', "invokevirtual " + buffer + ".*","ldc .*","imul","putfield " + player + ".* I");
+            list.add(asFieldHook(h, "playerSkull"));
+
+            h = findField(i, true, true, 2, 'f', "invokevirtual " + buffer + ".*","ldc .*","imul","putfield " + player + ".* I");
+            list.add(asFieldHook(h, "playerOverhead"));
 
 			return list;
 		}
@@ -88,7 +106,7 @@ public class PlayerAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

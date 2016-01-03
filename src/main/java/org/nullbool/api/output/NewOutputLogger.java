@@ -3,27 +3,17 @@
  */
 package org.nullbool.api.output;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
 import org.nullbool.api.AbstractAnalysisProvider;
 import org.nullbool.api.Context;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.obfuscation.number.MultiplierHandler;
 import org.nullbool.api.obfuscation.refactor.MethodCache;
 import org.nullbool.api.obfuscation.refactor.ReverseMethodDescCache;
-import org.nullbool.pi.core.hook.api.ClassHook;
-import org.nullbool.pi.core.hook.api.Constants;
-import org.nullbool.pi.core.hook.api.DynamicDesc;
-import org.nullbool.pi.core.hook.api.FieldHook;
-import org.nullbool.pi.core.hook.api.HookMap;
-import org.nullbool.pi.core.hook.api.MethodHook;
-import org.nullbool.pi.core.hook.api.ObfuscatedData;
+import org.nullbool.pi.core.hook.api.*;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import java.util.*;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -41,7 +31,7 @@ public class NewOutputLogger {
 
 		List<ClassAnalyser> analysers = provider.getAnalysers();
 
-		int col_width = 40;
+		int col_width = 60;
 
 		List<String> errors = new ArrayList<String>();
 
@@ -132,9 +122,9 @@ public class NewOutputLogger {
 					sb.append(" ^  ").append(fh.refactored());
 					longstring(sb, 0, col_width); // 40
 					sb.append(desc.getRefactoredDesc(classes)).append(" ");
-					longstring(sb, 40, col_width); // 80
+					longstring(sb, col_width, col_width); // 80
 					sb.append("identified as ").append(format(fh));
-					longstring(sb, 80, 25); // 105
+					longstring(sb, col_width * 2, 25); // 105
 
 					if (printMultis) {						
 						if(hasMulti(desc.getObfuscated())) {
@@ -146,7 +136,7 @@ public class NewOutputLogger {
 						}
 					}
 
-					longstring(sb, 105, 25); // 130
+					longstring(sb, col_width * 2 + 25, 25); // 130
 					sb.append("(").append(desc.getObfuscated()).append(")");
 					sb.append('\n');
 
@@ -209,13 +199,13 @@ public class NewOutputLogger {
 					StringBuilder sb = new StringBuilder();
 					MethodHook mh = matches.get(0);
 					DynamicDesc desc = new DynamicDesc(mh.val(Constants.REFACTORED_DESC), true);
-					sb.append(" º  ").append(mh.refactored());
+					sb.append(" ^  ").append(mh.refactored());
 					longstring(sb, 0, col_width); // 40
 					sb.append(desc.getRefactoredDesc(classes)).append(" ");
-					longstring(sb, 40, col_width); // 80
+					longstring(sb, col_width, col_width); // 80
 					sb.append("identified as ").append(format(mh));
-					longstring(sb, 80, 25); // 105
-					longstring(sb, 105, 25); // 130
+					longstring(sb, col_width * 2, 25); // 105
+					longstring(sb, col_width * 2 + 25, 25); // 130
 
 					sb.append(desc.getObfuscated());
 					sb.append('\n');

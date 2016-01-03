@@ -51,7 +51,7 @@ public class LabelNode extends AbstractInsnNode {
     }
 
     @Override
-    public int type() {
+    public int getType() {
         return LABEL;
     }
 

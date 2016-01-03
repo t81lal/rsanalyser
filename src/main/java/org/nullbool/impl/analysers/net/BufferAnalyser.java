@@ -932,10 +932,10 @@ public class BufferAnalyser extends ClassAnalyser {
 			for(MethodNode m : cn.methods) {
 				if(m.name.equals("<init>") && m.desc.startsWith("(I")) {
 					for(AbstractInsnNode ain : m.instructions.toArray()) {
-						if(ain.opcode() == PUTFIELD) {
+						if(ain.getOpcode() == PUTFIELD) {
 							FieldInsnNode fin = (FieldInsnNode) ain;
 							// String source = String.format("%s.%s", fin.owner, fin.name);
-							if(ain.getPrevious().opcode() == ICONST_0) {
+							if(ain.getPrevious().getOpcode() == ICONST_0) {
 								list.add(asFieldHook(fin, "caret", false));
 							} else {
 								list.add(asFieldHook(fin, "payload", false));
@@ -953,7 +953,7 @@ public class BufferAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

@@ -55,7 +55,7 @@ import org.objectweb.asm.tree.TableSwitchInsnNode;
 import org.objectweb.asm.tree.TryCatchBlockNode;
 
 /**
- * A {@link org.objectweb.asm.MethodVisitor} that removes JSR instructions and
+ * A {@link MethodVisitor} that removes JSR instructions and
  * inlines the referenced subroutines.
  * 
  * <b>Explanation of how it works</b> TODO
@@ -304,15 +304,15 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes {
             }
             anyvisited.set(index);
 
-            if (node.type() == AbstractInsnNode.JUMP_INSN
-                    && node.opcode() != JSR) {
+            if (node.getType() == AbstractInsnNode.JUMP_INSN
+                    && node.getOpcode() != JSR) {
                 // we do not follow recursively called subroutines here; but any
                 // other sort of branch we do follow
                 JumpInsnNode jnode = (JumpInsnNode) node;
                 int destidx = instructions.indexOf(jnode.label);
                 markSubroutineWalkDFS(sub, destidx, anyvisited);
             }
-            if (node.type() == AbstractInsnNode.TABLESWITCH_INSN) {
+            if (node.getType() == AbstractInsnNode.TABLESWITCH_INSN) {
                 TableSwitchInsnNode tsnode = (TableSwitchInsnNode) node;
                 int destidx = instructions.indexOf(tsnode.dflt);
                 markSubroutineWalkDFS(sub, destidx, anyvisited);
@@ -322,7 +322,7 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes {
                     markSubroutineWalkDFS(sub, destidx, anyvisited);
                 }
             }
-            if (node.type() == AbstractInsnNode.LOOKUPSWITCH_INSN) {
+            if (node.getType() == AbstractInsnNode.LOOKUPSWITCH_INSN) {
                 LookupSwitchInsnNode lsnode = (LookupSwitchInsnNode) node;
                 int destidx = instructions.indexOf(lsnode.dflt);
                 markSubroutineWalkDFS(sub, destidx, anyvisited);
@@ -335,7 +335,7 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes {
 
             // check to see if this opcode falls through to the next instruction
             // or not; if not, return.
-            switch (instructions.get(index).opcode()) {
+            switch (instructions.get(index).getOpcode()) {
             case GOTO:
             case RET:
             case TABLESWITCH:
@@ -431,7 +431,7 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes {
             Instantiation owner = instant.findOwner(i);
 
             // Always remap labels:
-            if (insn.type() == AbstractInsnNode.LABEL) {
+            if (insn.getType() == AbstractInsnNode.LABEL) {
                 // Translate labels into their renamed equivalents.
                 // Avoid adding the same label more than once. Note
                 // that because we own this instruction the gotoTable
@@ -462,7 +462,7 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes {
                 log("Emitting inst #" + i);
             }
 
-            if (insn.opcode() == RET) {
+            if (insn.getOpcode() == RET) {
                 // Translate RET instruction(s) to a jump to the return label
                 // for the appropriate instantiation. The problem is that the
                 // subroutine may "fall through" to the ret of a parent
@@ -485,7 +485,7 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes {
                             + " is a RET not owned by any subroutine");
                 }
                 newInstructions.add(new JumpInsnNode(GOTO, retlabel));
-            } else if (insn.opcode() == JSR) {
+            } else if (insn.getOpcode() == JSR) {
                 LabelNode lbl = ((JumpInsnNode) insn).label;
                 BitSet sub = subroutineHeads.get(lbl);
                 Instantiation newinst = new Instantiation(instant, sub);
@@ -642,7 +642,7 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes {
             for (int i = 0, c = instructions.size(); i < c; i++) {
                 AbstractInsnNode insn = instructions.get(i);
 
-                if (insn.type() == AbstractInsnNode.LABEL) {
+                if (insn.getType() == AbstractInsnNode.LABEL) {
                     LabelNode ilbl = (LabelNode) insn;
 
                     if (duplbl == null) {
@@ -740,7 +740,7 @@ public class JSRInlinerAdapter extends MethodNode implements Opcodes {
         // AbstractMap implementation
 
         @Override
-        public Set<Map.Entry<LabelNode, LabelNode>> entrySet() {
+        public Set<Entry<LabelNode, LabelNode>> entrySet() {
             return null;
         }
 

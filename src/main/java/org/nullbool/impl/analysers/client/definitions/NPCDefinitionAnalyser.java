@@ -1,24 +1,20 @@
 package org.nullbool.impl.analysers.client.definitions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.nullbool.api.Builder;
-import org.nullbool.api.analysis.AnalysisException;
-import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.api.analysis.IFieldAnalyser;
-import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.analysis.IMultiAnalyser;
-import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.api.analysis.*;
 import org.nullbool.pi.core.hook.api.FieldHook;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "actions&[Ljava/lang/String;", "onMap&Z", "visible&Z", "clickable&Z", "name&Ljava/lang/String;", "combatLevel&I",
+@SupportedHooks(fields = { "id&I","actions&[Ljava/lang/String;", "onMap&Z", "visible&Z", "clickable&Z", "name&Ljava/lang/String;", "combatLevel&I",
 		"width&I", "height&I", "brightness&I", "contrast&I", "headIcon&I", "npcDegToTurn&I", "varpId&I", "settingId&I",
 		"npcBoundDim&I", "idleAnimationId&I", "walkAnimationId&I", "npcTurnAround&I", "npcTurnRight&I", "npcTurnLeft&I", }, methods = {})
 public class NPCDefinitionAnalyser extends ClassAnalyser {
@@ -41,7 +37,7 @@ public class NPCDefinitionAnalyser extends ClassAnalyser {
 
 	@Override
 	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
-		return new Builder<IFieldAnalyser>().add(new InfoHooks());
+		return new Builder<IFieldAnalyser>().addAll(new InfoHooks(),new IdHook());
 	}
 
 	@Override
@@ -124,12 +120,29 @@ public class NPCDefinitionAnalyser extends ClassAnalyser {
 		}
 	}
 
+	public class IdHook implements IFieldAnalyser {
+
+		@Override
+		public List<FieldHook> findFields(ClassNode cn) {
+            String h, model = findObfClassName("Model");
+			List<FieldHook> list = new ArrayList<FieldHook>();
+			MethodNode[] ms = getMethodNodes(cn.methods.toArray());
+			for(MethodNode m : ms){
+				if(Type.getReturnType(m.desc).getClassName().equals(model)){
+					h = findField(m,true, false, 1, 'f',"checkcast " + model);
+                    list.add(asFieldHook(h,"id"));
+				}
+			}
+
+			return list;
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.nullbool.api.analysis.ClassAnalyser#registerMultiAnalysers()
 	 */
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

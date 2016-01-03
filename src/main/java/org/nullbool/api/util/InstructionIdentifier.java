@@ -3,12 +3,7 @@ package org.nullbool.api.util;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 import org.objectweb.asm.util.Printer;
 
 public class InstructionIdentifier {
@@ -21,9 +16,9 @@ public class InstructionIdentifier {
 			this.instList = new LinkedList<String>();
 			this.instCleanList = new LinkedList<String>();
 			for (AbstractInsnNode instruction : instructions) {
-				if(instruction.opcode() == -1)
+				if(instruction.getOpcode() == -1)
 					continue;
-				String name = Printer.OPCODES[instruction.opcode()].toLowerCase();
+				String name = Printer.OPCODES[instruction.getOpcode()].toLowerCase();
 				String extra = "";
 				if (instruction instanceof FieldInsnNode) {
 					FieldInsnNode f = ((FieldInsnNode) instruction);
@@ -48,6 +43,11 @@ public class InstructionIdentifier {
 				if (instruction instanceof IntInsnNode) {
 					IntInsnNode m = ((IntInsnNode) instruction);
 					extra = " " + String.valueOf(m.operand);
+				}
+
+				if (instruction instanceof TypeInsnNode) {
+					TypeInsnNode m = ((TypeInsnNode) instruction);
+					extra = " " + String.valueOf(m.desc);
 				}
 
 				this.instList.add(name + extra);

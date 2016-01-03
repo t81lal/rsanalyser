@@ -96,7 +96,7 @@ public class BytecodeRefactorer implements Opcodes {
 					if(ain instanceof FieldInsnNode) {
 						FieldInsnNode fin = (FieldInsnNode) ain;
 						String newOwner = getMappedClassName(fin.owner);
-						String newName  = getMappedFieldName(fin.owner, fin.name, fin.desc, ain.opcode() == PUTSTATIC || ain.opcode() == GETSTATIC);
+						String newName  = getMappedFieldName(fin.owner, fin.name, fin.desc, ain.getOpcode() == PUTSTATIC || ain.getOpcode() == GETSTATIC);
 						String newDesc  = transformFieldDesc(fin.desc);
 						Tuple3 t2 = new Tuple3(newOwner, newName, newDesc);
 						finMappings.put(fin, t2);
@@ -104,7 +104,7 @@ public class BytecodeRefactorer implements Opcodes {
 						MethodInsnNode min = (MethodInsnNode) ain;
 						try {
 							String newOwner = getMappedClassName(min.owner);
-							String newName  = getMappedMethodName(min.owner, min.name, min.desc, min.opcode() == INVOKESTATIC);
+							String newName  = getMappedMethodName(min.owner, min.name, min.desc, min.getOpcode() == INVOKESTATIC);
 							String newDesc  = transformMethodDesc(min.desc);
 							Tuple3 t2 = new Tuple3(newOwner, newName, newDesc);
 							minMappings.put(min, t2);
@@ -118,14 +118,14 @@ public class BytecodeRefactorer implements Opcodes {
 					} else if(ain instanceof TypeInsnNode) {
 						TypeInsnNode tin = (TypeInsnNode) ain;
 						
-						if(tin.opcode() == NEW || tin.opcode() == ANEWARRAY) {
+						if(tin.getOpcode() == NEW || tin.getOpcode() == ANEWARRAY) {
 							String desc  = tin.desc;
 							if(desc.startsWith("[") || desc.endsWith(";")) {
 								singAinMappings.put(tin, transformFieldDesc(desc));
 							} else {
 								singAinMappings.put(tin, getMappedClassName(desc));
 							}
-						} else if(tin.opcode() == CHECKCAST || tin.opcode() == INSTANCEOF) {
+						} else if(tin.getOpcode() == CHECKCAST || tin.getOpcode() == INSTANCEOF) {
 							//ALOAD 1
 							//CHECKCAST java/lang/Character
 							//INVOKEVIRTUAL java/lang/Character.charValue ()C

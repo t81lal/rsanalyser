@@ -284,7 +284,7 @@ private static int graphCount = 0;
 			}
 			
 			AbstractInsnNode last = block.last();
-			int fallThroughOpcode = last.opcode();
+			int fallThroughOpcode = last.getOpcode();
 			
 			/* Rather than calling isConditional() to check whether the 
 			 * last instruction is part of a block which is predecessor
@@ -430,7 +430,7 @@ private static int graphCount = 0;
 	private void removeGotos() throws ControlFlowException {		
 		for (FlowBlock block : blocks) {
 			AbstractInsnNode last = block.last();
-			if (last != null && last.opcode() == GOTO) {
+			if (last != null && last.getOpcode() == GOTO) {
 				block.insns().remove(last);
 			}
 		}
@@ -466,7 +466,7 @@ private static int graphCount = 0;
 			if (block.exceptionPredecessors().isEmpty() && (!setExits.contains(block) || block.predecessors().size() == 1)) {
 				if (setExits.contains(block)) {
 					FlowBlock pred = block.predecessors().get(0);
-					if (pred.successors().size() != 1 || (pred.cleansize() != 0 && isSwitch(pred.last().opcode()))) {
+					if (pred.successors().size() != 1 || (pred.cleansize() != 0 && isSwitch(pred.last().getOpcode()))) {
 						return false;
 					}
 				}
@@ -655,7 +655,7 @@ private static int graphCount = 0;
 			for (FlowBlock block : blocks) {
 				if (block.successors().size() == 1) {
 					FlowBlock next = block.successors().get(0);
-					if (next != exit && (block.insns().isEmpty() || !isSwitch(block.last().opcode()))) {
+					if (next != exit && (block.insns().isEmpty() || !isSwitch(block.last().getOpcode()))) {
 						if (next.predecessors().size() == 1 && next.exceptionPredecessors().isEmpty() && next != entry) {
 							boolean sameRanges = true;
 							for (ExceptionData range : exceptions) {
@@ -716,7 +716,7 @@ private static int graphCount = 0;
 		if(ain == null)
 			return false;
 		
-		int opcode = ain.opcode();
+		int opcode = ain.getOpcode();
 		return isConditional(opcode) || isUnconditional(opcode) || isExit(opcode) || isSwitch(opcode);
 	}
 

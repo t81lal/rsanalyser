@@ -79,7 +79,7 @@ public class InsaneControlFlowGraph extends AbstractControlFlowGraph {
 				} else if(ain instanceof LookupSwitchInsnNode) {
 					Set<LabelNode> targets = InstructionUtil.calcSwitchTargets((LookupSwitchInsnNode)ain, new HashSet<LabelNode>());
 					super.linkBlocks(block, targets);
-				} else if(InstructionUtil.isExit(ain.opcode()) && ain.equals(block.last())) {
+				} else if(InstructionUtil.isExit(ain.getOpcode()) && ain.equals(block.last())) {
 					
 				} else {
 					if(it.hasNext()) {

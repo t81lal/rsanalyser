@@ -1,19 +1,21 @@
 package org.nullbool.impl.analysers.client;
 
 import org.nullbool.api.Builder;
-import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.api.analysis.IFieldAnalyser;
-import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.analysis.IMultiAnalyser;
-import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.api.analysis.*;
 import org.nullbool.api.util.StaticDescFilter;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.ClassNode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Bibl (don't ban me pls)
  * @created 23 Jul 2015 17:59:07
  */
-@SupportedHooks(fields = { }, methods = { })
+
+@SupportedHooks(fields = {"methodByteArray&[[[B", "fields&[Ljava/lang/reflect/Field;", "methods&[Ljava/lang/reflect/Method;"},
+		methods = {})
 public class VerificationDataAnalyser extends ClassAnalyser {
 
 	public VerificationDataAnalyser() {
@@ -53,7 +55,7 @@ public class VerificationDataAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
-		return null;
+		return new Builder<IFieldAnalyser>().add(new FieldsAnalyser());
 	}
 
 	/* (non-Javadoc)
@@ -70,5 +72,25 @@ public class VerificationDataAnalyser extends ClassAnalyser {
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
 		return null;
+	}
+
+	private class FieldsAnalyser implements IFieldAnalyser {
+
+		@Override
+		public List<FieldHook> findFields(ClassNode cn) {
+			List<FieldHook> list = new ArrayList<FieldHook>();
+			String h;
+
+			h = getFieldOfType(cn, "[[[B", false);
+			list.add(asFieldHook(h, "methodByteArray"));
+
+			h = getFieldOfType(cn, "[Ljava/lang/reflect/Field;", false);
+			list.add(asFieldHook(h, "fields"));
+
+			h = getFieldOfType(cn, "[Ljava/lang/reflect/Method;", false);
+			list.add(asFieldHook(h, "methods"));
+
+			return list;
+		}
 	}
 }

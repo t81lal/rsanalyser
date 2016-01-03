@@ -3,13 +3,10 @@ package org.objectweb.asm.commons.util;
 import static org.objectweb.asm.tree.AbstractInsnNode.*;
 
 import java.util.Arrays;
-import java.util.Collection;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
@@ -20,7 +17,6 @@ import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.LookupSwitchInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.MultiANewArrayInsnNode;
 import org.objectweb.asm.tree.TableSwitchInsnNode;
 import org.objectweb.asm.tree.TypeInsnNode;
@@ -59,12 +55,12 @@ public class Assembly {
         if (insn1 == insn2) {
             return true;
         }
-        if (insn1 == null || insn2 == null || insn1.type() != insn2.type() ||
-                insn1.opcode() != insn2.opcode()) {
+        if (insn1 == null || insn2 == null || insn1.getType() != insn2.getType() ||
+                insn1.getOpcode() != insn2.getOpcode()) {
             return false;
         }
         int size;
-        switch (insn1.type()) {
+        switch (insn1.getType()) {
             case INSN:
                 return true;
             case INT_INSN:
@@ -160,7 +156,7 @@ public class Assembly {
         if (insn == null) {
             return "null";
         }
-        int op = insn.opcode();
+        int op = insn.getOpcode();
         if (op == -1) {
             return insn.toString();
         }
@@ -170,7 +166,7 @@ public class Assembly {
          * out of all the possible ones(statically, the longest opcode name is invokedynamic).*/
         sb.append(pad(OPCODES[op].toLowerCase(), LONGEST_OPCODE_NAME));
         
-        switch (insn.type()) {
+        switch (insn.getType()) {
             case INT_INSN:
                 sb.append(((IntInsnNode) insn).operand);
                 break;
@@ -208,51 +204,5 @@ public class Assembly {
                 break;
         }
         return sb.toString();
-    }
-
-    public static void rename(Collection<ClassNode> classes, FieldNode fn, String newName) {
-        for (ClassNode node : classes) {
-            for (MethodNode mn : node.methods) {
-                for (AbstractInsnNode ain : mn.instructions.toArray()) {
-                    if (ain instanceof FieldInsnNode) {
-                        FieldInsnNode fin = (FieldInsnNode) ain;
-                        if (fin.owner.equals(fn.owner.name) && fin.name.equals(fn.name))
-                            fin.name = newName;
-                    }
-                }
-            }
-        }
-        fn.name = newName;
-    }
-
-    public static void rename(Collection<ClassNode> classes, ClassNode cn, String newName) {
-        for (ClassNode node : classes) {
-            if (node.superName.equals(cn.name))
-                node.superName = newName;
-            if (node.interfaces.contains(cn.name)) {
-                node.interfaces.remove(cn.name);
-                node.interfaces.add(newName);
-            }
-            for (FieldNode fn : node.fields) {
-                if (fn.desc.endsWith("L" + cn.name + ";"))
-                    fn.desc = fn.desc.replace("L" + cn.name + ";", "L" + newName + ";");
-            }
-            for (MethodNode mn : node.methods) {
-                if (mn.desc.contains("L" + cn.name + ";"))
-                    mn.desc = mn.desc.replaceAll("L" + cn.name + ";", "L" + newName + ";");
-                for (AbstractInsnNode ain : mn.instructions.toArray()) {
-                    if (ain instanceof FieldInsnNode) {
-                        FieldInsnNode fin = (FieldInsnNode) ain;
-                        if (fin.owner.equals(cn.name))
-                            fin.owner = newName;
-                    } else if (ain instanceof MethodInsnNode) {
-                        MethodInsnNode min = (MethodInsnNode) ain;
-                        if (min.owner.equals(cn.name))
-                            min.owner = newName;
-                    }
-                }
-            }
-        }
-        cn.name = newName;
     }
 }

@@ -66,7 +66,7 @@ public class IincInsnNode extends AbstractInsnNode {
     }
 
     @Override
-    public int type() {
+    public int getType() {
         return IINC_INSN;
     }
 

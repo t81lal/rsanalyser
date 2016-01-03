@@ -19,8 +19,8 @@ import java.util.List;
  * @author MalikDz
  */
 @SupportedHooks(fields = {"localX&I", "localY&I", "animationId&I", "interactingId&I", "health&I", "maxHealth&I", "hitTypes&[I",
-        "message&Ljava/lang/String;", "hitDamages&[I", "hitCycle&I", /*"healthBarCycle&I" */
-        "queueX&[I", "queueY&[I", "queueLength&I", "queueRun&[Z"},
+        "message&Ljava/lang/String;", "hitDamages&[I", "hitCycle&I", "orientation&I", /*"healthBarCycle&I" */
+        "queueX&[I", "queueY&[I", "queueLength&I", "queueRun&[Z","combatTime&I"},
         methods = {"queuePosition&(IIZ)V", "move&(IZ)V"})
 public class ActorAnalyser extends ClassAnalyser {
 
@@ -56,7 +56,7 @@ public class ActorAnalyser extends ClassAnalyser {
 
     @Override
     protected Builder<IFieldAnalyser> registerFieldAnalysers() {
-        return new Builder<IFieldAnalyser>().addAll(new XYHooks(), new QueueFieldsAnalyser(), new AnimationHooks(), new InteractingHooks(), new HealthAndDamageHooks(), new CycleHookAnalyser());
+        return new Builder<IFieldAnalyser>().addAll(new XYHooks(), new QueueFieldsAnalyser(), new AnimationHooks(), new InteractingHooks(), new HealthAndDamageHooks(), new CycleHookAnalyser(), new OrientationAnalser());
     }
 
     @Override
@@ -71,24 +71,15 @@ public class ActorAnalyser extends ClassAnalyser {
          */
         @Override
         public List<FieldHook> findFields(ClassNode cn) {
+            String obj = "L" + findObfClassName("Actor");
+            String h, regex = ";\\w*" + obj + ";" + "\\w*;V";
             List<FieldHook> list = new ArrayList<FieldHook>();
+            String mPattern = "invokestatic java/lang/Math.atan2 (DD)D";
+            MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
+            MethodNode method = identifyMethod(mn, false, mPattern);
 
-//			NodeVisitor nv = new NodeVisitor() {
-//				@Override
-//			    public boolean validateBlock(Block block) {
-//			        return block.count(new NumberQuery(SIPUSH, 2048)) > 0 && block.count(LDC) > 0;
-//			    }
-//
-//			    @Override
-//			    public void visitNumber(final NumberNode nn) {
-//			        if (nn.parent().opcode() == ISUB) {
-//			            final FieldMemberNode fmn = (FieldMemberNode) nn.parent().layer(IMUL, GETFIELD);
-//			            if (fmn != null && fmn.desc().equals("I")) {
-////			                Hook.CHARACTER.put(new RSField(fmn, "orientation"));
-//			            }
-//			        }
-//			    }
-//			};
+            h = findField(method,true,true,1,'f',"d2i","sipush 2047");
+            list.add(asFieldHook(h,"orientation"));
 
             return list;
         }
@@ -380,9 +371,9 @@ public class ActorAnalyser extends ClassAnalyser {
             for (MethodNode mn : cn.methods) {
                 if (mn.name.equals("<init>")) {
                     for (AbstractInsnNode ain : mn.instructions.toArray()) {
-                        if (ain.opcode() == PUTFIELD) {
+                        if (ain.getOpcode() == PUTFIELD) {
                             AbstractInsnNode prev = ain.getPrevious();
-                            if (prev.opcode() == LDC) {
+                            if (prev.getOpcode() == LDC) {
                                 LdcInsnNode lin = (LdcInsnNode) prev;
                                 if (lin.cst instanceof Number) {
                                     FieldInsnNode fin = (FieldInsnNode) ain;
@@ -488,7 +479,7 @@ public class ActorAnalyser extends ClassAnalyser {
      */
     @Override
     public Builder<IMultiAnalyser> registerMultiAnalysers() {
-        // TODO Auto-generated method stub
+
         return null;
     }
 }

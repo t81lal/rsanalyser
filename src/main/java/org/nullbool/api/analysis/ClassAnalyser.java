@@ -96,7 +96,7 @@ public abstract class ClassAnalyser implements Opcodes {
 				}
 			}
 		}
-		
+
 		Builder<IMultiAnalyser> mas = registerMultiAnalysers();
 		if (mas != null) {
 			for (IMultiAnalyser m : mas) {
@@ -160,7 +160,7 @@ public abstract class ClassAnalyser implements Opcodes {
 	protected abstract Builder<IMethodAnalyser> registerMethodAnalysers();
 
 	public abstract Builder<IMultiAnalyser> registerMultiAnalysers();
-	
+
 	public long getMethodDescCount(ClassNode cn, String regex) {
 		Stream<MethodNode> s = cn.methods.stream();
 		return s.filter(m -> ((MethodNode) m).desc.matches((regex))).count();
@@ -177,6 +177,15 @@ public abstract class ClassAnalyser implements Opcodes {
 	public boolean containMethodWithName(ClassNode classnode, String t) {
 		Stream<MethodNode> stream = classnode.methods.stream();
 		return stream.filter(m -> ((MethodNode) m).name.equals(t)).count() != 0;
+	}
+
+	public List<String> getList(MethodNode node) {
+		List<String> opList = new ArrayList<String>();
+		AbstractInsnNode[] ins = node.instructions.toArray();
+		Stream<String> s = new InstructionIdentifier(ins).getInstList().stream();
+		s = s.filter(n -> (n != null) && !n.trim().equalsIgnoreCase("f_new"));
+		s.forEach(n -> opList.add(n));
+		return opList;
 	}
 
 	public List<String> getCleanList(MethodNode node) {
@@ -291,7 +300,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		}
 		return null;
 	}
-	
+
 	public List<DataPoint> pointsOf(MethodNode m, String... pattern) {
 		List<DataPoint> points = new ArrayList<DataPoint>();
 		// TODO: Find from cache
@@ -311,21 +320,21 @@ public abstract class ClassAnalyser implements Opcodes {
 					}
 					secondIn = pattern[index];
 					count += firstIn.toString().matches(secondIn) ? 1 : 0;
-					
+
 					// System.out.printf("[%b] %s matches %s.%n", firstIn.toString().matches(secondIn), firstIn, secondIn);
-					
+
 				}
 				if(size == count) // if the size == count return true (found)
 					points.add(start);
-				
+
 				count = 0;
 				start = null;
 			}
 		}
-		
+
 		return points;
 	}
-	
+
 	public DataPoint pointOf(MethodNode m, String... pattern) {
 		// TODO: Find from cache
 		BoundedInstructionIdentifier i = new BoundedInstructionIdentifier(m.instructions.toArray());
@@ -344,18 +353,18 @@ public abstract class ClassAnalyser implements Opcodes {
 					}
 					secondIn = pattern[index];
 					count += firstIn.toString().matches(secondIn) ? 1 : 0;
-					
+
 					// System.out.printf("[%b] %s matches %s.%n", firstIn.toString().matches(secondIn), firstIn, secondIn);
-					
+
 				}
 				if(size == count) // if the size == count return true (found)
 					return start;
-				
+
 				count = 0;
 				start = null;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -372,17 +381,17 @@ public abstract class ClassAnalyser implements Opcodes {
 					firstIn = opcodeList.get(x + index);
 					secondIn = pattern[index];
 					count += firstIn.matches(secondIn) ? 1 : 0;
-					
+
 					 // System.out.printf("[%b] %s matches %s.%n", firstIn.toString().matches(secondIn), firstIn, secondIn);
 
 				}
 				if(size == count) // if the size == count return true (found)
 					return true;
-				
+
 				count = 0;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -428,6 +437,33 @@ public abstract class ClassAnalyser implements Opcodes {
 					for (int index = 0; index < size; index++) {
 						firstIn = opcodeList.get(x + index);
 						secondIn = pattern[index];
+						count += secondIn.equals(firstIn) ? 1 : 0;
+					}
+					result = size == count ? methodNode : result;
+					count = 0;
+				}
+			}
+		}
+		return result;
+	}
+
+	public MethodNode identifyMethodDebug(MethodNode[] methodNodes, boolean clean, String... pattern) {
+		int count = 0;
+		InstructionIdentifier i;
+		String firstIn, secondIn;
+		MethodNode result = null;
+		List<String> opcodeList;
+		int size = pattern.length;
+
+		for (MethodNode methodNode : methodNodes) {
+			i = new InstructionIdentifier(methodNode.instructions.toArray());
+			opcodeList = clean ? i.getInstCleanList() : i.getInstList();
+			if ((opcodeList.size() > 0) && ((opcodeList.size() - size) >= 0)) {
+				for (int x = 0; x <= (opcodeList.size() - size); x++) {
+					for (int index = 0; index < size; index++) {
+						firstIn = opcodeList.get(x + index);
+						secondIn = pattern[index];
+						System.out.println(firstIn);
 						count += secondIn.equals(firstIn) ? 1 : 0;
 					}
 					result = size == count ? methodNode : result;
@@ -570,7 +606,7 @@ public abstract class ClassAnalyser implements Opcodes {
 	}
 
 	public FieldHook asFieldHook(FieldInsnNode f, String realName) {
-		return asFieldHook(f, realName, f.opcode() == PUTSTATIC || f.opcode() == GETSTATIC);
+		return asFieldHook(f, realName, f.getOpcode() == PUTSTATIC || f.getOpcode() == GETSTATIC);
 	}
 
 	public FieldHook asFieldHook(FieldInsnNode f, String realName, boolean isStatic) {
@@ -734,7 +770,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		return null;
 	}
 
-	private int getIndex(List<String> ins, String... pat) {
+	public int getIndex(List<String> ins, String... pat) {
 		String firstIn, secondIn;
 		int count = 0, index = -1;
 		int size = ins.size() - pat.length;
@@ -754,15 +790,15 @@ public abstract class ClassAnalyser implements Opcodes {
 		return followJump(node, "yolo", maxGoto);
 	}
 
-	public AbstractInsnNode[] followJump(MethodNode node, String s, int maxGoto) {
+    public AbstractInsnNode[] followJump(MethodNode node, String s, int maxGoto) {
 		boolean condition;
 		int op, compteur = 0;
 		AbstractInsnNode i = node.instructions.toArray()[index(node, s)];
 		List<AbstractInsnNode> list = new ArrayList<AbstractInsnNode>();
 		while ((i != null) && (compteur <= maxGoto)) {
-			condition = (i.opcode() != -1) && (i instanceof JumpInsnNode);
+			condition = (i.getOpcode() != -1) && (i instanceof JumpInsnNode);
 			i = condition ? ((JumpInsnNode) i).label.getNext() : i.getNext();
-			op = (i != null) ? i.opcode() : -1;
+			op = (i != null) ? i.getOpcode() : -1;
 			compteur += condition ? 1 : 0;
 			if ((i != null) && (op != -1) && (op != Opcodes.GOTO))
 				list.add(i);
@@ -837,8 +873,8 @@ public abstract class ClassAnalyser implements Opcodes {
 				continue;
 			}
 
-			if (ain.opcode() != -1) {
-				if (ain.opcode() == target) {
+			if (ain.getOpcode() != -1) {
+				if (ain.getOpcode() == target) {
 					array[j - 1] = ain;
 					if (j == opcodes.length) {
 						set.add(array);
@@ -913,7 +949,7 @@ public abstract class ClassAnalyser implements Opcodes {
 	public static int getDistance(AbstractInsnNode[] insns, int offset, int target) {
 		for (int i = offset; i < insns.length; i++) {
 			AbstractInsnNode ain = insns[i];
-			if (ain.opcode() == target)
+			if (ain.getOpcode() == target)
 				return i;
 		}
 

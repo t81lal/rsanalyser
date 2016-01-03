@@ -76,7 +76,7 @@ public class TypeInsnNode extends AbstractInsnNode {
     }
 
     @Override
-    public int type() {
+    public int getType() {
         return TYPE_INSN;
     }
 
@@ -93,6 +93,6 @@ public class TypeInsnNode extends AbstractInsnNode {
     
     @Override
 	public String toString() {
-    	return Printer.OPCODES[opcode()] + " " + desc;
+    	return Printer.OPCODES[getOpcode()] + " " + desc;
     }
 }

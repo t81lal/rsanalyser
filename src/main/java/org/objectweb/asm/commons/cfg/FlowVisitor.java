@@ -1,4 +1,4 @@
-//TODO: fix
+package org.objectweb.asm.commons.cfg;//TODO: fix
 //package org.objectweb.asm.commons.cfg;
 //
 //import static org.objectweb.asm.Opcodes.ARETURN;

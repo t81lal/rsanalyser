@@ -69,7 +69,7 @@ public class AbstractNode extends Tree<AbstractNode> implements Opcodes {
 	public void accept(NodeVisitor nv) {
 		nv.visitAny(this);
 
-		switch (insn.type()) {
+		switch (insn.getType()) {
 			case INSN: {
 				if (opcode() >= ICONST_M1 && opcode() <= DCONST_1) {
 					nv.visitNumber((NumberNode) this);
@@ -182,7 +182,7 @@ public class AbstractNode extends Tree<AbstractNode> implements Opcodes {
 	}
 
 	public int opcode() {
-		return insn != null ? insn.opcode() : -1;
+		return insn != null ? insn.getOpcode() : -1;
 	}
 
 	public void pop() {

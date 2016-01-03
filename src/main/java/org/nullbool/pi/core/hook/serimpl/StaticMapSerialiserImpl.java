@@ -136,10 +136,10 @@ public class StaticMapSerialiserImpl implements IMapSerialiser<HookMap> {
 		 * 	  ux   extra_data;
 		 * }
 		 */
-		dos.writeByte(insn.type());
-		dos.writeShort(insn.opcode());
+		dos.writeByte(insn.getType());
+		dos.writeShort(insn.getOpcode());
 		
-		switch(insn.type()){
+		switch(insn.getType()){
 			case AbstractInsnNode.INSN:{
 				//nothing else
 				break;
@@ -222,7 +222,7 @@ public class StaticMapSerialiserImpl implements IMapSerialiser<HookMap> {
 				} else if(cst instanceof Integer) {
 					dos.writeByte(4);
 					dos.writeInt((int)cst);
-				} else if (cst instanceof org.objectweb.asm.Type) {
+				} else if (cst instanceof Type) {
 					Type type = (Type) cst;
 					/* Types have:
 					 *   int    sort

@@ -60,7 +60,7 @@ public abstract class Printer {
 
     /**
      * The names of the <code>tag</code> field values for
-     * {@link org.objectweb.asm.Handle}.
+     * {@link Handle}.
      */
     public static final String[] HANDLE_TAG;
 

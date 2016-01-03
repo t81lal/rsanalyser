@@ -50,7 +50,7 @@ public class StringInliner extends Visitor {
 		for (ClassNode cn : classes) {
 			for (MethodNode m : cn.methods) {
 				for (AbstractInsnNode ain : m.instructions.toArray()) {
-					if (ain.opcode() == GETSTATIC) {
+					if (ain.getOpcode() == GETSTATIC) {
 						FieldInsnNode fin = (FieldInsnNode) ain;
 						FieldNode f = cache.get(fin.owner, fin.name, fin.desc);
 						if (f != null && Modifier.isStatic(f.access) && f.desc.equals("Ljava/lang/String;") && callmap.containsKey(f)) {

@@ -37,36 +37,29 @@ public class MultiplierVisitor extends NodeVisitor {
 	public void visitOperation(final ArithmeticNode an) {
 		if(an.parent() instanceof FieldMemberNode) {
 			final FieldMemberNode f = (FieldMemberNode) an.parent();
-			// if(f.key().equals("client.hs")) {
-			// 	System.out.println("MultiplierVisitor.visitOperation(2)");
-			// }
 		}
 		
 		if (isSetting(an)) {
 			final FieldMemberNode fmn = (FieldMemberNode) an.parent();
 			final NumberNode nn = an.firstNumber();
-			if (!fmn.desc().equals("I") && !fmn.desc().equals("J") || (nn == null) || (nn.opcode() != LDC))
+			final FieldMemberNode fcn = an.firstField();
+			if (!fmn.desc().equals("I") && !fmn.desc().equals("J") || (nn == null) || (nn.opcode() != LDC) || (fcn != null && fcn.opcode() == GETSTATIC))
 				return;
 			final int encoder = nn.number();
 			if ((encoder % 2) != 0) {
 				handler.addEncoder(fmn.key(), encoder);
 				eCount++;
-				
-//				if(fmn.key().equals("client.hs")) {
-//					System.out.println("MultiplierVisitor.visitOperation(1)");
-//				}
 			}
 		} else if (an.multiplying() && (an.children() == 2)) {
 			final FieldMemberNode fmn = an.firstField();
 			final NumberNode nn = an.firstNumber();
-			if ((fmn == null) || !fmn.getting() || (nn == null) || (nn.opcode() != LDC))
+			final FieldMemberNode fcn = an.firstField();
+			if ((fmn == null) || !fmn.getting() || (nn == null) || (nn.opcode() != LDC) && (fcn != null && fcn.opcode() == GETSTATIC))
 				return;
 			final int decoder = nn.number();
 			if ((decoder % 2) != 0) {
 				handler.addDecoder(fmn.key(), decoder);
 				dCount++;
-				
-
 			}
 		}
 		

@@ -290,7 +290,7 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
 	 */
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

@@ -26,7 +26,6 @@ public class AnalysisProviderRegistry {
 				return e.creator();
 			}
 		}
-		
 		throw new UnsupportedOperationException("Unsupported revision " + rev);
 	}
 	

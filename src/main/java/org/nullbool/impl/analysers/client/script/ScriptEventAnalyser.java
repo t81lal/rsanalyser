@@ -31,7 +31,6 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 	private String name;
 
 	/**
-	 * @param name
 	 */
 	public ScriptEventAnalyser() {
 		super("ScriptEvent");
@@ -119,15 +118,14 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 
 			String regex = ";\\[L.*;IIIIIII.{0,1};V";
 			MethodNode[] ms = findMethods(Context.current().getClassNodes(), regex, true);
-			String[] pattern = new String[]{"new", "dup"};
+			String[] pattern = new String[]{"new.*", "dup"};
 			MethodNode m = identifyMethod(ms, false, pattern);
 			
-			String s = findField2(m, "putfield " + node.name + ".*", "iconst_1");
 			// l.add(asFieldHook(s, "isDisposable"));
 			// System.out.println(s);
-			
-			
-			s = findField(method, "getfield .*I", "ldc -2147483647");
+
+
+			String s = findField(method, "getfield .*I", "ldc -2147483647");
 			l.add(asFieldHook(s, "mouseX"));
 			// System.out.println(s);
 			
@@ -189,7 +187,7 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

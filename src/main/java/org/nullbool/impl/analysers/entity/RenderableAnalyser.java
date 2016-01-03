@@ -1,26 +1,22 @@
 package org.nullbool.impl.analysers.entity;
 
+import org.nullbool.api.Builder;
+import org.nullbool.api.Context;
+import org.nullbool.api.analysis.*;
+import org.nullbool.pi.core.hook.api.FieldHook;
+import org.nullbool.pi.core.hook.api.MethodHook;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
+
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.nullbool.api.Builder;
-import org.nullbool.api.Context;
-import org.nullbool.api.analysis.AnalysisException;
-import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.api.analysis.IFieldAnalyser;
-import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.analysis.IMultiAnalyser;
-import org.nullbool.api.analysis.SupportedHooks;
-import org.nullbool.pi.core.hook.api.FieldHook;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
-
 /**
  * @author MalikDz
  */
-@SupportedHooks(fields = { "modelHeight&I" }, methods = {})
+@SupportedHooks(fields = { "modelHeight&I" }, methods = {"renderModel&(IIIIIIIII)V"})
 public class RenderableAnalyser extends ClassAnalyser {
 
 	public RenderableAnalyser() throws AnalysisException {
@@ -34,6 +30,22 @@ public class RenderableAnalyser extends ClassAnalyser {
 			List<FieldHook> list = new ArrayList<FieldHook>();
 			String hook = getFieldOfType(cn, "I", false);
 			list.add(asFieldHook(hook, "modelHeight"));
+			return list;
+		}
+	}
+
+	public class RenderMethod implements IMethodAnalyser{
+
+		@Override
+		public List<MethodHook> findMethods(ClassNode cn) {
+			List<MethodHook> list = new ArrayList<>();
+			for(MethodNode m : cn.methods) {
+				if(!Modifier.isStatic(m.access) && m.desc.startsWith("(IIIIIIIII") && m.desc.endsWith("V")) {
+					list.add(asMethodHook(m, "renderModel"));
+					return list;
+				}
+			}
+
 			return list;
 		}
 	}
@@ -72,7 +84,7 @@ public class RenderableAnalyser extends ClassAnalyser {
 
 	@Override
 	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
-		return null;
+		return new Builder<IMethodAnalyser>().add(new RenderMethod());
 	}
 
 	/* (non-Javadoc)
@@ -80,7 +92,7 @@ public class RenderableAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

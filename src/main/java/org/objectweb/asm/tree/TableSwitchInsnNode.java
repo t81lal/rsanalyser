@@ -92,7 +92,7 @@ public class TableSwitchInsnNode extends AbstractInsnNode {
     }
 
     @Override
-    public int type() {
+    public int getType() {
         return TABLESWITCH_INSN;
     }
 

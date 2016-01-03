@@ -41,7 +41,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 /**
- * A {@link org.objectweb.asm.MethodVisitor} to insert before, after and around
+ * A {@link MethodVisitor} to insert before, after and around
  * advices in methods and constructors.
  * <p>
  * The behavior for constructors is like this:

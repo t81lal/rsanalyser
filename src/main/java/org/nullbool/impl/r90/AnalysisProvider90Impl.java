@@ -42,6 +42,7 @@ public class AnalysisProvider90Impl extends AnalysisProvider82Impl {
 	public Builder<ClassAnalyser> registerAnalysers() throws AnalysisException {
 		return super.registerAnalysers()
 				.replace(t -> ActorAnalyser.class.isAssignableFrom(t.getClass()), new ActorAnalyser90())
-				.replace(t -> ClientAnalyser.class.isAssignableFrom(t.getClass()), new ClientAnalyser90());
+				.replace(t -> ClientAnalyser.class.isAssignableFrom(t.getClass()), new ClientAnalyser90())
+				.add(new CollisionMapAnalyser90());
 	}
 }

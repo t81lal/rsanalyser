@@ -33,7 +33,7 @@ public class UnusedFieldRemover extends Visitor {
 		for(ClassNode cn : tree.getClasses().values()) {
 			for(MethodNode m : cn.methods) {
 				for(AbstractInsnNode ain : m.instructions.toArray()) {
-					if(ain.opcode() == GETSTATIC || ain.opcode() == PUTSTATIC) {
+					if(ain.getOpcode() == GETSTATIC || ain.getOpcode() == PUTSTATIC) {
 						FieldInsnNode fin = (FieldInsnNode) ain;
 						FieldNode ref = findReference(tree, fin.owner, fin.halfKey());
 						if(ref == null) {

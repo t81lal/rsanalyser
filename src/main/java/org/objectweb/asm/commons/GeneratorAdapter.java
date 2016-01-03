@@ -41,7 +41,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 /**
- * A {@link org.objectweb.asm.MethodVisitor} with convenient methods to generate
+ * A {@link MethodVisitor} with convenient methods to generate
  * code. For example, using this adapter, the class below
  * 
  * <pre>

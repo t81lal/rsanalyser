@@ -1,15 +1,5 @@
 package org;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.nullbool.api.AbstractAnalysisProvider;
 import org.nullbool.api.Context;
 import org.nullbool.api.Revision;
@@ -26,13 +16,23 @@ import org.nullbool.impl.r90.AnalysisProvider90Impl;
 import org.topdank.banalysis.filter.Filter;
 import org.topdank.byteio.util.Debug;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * @author Bibl (don't ban me pls)
  * @created 4 May 2015
  */
 public class Boot {
 
-	private static int revision = 102;
+	private static int revision = 103;
 
 	public static void main(String[] args) throws Exception {
 		System.out.printf("Remote rev: %d.%n", RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100));
@@ -229,7 +229,7 @@ public class Boot {
 		runFlags(provider, flags);
 	}
 
-	private static void bootstrap() throws Exception {
+	public static void bootstrap() throws Exception {
 		AnalysisProviderRegistry.register(new RegistryEntry(new ProviderCreator() {
 			@Override
 			public AbstractAnalysisProvider create(Revision rev) throws Exception {

@@ -49,7 +49,7 @@ public class FieldNode extends FieldVisitor {
 	public ClassNode owner;
 	
     /**
-     * The field's access flags (see {@link org.objectweb.asm.Opcodes}). This
+     * The field's access flags (see {@link Opcodes}). This
      * field also indicates if the field is synthetic and/or deprecated.
      */
     public int access;
@@ -127,7 +127,7 @@ public class FieldNode extends FieldVisitor {
      * 
      * @param access
      *            the field's access flags (see
-     *            {@link org.objectweb.asm.Opcodes}). This parameter also
+     *            {@link Opcodes}). This parameter also
      *            indicates if the field is synthetic and/or deprecated.
      * @param name
      *            the field's name.
@@ -161,7 +161,7 @@ public class FieldNode extends FieldVisitor {
      *            of {@link Opcodes#ASM4} or {@link Opcodes#ASM5}.
      * @param access
      *            the field's access flags (see
-     *            {@link org.objectweb.asm.Opcodes}). This parameter also
+     *            {@link Opcodes}). This parameter also
      *            indicates if the field is synthetic and/or deprecated.
      * @param name
      *            the field's name.

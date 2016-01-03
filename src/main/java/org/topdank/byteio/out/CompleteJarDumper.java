@@ -73,7 +73,7 @@ public class CompleteJarDumper implements JarDumper {
 	public int dumpClass(JarOutputStream out, String name, ClassNode cn) throws IOException {
 		JarEntry entry = new JarEntry(cn.name + ".class");
 		out.putNextEntry(entry);
-		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES) {
+		ClassWriter writer = new ClassWriter(0) {
 		    @Override
 			protected String getCommonSuperClass(final String type1, final String type2) {
 		    	ClassNode ccn = classTree.getClass(type1);

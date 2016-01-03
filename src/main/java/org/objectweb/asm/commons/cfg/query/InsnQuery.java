@@ -18,7 +18,7 @@ public class InsnQuery implements Opcodes {
     }
 
     public boolean matches(AbstractInsnNode ain) {
-        return ain.opcode() == opcode;
+        return ain.getOpcode() == opcode;
     }
 
     public void setInstruction(AbstractInsnNode insn) {

@@ -37,7 +37,7 @@ public class BoundedInstructionIdentifier implements Iterable<DataPoint> {
 			AbstractInsnNode... ains) {
 		this(creator);
 		for (AbstractInsnNode ain : ains) {
-			if(ain.opcode() != -1)
+			if(ain.getOpcode() != -1)
 				addPoint(ain);
 		}
 	}
@@ -124,7 +124,7 @@ public class BoundedInstructionIdentifier implements Iterable<DataPoint> {
 
 		@Override
 		String create(AbstractInsnNode ain) {
-			return Printer.OPCODES[ain.opcode()].toLowerCase();
+			return Printer.OPCODES[ain.getOpcode()].toLowerCase();
 		}
 	}
 

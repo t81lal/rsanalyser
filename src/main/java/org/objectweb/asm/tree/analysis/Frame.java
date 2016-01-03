@@ -246,7 +246,7 @@ public class Frame<V extends Value> {
         List<V> values;
         int var;
 
-        switch (insn.opcode()) {
+        switch (insn.getOpcode()) {
         case Opcodes.NOP:
             break;
         case Opcodes.ACONST_NULL:
@@ -611,7 +611,7 @@ public class Frame<V extends Value> {
             for (int i = Type.getArgumentTypes(desc).length; i > 0; --i) {
                 values.add(0, pop());
             }
-            if (insn.opcode() != Opcodes.INVOKESTATIC) {
+            if (insn.getOpcode() != Opcodes.INVOKESTATIC) {
                 values.add(0, pop());
             }
             if (Type.getReturnType(desc) == Type.VOID_TYPE) {
@@ -665,7 +665,7 @@ public class Frame<V extends Value> {
             interpreter.unaryOperation(insn, pop());
             break;
         default:
-            throw new RuntimeException("Illegal opcode " + insn.opcode());
+            throw new RuntimeException("Illegal opcode " + insn.getOpcode());
         }
     }
 

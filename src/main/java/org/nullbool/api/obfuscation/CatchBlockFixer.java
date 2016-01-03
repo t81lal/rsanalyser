@@ -31,11 +31,11 @@ public class CatchBlockFixer implements Opcodes {
                     skip.addAll(remove.stream().filter(check ->
                             check != tcb && check.handler == tcb.handler).collect(Collectors.toList()));
                     AbstractInsnNode cur = tcb.handler.getNext();
-                    while (!isCodeKill(cur.opcode()))
+                    while (!isCodeKill(cur.getOpcode()))
                         cur = cur.getNext();
-                    if (cur.opcode() == ATHROW) {
+                    if (cur.getOpcode() == ATHROW) {
                         cur = tcb.handler.getNext();
-                        while (!isCodeKill(cur.opcode())) {
+                        while (!isCodeKill(cur.getOpcode())) {
                             AbstractInsnNode temp = cur;
                             cur = cur.getNext();
                             mn.instructions.remove(temp);

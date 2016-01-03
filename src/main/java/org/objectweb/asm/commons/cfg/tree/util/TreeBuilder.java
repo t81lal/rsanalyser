@@ -1,39 +1,16 @@
 package org.objectweb.asm.commons.cfg.tree.util;
 
-import static org.objectweb.asm.Opcodes.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.cfg.Block;
 import org.objectweb.asm.commons.cfg.tree.NodeTree;
-import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
-import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
-import org.objectweb.asm.commons.cfg.tree.node.ConstantNode;
-import org.objectweb.asm.commons.cfg.tree.node.ConversionNode;
-import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
-import org.objectweb.asm.commons.cfg.tree.node.IincNode;
-import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
-import org.objectweb.asm.commons.cfg.tree.node.MethodMemberNode;
-import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
-import org.objectweb.asm.commons.cfg.tree.node.TypeNode;
-import org.objectweb.asm.commons.cfg.tree.node.VariableNode;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.IincInsnNode;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.LookupSwitchInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.MultiANewArrayInsnNode;
-import org.objectweb.asm.tree.TableSwitchInsnNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.commons.cfg.tree.node.*;
+import org.objectweb.asm.tree.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.objectweb.asm.Opcodes.*;
 
 /**
  * @author Tyler Sedlar
@@ -52,12 +29,12 @@ public class TreeBuilder {
         if (ain instanceof InsnNode || ain instanceof IntInsnNode || ain instanceof VarInsnNode ||
                 ain instanceof JumpInsnNode || ain instanceof TableSwitchInsnNode ||
                 ain instanceof LookupSwitchInsnNode) {
-            c = CDS[ain.opcode()];
-            p = PDS[ain.opcode()];
+            c = CDS[ain.getOpcode()];
+            p = PDS[ain.getOpcode()];
         } else if (ain instanceof FieldInsnNode) {
             FieldInsnNode fin = (FieldInsnNode) ain;
             char d = fin.desc.charAt(0);
-            switch (fin.opcode()) {
+            switch (fin.getOpcode()) {
                 case GETFIELD: {
                     c = 1;
                     p = d == 'D' || d == 'J' ? 2 : 1;
@@ -87,7 +64,7 @@ public class TreeBuilder {
         } else if (ain instanceof MethodInsnNode) {
             MethodInsnNode min = (MethodInsnNode) ain;
             int as = Type.getArgumentsAndReturnSizes(min.desc);
-            c = (as >> 2) - (min.opcode() == INVOKEDYNAMIC || min.opcode() == INVOKESTATIC ? 1 : 0);
+            c = (as >> 2) - (min.getOpcode() == INVOKEDYNAMIC || min.getOpcode() == INVOKESTATIC ? 1 : 0);
             p = as & 0x03;
         } else if (ain instanceof LdcInsnNode) {
             Object cst = ((LdcInsnNode) ain).cst;
@@ -100,13 +77,15 @@ public class TreeBuilder {
     }
 
     private static AbstractNode createNode(AbstractInsnNode ain, NodeTree tree, TreeSize size) {
-        int opcode = ain.opcode();
+        int opcode = ain.getOpcode();
         if (ain instanceof IntInsnNode) {
             return new NumberNode(tree, ain, size.collapsing, size.producing);
         } else if (ain instanceof VarInsnNode) {
             return new VariableNode(tree, ain, size.collapsing, size.producing);
         } else if (ain instanceof JumpInsnNode) {
-            return new JumpNode(tree, (JumpInsnNode) ain, size.collapsing, size.producing);
+            JumpNode jumpNode = new JumpNode(tree, (JumpInsnNode) ain, size.collapsing, size.producing);
+            jumpNode.setTarget(new TargetNode(tree,((JumpInsnNode) ain).label,size.collapsing,size.producing));
+            return jumpNode;
         } else if (ain instanceof FieldInsnNode) {
             return new FieldMemberNode(tree, ain, size.collapsing, size.producing);
         } else if (ain instanceof MethodInsnNode) {
@@ -179,7 +158,7 @@ public class TreeBuilder {
 //        		System.out.println("NULL INSN NIGGER AT " + mn);
 //        		System.exit(10);
 //        	}
-            if(ain.opcode() != -1) {
+            if(ain.getOpcode() != -1) {
             	nodes.add(createNode(ain, tree, getTreeSize(ain)));
             }
         }
@@ -200,7 +179,7 @@ public class TreeBuilder {
         List<AbstractNode> nodes = new ArrayList<>();
         long start = System.nanoTime();
         for (AbstractInsnNode ain : block.instructions)
-            if(ain.opcode() != -1) {
+            if(ain.getOpcode() != -1) {
             	nodes.add(createNode(ain, tree, getTreeSize(ain)));
             }
         long end = System.nanoTime();
@@ -220,7 +199,7 @@ public class TreeBuilder {
         List<AbstractNode> nodes = new ArrayList<>();
         long start = System.nanoTime();
         for (AbstractInsnNode ain : block.insns())
-            if(ain.opcode() != -1) {
+            if(ain.getOpcode() != -1) {
             	nodes.add(createNode(ain, tree, getTreeSize(ain)));
             }
         long end = System.nanoTime();

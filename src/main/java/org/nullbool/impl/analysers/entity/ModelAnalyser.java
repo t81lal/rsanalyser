@@ -1,25 +1,20 @@
 package org.nullbool.impl.analysers.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.nullbool.api.Builder;
-import org.nullbool.api.analysis.AnalysisException;
-import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.api.analysis.IFieldAnalyser;
-import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.analysis.IMultiAnalyser;
-import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.api.analysis.*;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author MalikDz
  */
 @SupportedHooks(fields = { "vertexCount&I", "triangleCount&I", "verticesX&[I", "verticesY&[I", "verticesZ&[I",
-		"indicesX&[I", "indicesY&[I", "indicesZ&[I", }, methods = {})
+		"indicesX&[I", "indicesY&[I", "indicesZ&[I","vectorSkin&[[I" }, methods = {})
 public class ModelAnalyser extends ClassAnalyser {
 
 	public ModelAnalyser() throws AnalysisException {
@@ -36,13 +31,30 @@ public class ModelAnalyser extends ClassAnalyser {
 
 	@Override
 	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
-		return new Builder<IFieldAnalyser>().add(new ModelInfo());
+		return new Builder<IFieldAnalyser>().addAll(new ModelInfo(), new ModelVectorSkin());
 	}
 
 	@Override
 	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
 		return null;
 	}
+
+
+	public class ModelVectorSkin implements IFieldAnalyser {
+
+		@Override
+		public List<FieldHook> findFields(ClassNode cn) {
+			String[] pattern = { "aload", "getfield","ifnonnull" };
+			List<FieldHook> list = new ArrayList<FieldHook>();
+			MethodNode[] ms = getMethodNodes(cn.methods.toArray());
+			MethodNode m = startWithBc(pattern, ms)[0];
+			String h = findField(m, false, false, 1, 'f', "ifnonnull");
+			list.add(asFieldHook(h, "vectorSkin"));
+
+			return list;
+		}
+	}
+
 
 	public class ModelInfo implements IFieldAnalyser {
 
@@ -90,7 +102,7 @@ public class ModelAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

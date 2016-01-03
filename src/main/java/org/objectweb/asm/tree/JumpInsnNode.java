@@ -79,7 +79,7 @@ public class JumpInsnNode extends AbstractInsnNode {
     }
 
     @Override
-    public int type() {
+    public int getType() {
         return JUMP_INSN;
     }
 

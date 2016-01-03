@@ -58,7 +58,7 @@ public class BasicVerifier extends BasicInterpreter {
     public BasicValue copyOperation(final AbstractInsnNode insn,
             final BasicValue value) throws AnalyzerException {
         Value expected;
-        switch (insn.opcode()) {
+        switch (insn.getOpcode()) {
         case ILOAD:
         case ISTORE:
             expected = BasicValue.INT_VALUE;
@@ -101,7 +101,7 @@ public class BasicVerifier extends BasicInterpreter {
     public BasicValue unaryOperation(final AbstractInsnNode insn,
             final BasicValue value) throws AnalyzerException {
         BasicValue expected;
-        switch (insn.opcode()) {
+        switch (insn.getOpcode()) {
         case INEG:
         case IINC:
         case I2F:
@@ -190,7 +190,7 @@ public class BasicVerifier extends BasicInterpreter {
             throws AnalyzerException {
         BasicValue expected1;
         BasicValue expected2;
-        switch (insn.opcode()) {
+        switch (insn.getOpcode()) {
         case IALOAD:
             expected1 = newValue(Type.getType("[I"));
             expected2 = BasicValue.INT_VALUE;
@@ -305,7 +305,7 @@ public class BasicVerifier extends BasicInterpreter {
             throw new AnalyzerException(insn, "Second argument", expected2,
                     value2);
         }
-        if (insn.opcode() == AALOAD) {
+        if (insn.getOpcode() == AALOAD) {
             return getElementValue(value1);
         } else {
             return super.binaryOperation(insn, value1, value2);
@@ -318,7 +318,7 @@ public class BasicVerifier extends BasicInterpreter {
             final BasicValue value3) throws AnalyzerException {
         BasicValue expected1;
         BasicValue expected3;
-        switch (insn.opcode()) {
+        switch (insn.getOpcode()) {
         case IASTORE:
             expected1 = newValue(Type.getType("[I"));
             expected3 = BasicValue.INT_VALUE;
@@ -374,7 +374,7 @@ public class BasicVerifier extends BasicInterpreter {
     @Override
     public BasicValue naryOperation(final AbstractInsnNode insn,
             final List<? extends BasicValue> values) throws AnalyzerException {
-        int opcode = insn.opcode();
+        int opcode = insn.getOpcode();
         if (opcode == MULTIANEWARRAY) {
             for (int i = 0; i < values.size(); ++i) {
                 if (!BasicValue.INT_VALUE.equals(values.get(i))) {

@@ -37,7 +37,7 @@ public class MemberQuery extends InsnQuery {
     @Override
     public boolean matches(AbstractInsnNode ain) {
         if (!(ain instanceof FieldInsnNode) && !(ain instanceof MethodInsnNode)) return false;
-        int opcode = ain.opcode();
+        int opcode = ain.getOpcode();
         String owner, name, desc;
         if (ain instanceof FieldInsnNode) {
             FieldInsnNode fin = (FieldInsnNode) ain;

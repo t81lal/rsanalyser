@@ -20,12 +20,12 @@ public class OpaquePredicateFilter implements Filter<AbstractInsnNode>, Opcodes 
 
 	@Override
 	public AbstractInsnNode accept(AbstractInsnNode ain) {
-		if (ain.opcode() == NEW) {
+		if (ain.getOpcode() == NEW) {
 			TypeInsnNode tin = (TypeInsnNode) ain;
 			String desc = tin.desc;
 			if (desc.equals("java/lang/IllegalStateException")) {
 				AbstractInsnNode prev = ain.getPrevious();
-				if (prev != null && CMP_INSNS.contains(prev.opcode())) {
+				if (prev != null && CMP_INSNS.contains(prev.getOpcode())) {
 					AbstractInsnNode numberNode = prev.getPrevious();
 					if (numberNode != null) {
 						AbstractInsnNode varNode = numberNode.getPrevious();

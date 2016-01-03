@@ -17,7 +17,7 @@ public class RemovePredicateActor implements Actor {
 
 	@Override
 	public int act(AbstractInsnNode _ain) {
-		counter.inc(next(_ain.getNext().getNext()).opcode());
+		counter.inc(next(_ain.getNext().getNext()).getOpcode());
 		AbstractInsnNode ain = _ain;
 		AbstractInsnNode[] ains = new AbstractInsnNode[7];
 		for (int i = 0; i < ains.length; i++) {

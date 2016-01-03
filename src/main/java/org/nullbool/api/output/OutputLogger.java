@@ -224,7 +224,7 @@ public class OutputLogger {
 				MethodHook hook = foundMethod(verify, parts[0], parts[1], classHook.methods(), classes);
 				if (hook == null) {
 					StringBuilder sb1 = new StringBuilder();
-					sb1.append(" º  ");
+					sb1.append(" ^  ");
 					sb1.append(parts[0]);
 					sb1.append(parts[1]);
 					sb1.append(" couldn't be identified.");
@@ -236,7 +236,7 @@ public class OutputLogger {
 					methodsFound++;
 					mhf++;
 					StringBuilder sb1 = new StringBuilder();
-					sb1.append(" º  ");
+					sb1.append(" ^  ");
 					sb1.append(longstring(parts[0], maxLength));
 					// sb1.append(longstring(" " + niceDescMethod(parts[1]), maxLength));
 					DynamicDesc mdd = new DynamicDesc(hook.val(Constants.DESC), true);

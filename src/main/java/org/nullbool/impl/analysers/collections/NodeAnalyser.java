@@ -90,7 +90,7 @@ public class NodeAnalyser extends ClassAnalyser {
 				MethodNode m = ms2[0];
 				hasPreviousMethod = m;
 				
-				FieldInsnNode prevFin = (FieldInsnNode) Arrays.asList(m.instructions.toArray()).stream().filter(ain -> ain.opcode() == GETFIELD).findFirst()
+				FieldInsnNode prevFin = (FieldInsnNode) Arrays.asList(m.instructions.toArray()).stream().filter(ain -> ain.getOpcode() == GETFIELD).findFirst()
 						.get();
 				list.add(asFieldHook(cn.name + "." + prevFin.name, "previous"));
 
@@ -110,7 +110,7 @@ public class NodeAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

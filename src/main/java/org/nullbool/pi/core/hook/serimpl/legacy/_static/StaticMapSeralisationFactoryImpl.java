@@ -1,4 +1,4 @@
-//package org.nullbool.pi.core.hook.serimpl.legacy._static;
+package org.nullbool.pi.core.hook.serimpl.legacy._static;//package org.nullbool.pi.core.hook.serimpl.legacy._static;
 //
 //import org.nullbool.pi.core.hook.api.HookMap;
 //import org.nullbool.pi.core.hook.api.serialisation.IMapDeserialiser;

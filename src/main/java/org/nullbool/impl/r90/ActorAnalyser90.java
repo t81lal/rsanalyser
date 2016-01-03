@@ -106,6 +106,7 @@ public class ActorAnalyser90 extends ActorAnalyser {
         @Override
         public List<FieldHook> findFields(ClassNode actor) {
             List<FieldHook> list = new ArrayList<FieldHook>();
+
             for (ClassNode cn : Context.current().getClassNodes().values()) {
                 for (MethodNode m : cn.methods) {
                     if (Modifier.isStatic(m.access)) {
@@ -116,7 +117,7 @@ public class ActorAnalyser90 extends ActorAnalyser {
                             while (iterator.hasNext()) {
                                 AbstractInsnNode next = iterator.next();
                                 if (next instanceof IntInsnNode) {
-                                    if (next.opcode() == SIPUSH && ((IntInsnNode) next).operand == 13184) {
+                                    if (next.getOpcode() == SIPUSH && ((IntInsnNode) next).operand == 13184) {
                                         found = true;
                                         break;
                                     }
@@ -134,9 +135,9 @@ public class ActorAnalyser90 extends ActorAnalyser {
                                         if (fmn.putting() && fmn.owner().equals(actor.name) && fmn.desc().equals("I")) {
                                             AbstractInsnNode previous = fmn.insn().getPrevious();
                                             for (int i = 10; i >= 0 && previous != null; i--) {
-                                                if (previous.opcode() == GETFIELD) {
+                                                if (previous.getOpcode() == GETFIELD) {
                                                     final FieldInsnNode node = (FieldInsnNode) previous;
-                                                    if (node.owner.equals(actor.name) && node.desc.equals("[I") && node.getNext().opcode() == ICONST_0) {
+                                                    if (node.owner.equals(actor.name) && node.desc.equals("[I") && node.getNext().getOpcode() == ICONST_0) {
                                                         if (fmn.name().equals(localX.obfuscated()) && queueXHook[0] == null) {
                                                             list.add(queueXHook[0] = asFieldHook(node, "queueX"));
                                                         } else if (fmn.name().equals(localY.obfuscated()) && queueYHook[0] == null) {
@@ -163,7 +164,7 @@ public class ActorAnalyser90 extends ActorAnalyser {
                                                 if (queueLengthHook[0] == null) {
                                                     AbstractInsnNode next = fmn.insn().getNext();
                                                     for (int i = 0; i < 8 && next != null; i++) {
-                                                        if (next.opcode() == GETFIELD) {
+                                                        if (next.getOpcode() == GETFIELD) {
                                                             FieldInsnNode node = (FieldInsnNode) next;
                                                             if (node.desc.equals("I") && node.owner.equals(actor.name)) {
                                                                 list.add(queueLengthHook[0] = asFieldHook(node, "queueLength"));
@@ -177,13 +178,14 @@ public class ActorAnalyser90 extends ActorAnalyser {
                                         }
                                     });
                                 }
-
-
                             }
                         }
                     }
                 }
             }
+
+            String hook = identify(actor, "[B", 'f');
+            list.add(asFieldHook(hook, "queueRun"));
 
             return list;
         }
@@ -199,6 +201,7 @@ public class ActorAnalyser90 extends ActorAnalyser {
             for (MethodNode methodNode : ms) {
                 NodeTree tree = new TreeBuilder().build(methodNode);
                 tree.accept(new NodeVisitor() {
+
                     @Override
                     public void visitOperation(ArithmeticNode an) {
                         if (an.opcode() == Opcodes.IDIV) {

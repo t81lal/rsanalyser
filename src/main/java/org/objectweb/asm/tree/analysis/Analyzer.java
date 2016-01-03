@@ -188,8 +188,8 @@ public class Analyzer<V extends Value> implements Opcodes {
             AbstractInsnNode insnNode = null;
             try {
                 insnNode = m.instructions.get(insn);
-                int insnOpcode = insnNode.opcode();
-                int insnType = insnNode.type();
+                int insnOpcode = insnNode.getOpcode();
+                int insnType = insnNode.getType();
 
                 if (insnType == AbstractInsnNode.LABEL
                         || insnType == AbstractInsnNode.LINE
@@ -317,7 +317,7 @@ public class Analyzer<V extends Value> implements Opcodes {
 
             // calls findSubroutine recursively on normal successors
             if (node instanceof JumpInsnNode) {
-                if (node.opcode() == JSR) {
+                if (node.getOpcode() == JSR) {
                     // do not follow a JSR, it leads to another subroutine!
                     calls.add(node);
                 } else {
@@ -350,7 +350,7 @@ public class Analyzer<V extends Value> implements Opcodes {
             }
 
             // if insn does not falls through to the next instruction, return.
-            switch (node.opcode()) {
+            switch (node.getOpcode()) {
             case GOTO:
             case RET:
             case TABLESWITCH:

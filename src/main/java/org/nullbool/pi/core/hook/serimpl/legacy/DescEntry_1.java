@@ -1,4 +1,4 @@
-//package org.nullbool.pi.core.hook.serimpl.legacy;
+package org.nullbool.pi.core.hook.serimpl.legacy;//package org.nullbool.pi.core.hook.serimpl.legacy;
 //
 //import java.io.DataOutputStream;
 //import java.io.IOException;

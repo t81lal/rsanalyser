@@ -80,7 +80,7 @@ public class InsnListPrinter extends InstructionPrinter {
 			} else if (ain instanceof MultiANewArrayInsnNode) {
 				line = printMultiANewArrayInsnNode((MultiANewArrayInsnNode) ain);
 			} else {
-				line += "UNKNOWN-NODE: " + (ain.opcode() >= 0 ? nameOpcode(ain.opcode()) : "") + " " + ain.toString();
+				line += "UNKNOWN-NODE: " + (ain.getOpcode() >= 0 ? nameOpcode(ain.getOpcode()) : "") + " " + ain.toString();
 			}
 			if (!line.equals("")) {
 				if (match)

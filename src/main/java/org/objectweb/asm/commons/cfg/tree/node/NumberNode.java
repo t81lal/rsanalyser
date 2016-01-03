@@ -13,7 +13,7 @@ public class NumberNode extends AbstractNode {
 
 	public long longNumber() {
 		AbstractInsnNode insn = insn();
-		int op = insn.opcode();
+		int op = insn.getOpcode();
 		switch (op) {
 			case NEWARRAY:
 			case BIPUSH:
@@ -56,7 +56,7 @@ public class NumberNode extends AbstractNode {
 
 	public Class<?> type() {
 		AbstractInsnNode insn = insn();
-		int op = insn.opcode();
+		int op = insn.getOpcode();
 		switch (op) {
 			case NEWARRAY:
 			case BIPUSH:
@@ -99,7 +99,7 @@ public class NumberNode extends AbstractNode {
 
 	public int number() {
 		AbstractInsnNode insn = insn();
-		int op = insn.opcode();
+		int op = insn.getOpcode();
 		switch (op) {
 			case NEWARRAY:
 			case BIPUSH:

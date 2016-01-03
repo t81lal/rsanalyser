@@ -90,7 +90,7 @@ public class LookupSwitchInsnNode extends AbstractInsnNode {
     }
 
     @Override
-    public int type() {
+    public int getType() {
         return LOOKUPSWITCH_INSN;
     }
 

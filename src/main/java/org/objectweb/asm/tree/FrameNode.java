@@ -130,7 +130,7 @@ public class FrameNode extends AbstractInsnNode {
     }
 
     @Override
-    public int type() {
+    public int getType() {
         return FRAME;
     }
 

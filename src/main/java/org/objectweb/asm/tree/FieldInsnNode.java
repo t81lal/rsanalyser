@@ -92,7 +92,7 @@ public class FieldInsnNode extends AbstractInsnNode {
     }
 
     @Override
-    public int type() {
+    public int getType() {
         return FIELD_INSN;
     }
 

@@ -68,7 +68,7 @@ public class LineNumberNode extends AbstractInsnNode {
     }
 
     @Override
-    public int type() {
+    public int getType() {
         return LINE;
     }
 

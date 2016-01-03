@@ -97,7 +97,7 @@ public class NodeIteratorAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
@@ -106,7 +106,7 @@ public class NodeIteratorAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

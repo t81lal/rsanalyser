@@ -99,7 +99,7 @@ public class DualNodeIteratorAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	protected Builder<IMethodAnalyser> registerMethodAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
@@ -108,7 +108,7 @@ public class DualNodeIteratorAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

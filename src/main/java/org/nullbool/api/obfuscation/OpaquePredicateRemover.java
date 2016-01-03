@@ -194,12 +194,12 @@ public class OpaquePredicateRemover extends NodeVisitor {
 					}
 					//TODO: Account for meta instructions.
 					if(block.size() == 1) {
-						if(block.get(0).opcode() != RETURN) {
+						if(block.get(0).getOpcode() != RETURN) {
 							b = true;
 							break;
 						}
 					} else {
-						if(block.get(block.size() - 1).opcode() != ATHROW) {
+						if(block.get(block.size() - 1).getOpcode() != ATHROW) {
 							b = true;
 							break;
 						} else {
@@ -228,7 +228,7 @@ public class OpaquePredicateRemover extends NodeVisitor {
 						Jump jump = e.getKey().jump;
 						
 						if(!foundPredicates.containsKey(jump.jin.method)) {
-							foundPredicates.put(jump.jin.method, new Opaque(jump.jin.opcode(), e.getKey().num));
+							foundPredicates.put(jump.jin.method, new Opaque(jump.jin.getOpcode(), e.getKey().num));
 						}
 						
 						/* Redirect the false jump location of the jump and force it
@@ -276,9 +276,9 @@ public class OpaquePredicateRemover extends NodeVisitor {
 
 			ains.add(ain);
 
-			if(ain.opcode() == ATHROW || ain.opcode() == RETURN) {
+			if(ain.getOpcode() == ATHROW || ain.getOpcode() == RETURN) {
 				return ains;
-			} else if(ain.type() == AbstractInsnNode.JUMP_INSN || ain.type() == AbstractInsnNode.LOOKUPSWITCH_INSN || ain.type() == AbstractInsnNode.TABLESWITCH_INSN) {
+			} else if(ain.getType() == AbstractInsnNode.JUMP_INSN || ain.getType() == AbstractInsnNode.LOOKUPSWITCH_INSN || ain.getType() == AbstractInsnNode.TABLESWITCH_INSN) {
 				return null;
 			}
 
@@ -301,8 +301,8 @@ public class OpaquePredicateRemover extends NodeVisitor {
 			}
 
 			if(jop == -1) {
-				jop = p.jump.jin.opcode();
-			} else if(p.jump.jin.opcode() != jop) {
+				jop = p.jump.jin.getOpcode();
+			} else if(p.jump.jin.getOpcode() != jop) {
 				return false;
 			}
 		}

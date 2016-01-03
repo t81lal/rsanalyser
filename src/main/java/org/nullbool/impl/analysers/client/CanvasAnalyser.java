@@ -1,20 +1,18 @@
 package org.nullbool.impl.analysers.client;
 
-import java.awt.Canvas;
-
 import org.nullbool.api.Builder;
-import org.nullbool.api.analysis.AnalysisException;
-import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.api.analysis.IFieldAnalyser;
-import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.analysis.IMultiAnalyser;
-import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.api.analysis.*;
+import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.ClassNode;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author : MalikDz
  */
-@SupportedHooks(fields = {}, methods = {})
+@SupportedHooks(fields = {"component&Ljava/awt/Component;"}, methods = {})
 public class CanvasAnalyser extends ClassAnalyser {
 
 	public CanvasAnalyser() throws AnalysisException {
@@ -23,7 +21,7 @@ public class CanvasAnalyser extends ClassAnalyser {
 
 	@Override
 	protected Builder<IFieldAnalyser> registerFieldAnalysers() {
-		return null;
+		return new Builder<IFieldAnalyser>().add(new FieldsAnalyser());
 	}
 
 	@Override
@@ -41,7 +39,19 @@ public class CanvasAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
 		return null;
+	}
+
+	private class FieldsAnalyser implements IFieldAnalyser {
+
+		@Override
+		public List<FieldHook> findFields(ClassNode cn) {
+			List<FieldHook> list = new ArrayList<FieldHook>();
+
+			String h = getFieldOfType(cn, "Ljava/awt/Component;", false);
+			list.add(asFieldHook(h, "component"));
+
+			return list;
+		}
 	}
 }

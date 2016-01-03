@@ -85,7 +85,7 @@ public class FlowBlock {
 		ListIterator<AbstractInsnNode> it = insns.listIterator();
 		while(it.hasNext()) {
 			AbstractInsnNode ain = it.next();
-			if(ain.opcode() != -1)
+			if(ain.getOpcode() != -1)
 				i++;
 		}
 		return i;
@@ -107,7 +107,7 @@ public class FlowBlock {
 		AbstractInsnNode last = last();
 		if(last == null)
 			return -1;
-		return last.opcode();
+		return last.getOpcode();
 	}
 	
 	public void removeLast() {
@@ -310,7 +310,7 @@ public class FlowBlock {
 		if (insn == null) {
 			return "null";
 		}
-		int op = insn.opcode();
+		int op = insn.getOpcode();
 		if (op == -1) {
 			if(insn instanceof LabelNode) {
 				LabelNode label = (LabelNode) insn;
@@ -324,7 +324,7 @@ public class FlowBlock {
 		 * out of all the possible ones(statically, the longest opcode name is invokedynamic).*/
 		sb.append(pad(OPCODES[op].toLowerCase(), Assembly.LONGEST_OPCODE_NAME));
 
-		switch (insn.type()) {
+		switch (insn.getType()) {
 			case INT_INSN:
 				sb.append(((IntInsnNode) insn).operand);
 				break;

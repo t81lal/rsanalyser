@@ -62,7 +62,7 @@ public class LdcInsnNode extends AbstractInsnNode {
     }
 
     @Override
-    public int type() {
+    public int getType() {
         return LDC_INSN;
     }
 

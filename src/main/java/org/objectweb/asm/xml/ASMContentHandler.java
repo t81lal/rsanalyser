@@ -52,8 +52,8 @@ import org.xml.sax.helpers.DefaultHandler;
  * document into Java class file. This class can be feeded by any kind of SAX
  * 2.0 event producers, e.g. XML parser, XSLT or XPath engines, or custom code.
  * 
- * @see org.objectweb.asm.xml.SAXClassAdapter
- * @see org.objectweb.asm.xml.Processor
+ * @see SAXClassAdapter
+ * @see Processor
  * 
  * @author Eugene Kuleshov
  */

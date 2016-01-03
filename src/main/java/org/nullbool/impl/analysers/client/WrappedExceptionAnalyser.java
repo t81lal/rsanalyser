@@ -47,7 +47,7 @@ public class WrappedExceptionAnalyser extends ClassAnalyser {
 			for (MethodNode m : cn.methods) {
 				if (m.name.equals("<init>") && m.desc.equals("(Ljava/lang/Throwable;Ljava/lang/String;)V")) {
 					for (AbstractInsnNode ain : m.instructions.toArray()) {
-						if (ain.opcode() == PUTFIELD) {
+						if (ain.getOpcode() == PUTFIELD) {
 							FieldInsnNode fin = (FieldInsnNode) ain;
 							if (fin.desc.equals("Ljava/lang/String;")) {
 								hooks.add(asFieldHook(fin.owner + "." + fin.name, "reason_"));
@@ -68,7 +68,7 @@ public class WrappedExceptionAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

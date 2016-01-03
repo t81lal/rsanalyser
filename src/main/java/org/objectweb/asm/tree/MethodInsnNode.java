@@ -124,7 +124,7 @@ public class MethodInsnNode extends AbstractInsnNode {
     }
 
     @Override
-    public int type() {
+    public int getType() {
         return METHOD_INSN;
     }
 

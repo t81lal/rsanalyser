@@ -1,25 +1,20 @@
 package org.nullbool.impl.analysers.world;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.nullbool.api.Builder;
-import org.nullbool.api.analysis.AnalysisException;
-import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.api.analysis.IFieldAnalyser;
-import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.analysis.IMultiAnalyser;
-import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.api.analysis.*;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author MalikDz
  */
 @SupportedHooks(
-		fields = { "markedRenderable1&Renderable", "markedRenderable2&Renderable", "localX&I", "localY&I", "plane&I", "hash&I",
+		fields = { "markerRenderable1&Renderable", "markerRenderable2&Renderable", "localX&I", "localY&I", "plane&I", "hash&I",
 		"flags&I", "orientation1&I", "orientation2&I", }, methods = {})
 public class WallObjectAnalyser extends ClassAnalyser {
 
@@ -64,10 +59,10 @@ public class WallObjectAnalyser extends ClassAnalyser {
 			AbstractInsnNode[] ins = followJump(m, 100);
 
 			h = findField(ins, false, true, 6, 'f', "putfield");
-			l.add(asFieldHook(h, "markedRenderable1"));
+			l.add(asFieldHook(h, "markerRenderable1"));
 
 			h = findField(ins, false, true, 7, 'f', "putfield");
-			l.add(asFieldHook(h, "markedRenderable2"));
+			l.add(asFieldHook(h, "markerRenderable2"));
 
 			h = findField(ins, false, true, 3, 'f', "putfield");
 			l.add(asFieldHook(h, "localX"));
@@ -99,7 +94,7 @@ public class WallObjectAnalyser extends ClassAnalyser {
 	 */
 	@Override
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 }

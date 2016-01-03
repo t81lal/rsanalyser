@@ -49,7 +49,7 @@ public class NodeTree extends AbstractNode {
     @Override
 	public AbstractInsnNode[] collapse() {
         AbstractInsnNode[] instructions = super.collapse();
-        int i = instructions.length > 1 && instructions[instructions.length - 2].type() == LABEL ? 2 : 1;
+        int i = instructions.length > 1 && instructions[instructions.length - 2].getType() == LABEL ? 2 : 1;
         return Arrays.copyOf(instructions, instructions.length - i);
     }
 }

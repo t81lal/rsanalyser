@@ -14,6 +14,7 @@ import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
 import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
 import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
 import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
+import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
 import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
 import org.objectweb.asm.tree.*;
 import org.topdank.banalysis.asm.insn.InstructionPattern;
@@ -30,13 +31,14 @@ import java.util.Map;
  */
 @SupportedHooks(
         fields = {"npcs&[NPC", "players&[Player", "region&Region", /*"getWidgetPositionsX&[I", "getWidgetPositionsY&[I",*/
-                "canvas&Ljava/awt/Canvas;", "localPlayer&Player", "widgetNodes&HashTable", "menuActions&[Ljava/lang/String;", "spellSelected&Z",
+                "canvas&Ljava/awt/Canvas;", "localPlayer&Player", "localPlayerIndex&I" , "widgetNodes&HashTable", "menuVariable&[I", "menuActions&[Ljava/lang/String;", "spellSelected&Z",
                 "selectionState&I", "menuOptions&[Ljava/lang/String;", "loopCycle&I", "currentWorld&I", "gameState&I", "currentLevels&[I",
-                "realLevels&[I", "skillsExp&[I", "selectedItem&I", "menuOpen&Z", "menuX&I", "menuY&I", "menuWidth&I", "menuHeight&I",
+                "realLevels&[I", "skillsExp&[I", "selectedSpellName&Ljava/lang/String;","selectedItemIndex&I", "selectedItemId&I", "selectedItemName&Ljava/lang/String;" ,"menuOpen&Z", "menuX&I", "menuY&I", "menuWidth&I", "menuHeight&I",
                 "menuSize&I", "groundItems&[[[Deque", "tileSettings&[[[B", "tileHeights&[[[I", "mapScale&I", "mapOffset&I", "mapAngle&I",
                 "plane&I", "cameraX&I", "cameraY&I", "cameraZ&I", "cameraYaw&I", "cameraPitch&I", "baseX&I", "baseY&I", "widgets&[[Widget",
                 "clientSettings&[I", "widgetsSettings&[I", "hoveredRegionTileX&I", "hoveredRegionTileY&I", "itemTables&HashTable", "username&String", "password&String",
-                "widgetPositionsX&I", "widgetPositionsY&I"
+                "widgetPositionsX&I", "widgetPositionsY&I", "hintArrowType&I", "hintArrowX&I", "hintArrowY&I" ,"hintArrowHeight&I", "hintArrowNpcId&I",
+                "hintArrowPlayerId&I","hintArrowIconX&I","hintArrowIconY&I","destinationX&I","destinationY&I"
         },
         methods = {"loadObjDefinition&(I)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
                 /*"getPlayerModel&()LModel;",*/ "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&(IIIILjava/lang/String;Ljava/lang/String;II)V"})
@@ -50,7 +52,8 @@ public class ClientAnalyser extends ClassAnalyser {
     protected Builder<IFieldAnalyser> registerFieldAnalysers() {
         return new Builder<IFieldAnalyser>().addAll(new ActorArrayHook(), new CurrentRegionHook(), new WidgetPositionXY(), new CanvasPlayerHook(), new ClientArrayHooks(),
                 new MenuScreenHooks(), new GroundItemsHook(), new TileInfoHooks(), new MinimapHooks(), new CameraHooks(), new BaseXYHooks(), new WidgetsHook(),
-                new SettingsHook(), new CredentialAnalyser(), new RegionWalkingHooks(), new ItemTableHook(), new CredentialHooks());
+                new SettingsHook(), new CredentialAnalyser(), new RegionWalkingHooks(), new ItemTableHook(), new CredentialHooks(), new HintArrowHook(),new LocalPlayerIdHook(),
+                new SelectedItemHook());
     }
 
     @Override
@@ -145,7 +148,7 @@ public class ClientAnalyser extends ClassAnalyser {
                                 }
                             }
 
-                            if (ain.opcode() != -1)
+                            if (ain.getOpcode() != -1)
                                 break;
                         }
 
@@ -208,6 +211,20 @@ public class ClientAnalyser extends ClassAnalyser {
         }
     }
 
+    public class LocalPlayerIdHook implements IFieldAnalyser {
+
+        @Override
+        public List<FieldHook> findFields(ClassNode cn) {
+            List<FieldHook> list = new ArrayList<FieldHook>();
+            MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";;V", true);
+
+            MethodNode m = identifyMethod(mn,false,"ldc You have only just left another world.", "ldc Your profile will be transferred in:");
+            String p = findField(m,true,true,1,'s',"imul",".* 8","ishl");
+            list.add(asFieldHook(p, "localPlayerIndex"));
+            return list;
+        }
+    }
+
     public class ActorArrayHook implements IFieldAnalyser {
 
         @Override
@@ -222,6 +239,90 @@ public class ClientAnalyser extends ClassAnalyser {
             tempo = "[L" + findObfClassName("Player") + ";";
             hook = identify(cn, tempo, 's');
             list.add(asFieldHook(hook, "players"));
+
+            return list;
+        }
+    }
+
+    public class SelectedItemHook implements IFieldAnalyser {
+
+        @Override
+        public List<FieldHook> findFields(ClassNode cn) {
+            String regex = ";.{3,4}Ljava/lang/String;Ljava/lang/String;.{2,3};V";
+            List<FieldHook> list = new ArrayList<FieldHook>();
+            MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
+            MethodNode method = startWithBc(new String[]{"iload","sipush","if_icmplt"},mn)[0];
+
+            TreeBuilder builder = new TreeBuilder();
+            builder.build(method).accept(new NodeVisitor() {
+                @Override
+                public void visitJump(JumpNode jn) {
+                    if(jn.firstNumber() != null && jn.firstNumber().number() == 21) {
+                        int fieldCount = 0;
+                        AbstractInsnNode node = jn.insn();
+                        while(node != null){
+                            if(node instanceof FieldInsnNode){
+                                if(fieldCount == 4){
+                                    list.add(asFieldHook((FieldInsnNode)node,"destinationX",true));
+                                }
+                                if(fieldCount == 5){
+                                    list.add(asFieldHook((FieldInsnNode)node,"destinationY",true));
+                                }else if(fieldCount > 5){
+                                    break;
+                                }
+                                fieldCount++;
+                            }
+                            if(node instanceof JumpInsnNode && node.getOpcode() == GOTO){
+                                node = ((JumpInsnNode) node).label;
+                            }else{
+                                node = node.getNext();
+                            }
+
+                        }
+                    }else if(jn.firstNumber() != null && jn.firstNumber().number() == 38) {
+                        int fieldCount = 0;
+                        AbstractInsnNode node = jn.insn();
+                        while(node != null){
+                            if(node instanceof FieldInsnNode){
+                                if(fieldCount == 1){
+                                    list.add(asFieldHook((FieldInsnNode)node,"selectedItemIndex",true));
+                                }
+                                if(fieldCount == 3){
+                                    list.add(asFieldHook((FieldInsnNode)node,"selectedItemId",true));
+                                }else if(fieldCount > 3){
+                                    break;
+                                }
+                                fieldCount++;
+                            }
+                            if(node instanceof JumpInsnNode && node.getOpcode() == GOTO){
+                                node = ((JumpInsnNode) node).label;
+                            }else{
+                                node = node.getNext();
+                            }
+
+                        }
+                    }else if(jn.firstNumber() != null && jn.firstNumber().number() == 25) {
+                        int fieldCount = 0;
+                        AbstractInsnNode node = jn.insn();
+                        while(node != null){
+                            if(node instanceof FieldInsnNode){
+                                if(fieldCount == 7){
+                                    list.add(asFieldHook((FieldInsnNode)node,"selectedSpellName",true));
+                                }else if(fieldCount > 7){
+                                    break;
+                                }
+                                fieldCount++;
+                            }
+                            if(node instanceof JumpInsnNode && node.getOpcode() == GOTO){
+                                node = ((JumpInsnNode) node).label;
+                            }else{
+                                node = node.getNext();
+                            }
+
+                        }
+                    }
+                }
+            });
 
             return list;
         }
@@ -245,6 +346,18 @@ public class ClientAnalyser extends ClassAnalyser {
             h = findField(m, true, true, 1, 's', "ldc 20.0");
             list.add(asFieldHook(h, "mapAngle"));
 
+            /*
+            regex = ";\\[L" + findObfClassName("Widget") + ";.{6,8};V";
+            mn = findMethods(Context.current().getClassNodes(),regex,true);
+            m = identifyMethod(mn,false,"bipush 63");
+            findField3()
+            AbstractInsnNode[] i = followJump(m,"BIPUSH 63",300);
+            System.out.println(m.owner + " " + m.name + " " + i.length + "\t" + Arrays.toString(i));
+            System.out.println(findField(m, true, true, 1, 's', "bipush 63"));
+            System.out.println(findField(m, true, true, 2, 's', "bipush 63"));
+            System.out.println(findField(m, true, true, 1, 's', "bipush"));
+            System.out.println(findField(m, true, true, 2, 's', "bipush"));
+            */
             return list;
         }
     }
@@ -256,7 +369,7 @@ public class ClientAnalyser extends ClassAnalyser {
             String h, regex = ";III\\w{0,1};V";
             List<FieldHook> list = new ArrayList<FieldHook>();
             MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
-            MethodNode m = startWithBc(Context.current().getPattern("camera"), mn)[0];
+            MethodNode m = startWithBc(new String[]{"iload", "sipush", "if_icmplt"}, mn)[0];
 
             h = findNearIns(m, "invokestatic", "put", "get");
             list.add(asFieldHook(h, "plane"));
@@ -296,6 +409,7 @@ public class ClientAnalyser extends ClassAnalyser {
             MethodNode[] m = startWithBc(p, mn);
 
             AbstractInsnNode[] ins = followJump(m[0], 323);
+
             final String[] pattern = {"if_icmple", "iload 6", "ifge", "iconst_1"};
 
             h = findField(ins, true, true, 1, 's', pattern);
@@ -324,7 +438,7 @@ public class ClientAnalyser extends ClassAnalyser {
 
         @Override
         public List<FieldHook> findFields(ClassNode cn) {
-            String h, regex = ";;V";
+            String h,loopCycle,actor, regex = ";;V";
             String[] p = {"iconst_1", "putstatic"};
             String[] pattern = {"bipush 9", "iconst_2", "iastore"};
             List<FieldHook> list = new ArrayList<FieldHook>();
@@ -336,24 +450,32 @@ public class ClientAnalyser extends ClassAnalyser {
 
             String[] pat = {"iconst_1", "putstatic", "iconst_0"};
             String[] r = {"aconst_null", "putstatic .* Ljava/lang/String;", "iconst_0"};
-            r = new String[]{"putstatic .*", "new", "dup", "bipush 8"};
+
+            r = new String[]{"putstatic .*", "new .*", "dup", "bipush 8"};
             h = findField(ins, true, true, 2, 's', r);
             list.add(asFieldHook(h, "widgetNodes"));
 
-            h = findField(ins, true, true, 1, 's', "sipush 500", "anewarray");
+            h = findField(ins, true, true, 1, 's', "sipush 500", "anewarray .*");
             list.add(asFieldHook(h, "menuActions"));
 
-            h = findField(ins, true, true, 9, 's', "sipush 500", "anewarray");
+            h = findField(ins, true, true, 9, 's', "sipush 500", "anewarray .*");
             list.add(asFieldHook(h, "spellSelected"));
 
-            h = findField(ins, true, true, 7, 's', "sipush 500", "anewarray");
+            h = findField(ins, true, true, 7, 's', "sipush 500", "anewarray .*");
             list.add(asFieldHook(h, "selectionState"));
 
-            h = findField(ins, true, true, 2, 's', "sipush 500", "anewarray");
+            h = findField(ins, true, true, 8, 's', "sipush 500", "anewarray .*");
+            list.add(asFieldHook(h, "selectedItemName"));
+
+            h = findField(ins, true, true, 2, 's', "sipush 500", "anewarray .*");
             list.add(asFieldHook(h, "menuOptions"));
 
-            h = findField(ins, false, true, 2, 's', pat);
-            list.add(asFieldHook(h, "loopCycle"));
+            //i dont like this :(
+            h = findField(ins, true, true, 4, 's', "sipush 500", "newarray 10");
+            list.add(asFieldHook(h, "menuVariable"));
+
+            loopCycle = findField(ins, false, true, 2, 's', pat);
+            list.add(asFieldHook(loopCycle, "loopCycle"));
 
             h = findField(ins, true, true, 2, 's', "iconst_1");
             list.add(asFieldHook(h, "currentWorld"));
@@ -370,8 +492,21 @@ public class ClientAnalyser extends ClassAnalyser {
             h = findField(ins, true, true, 3, 's', "bipush 25", "newarray 10");
             list.add(asFieldHook(h, "skillsExp"));
 
-            h = findField(ins, true, true, 1, 's', r);
-            list.add(asFieldHook(h, "selectedItem"));
+            //h = findField(ins, true, true, 1, 's', r);
+            //list.add(asFieldHook(h, "selectedItem"));
+
+            try {
+                MethodNode renderScreenMethod = identifyMethod(findMethods(Context.current().getClassNodes(), ";.*;.*;V", true), false, "ldc Fps:");
+                h = findField(renderScreenMethod, true, true, 1, 'f', "getstatic " + loopCycle + " I", "ldc .*", "imul", "putfield " + findObfClassName("Widget") + ".* I");
+                getAnalyser("Widget").getFoundHook().fields().add(asFieldHook(h, "loopCycle"));
+
+                actor = findObfClassName("Actor");
+                MethodNode renderHitBarMethod = identifyMethod(findMethods(Context.current().getClassNodes(), ";.*" + "L" + actor + ";III" + ".*;V", true),false,"getstatic " + loopCycle + " I");
+                h = findField(renderHitBarMethod,true,false,1,'f',"getfield .*" + actor + ".* I","ldc .*","imul","getstatic " + loopCycle + " I");
+                getAnalyser("Actor").getFoundHook().fields().add(asFieldHook(h, "combatTime"));
+            }catch (Exception ignore){
+                ignore.printStackTrace();
+            }
 
             return list;
         }
@@ -488,6 +623,40 @@ public class ClientAnalyser extends ClassAnalyser {
             return list;
         }
 
+    }
+
+    public class HintArrowHook implements IFieldAnalyser {
+
+        @Override
+        public List<FieldHook> findFields(ClassNode client) {
+            List<FieldHook> hooks = new ArrayList<FieldHook>();
+            for (ClassNode classNode : Context.current().getClassNodes().values()) {
+                for (MethodNode m : classNode.methods) {
+                    if (identifyMethod(m,"ldc .*","imul", "iconst_2","if_icmplt") && identifyMethod(m,"ldc .*","imul", "bipush 6","if_icmpgt")) {
+                        String h, id;
+                        id = findField(m, true, false, 1, 's', "ldc .*","imul", "iconst_2","if_icmplt");
+                        hooks.add(asFieldHook(id, "hintArrowType"));
+                        h = findField(m, true, true, 3, 's', "getstatic " + id + " I", "ldc .*","imul", "iconst_1");
+                        hooks.add(asFieldHook(h, "hintArrowNpcId"));
+                        h = findField(m, true, true, 2, 's', "getstatic " + id + " I", "ldc .*","imul", "iconst_3");
+                        hooks.add(asFieldHook(h, "hintArrowX"));
+                        h = findField(m, true, true, 3, 's', "getstatic " + id + " I", "ldc .*","imul", "iconst_3");
+                        hooks.add(asFieldHook(h, "hintArrowY"));
+                        h = findField(m, true, true, 3, 's', "ldc .*", "putstatic " + id + " I");
+                        hooks.add(asFieldHook(h, "hintArrowIconX"));
+                        h = findField(m, true, true, 5, 's', "ldc .*", "putstatic " + id + " I");
+                        hooks.add(asFieldHook(h, "hintArrowIconY"));
+                        h = findField(m, true, true, 7, 's', "ldc .*", "putstatic " + id + " I");
+                        hooks.add(asFieldHook(h, "hintArrowHeight"));
+                        h = findField(m, true, true, 3, 's', "getstatic " + id + " I", "ldc .*","imul", "bipush 10");
+                        hooks.add(asFieldHook(h, "hintArrowPlayerId"));
+                        break;
+                    }
+                }
+            }
+
+            return hooks;
+        }
     }
 
     // TODO: METHODS
@@ -621,7 +790,7 @@ public class ClientAnalyser extends ClassAnalyser {
                         VarInsnNode beforeReturn = null;
                         try {
                             for (AbstractInsnNode ain : m.instructions.toArray()) {
-                                if (ain.opcode() == ARETURN) {
+                                if (ain.getOpcode() == ARETURN) {
                                     if (beforeReturn != null)
                                         System.err.println("WTF BOI");
                                     beforeReturn = (VarInsnNode) ain.getPrevious();
@@ -791,7 +960,6 @@ public class ClientAnalyser extends ClassAnalyser {
             return list;
         }
     }
-
 
     public static void test(Throwable t) {
         System.out.println("[Client] " + t.getClass().getCanonicalName() + " " + t.getMessage());

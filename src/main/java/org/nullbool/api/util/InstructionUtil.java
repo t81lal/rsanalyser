@@ -81,7 +81,7 @@ public class InstructionUtil implements Opcodes {
 	}
 
 	public static int resolve(AbstractInsnNode ain) {
-		switch (ain.opcode()) {
+		switch (ain.getOpcode()) {
 			case ICONST_M1:
 			case ICONST_0:
 			case ICONST_1:
@@ -89,7 +89,7 @@ public class InstructionUtil implements Opcodes {
 			case ICONST_3:
 			case ICONST_4:
 			case ICONST_5:
-				return ain.opcode() - 3;
+				return ain.getOpcode() - 3;
 			case BIPUSH:
 			case SIPUSH:
 				return ((IntInsnNode) ain).operand;

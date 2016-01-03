@@ -189,7 +189,7 @@ public abstract class AbstractInsnNode {
      * 
      * @return the opcode of this instruction.
      */
-    public int opcode() {
+    public int getOpcode() {
         return opcode;
     }
 
@@ -199,7 +199,7 @@ public abstract class AbstractInsnNode {
      * @return the type of this instruction, i.e. one the constants defined in
      *         this class.
      */
-    public abstract int type();
+    public abstract int getType();
 
     /**
      * Returns the previous instruction in the list to which this instruction

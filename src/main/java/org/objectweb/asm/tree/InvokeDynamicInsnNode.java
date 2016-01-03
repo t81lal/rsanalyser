@@ -84,7 +84,7 @@ public class InvokeDynamicInsnNode extends AbstractInsnNode {
     }
 
     @Override
-    public int type() {
+    public int getType() {
         return INVOKE_DYNAMIC_INSN;
     }
 
