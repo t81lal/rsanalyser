@@ -1,8 +1,19 @@
 package org.nullbool.impl.analysers;
 
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
-import org.nullbool.api.analysis.*;
+import org.nullbool.api.analysis.AnalysisException;
+import org.nullbool.api.analysis.ClassAnalyser;
+import org.nullbool.api.analysis.IFieldAnalyser;
+import org.nullbool.api.analysis.IMethodAnalyser;
+import org.nullbool.api.analysis.IMultiAnalyser;
+import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.EventCallGenerator;
 import org.nullbool.pi.core.hook.api.ClassHook;
 import org.nullbool.pi.core.hook.api.Constants;
@@ -16,15 +27,19 @@ import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
 import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
 import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
 import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LdcInsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 import org.topdank.banalysis.asm.insn.InstructionPattern;
 import org.topdank.banalysis.asm.insn.InstructionSearcher;
-
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author MalikDz
@@ -665,14 +680,14 @@ public class ClientAnalyser extends ClassAnalyser {
         @Override
         public List<MethodHook> findMethods(ClassNode _unused) {
             List<MethodHook> list = new ArrayList<MethodHook>();
-            String npcClass = findObfClassName("NPC");
-            ClassNode cn = getClassNodeByRefactoredName("Renderable");
-            MethodNode[] ms = getMethodNodes(cn.methods.toArray());
-            String playerClass = findObfClassName("Player");
-            MethodNode m = identifyMethod(ms, true, "aconst_null", "areturn");
+            // String npcClass = findObfClassName("NPC");
+            // ClassNode cn = getClassNodeByRefactoredName("Renderable");
+            // MethodNode[] ms = getMethodNodes(cn.methods.toArray());
+            // String playerClass = findObfClassName("Player");
+            // MethodNode m = identifyMethod(ms, true, "aconst_null", "areturn");
             String v = "L" + findObfClassName("ItemDefinition") + ";";
-            String mn, t = "L" + findObfClassName("ObjectDefinition") + ";";
-            //
+            // String mn
+            String t = "L" + findObfClassName("ObjectDefinition") + ";";
             MethodNode mNode = findMethodNode(Context.current().getClassNodes(), ";I.{0,1};" + t);
             MethodHook mhook = getAnalyser("ObjectDefinition").asMethodHook(mNode, "loadObjDefinition").var(Constants.METHOD_TYPE, Constants.CALLBACK);
             list.add(mhook);
@@ -681,7 +696,7 @@ public class ClientAnalyser extends ClassAnalyser {
             mhook = getAnalyser("ItemDefinition").asMethodHook(mNode, "loadItemDefinition").var(Constants.METHOD_TYPE, Constants.CALLBACK);
             list.add(mhook);
             //
-            mn = npcClass + "." + m.name;
+            // mn = npcClass + "." + m.name;
             mNode = findMethodNode(Context.current().getClassNodes(), ";I.{0,1};" + v);
             //
             //mn = playerClass + "." + m.name;
@@ -723,18 +738,18 @@ public class ClientAnalyser extends ClassAnalyser {
             return null;
         }
 
-        private String findMethod(Map<String, ClassNode> nodes, String r) {
-            String g = "[()]", result = null;
-            Iterator<ClassNode> it = nodes.values().iterator();
-            while (it.hasNext()) {
-                ClassNode cn = it.next();
-                for (Object m : cn.methods)
-                    if ((Modifier.isStatic(((MethodNode) m).access)))
-                        if (((MethodNode) m).desc.replaceAll(g, ";").matches(r))
-                            return cn.name + "." + ((MethodNode) m).name;
-            }
-            return result;
-        }
+//        private String findMethod(Map<String, ClassNode> nodes, String r) {
+//            String g = "[()]", result = null;
+//            Iterator<ClassNode> it = nodes.values().iterator();
+//            while (it.hasNext()) {
+//                ClassNode cn = it.next();
+//                for (Object m : cn.methods)
+//                    if ((Modifier.isStatic(((MethodNode) m).access)))
+//                        if (((MethodNode) m).desc.replaceAll(g, ";").matches(r))
+//                            return cn.name + "." + ((MethodNode) m).name;
+//            }
+//            return result;
+//        }
     }
 
     public class WidgetsHook implements IFieldAnalyser {

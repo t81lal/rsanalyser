@@ -108,7 +108,7 @@ public class BufferAnalyser extends ClassAnalyser {
 
 	private final TreeBuilder treeBuilder = new TreeBuilder();
 	private final ArrayStoreVisitor arrayStoreVisitor = new ArrayStoreVisitor();
-	private final ArrayLoadVisitor arrayLoadVisitor = new ArrayLoadVisitor();
+	// private final ArrayLoadVisitor arrayLoadVisitor = new ArrayLoadVisitor();
 	private final ArrayMethodVisitor arrayMethodVisitor = new ArrayMethodVisitor();
 	private final VarIntNodeVisitor varIntNodeVisitor = new VarIntNodeVisitor();
 	

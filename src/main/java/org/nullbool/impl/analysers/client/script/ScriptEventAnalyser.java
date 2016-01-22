@@ -116,10 +116,10 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 			//				}
 			//			}
 
-			String regex = ";\\[L.*;IIIIIII.{0,1};V";
-			MethodNode[] ms = findMethods(Context.current().getClassNodes(), regex, true);
-			String[] pattern = new String[]{"new.*", "dup"};
-			MethodNode m = identifyMethod(ms, false, pattern);
+			// String regex = ";\\[L.*;IIIIIII.{0,1};V";
+			// MethodNode[] ms = findMethods(Context.current().getClassNodes(), regex, true);
+			// String[] pattern = new String[]{"new.*", "dup"};
+			// MethodNode m = identifyMethod(ms, false, pattern);
 			
 			// l.add(asFieldHook(s, "isDisposable"));
 			// System.out.println(s);

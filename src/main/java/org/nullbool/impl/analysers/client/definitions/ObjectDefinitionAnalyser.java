@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nullbool.api.Builder;
-import org.nullbool.api.Context;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
@@ -117,9 +116,9 @@ public class ObjectDefinitionAnalyser extends ClassAnalyser {
 		@Override
 		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
-			String regex = ";\\w*" + "L" +  getFoundClass().name+ ";" + "\\w*;V";
-			MethodNode[] m = findMethods(Context.current().getClassNodes(), regex, true);
-			MethodNode method = identifyMethod(m, false, "sipush 55");
+			// String regex = ";\\w*" + "L" +  getFoundClass().name+ ";" + "\\w*;V";
+			// MethodNode[] m = findMethods(Context.current().getClassNodes(), regex, true);
+			// MethodNode method = identifyMethod(m, false, "sipush 55");
 			
 			//this field nigga...
 
