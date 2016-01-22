@@ -35,6 +35,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 public class AbstractNode extends Tree<AbstractNode> implements Opcodes {
+	private static final long serialVersionUID = 4993791878851883165L;
 
 	public static final String CHILD = ">";
 	public static final String NUMBER = "#";
@@ -267,6 +268,7 @@ public class AbstractNode extends Tree<AbstractNode> implements Opcodes {
 		return method().instructions.indexOf(insn());//insn.insnIndex;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <T extends AbstractNode> T t_first(int opcode) {
 		for (AbstractNode n : this) {
 			if (n.opcode() == opcode) return (T) n;
@@ -446,6 +448,7 @@ public class AbstractNode extends Tree<AbstractNode> implements Opcodes {
 		return previous(opcode, 5);
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T extends AbstractNode> List<T> t_deepFindChildren(int opcode) {
 		List<T> children = new ArrayList<T>();
 		for (AbstractNode n : traverse()) {
@@ -454,6 +457,7 @@ public class AbstractNode extends Tree<AbstractNode> implements Opcodes {
 		return !children.isEmpty() ? children : null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public <T extends AbstractNode> List<T> t_findChildren(int opcode) {
 		List<T> children = new ArrayList<T>();
 		for (AbstractNode n : this) {

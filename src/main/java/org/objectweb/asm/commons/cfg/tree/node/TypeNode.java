@@ -8,6 +8,7 @@ import org.objectweb.asm.tree.TypeInsnNode;
  * @author Tyler Sedlar
  */
 public class TypeNode extends AbstractNode {
+	private static final long serialVersionUID = 4993791878851883165L;
 
 	public TypeNode(NodeTree tree, AbstractInsnNode insn, int collapsed, int producing) {
 		super(tree, insn, collapsed, producing);

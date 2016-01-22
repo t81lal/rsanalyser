@@ -1,13 +1,14 @@
 package org.objectweb.asm.commons.cfg.tree.node;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.objectweb.asm.commons.cfg.tree.NodeTree;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 
-import java.util.LinkedList;
-import java.util.List;
-
 public class TargetNode extends AbstractNode {
+	private static final long serialVersionUID = 4993791878851883165L;
 
 	private final List<JumpNode> nodes = new LinkedList<>();
 

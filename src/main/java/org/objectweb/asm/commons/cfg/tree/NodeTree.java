@@ -13,6 +13,7 @@ import org.objectweb.asm.tree.MethodNode;
  * @author Tyler Sedlar
  */
 public class NodeTree extends AbstractNode {
+	private static final long serialVersionUID = 4993791878851883165L;
 
     private final MethodNode mn;
 

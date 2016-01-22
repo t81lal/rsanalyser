@@ -5,6 +5,7 @@ import org.objectweb.asm.commons.util.Assembly;
 import org.objectweb.asm.tree.JumpInsnNode;
 
 public class JumpNode extends AbstractNode {
+	private static final long serialVersionUID = 4993791878851883165L;
 
 	private TargetNode target;
 
@@ -12,6 +13,7 @@ public class JumpNode extends AbstractNode {
 		super(tree, insn, collapsed, producing);
 	}
 
+	@Override
 	public JumpInsnNode insn() {
 		return (JumpInsnNode) super.insn();
 	}

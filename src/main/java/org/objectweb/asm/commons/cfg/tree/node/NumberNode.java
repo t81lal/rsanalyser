@@ -6,6 +6,7 @@ import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.LdcInsnNode;
 
 public class NumberNode extends AbstractNode {
+	private static final long serialVersionUID = 4993791878851883165L;
 
 	public NumberNode(NodeTree tree, AbstractInsnNode insn, int collapsed, int producing) {
 		super(tree, insn, collapsed, producing);

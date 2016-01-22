@@ -7,7 +7,8 @@ import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Tree<E extends Tree<E>> extends CopyOnWriteArrayList<E> {
-
+	private static final long serialVersionUID = 4993791878851883165L;
+	
 	protected Tree<E> parent;
 
 	public Tree() {

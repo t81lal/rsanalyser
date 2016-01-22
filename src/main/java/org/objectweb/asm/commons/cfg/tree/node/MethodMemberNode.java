@@ -8,6 +8,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
  * @author Tyler Sedlar
  */
 public class MethodMemberNode extends ReferenceNode {
+	private static final long serialVersionUID = 4993791878851883165L;
 
 	public MethodMemberNode(NodeTree tree, AbstractInsnNode insn, int collapsed, int producing) {
 		super(tree, insn, collapsed, producing);

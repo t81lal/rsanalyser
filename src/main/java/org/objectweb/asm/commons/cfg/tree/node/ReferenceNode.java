@@ -7,6 +7,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 public class ReferenceNode extends AbstractNode {
+	private static final long serialVersionUID = 4993791878851883165L;
 
     public ReferenceNode(NodeTree tree, AbstractInsnNode insn, int collapsed, int producing) {
         super(tree, insn, collapsed, producing);
