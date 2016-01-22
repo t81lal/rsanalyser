@@ -26,7 +26,6 @@ import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.impl.analysers.ClientAnalyser;
 import org.nullbool.impl.analysers.entity.ActorAnalyser;
 import org.nullbool.impl.r82.AnalysisProvider82Impl;
-import org.topdank.banalysis.filter.Filter;
 
 /**
  * @author Bibl (don't ban me pls)

@@ -30,7 +30,7 @@ public class MethodUtil {
 	}
 	
 	@Deprecated
-	private static int getLastParameterIndex(MethodNode m) {
+	public static int getLastParameterIndex(MethodNode m) {
 		Type[] args = Type.getArgumentTypes(m.desc);
 		return args.length + (Modifier.isStatic(m.access) ? -1 : 0);
 	}
