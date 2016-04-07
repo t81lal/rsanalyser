@@ -1,7 +1,7 @@
 package org.nullbool.api.obfuscation;
 
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.custom_asm.commons.cfg.tree.node.ArithmeticNode;
 
 /**
  * @author Bibl (don't ban me pls)

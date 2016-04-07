@@ -6,15 +6,15 @@ import java.util.Set;
 
 import org.nullbool.api.obfuscation.refactor.SetCreator;
 import org.nullbool.api.util.map.NullPermeableHashMap;
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
-import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
-import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
-import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.custom_asm.commons.cfg.tree.node.ArithmeticNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.FieldMemberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.NumberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.util.TreeBuilder;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.LdcInsnNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)

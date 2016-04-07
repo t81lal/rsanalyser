@@ -1,7 +1,7 @@
 package org.nullbool.api.util;
 
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)

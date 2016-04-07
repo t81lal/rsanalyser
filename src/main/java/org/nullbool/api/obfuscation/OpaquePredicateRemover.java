@@ -11,15 +11,15 @@ import java.util.Set;
 
 import org.nullbool.api.Context;
 import org.nullbool.api.util.MethodUtil;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
-import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
-import org.objectweb.asm.commons.cfg.tree.node.VariableNode;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.custom_asm.Type;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.custom_asm.commons.cfg.tree.node.JumpNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.NumberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.VariableNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.JumpInsnNode;
+import org.objectweb.custom_asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.TypeInsnNode;
 
 /**
  * Jagex's Obfuscater (at least for a while) has been

@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnList;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.InsnList;
 
 public class InstructionSearcher implements Opcodes {
 	

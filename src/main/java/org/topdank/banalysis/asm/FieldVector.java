@@ -2,7 +2,7 @@ package org.topdank.banalysis.asm;
 
 import java.util.List;
 
-import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.custom_asm.tree.FieldNode;
 import org.topdank.banalysis.filter.Filter;
 
 public class FieldVector extends InfoVector<FieldNode> {

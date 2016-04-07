@@ -1,45 +1,29 @@
 package org.nullbool.impl.analysers;
 
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
-import org.nullbool.api.analysis.AnalysisException;
-import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.api.analysis.IFieldAnalyser;
-import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.analysis.IMultiAnalyser;
-import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.api.analysis.*;
 import org.nullbool.api.util.EventCallGenerator;
 import org.nullbool.pi.core.hook.api.ClassHook;
 import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.cfg.tree.NodeTree;
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
-import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
-import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
-import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
-import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeTree;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.custom_asm.commons.cfg.tree.node.AbstractNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.ArithmeticNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.FieldMemberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.JumpNode;
+import org.objectweb.custom_asm.commons.cfg.tree.util.TreeBuilder;
 import org.topdank.banalysis.asm.insn.InstructionPattern;
 import org.topdank.banalysis.asm.insn.InstructionSearcher;
+
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author MalikDz
@@ -53,7 +37,7 @@ import org.topdank.banalysis.asm.insn.InstructionSearcher;
                 "plane&I", "cameraX&I", "cameraY&I", "cameraZ&I", "cameraYaw&I", "cameraPitch&I", "baseX&I", "baseY&I", "widgets&[[Widget",
                 "clientSettings&[I", "widgetsSettings&[I", "hoveredRegionTileX&I", "hoveredRegionTileY&I", "itemTables&HashTable", "username&String", "password&String",
                 "widgetPositionsX&I", "widgetPositionsY&I", "hintArrowType&I", "hintArrowX&I", "hintArrowY&I" ,"hintArrowHeight&I", "hintArrowNpcId&I",
-                "hintArrowPlayerId&I","hintArrowIconX&I","hintArrowIconY&I","destinationX&I","destinationY&I"
+                "hintArrowPlayerId&I","hintArrowIconX&I","hintArrowIconY&I","destinationX&I","destinationY&I",
         },
         methods = {"loadObjDefinition&(I)LObjectDefinition;", "loadItemDefinition&(I)LItemDefinition;",
                 /*"getPlayerModel&()LModel;",*/ "reportException&(Ljava/lang/Throwable;Ljava/lang/String;)WrappedException", "processAction&(IIIILjava/lang/String;Ljava/lang/String;II)V"})
@@ -85,17 +69,17 @@ public class ClientAnalyser extends ClassAnalyser {
     }
 
     @Override
-    public boolean matches(ClassNode c) {
+    public boolean matches(org.objectweb.custom_asm.tree.ClassNode c) {
         return c.name.equalsIgnoreCase("client");
     }
 
     public class CredentialHooks implements IFieldAnalyser {
 
         /* (non-Javadoc)
-         * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+         * @see org.nullbool.api.analysis.IFieldAnalyser#find(ClassNode)
          */
         @Override
-        public List<FieldHook> findFields(ClassNode _cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode _cn) {
             List<FieldHook> list = new ArrayList<FieldHook>();
 
             // getstatic aq.ad:java.lang.String
@@ -103,10 +87,10 @@ public class ClientAnalyser extends ClassAnalyser {
             // invokestatic java/lang/Integer valueOf((I)Ljava/lang/Integer;);
             // invokevirtual java/util/LinkedHashMap containsKey((Ljava/lang/Object;)Z);
 
-            InstructionPattern pattern = new InstructionPattern(new AbstractInsnNode[]{
-                    new FieldInsnNode(GETSTATIC, null, null, "Ljava/lang/String;"),
-                    new MethodInsnNode(INVOKEVIRTUAL, "java/lang/String", "length", "()I", false),
-                    new JumpInsnNode(IFNE, null)
+            InstructionPattern pattern = new InstructionPattern(new org.objectweb.custom_asm.tree.AbstractInsnNode[]{
+                    new org.objectweb.custom_asm.tree.FieldInsnNode(GETSTATIC, null, null, "Ljava/lang/String;"),
+                    new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, "java/lang/String", "length", "()I", false),
+                    new org.objectweb.custom_asm.tree.JumpInsnNode(IFNE, null)
                     //	getstatic aq.ad:java.lang.String
                     //	invokevirtual java/lang/String length(()I);
                     //	ifle L24
@@ -120,32 +104,32 @@ public class ClientAnalyser extends ClassAnalyser {
             boolean username = false;
             boolean password = false;
 
-            MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";L.*;V", true);
+            org.objectweb.custom_asm.tree.MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";L.*;V", true);
 
             f:
-            for (MethodNode m : mn) {
+            for (org.objectweb.custom_asm.tree.MethodNode m : mn) {
                 InstructionSearcher searcher = new InstructionSearcher(m.instructions, pattern);
                 if (searcher.search()) {
 
-                    for (AbstractInsnNode[] ains : searcher.getMatches()) {
-                        FieldInsnNode fin = (FieldInsnNode) ains[0];
-                        AbstractInsnNode ain = ains[2].getNext();
+                    for (org.objectweb.custom_asm.tree.AbstractInsnNode[] ains : searcher.getMatches()) {
+                        org.objectweb.custom_asm.tree.FieldInsnNode fin = (org.objectweb.custom_asm.tree.FieldInsnNode) ains[0];
+                        org.objectweb.custom_asm.tree.AbstractInsnNode ain = ains[2].getNext();
                         w:
                         while (ain != null) {
-                            if (ain instanceof JumpInsnNode) {
-                                JumpInsnNode jin = (JumpInsnNode) ain;
+                            if (ain instanceof org.objectweb.custom_asm.tree.JumpInsnNode) {
+                                org.objectweb.custom_asm.tree.JumpInsnNode jin = (org.objectweb.custom_asm.tree.JumpInsnNode) ain;
                                 ain = jin.label.getNext();
                                 continue;
                             }
                             ain = ain.getNext();
 
-                            if (ain instanceof LdcInsnNode) {
+                            if (ain instanceof org.objectweb.custom_asm.tree.LdcInsnNode) {
                                 while (ain != null) {
-                                    if (!(ain instanceof LdcInsnNode)) {
+                                    if (!(ain instanceof org.objectweb.custom_asm.tree.LdcInsnNode)) {
                                         break w;
                                     }
 
-                                    LdcInsnNode ldc = (LdcInsnNode) ain;
+                                    org.objectweb.custom_asm.tree.LdcInsnNode ldc = (org.objectweb.custom_asm.tree.LdcInsnNode) ain;
                                     if (ldc.cst instanceof String) {
                                         String s = (String) ldc.cst;
                                         if (s.contains("username") && !username) {
@@ -180,10 +164,10 @@ public class ClientAnalyser extends ClassAnalyser {
     public class ItemTableHook implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<FieldHook> hooks = new ArrayList<FieldHook>();
-            MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";IIII.{0,2};V", false);
-            final MethodNode[] m = startWithBc(new String[]{"getstatic", "iload", "i2l"}, mn);
+            org.objectweb.custom_asm.tree.MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";IIII.{0,2};V", false);
+            final org.objectweb.custom_asm.tree.MethodNode[] m = startWithBc(new String[]{"getstatic", "iload", "i2l"}, mn);
 
             String field = findField(m[0], false, true, 1, 's', "getstatic");
             hooks.add(asFieldHook(getNew(field.split("\\.")[0]), field, "itemTables"));
@@ -194,10 +178,10 @@ public class ClientAnalyser extends ClassAnalyser {
     public class RegionWalkingHooks implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<FieldHook> list = new ArrayList<FieldHook>();
-            MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";L.{0,3};IIIIII.{0,2};V", false);
-            final MethodNode m = identifyMethod(mn, false, "iload 7", "bipush 7", "ishl");
+            org.objectweb.custom_asm.tree.MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";L.{0,3};IIIIII.{0,2};V", false);
+            final org.objectweb.custom_asm.tree.MethodNode m = identifyMethod(mn, false, "iload 7", "bipush 7", "ishl");
 
             String h = findField(m, true, true, 1, 's', "iload 8", "putstatic .* I");//wheres the class name?
             list.add(asFieldHook(getNew(h.split("\\.")[0]), h, "hoveredRegionTileX"));
@@ -212,7 +196,7 @@ public class ClientAnalyser extends ClassAnalyser {
     public class CanvasPlayerHook implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             String type = "L" + "java/awt/Canvas" + ";";
             List<FieldHook> list = new ArrayList<FieldHook>();
             String hook = identifyField(Context.current().getClassNodes(), type);
@@ -229,11 +213,11 @@ public class ClientAnalyser extends ClassAnalyser {
     public class LocalPlayerIdHook implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<FieldHook> list = new ArrayList<FieldHook>();
-            MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";;V", true);
+            org.objectweb.custom_asm.tree.MethodNode[] mn = findMethods(Context.current().getClassNodes(), ";;V", true);
 
-            MethodNode m = identifyMethod(mn,false,"ldc You have only just left another world.", "ldc Your profile will be transferred in:");
+            org.objectweb.custom_asm.tree.MethodNode m = identifyMethod(mn,false,"ldc You have only just left another world.", "ldc Your profile will be transferred in:");
             String p = findField(m,true,true,1,'s',"imul",".* 8","ishl");
             list.add(asFieldHook(p, "localPlayerIndex"));
             return list;
@@ -243,7 +227,7 @@ public class ClientAnalyser extends ClassAnalyser {
     public class ActorArrayHook implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             String hook, tempo;
             List<FieldHook> list = new ArrayList<FieldHook>();
 
@@ -262,11 +246,11 @@ public class ClientAnalyser extends ClassAnalyser {
     public class SelectedItemHook implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             String regex = ";.{3,4}Ljava/lang/String;Ljava/lang/String;.{2,3};V";
             List<FieldHook> list = new ArrayList<FieldHook>();
-            MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
-            MethodNode method = startWithBc(new String[]{"iload","sipush","if_icmplt"},mn)[0];
+            org.objectweb.custom_asm.tree.MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
+            org.objectweb.custom_asm.tree.MethodNode method = startWithBc(new String[]{"iload","sipush","if_icmplt"},mn)[0];
 
             TreeBuilder builder = new TreeBuilder();
             builder.build(method).accept(new NodeVisitor() {
@@ -274,21 +258,21 @@ public class ClientAnalyser extends ClassAnalyser {
                 public void visitJump(JumpNode jn) {
                     if(jn.firstNumber() != null && jn.firstNumber().number() == 21) {
                         int fieldCount = 0;
-                        AbstractInsnNode node = jn.insn();
+                        org.objectweb.custom_asm.tree.AbstractInsnNode node = jn.insn();
                         while(node != null){
-                            if(node instanceof FieldInsnNode){
+                            if(node instanceof org.objectweb.custom_asm.tree.FieldInsnNode){
                                 if(fieldCount == 4){
-                                    list.add(asFieldHook((FieldInsnNode)node,"destinationX",true));
+                                    list.add(asFieldHook((org.objectweb.custom_asm.tree.FieldInsnNode)node,"destinationX",true));
                                 }
                                 if(fieldCount == 5){
-                                    list.add(asFieldHook((FieldInsnNode)node,"destinationY",true));
+                                    list.add(asFieldHook((org.objectweb.custom_asm.tree.FieldInsnNode)node,"destinationY",true));
                                 }else if(fieldCount > 5){
                                     break;
                                 }
                                 fieldCount++;
                             }
-                            if(node instanceof JumpInsnNode && node.getOpcode() == GOTO){
-                                node = ((JumpInsnNode) node).label;
+                            if(node instanceof org.objectweb.custom_asm.tree.JumpInsnNode && node.getOpcode() == GOTO){
+                                node = ((org.objectweb.custom_asm.tree.JumpInsnNode) node).label;
                             }else{
                                 node = node.getNext();
                             }
@@ -296,40 +280,46 @@ public class ClientAnalyser extends ClassAnalyser {
                         }
                     }else if(jn.firstNumber() != null && jn.firstNumber().number() == 38) {
                         int fieldCount = 0;
-                        AbstractInsnNode node = jn.insn();
+                        org.objectweb.custom_asm.tree.AbstractInsnNode node = jn.insn();
                         while(node != null){
-                            if(node instanceof FieldInsnNode){
+                            if(node instanceof org.objectweb.custom_asm.tree.FieldInsnNode){
                                 if(fieldCount == 1){
-                                    list.add(asFieldHook((FieldInsnNode)node,"selectedItemIndex",true));
+                                    list.add(asFieldHook((org.objectweb.custom_asm.tree.FieldInsnNode)node,"selectedItemIndex",true));
                                 }
                                 if(fieldCount == 3){
-                                    list.add(asFieldHook((FieldInsnNode)node,"selectedItemId",true));
+                                    list.add(asFieldHook((org.objectweb.custom_asm.tree.FieldInsnNode)node,"selectedItemId",true));
                                 }else if(fieldCount > 3){
                                     break;
                                 }
                                 fieldCount++;
                             }
-                            if(node instanceof JumpInsnNode && node.getOpcode() == GOTO){
-                                node = ((JumpInsnNode) node).label;
+                            if(node instanceof org.objectweb.custom_asm.tree.JumpInsnNode && node.getOpcode() == GOTO){
+                                node = ((org.objectweb.custom_asm.tree.JumpInsnNode) node).label;
                             }else{
                                 node = node.getNext();
                             }
 
                         }
                     }else if(jn.firstNumber() != null && jn.firstNumber().number() == 25) {
+                        boolean foundLDC = false;
                         int fieldCount = 0;
-                        AbstractInsnNode node = jn.insn();
+                        org.objectweb.custom_asm.tree.AbstractInsnNode node = jn.insn();
                         while(node != null){
-                            if(node instanceof FieldInsnNode){
-                                if(fieldCount == 7){
-                                    list.add(asFieldHook((FieldInsnNode)node,"selectedSpellName",true));
-                                }else if(fieldCount > 7){
+                            if(node instanceof org.objectweb.custom_asm.tree.LdcInsnNode){
+                                if(((org.objectweb.custom_asm.tree.LdcInsnNode) node).cst.equals("Null")){
+                                    foundLDC = true;
+                                }
+                            }else if(node instanceof org.objectweb.custom_asm.tree.FieldInsnNode && foundLDC){
+                                if(fieldCount == 3){
+                                    list.add(asFieldHook((org.objectweb.custom_asm.tree.FieldInsnNode)node,"selectedSpellName",true));
+                                    break;
+                                }else if(fieldCount > 3){
                                     break;
                                 }
                                 fieldCount++;
                             }
-                            if(node instanceof JumpInsnNode && node.getOpcode() == GOTO){
-                                node = ((JumpInsnNode) node).label;
+                            if(node instanceof org.objectweb.custom_asm.tree.JumpInsnNode && node.getOpcode() == GOTO){
+                                node = ((org.objectweb.custom_asm.tree.JumpInsnNode) node).label;
                             }else{
                                 node = node.getNext();
                             }
@@ -346,11 +336,11 @@ public class ClientAnalyser extends ClassAnalyser {
     public class MinimapHooks implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             String h, regex = ";.{0,1};V";
             List<FieldHook> list = new ArrayList<FieldHook>();
-            MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
-            MethodNode m = identifyMethod(mn, false, "ldc 120.0");
+            org.objectweb.custom_asm.tree.MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
+            org.objectweb.custom_asm.tree.MethodNode m = identifyMethod(mn, false, "ldc 120.0");
 
             h = findField(m, true, true, 1, 's', "ldc 120.0");
             list.add(asFieldHook(h, "mapScale"));
@@ -380,11 +370,11 @@ public class ClientAnalyser extends ClassAnalyser {
     public class CameraHooks implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             String h, regex = ";III\\w{0,1};V";
             List<FieldHook> list = new ArrayList<FieldHook>();
-            MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
-            MethodNode m = startWithBc(new String[]{"iload", "sipush", "if_icmplt"}, mn)[0];
+            org.objectweb.custom_asm.tree.MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
+            org.objectweb.custom_asm.tree.MethodNode m = startWithBc(new String[]{"iload", "sipush", "if_icmplt"}, mn)[0];
 
             h = findNearIns(m, "invokestatic", "put", "get");
             list.add(asFieldHook(h, "plane"));
@@ -411,7 +401,7 @@ public class ClientAnalyser extends ClassAnalyser {
     public class MenuScreenHooks implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
 
             String h, regex = ";I.{0,2};V";
             List<FieldHook> list = new ArrayList<FieldHook>();
@@ -419,11 +409,11 @@ public class ClientAnalyser extends ClassAnalyser {
             // because the we inline strings and the 2nd getstatic is a
             // string constant, the pattern has to be changed.
             String[] p = {"getstatic", "ldc", "invokevirtual", "istore"};
-            MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, false);
+            org.objectweb.custom_asm.tree.MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, false);
 
-            MethodNode[] m = startWithBc(p, mn);
+            org.objectweb.custom_asm.tree.MethodNode[] m = startWithBc(p, mn);
 
-            AbstractInsnNode[] ins = followJump(m[0], 323);
+            org.objectweb.custom_asm.tree.AbstractInsnNode[] ins = followJump(m[0], 323);
 
             final String[] pattern = {"if_icmple", "iload 6", "ifge", "iconst_1"};
 
@@ -452,16 +442,16 @@ public class ClientAnalyser extends ClassAnalyser {
     public class ClientArrayHooks implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             String h,loopCycle,actor, regex = ";;V";
             String[] p = {"iconst_1", "putstatic"};
             String[] pattern = {"bipush 9", "iconst_2", "iastore"};
             List<FieldHook> list = new ArrayList<FieldHook>();
-            MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, false);
-            MethodNode[] ms = startWithBc(p, mn);
+            org.objectweb.custom_asm.tree.MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, false);
+            org.objectweb.custom_asm.tree.MethodNode[] ms = startWithBc(p, mn);
 
-            MethodNode m = identifyMethod(ms, false, pattern);
-            AbstractInsnNode[] ins = followJump(m, 323);
+            org.objectweb.custom_asm.tree.MethodNode m = identifyMethod(ms, false, pattern);
+            org.objectweb.custom_asm.tree.AbstractInsnNode[] ins = followJump(m, 323);
 
             String[] pat = {"iconst_1", "putstatic", "iconst_0"};
             String[] r = {"aconst_null", "putstatic .* Ljava/lang/String;", "iconst_0"};
@@ -511,12 +501,12 @@ public class ClientAnalyser extends ClassAnalyser {
             //list.add(asFieldHook(h, "selectedItem"));
 
             try {
-                MethodNode renderScreenMethod = identifyMethod(findMethods(Context.current().getClassNodes(), ";.*;.*;V", true), false, "ldc Fps:");
+                org.objectweb.custom_asm.tree.MethodNode renderScreenMethod = identifyMethod(findMethods(Context.current().getClassNodes(), ";.*;.*;V", true), false, "ldc Fps:");
                 h = findField(renderScreenMethod, true, true, 1, 'f', "getstatic " + loopCycle + " I", "ldc .*", "imul", "putfield " + findObfClassName("Widget") + ".* I");
                 getAnalyser("Widget").getFoundHook().fields().add(asFieldHook(h, "loopCycle"));
 
                 actor = findObfClassName("Actor");
-                MethodNode renderHitBarMethod = identifyMethod(findMethods(Context.current().getClassNodes(), ";.*" + "L" + actor + ";III" + ".*;V", true),false,"getstatic " + loopCycle + " I");
+                org.objectweb.custom_asm.tree.MethodNode renderHitBarMethod = identifyMethod(findMethods(Context.current().getClassNodes(), ";.*" + "L" + actor + ";III" + ".*;V", true),false,"getstatic " + loopCycle + " I");
                 h = findField(renderHitBarMethod,true,false,1,'f',"getfield .*" + actor + ".* I","ldc .*","imul","getstatic " + loopCycle + " I");
                 getAnalyser("Actor").getFoundHook().fields().add(asFieldHook(h, "combatTime"));
             }catch (Exception ignore){
@@ -530,14 +520,14 @@ public class ClientAnalyser extends ClassAnalyser {
     public class TileInfoHooks implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             String hook, regex = ";III\\w{0,1};I";
             List<FieldHook> list = new ArrayList<FieldHook>();
             String bytesPattern = "getstatic \\w*.\\w* \\[\\[\\[B";
             String heightPattern = "getstatic \\w*.\\w* \\[\\[\\[I";
 
-            MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
-            MethodNode method = identifyMethod(mn, false, "bipush 103");
+            org.objectweb.custom_asm.tree.MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
+            org.objectweb.custom_asm.tree.MethodNode method = identifyMethod(mn, false, "bipush 103");
 
             hook = findField(method, true, false, 1, 's', bytesPattern);
             list.add(asFieldHook(hook, "tileSettings"));
@@ -552,14 +542,14 @@ public class ClientAnalyser extends ClassAnalyser {
     public class BaseXYHooks implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             String obj = "L" + findObfClassName("Actor");
             String h, regex = ";\\w*" + obj + ";" + "\\w*;V";
             List<FieldHook> list = new ArrayList<FieldHook>();
             String mPattern = "invokestatic java/lang/Math.atan2 (DD)D";
-            MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
-            MethodNode method = identifyMethod(mn, false, mPattern);
-            AbstractInsnNode[] ins = followJump(method, 120);
+            org.objectweb.custom_asm.tree.MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
+            org.objectweb.custom_asm.tree.MethodNode method = identifyMethod(mn, false, mPattern);
+            org.objectweb.custom_asm.tree.AbstractInsnNode[] ins = followJump(method, 120);
 
             h = findField(ins, false, false, 1, 's', "isub", "isub", "istore");
             list.add(asFieldHook(h, "baseX"));
@@ -574,14 +564,14 @@ public class ClientAnalyser extends ClassAnalyser {
     public class SettingsHook implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             String hook, r = ";;V";
             String[] pat = {"bipush", "newarray"};
             String[] pat2 = {"sipush 2000", "newarray 10"};
             List<FieldHook> list = new ArrayList<FieldHook>();
-            MethodNode[] mn = findMethods(Context.current().getClassNodes(), r, true);
-            MethodNode[] ms = startWithBc(pat, mn);
-            MethodNode m = identifyMethod(ms, false, pat2);
+            org.objectweb.custom_asm.tree.MethodNode[] mn = findMethods(Context.current().getClassNodes(), r, true);
+            org.objectweb.custom_asm.tree.MethodNode[] ms = startWithBc(pat, mn);
+            org.objectweb.custom_asm.tree.MethodNode m = identifyMethod(ms, false, pat2);
 
             hook = findField(m, true, true, 1, 's', pat2);
             list.add(asFieldHook(hook, "clientSettings"));
@@ -596,14 +586,14 @@ public class ClientAnalyser extends ClassAnalyser {
     public class WidgetPositionXY implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<FieldHook> list = new ArrayList<FieldHook>();
             ClassHook widgetHook = getAnalyser("Widget").getFoundHook();
             FieldHook relativeX = widgetHook.fbyRefactoredName("relativeX");
             FieldHook relativeY = widgetHook.fbyRefactoredName("relativeY");
-            MethodNode[] methods = findMethods(Context.current().getClassNodes(), ";\\[L" + widgetHook.obfuscated() + ";I{8,9};V", true);
+            org.objectweb.custom_asm.tree.MethodNode[] methods = findMethods(Context.current().getClassNodes(), ";\\[L" + widgetHook.obfuscated() + ";I{8,9};V", true);
 
-            for (MethodNode method : methods) {
+            for (org.objectweb.custom_asm.tree.MethodNode method : methods) {
                 TreeBuilder builder = new TreeBuilder();
                 NodeTree build = builder.build(method);
                 build.accept(new NodeVisitor() {
@@ -643,10 +633,10 @@ public class ClientAnalyser extends ClassAnalyser {
     public class HintArrowHook implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode client) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode client) {
             List<FieldHook> hooks = new ArrayList<FieldHook>();
-            for (ClassNode classNode : Context.current().getClassNodes().values()) {
-                for (MethodNode m : classNode.methods) {
+            for (org.objectweb.custom_asm.tree.ClassNode classNode : Context.current().getClassNodes().values()) {
+                for (org.objectweb.custom_asm.tree.MethodNode m : classNode.methods) {
                     if (identifyMethod(m,"ldc .*","imul", "iconst_2","if_icmplt") && identifyMethod(m,"ldc .*","imul", "bipush 6","if_icmpgt")) {
                         String h, id;
                         id = findField(m, true, false, 1, 's', "ldc .*","imul", "iconst_2","if_icmplt");
@@ -678,17 +668,17 @@ public class ClientAnalyser extends ClassAnalyser {
     public class LoadDefinitionHook implements IMethodAnalyser {
 
         @Override
-        public List<MethodHook> findMethods(ClassNode _unused) {
+        public List<MethodHook> findMethods(org.objectweb.custom_asm.tree.ClassNode _unused) {
             List<MethodHook> list = new ArrayList<MethodHook>();
-            // String npcClass = findObfClassName("NPC");
-            // ClassNode cn = getClassNodeByRefactoredName("Renderable");
-            // MethodNode[] ms = getMethodNodes(cn.methods.toArray());
-            // String playerClass = findObfClassName("Player");
-            // MethodNode m = identifyMethod(ms, true, "aconst_null", "areturn");
+            String npcClass = findObfClassName("NPC");
+            org.objectweb.custom_asm.tree.ClassNode cn = getClassNodeByRefactoredName("Renderable");
+            org.objectweb.custom_asm.tree.MethodNode[] ms = getMethodNodes(cn.methods.toArray());
+            String playerClass = findObfClassName("Player");
+            org.objectweb.custom_asm.tree.MethodNode m = identifyMethod(ms, true, "aconst_null", "areturn");
             String v = "L" + findObfClassName("ItemDefinition") + ";";
-            // String mn
-            String t = "L" + findObfClassName("ObjectDefinition") + ";";
-            MethodNode mNode = findMethodNode(Context.current().getClassNodes(), ";I.{0,1};" + t);
+            String mn, t = "L" + findObfClassName("ObjectDefinition") + ";";
+            //
+            org.objectweb.custom_asm.tree.MethodNode mNode = findMethodNode(Context.current().getClassNodes(), ";I.{0,1};" + t);
             MethodHook mhook = getAnalyser("ObjectDefinition").asMethodHook(mNode, "loadObjDefinition").var(Constants.METHOD_TYPE, Constants.CALLBACK);
             list.add(mhook);
             //
@@ -696,7 +686,7 @@ public class ClientAnalyser extends ClassAnalyser {
             mhook = getAnalyser("ItemDefinition").asMethodHook(mNode, "loadItemDefinition").var(Constants.METHOD_TYPE, Constants.CALLBACK);
             list.add(mhook);
             //
-            // mn = npcClass + "." + m.name;
+            mn = npcClass + "." + m.name;
             mNode = findMethodNode(Context.current().getClassNodes(), ";I.{0,1};" + v);
             //
             //mn = playerClass + "." + m.name;
@@ -725,37 +715,37 @@ public class ClientAnalyser extends ClassAnalyser {
             return list;
         }
 
-        private MethodNode findMethodNode(Map<String, ClassNode> nodes, String r) {
+        private org.objectweb.custom_asm.tree.MethodNode findMethodNode(Map<String, org.objectweb.custom_asm.tree.ClassNode> nodes, String r) {
             String g = "[()]";
-            Iterator<ClassNode> it = nodes.values().iterator();
+            Iterator<org.objectweb.custom_asm.tree.ClassNode> it = nodes.values().iterator();
             while (it.hasNext()) {
-                ClassNode cn = it.next();
+                org.objectweb.custom_asm.tree.ClassNode cn = it.next();
                 for (Object m : cn.methods)
-                    if ((Modifier.isStatic(((MethodNode) m).access)))
-                        if (((MethodNode) m).desc.replaceAll(g, ";").matches(r))
-                            return (MethodNode) m;
+                    if ((Modifier.isStatic(((org.objectweb.custom_asm.tree.MethodNode) m).access)))
+                        if (((org.objectweb.custom_asm.tree.MethodNode) m).desc.replaceAll(g, ";").matches(r))
+                            return (org.objectweb.custom_asm.tree.MethodNode) m;
             }
             return null;
         }
 
-//        private String findMethod(Map<String, ClassNode> nodes, String r) {
-//            String g = "[()]", result = null;
-//            Iterator<ClassNode> it = nodes.values().iterator();
-//            while (it.hasNext()) {
-//                ClassNode cn = it.next();
-//                for (Object m : cn.methods)
-//                    if ((Modifier.isStatic(((MethodNode) m).access)))
-//                        if (((MethodNode) m).desc.replaceAll(g, ";").matches(r))
-//                            return cn.name + "." + ((MethodNode) m).name;
-//            }
-//            return result;
-//        }
+        private String findMethod(Map<String, org.objectweb.custom_asm.tree.ClassNode> nodes, String r) {
+            String g = "[()]", result = null;
+            Iterator<org.objectweb.custom_asm.tree.ClassNode> it = nodes.values().iterator();
+            while (it.hasNext()) {
+                org.objectweb.custom_asm.tree.ClassNode cn = it.next();
+                for (Object m : cn.methods)
+                    if ((Modifier.isStatic(((org.objectweb.custom_asm.tree.MethodNode) m).access)))
+                        if (((org.objectweb.custom_asm.tree.MethodNode) m).desc.replaceAll(g, ";").matches(r))
+                            return cn.name + "." + ((org.objectweb.custom_asm.tree.MethodNode) m).name;
+            }
+            return result;
+        }
     }
 
     public class WidgetsHook implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<FieldHook> list = new ArrayList<FieldHook>();
             String t = "[[L" + findObfClassName("Widget") + ";";
             String widgetField = identifyField(Context.current().getClassNodes(), t);
@@ -768,7 +758,7 @@ public class ClientAnalyser extends ClassAnalyser {
     public class GroundItemsHook implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             String t = "[[[L" + findObfClassName("Deque") + ";";
             String p = identifyField(Context.current().getClassNodes(), t);
             List<FieldHook> list = new ArrayList<FieldHook>();
@@ -781,7 +771,7 @@ public class ClientAnalyser extends ClassAnalyser {
     public class CurrentRegionHook implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<FieldHook> list = new ArrayList<FieldHook>();
 
             String type = "L" + findObfClassName("Region") + ";";
@@ -795,20 +785,20 @@ public class ClientAnalyser extends ClassAnalyser {
     public class ReportMethodHookAnalyser implements IMethodAnalyser {
 
         @Override
-        public List<MethodHook> findMethods(ClassNode _cn) {
+        public List<MethodHook> findMethods(org.objectweb.custom_asm.tree.ClassNode _cn) {
             List<MethodHook> hooks = new ArrayList<MethodHook>();
-            for (ClassNode cn : Context.current().getClassNodes().values()) {
-                for (MethodNode m : cn.methods) {
+            for (org.objectweb.custom_asm.tree.ClassNode cn : Context.current().getClassNodes().values()) {
+                for (org.objectweb.custom_asm.tree.MethodNode m : cn.methods) {
                     if (m.desc.startsWith("(Ljava/lang/Throwable;Ljava/lang/String;)") && m.desc.contains(")L")) {
                         MethodHook mhook = asMethodHook(m, "reportException").var(Constants.METHOD_TYPE, Constants.PATCH);
                         hooks.add(mhook);
-                        VarInsnNode beforeReturn = null;
+                        org.objectweb.custom_asm.tree.VarInsnNode beforeReturn = null;
                         try {
-                            for (AbstractInsnNode ain : m.instructions.toArray()) {
+                            for (org.objectweb.custom_asm.tree.AbstractInsnNode ain : m.instructions.toArray()) {
                                 if (ain.getOpcode() == ARETURN) {
                                     if (beforeReturn != null)
                                         System.err.println("WTF BOI");
-                                    beforeReturn = (VarInsnNode) ain.getPrevious();
+                                    beforeReturn = (org.objectweb.custom_asm.tree.VarInsnNode) ain.getPrevious();
                                 }
                             }
                             /* 1. Generate the event creation. 2. Call the dispatch method. */
@@ -820,37 +810,37 @@ public class ClientAnalyser extends ClassAnalyser {
                             // new TypeInsnNode(CHECKCAST, APIGenerator.ACCESSOR_BASE + APIGenerator.API_CANONICAL_NAMES.get("WrappedException"))));
                             // InsnList newInsns = EventCallGenerator.generateDispatch(objCreateList);
 
-                            InsnList newInsns = new InsnList();
-                            newInsns.add(EventCallGenerator.generatePrintLn(new LdcInsnNode("[Client] Create error.")));
-                            newInsns.add(EventCallGenerator.generatePrintLn(new VarInsnNode(ALOAD, 1)));
+                            org.objectweb.custom_asm.tree.InsnList newInsns = new org.objectweb.custom_asm.tree.InsnList();
+                            newInsns.add(EventCallGenerator.generatePrintLn(new org.objectweb.custom_asm.tree.LdcInsnNode("[Client] Create error.")));
+                            newInsns.add(EventCallGenerator.generatePrintLn(new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 1)));
 
-                            newInsns.add(new VarInsnNode(ALOAD, 0));
-                            newInsns.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable", "printStackTrace", "()V", false));
+                            newInsns.add(new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 0));
+                            newInsns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable", "printStackTrace", "()V", false));
 
-                            InsnList list2 = new InsnList();
-                            list2.add(new TypeInsnNode(NEW, "java/lang/StringBuilder"));
-                            list2.add(new InsnNode(DUP));
+                            org.objectweb.custom_asm.tree.InsnList list2 = new org.objectweb.custom_asm.tree.InsnList();
+                            list2.add(new org.objectweb.custom_asm.tree.TypeInsnNode(NEW, "java/lang/StringBuilder"));
+                            list2.add(new org.objectweb.custom_asm.tree.InsnNode(DUP));
 
-                            list2.add(new LdcInsnNode("[Client] "));
-                            list2.add(new MethodInsnNode(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false));
+                            list2.add(new org.objectweb.custom_asm.tree.LdcInsnNode("[Client] "));
+                            list2.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false));
 
-                            list2.add(new VarInsnNode(ALOAD, 0));
-                            list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false));
-                            list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Class", "getCanonicalName", "()Ljava/lang/String;", false));
-                            list2.add(new MethodInsnNode(INVOKESTATIC, "java/lang/String", "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;", false));
-                            list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
+                            list2.add(new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 0));
+                            list2.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;", false));
+                            list2.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, "java/lang/Class", "getCanonicalName", "()Ljava/lang/String;", false));
+                            list2.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESTATIC, "java/lang/String", "valueOf", "(Ljava/lang/Object;)Ljava/lang/String;", false));
+                            list2.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
 
-                            list2.add(new LdcInsnNode(" "));
-                            list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
+                            list2.add(new org.objectweb.custom_asm.tree.LdcInsnNode(" "));
+                            list2.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
 
-                            list2.add(new VarInsnNode(ALOAD, 0));
-                            list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable", "getMessage", "()Ljava/lang/String;", false));
-                            list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
-                            list2.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "valueOf", "()Ljava/lang/String;", false));
+                            list2.add(new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 0));
+                            list2.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, "java/lang/Throwable", "getMessage", "()Ljava/lang/String;", false));
+                            list2.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
+                            list2.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "valueOf", "()Ljava/lang/String;", false));
 
                             newInsns.add(EventCallGenerator.generatePrintLn(list2.toArray()));
 
-                            InsnList mInsns = m.instructions;
+                            org.objectweb.custom_asm.tree.InsnList mInsns = m.instructions;
                             mInsns.insertBefore(beforeReturn, newInsns);
                             mhook.insns(mInsns);
                             mhook.var(Constants.MAX_STACK, "7");
@@ -875,66 +865,66 @@ public class ClientAnalyser extends ClassAnalyser {
     public class ProccessActionMethodHookAnalyser implements IMethodAnalyser {
 
         @Override
-        public List<MethodHook> findMethods(ClassNode _cn) {
+        public List<MethodHook> findMethods(org.objectweb.custom_asm.tree.ClassNode _cn) {
             List<MethodHook> hooks = new ArrayList<MethodHook>();
             String descStart = "(IIIILjava/lang/String;Ljava/lang/String;II";
-            for (ClassNode cn : Context.current().getClassNodes().values()) {
-                for (MethodNode m : cn.methods) {
+            for (org.objectweb.custom_asm.tree.ClassNode cn : Context.current().getClassNodes().values()) {
+                for (org.objectweb.custom_asm.tree.MethodNode m : cn.methods) {
                     if (m.desc.startsWith(descStart)) {
-                        InsnList insns = new InsnList();
+                        org.objectweb.custom_asm.tree.InsnList insns = new org.objectweb.custom_asm.tree.InsnList();
                         final String sb = "java/lang/StringBuilder";
                         final String intAppendDesc = "(I)Ljava/lang/StringBuilder;";
                         final String stringAppendDesc = "(Ljava/lang/String;)Ljava/lang/StringBuilder;";
                         final String append = "append";
 
-                        insns.add(new FieldInsnNode(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"));
-                        insns.add(new TypeInsnNode(NEW, sb));
-                        insns.add(new InsnNode(DUP));
+                        insns.add(new org.objectweb.custom_asm.tree.FieldInsnNode(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"));
+                        insns.add(new org.objectweb.custom_asm.tree.TypeInsnNode(NEW, sb));
+                        insns.add(new org.objectweb.custom_asm.tree.InsnNode(DUP));
 
-                        insns.add(new LdcInsnNode("[doAction] Op: "));
-                        insns.add(new MethodInsnNode(INVOKESPECIAL, sb, "<init>", "(Ljava/lang/String;)V", false));
+                        insns.add(new org.objectweb.custom_asm.tree.LdcInsnNode("[doAction] Op: "));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, sb, "<init>", "(Ljava/lang/String;)V", false));
 
-                        insns.add(new VarInsnNode(ILOAD, 2));
-                        insns.add(new MethodInsnNode(INVOKEVIRTUAL, sb, append, intAppendDesc, false));
-                        insns.add(new LdcInsnNode(", Arg1: "));
-                        insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.VarInsnNode(ILOAD, 2));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, sb, append, intAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.LdcInsnNode(", Arg1: "));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
 
-                        insns.add(new VarInsnNode(ILOAD, 0));
-                        insns.add(new MethodInsnNode(INVOKEVIRTUAL, sb, append, intAppendDesc, false));
-                        insns.add(new LdcInsnNode(", Arg2: "));
-                        insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.VarInsnNode(ILOAD, 0));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, sb, append, intAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.LdcInsnNode(", Arg2: "));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
 
-                        insns.add(new VarInsnNode(ILOAD, 1));
-                        insns.add(new MethodInsnNode(INVOKEVIRTUAL, sb, append, intAppendDesc, false));
-                        insns.add(new LdcInsnNode(", Arg0: "));
-                        insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.VarInsnNode(ILOAD, 1));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, sb, append, intAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.LdcInsnNode(", Arg0: "));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
 
-                        insns.add(new VarInsnNode(ILOAD, 3));
-                        insns.add(new MethodInsnNode(INVOKEVIRTUAL, sb, append, intAppendDesc, false));
-                        insns.add(new LdcInsnNode(", Action: "));
-                        insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.VarInsnNode(ILOAD, 3));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, sb, append, intAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.LdcInsnNode(", Action: "));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
 
-                        insns.add(new VarInsnNode(ALOAD, 4));
-                        insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 4));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
 
-                        insns.add(new LdcInsnNode(", Target: "));
-                        insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.LdcInsnNode(", Target: "));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
 
-                        insns.add(new VarInsnNode(ALOAD, 5));
-                        insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
-                        insns.add(new LdcInsnNode(", var6: "));
-                        insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 5));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.LdcInsnNode(", var6: "));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
 
-                        insns.add(new VarInsnNode(ILOAD, 6));
-                        insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, intAppendDesc, false));
-                        insns.add(new LdcInsnNode(", var7: "));
-                        insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.VarInsnNode(ILOAD, 6));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, sb, append, intAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.LdcInsnNode(", var7: "));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, sb, append, stringAppendDesc, false));
 
-                        insns.add(new VarInsnNode(ILOAD, 7));
-                        insns.add(new MethodInsnNode(INVOKESPECIAL, sb, append, intAppendDesc, false));
+                        insns.add(new org.objectweb.custom_asm.tree.VarInsnNode(ILOAD, 7));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, sb, append, intAppendDesc, false));
 
-                        insns.add(new MethodInsnNode(INVOKESPECIAL, sb, "toString", "()Ljava/lang/String;", false));
-                        insns.add(new MethodInsnNode(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKESPECIAL, sb, "toString", "()Ljava/lang/String;", false));
+                        insns.add(new org.objectweb.custom_asm.tree.MethodInsnNode(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false));
 
                         MethodHook h = asMethodHook(m, "processAction")
                                 .var(Constants.METHOD_TYPE, Constants.PATCH)
@@ -956,7 +946,7 @@ public class ClientAnalyser extends ClassAnalyser {
     public class CredentialAnalyser implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<FieldHook> list = new ArrayList<FieldHook>();
 
             //TODO: FIX

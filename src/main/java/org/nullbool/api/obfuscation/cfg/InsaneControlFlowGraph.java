@@ -10,13 +10,13 @@ import java.util.Set;
 
 import org.nullbool.api.util.InstructionUtil;
 import org.nullbool.api.util.LabelHelper;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LookupSwitchInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TableSwitchInsnNode;
-import org.objectweb.asm.tree.TryCatchBlockNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.JumpInsnNode;
+import org.objectweb.custom_asm.tree.LabelNode;
+import org.objectweb.custom_asm.tree.LookupSwitchInsnNode;
+import org.objectweb.custom_asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.TableSwitchInsnNode;
+import org.objectweb.custom_asm.tree.TryCatchBlockNode;
 
 public class InsaneControlFlowGraph extends AbstractControlFlowGraph {
 

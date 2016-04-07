@@ -1,10 +1,10 @@
 package org.nullbool.api.obfuscation.number;
 
 import org.nullbool.api.Context;
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
-import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
-import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.custom_asm.commons.cfg.tree.node.ArithmeticNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.FieldMemberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.NumberNode;
 
 public class MultiplierVisitor extends NodeVisitor {
 

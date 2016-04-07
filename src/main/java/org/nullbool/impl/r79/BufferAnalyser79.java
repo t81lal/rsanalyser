@@ -6,7 +6,7 @@ import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
 import org.nullbool.impl.r77.BufferAnalyser77;
 import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.MethodHook;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * "readBytesA&([BII)V", "readBytesB&([BII)V" are only for rev 79+

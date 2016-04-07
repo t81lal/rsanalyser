@@ -14,14 +14,14 @@ import org.nullbool.api.obfuscation.refactor.ClassTree;
 import org.nullbool.api.obfuscation.refactor.InheritedMethodMap;
 import org.nullbool.api.obfuscation.refactor.MethodCache;
 import org.nullbool.api.util.MethodUtil;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.IincInsnNode;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.custom_asm.Type;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.IincInsnNode;
+import org.objectweb.custom_asm.tree.InsnNode;
+import org.objectweb.custom_asm.tree.MethodInsnNode;
+import org.objectweb.custom_asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.VarInsnNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 
 /**

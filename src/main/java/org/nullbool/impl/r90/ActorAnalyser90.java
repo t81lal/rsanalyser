@@ -25,16 +25,15 @@ import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.impl.analysers.entity.ActorAnalyser;
 import org.nullbool.pi.core.hook.api.FieldHook;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.cfg.tree.NodeTree;
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
-import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
-import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
-import org.objectweb.asm.commons.cfg.tree.node.MethodMemberNode;
-import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
-import org.objectweb.asm.tree.*;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.Type;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeTree;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.custom_asm.commons.cfg.tree.node.AbstractNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.ArithmeticNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.FieldMemberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.MethodMemberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.util.TreeBuilder;
 import org.topdank.banalysis.filter.Filter;
 
 import java.lang.reflect.Modifier;
@@ -99,25 +98,36 @@ public class ActorAnalyser90 extends ActorAnalyser {
             public boolean accept(IFieldAnalyser t) {
                 return t instanceof HealthAndDamageHooks;
             }
-        }, new HealthAndDamageHooks90()).add(new OverheadMessageHook90());
+        }, new HealthAndDamageHooks90()).add(new OverheadMessageHook90()).add(new QueueRunAnalyser90());
+    }
+
+    public class QueueRunAnalyser90 implements IFieldAnalyser {
+
+        @Override
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
+            List<FieldHook> list = new ArrayList<FieldHook>();
+            String hook = identify(cn, "[B", 'f');
+            list.add(asFieldHook(hook, "queueRun"));
+            return list;
+        }
     }
 
     public class QueueFieldsAnalyser90 extends QueueFieldsAnalyser {
         @Override
-        public List<FieldHook> findFields(ClassNode actor) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode actor) {
             List<FieldHook> list = new ArrayList<FieldHook>();
 
-            for (ClassNode cn : Context.current().getClassNodes().values()) {
-                for (MethodNode m : cn.methods) {
+            for (org.objectweb.custom_asm.tree.ClassNode cn : Context.current().getClassNodes().values()) {
+                for (org.objectweb.custom_asm.tree.MethodNode m : cn.methods) {
                     if (Modifier.isStatic(m.access)) {
                         if (m.desc.contains(actor.name)) {
-                            ListIterator<AbstractInsnNode> iterator = m.instructions.iterator();
+                            ListIterator<org.objectweb.custom_asm.tree.AbstractInsnNode> iterator = m.instructions.iterator();
 
                             boolean found = false;
                             while (iterator.hasNext()) {
-                                AbstractInsnNode next = iterator.next();
-                                if (next instanceof IntInsnNode) {
-                                    if (next.getOpcode() == SIPUSH && ((IntInsnNode) next).operand == 13184) {
+                                org.objectweb.custom_asm.tree.AbstractInsnNode next = iterator.next();
+                                if (next instanceof org.objectweb.custom_asm.tree.IntInsnNode) {
+                                    if (next.getOpcode() == SIPUSH && ((org.objectweb.custom_asm.tree.IntInsnNode) next).operand == 13184) {
                                         found = true;
                                         break;
                                     }
@@ -133,10 +143,10 @@ public class ActorAnalyser90 extends ActorAnalyser {
                                     @Override
                                     public void visitField(FieldMemberNode fmn) {
                                         if (fmn.putting() && fmn.owner().equals(actor.name) && fmn.desc().equals("I")) {
-                                            AbstractInsnNode previous = fmn.insn().getPrevious();
+                                            org.objectweb.custom_asm.tree.AbstractInsnNode previous = fmn.insn().getPrevious();
                                             for (int i = 10; i >= 0 && previous != null; i--) {
                                                 if (previous.getOpcode() == GETFIELD) {
-                                                    final FieldInsnNode node = (FieldInsnNode) previous;
+                                                    final org.objectweb.custom_asm.tree.FieldInsnNode node = (org.objectweb.custom_asm.tree.FieldInsnNode) previous;
                                                     if (node.owner.equals(actor.name) && node.desc.equals("[I") && node.getNext().getOpcode() == ICONST_0) {
                                                         if (fmn.name().equals(localX.obfuscated()) && queueXHook[0] == null) {
                                                             list.add(queueXHook[0] = asFieldHook(node, "queueX"));
@@ -162,10 +172,10 @@ public class ActorAnalyser90 extends ActorAnalyser {
                                         public void visitField(FieldMemberNode fmn) {
                                             if (fmn.getting() && fmn.owner().equals(actor.name) && fmn.name().equals(arrayHook.obfuscated())) {
                                                 if (queueLengthHook[0] == null) {
-                                                    AbstractInsnNode next = fmn.insn().getNext();
+                                                    org.objectweb.custom_asm.tree.AbstractInsnNode next = fmn.insn().getNext();
                                                     for (int i = 0; i < 8 && next != null; i++) {
                                                         if (next.getOpcode() == GETFIELD) {
-                                                            FieldInsnNode node = (FieldInsnNode) next;
+                                                            org.objectweb.custom_asm.tree.FieldInsnNode node = (org.objectweb.custom_asm.tree.FieldInsnNode) next;
                                                             if (node.desc.equals("I") && node.owner.equals(actor.name)) {
                                                                 list.add(queueLengthHook[0] = asFieldHook(node, "queueLength"));
                                                                 break;
@@ -184,21 +194,18 @@ public class ActorAnalyser90 extends ActorAnalyser {
                 }
             }
 
-            String hook = identify(actor, "[B", 'f');
-            list.add(asFieldHook(hook, "queueRun"));
-
             return list;
         }
     }
 
     private class HealthAndDamageHooks90 implements IFieldAnalyser {
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             ArrayList<FieldHook> fieldHooks = new ArrayList<>();
             String actorObj = findObfClassName("Actor");
             String r = ";.*" + "L" + actorObj + ";III" + ".*;V";
-            MethodNode[] ms = findMethods(Context.current().getClassNodes(), r, true);
-            for (MethodNode methodNode : ms) {
+            org.objectweb.custom_asm.tree.MethodNode[] ms = findMethods(Context.current().getClassNodes(), r, true);
+            for (org.objectweb.custom_asm.tree.MethodNode methodNode : ms) {
                 NodeTree tree = new TreeBuilder().build(methodNode);
                 tree.accept(new NodeVisitor() {
 
@@ -263,9 +270,9 @@ public class ActorAnalyser90 extends ActorAnalyser {
 
     private class OverheadMessageHook90 implements IFieldAnalyser {
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             ArrayList<FieldHook> fieldHooks = new ArrayList<>();
-            List<FieldNode> stringFields = cn.fields.stream().filter(v -> !Modifier.isStatic(v.access) && v.desc.equals("Ljava/lang/String;")).collect(Collectors.toList());
+            List<org.objectweb.custom_asm.tree.FieldNode> stringFields = cn.fields.stream().filter(v -> !Modifier.isStatic(v.access) && v.desc.equals("Ljava/lang/String;")).collect(Collectors.toList());
             if (stringFields.size() == 1) {
                 fieldHooks.add(asFieldHook(stringFields.get(0), "message"));
             } else {

@@ -4,7 +4,7 @@ import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.*;
 import org.nullbool.api.util.StaticDescFilter;
 import org.nullbool.pi.core.hook.api.FieldHook;
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.ClassNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class VerificationDataAnalyser extends ClassAnalyser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(org.objectweb.asm.tree.ClassNode)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(ClassNode)
 	 */
 	@Override
 	protected boolean matches(ClassNode cn) {

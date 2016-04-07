@@ -1,6 +1,6 @@
 package org.topdank.banalysis.filter.field;
 
-import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.custom_asm.tree.FieldNode;
 import org.topdank.banalysis.filter.FieldFilter;
 
 import java.util.ArrayList;

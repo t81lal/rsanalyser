@@ -6,8 +6,8 @@ import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.IFieldAnalyser;
 import org.nullbool.impl.analysers.ClientAnalyser;
 import org.nullbool.pi.core.hook.api.FieldHook;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 import java.util.ArrayList;
 import java.util.List;

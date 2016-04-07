@@ -23,21 +23,21 @@ import org.nullbool.pi.core.hook.api.ClassHook;
 import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
-import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
-import org.objectweb.asm.commons.cfg.tree.node.ConversionNode;
-import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
-import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
-import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
-import org.objectweb.asm.commons.cfg.tree.node.VariableNode;
-import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.util.Printer;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.custom_asm.commons.cfg.tree.node.AbstractNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.ArithmeticNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.ConversionNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.FieldMemberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.JumpNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.NumberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.VariableNode;
+import org.objectweb.custom_asm.commons.cfg.tree.util.TreeBuilder;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.FieldInsnNode;
+import org.objectweb.custom_asm.tree.FieldNode;
+import org.objectweb.custom_asm.tree.MethodNode;
+import org.objectweb.custom_asm.util.Printer;
 import org.topdank.banalysis.filter.Filter;
 
 @SupportedHooks(fields  = { "payload&[B", "caret&I", }, 
@@ -108,7 +108,7 @@ public class BufferAnalyser extends ClassAnalyser {
 
 	private final TreeBuilder treeBuilder = new TreeBuilder();
 	private final ArrayStoreVisitor arrayStoreVisitor = new ArrayStoreVisitor();
-	// private final ArrayLoadVisitor arrayLoadVisitor = new ArrayLoadVisitor();
+	private final ArrayLoadVisitor arrayLoadVisitor = new ArrayLoadVisitor();
 	private final ArrayMethodVisitor arrayMethodVisitor = new ArrayMethodVisitor();
 	private final VarIntNodeVisitor varIntNodeVisitor = new VarIntNodeVisitor();
 	

@@ -8,7 +8,7 @@ import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
 import org.nullbool.impl.analysers.net.BufferAnalyser;
 import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.MethodHook;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 import org.topdank.banalysis.filter.Filter;
 
 /**

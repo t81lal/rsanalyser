@@ -1,7 +1,7 @@
 package org.topdank.banalysis.filter.insn;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.VarInsnNode;
 import org.topdank.banalysis.filter.IntegerFilter;
 import org.topdank.banalysis.filter.OpcodeFilter;
 import org.topdank.banalysis.filter.ZeroCancelIntegerFilter;

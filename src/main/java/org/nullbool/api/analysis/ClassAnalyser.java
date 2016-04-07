@@ -22,14 +22,14 @@ import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.nullbool.pi.core.hook.api.ObfuscatedData;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.FieldInsnNode;
+import org.objectweb.custom_asm.tree.FieldNode;
+import org.objectweb.custom_asm.tree.JumpInsnNode;
+import org.objectweb.custom_asm.tree.MethodInsnNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 import org.topdank.banalysis.filter.Filter;
 
 /**
@@ -177,15 +177,6 @@ public abstract class ClassAnalyser implements Opcodes {
 	public boolean containMethodWithName(ClassNode classnode, String t) {
 		Stream<MethodNode> stream = classnode.methods.stream();
 		return stream.filter(m -> ((MethodNode) m).name.equals(t)).count() != 0;
-	}
-
-	public List<String> getList(MethodNode node) {
-		List<String> opList = new ArrayList<String>();
-		AbstractInsnNode[] ins = node.instructions.toArray();
-		Stream<String> s = new InstructionIdentifier(ins).getInstList().stream();
-		s = s.filter(n -> (n != null) && !n.trim().equalsIgnoreCase("f_new"));
-		s.forEach(n -> opList.add(n));
-		return opList;
 	}
 
 	public List<String> getCleanList(MethodNode node) {
@@ -437,33 +428,6 @@ public abstract class ClassAnalyser implements Opcodes {
 					for (int index = 0; index < size; index++) {
 						firstIn = opcodeList.get(x + index);
 						secondIn = pattern[index];
-						count += secondIn.equals(firstIn) ? 1 : 0;
-					}
-					result = size == count ? methodNode : result;
-					count = 0;
-				}
-			}
-		}
-		return result;
-	}
-
-	public MethodNode identifyMethodDebug(MethodNode[] methodNodes, boolean clean, String... pattern) {
-		int count = 0;
-		InstructionIdentifier i;
-		String firstIn, secondIn;
-		MethodNode result = null;
-		List<String> opcodeList;
-		int size = pattern.length;
-
-		for (MethodNode methodNode : methodNodes) {
-			i = new InstructionIdentifier(methodNode.instructions.toArray());
-			opcodeList = clean ? i.getInstCleanList() : i.getInstList();
-			if ((opcodeList.size() > 0) && ((opcodeList.size() - size) >= 0)) {
-				for (int x = 0; x <= (opcodeList.size() - size); x++) {
-					for (int index = 0; index < size; index++) {
-						firstIn = opcodeList.get(x + index);
-						secondIn = pattern[index];
-						System.out.println(firstIn);
 						count += secondIn.equals(firstIn) ? 1 : 0;
 					}
 					result = size == count ? methodNode : result;
@@ -770,7 +734,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		return null;
 	}
 
-	public int getIndex(List<String> ins, String... pat) {
+	private int getIndex(List<String> ins, String... pat) {
 		String firstIn, secondIn;
 		int count = 0, index = -1;
 		int size = ins.size() - pat.length;
@@ -790,7 +754,7 @@ public abstract class ClassAnalyser implements Opcodes {
 		return followJump(node, "yolo", maxGoto);
 	}
 
-    public AbstractInsnNode[] followJump(MethodNode node, String s, int maxGoto) {
+	public AbstractInsnNode[] followJump(MethodNode node, String s, int maxGoto) {
 		boolean condition;
 		int op, compteur = 0;
 		AbstractInsnNode i = node.instructions.toArray()[index(node, s)];

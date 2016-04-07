@@ -2,7 +2,7 @@ package org.nullbool.api.analysis;
 
 import java.util.List;
 
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.ClassNode;
 import org.nullbool.pi.core.hook.api.MethodHook;
 
 /**

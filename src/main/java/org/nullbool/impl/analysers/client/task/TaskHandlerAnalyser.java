@@ -14,12 +14,12 @@ import org.nullbool.api.util.BoundedInstructionIdentifier.DataPoint;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.nullbool.pi.core.hook.api.ObfuscatedData;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.FieldInsnNode;
+import org.objectweb.custom_asm.tree.FieldNode;
+import org.objectweb.custom_asm.tree.MethodInsnNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -40,7 +40,7 @@ public class TaskHandlerAnalyser extends ClassAnalyser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(org.objectweb.asm.tree.ClassNode)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(ClassNode)
 	 */
 	@Override
 	protected boolean matches(ClassNode cn) {
@@ -116,7 +116,7 @@ public class TaskHandlerAnalyser extends ClassAnalyser {
 	public class FieldsAnalysers implements IFieldAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(ClassNode)
 		 */
 		@Override
 		public List<FieldHook> findFields(ClassNode cn) {
@@ -165,7 +165,7 @@ public class TaskHandlerAnalyser extends ClassAnalyser {
 	public class StopMethodAnalyser implements IMultiAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(ClassNode)
 		 */
 		@Override
 		public List<ObfuscatedData> findAny(ClassNode cn) {
@@ -205,7 +205,7 @@ public class TaskHandlerAnalyser extends ClassAnalyser {
 	public class ScheduleMethodsAnalyser implements IMethodAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(ClassNode)
 		 */
 		@Override
 		public List<MethodHook> findMethods(ClassNode cn) {

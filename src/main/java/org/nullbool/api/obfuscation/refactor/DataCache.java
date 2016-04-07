@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.ClassNode;
 import org.topdank.banalysis.filter.Filter;
 
 /**

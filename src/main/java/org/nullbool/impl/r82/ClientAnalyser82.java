@@ -11,14 +11,14 @@ import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.impl.analysers.world.WorldAnalyser;
 import org.nullbool.impl.r79.ClientAnalyser79;
 import org.nullbool.pi.core.hook.api.ObfuscatedData;
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
-import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
-import org.objectweb.asm.commons.cfg.tree.node.TypeNode;
-import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.custom_asm.commons.cfg.tree.node.AbstractNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.FieldMemberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.TypeNode;
+import org.objectweb.custom_asm.commons.cfg.tree.util.TreeBuilder;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.FieldInsnNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)

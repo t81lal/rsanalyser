@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.ClassNode;
 
 public class JarContents<C extends ClassNode> {
 

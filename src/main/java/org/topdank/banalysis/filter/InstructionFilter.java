@@ -1,6 +1,6 @@
 package org.topdank.banalysis.filter;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
 
 public interface InstructionFilter extends Filter<AbstractInsnNode> {
 	

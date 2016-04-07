@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.nullbool.api.util.map.ValueCreator;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)

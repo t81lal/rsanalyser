@@ -2,7 +2,7 @@ package org.topdank.banalysis.asm;
 
 import java.util.List;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
 import org.topdank.banalysis.filter.Filter;
 
 public class InstructionVector extends InfoVector<AbstractInsnNode> {

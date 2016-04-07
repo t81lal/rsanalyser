@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.ClassNode;
 
 public class JarParser {
 

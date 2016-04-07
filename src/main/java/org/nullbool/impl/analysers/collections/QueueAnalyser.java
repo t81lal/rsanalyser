@@ -13,15 +13,15 @@ import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.util.StaticDescFilter;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.FieldInsnNode;
+import org.objectweb.custom_asm.tree.FieldNode;
+import org.objectweb.custom_asm.tree.InsnNode;
+import org.objectweb.custom_asm.tree.MethodInsnNode;
+import org.objectweb.custom_asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.TypeInsnNode;
+import org.objectweb.custom_asm.tree.VarInsnNode;
 import org.topdank.banalysis.asm.insn.InstructionPattern;
 import org.topdank.banalysis.asm.insn.InstructionSearcher;
 
@@ -48,7 +48,7 @@ public class QueueAnalyser extends ClassAnalyser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(org.objectweb.asm.tree.ClassNode)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(ClassNode)
 	 */
 	@Override
 	protected boolean matches(ClassNode cn) {
@@ -97,7 +97,7 @@ public class QueueAnalyser extends ClassAnalyser {
 	public class HeadFieldAnalyser implements IFieldAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(ClassNode)
 		 */
 		@Override
 		public List<FieldHook> findFields(ClassNode cn) {
@@ -123,7 +123,7 @@ public class QueueAnalyser extends ClassAnalyser {
 	public class GetRemoveMethodAnalysers implements IMethodAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(ClassNode)
 		 */
 		@Override
 		public List<MethodHook> findMethods(ClassNode cn) {
@@ -150,7 +150,7 @@ public class QueueAnalyser extends ClassAnalyser {
 	public class InsertMethodsAnalyser implements IMethodAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(ClassNode)
 		 */
 		@Override
 		public List<MethodHook> findMethods(ClassNode cn) {

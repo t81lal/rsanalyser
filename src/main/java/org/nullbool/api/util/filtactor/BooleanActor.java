@@ -1,6 +1,6 @@
 package org.nullbool.api.util.filtactor;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
 
 public class BooleanActor implements Actor {
 

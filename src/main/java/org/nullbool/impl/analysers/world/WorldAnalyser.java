@@ -1,24 +1,20 @@
 package org.nullbool.impl.analysers.world;
 
+import org.nullbool.api.Builder;
+import org.nullbool.api.analysis.*;
+import org.nullbool.api.util.InstructionUtil;
+import org.nullbool.api.util.StaticDescFilter;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.custom_asm.commons.cfg.tree.node.ArithmeticNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.JumpNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.NumberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.util.TreeBuilder;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.MethodNode;
+
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.nullbool.api.Builder;
-import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.api.analysis.IFieldAnalyser;
-import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.analysis.IMultiAnalyser;
-import org.nullbool.api.analysis.SupportedHooks;
-import org.nullbool.api.util.InstructionUtil;
-import org.nullbool.api.util.StaticDescFilter;
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
-import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
-import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
-import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
 
 /**
  * @OVERRIDE NO LONGER THE CASE
@@ -38,15 +34,13 @@ public class WorldAnalyser extends ClassAnalyser {
 
 	public MethodNode loadMethod;
 	
-	/**
-	 * @param name
-	 */
+
 	public WorldAnalyser() {
 		super("World");
 	}
 
 	/* (non-Javadoc)
-	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(org.objectweb.asm.tree.ClassNode)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(ClassNode)
 	 */
 	@Override
 	protected boolean matches(ClassNode cn) {

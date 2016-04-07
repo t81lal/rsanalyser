@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.ListIterator;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.ClassReader;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.FieldNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 import org.topdank.banalysis.filter.InstructionFilter;
 
 /**
@@ -34,7 +34,7 @@ public class OpcodeInfo implements Opcodes {
 		OPCODES = new HashMap<Integer, String>();
 		OPCODE_NAMES = new HashMap<String, Integer>();
 		try {
-			ClassReader cr = new ClassReader("org.objectweb.asm.Opcodes");
+			ClassReader cr = new ClassReader("Opcodes");
 			ClassNode cn = new ClassNode();
 			cr.accept(cn, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
 			ListIterator<?> fnIt = cn.fields.listIterator();

@@ -10,9 +10,9 @@ import java.util.Set;
 import org.nullbool.api.Context;
 import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)

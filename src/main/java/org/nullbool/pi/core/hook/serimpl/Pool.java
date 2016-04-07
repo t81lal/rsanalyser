@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.objectweb.asm.Handle;
+import org.objectweb.custom_asm.Handle;
 
 public class Pool {
 

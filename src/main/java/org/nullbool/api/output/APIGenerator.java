@@ -20,10 +20,10 @@ import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.HookMap;
 import org.nullbool.pi.core.hook.api.InterfaceMapping;
 import org.nullbool.pi.core.hook.api.MethodHook;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.Type;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 import org.topdank.byteio.out.CompleteJarDumper;
 

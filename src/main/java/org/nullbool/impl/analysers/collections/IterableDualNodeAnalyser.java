@@ -14,9 +14,9 @@ import org.nullbool.api.util.BoundedInstructionIdentifier.DataPoint;
 import org.nullbool.api.util.StaticDescFilter;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.FieldNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -30,7 +30,7 @@ public class IterableDualNodeAnalyser extends ClassAnalyser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(org.objectweb.asm.tree.ClassNode)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(ClassNode)
 	 */
 	@Override
 	protected boolean matches(ClassNode cn) {
@@ -55,7 +55,7 @@ public class IterableDualNodeAnalyser extends ClassAnalyser {
 	public class DualNodeFieldAnalyser implements IFieldAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(ClassNode)
 		 */
 		@Override
 		public List<FieldHook> findFields(ClassNode cn) {
@@ -77,7 +77,7 @@ public class IterableDualNodeAnalyser extends ClassAnalyser {
 	public class DualNodeMethodsAnalyser implements IMethodAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IMethodAnalyser#find(ClassNode)
 		 */
 		@Override
 		public List<MethodHook> findMethods(ClassNode cn) {

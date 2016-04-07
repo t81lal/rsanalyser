@@ -3,10 +3,10 @@ package org.nullbool.api.obfuscation.cfg;
 import java.util.List;
 
 import org.nullbool.api.util.LabelHelper;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.LabelNode;
+import org.objectweb.custom_asm.tree.MethodInsnNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * A 'graph' or Collection of FlowBlocks constructed from the code of a MethodNode

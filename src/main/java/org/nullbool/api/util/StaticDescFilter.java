@@ -2,7 +2,7 @@ package org.nullbool.api.util;
 
 import java.lang.reflect.Modifier;
 
-import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.custom_asm.tree.FieldNode;
 import org.topdank.banalysis.filter.Filter;
 
 /**

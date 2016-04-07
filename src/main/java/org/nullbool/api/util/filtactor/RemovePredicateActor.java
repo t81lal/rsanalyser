@@ -3,8 +3,8 @@ package org.nullbool.api.util.filtactor;
 import static org.nullbool.api.util.InstructionUtil.next;
 
 import org.nullbool.api.util.IntMap;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 public class RemovePredicateActor implements Actor {
 

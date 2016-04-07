@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.nullbool.api.obfuscation.DirectedGraph;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.ClassReader;
+import org.objectweb.custom_asm.ClassWriter;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.FieldNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 import org.topdank.banalysis.filter.Filter;
 
 public class ClassStructure extends ClassNode {

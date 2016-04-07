@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nullbool.api.Builder;
+import org.nullbool.api.Context;
 import org.nullbool.api.analysis.AnalysisException;
 import org.nullbool.api.analysis.ClassAnalyser;
 import org.nullbool.api.analysis.IFieldAnalyser;
@@ -11,9 +12,9 @@ import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.FieldHook;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * @author MalikDz
@@ -116,9 +117,9 @@ public class ObjectDefinitionAnalyser extends ClassAnalyser {
 		@Override
 		public List<FieldHook> findFields(ClassNode cn) {
 			List<FieldHook> list = new ArrayList<FieldHook>();
-			// String regex = ";\\w*" + "L" +  getFoundClass().name+ ";" + "\\w*;V";
-			// MethodNode[] m = findMethods(Context.current().getClassNodes(), regex, true);
-			// MethodNode method = identifyMethod(m, false, "sipush 55");
+			String regex = ";\\w*" + "L" +  getFoundClass().name+ ";" + "\\w*;V";
+			MethodNode[] m = findMethods(Context.current().getClassNodes(), regex, true);
+			MethodNode method = identifyMethod(m, false, "sipush 55");
 			
 			//this field nigga...
 

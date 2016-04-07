@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.jar.JarFile;
 
 import org.nullbool.api.util.JarParser;
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.ClassNode;
 
 /**
  * Immutable data container containing information a defined gamepack revision. <br>

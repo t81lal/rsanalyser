@@ -3,7 +3,7 @@ package org.nullbool.pi.core.hook.serimpl;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import org.objectweb.asm.Handle;
+import org.objectweb.custom_asm.Handle;
 
 public class HandleEntry_3 extends PoolEntry {
 

@@ -1,7 +1,7 @@
 package org.topdank.banalysis.filter.insn;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.JumpInsnNode;
 import org.topdank.banalysis.filter.OpcodeFilter;
 
 public class JumpInstructionFilter extends OpcodeInstructionFilter {

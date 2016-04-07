@@ -3,7 +3,7 @@ package org.nullbool.impl.analysers.client;
 import org.nullbool.api.Builder;
 import org.nullbool.api.analysis.*;
 import org.nullbool.pi.core.hook.api.FieldHook;
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.ClassNode;
 
 import java.awt.*;
 import java.util.ArrayList;

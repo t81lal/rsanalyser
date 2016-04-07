@@ -2,8 +2,8 @@ package org.nullbool.api.obfuscation.refactor;
 
 import java.util.Collection;
 
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.FieldNode;
 import org.topdank.banalysis.filter.Filter;
 
 /**
@@ -35,7 +35,7 @@ public class FieldCache extends DataCache<FieldNode> {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.nullbool.api.obfuscation.refactor.DataCache#put(org.objectweb.asm.tree.ClassNode)
+	 * @see org.nullbool.api.obfuscation.refactor.DataCache#put(ClassNode)
 	 */
 	@Override
 	public void put(ClassNode cn) {

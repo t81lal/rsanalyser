@@ -3,8 +3,8 @@ package org.nullbool.api.obfuscation.cfg;
 import java.util.List;
 import java.util.Map;
 
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.LabelNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)

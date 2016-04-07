@@ -15,22 +15,22 @@ package org.nullbool.pi.core.hook.serimpl.legacy._static;//package org.nullbool.
 //import org.nullbool.pi.core.hook.api.MethodHook;
 //import org.nullbool.pi.core.hook.api.ObfuscatedData;
 //import org.nullbool.pi.core.hook.api.serialisation.IMapSerialiser;
-//import org.objectweb.asm.Type;
-//import org.objectweb.asm.tree.AbstractInsnNode;
-//import org.objectweb.asm.tree.FieldInsnNode;
-//import org.objectweb.asm.tree.IincInsnNode;
-//import org.objectweb.asm.tree.InsnList;
-//import org.objectweb.asm.tree.IntInsnNode;
-//import org.objectweb.asm.tree.JumpInsnNode;
-//import org.objectweb.asm.tree.LabelNode;
-//import org.objectweb.asm.tree.LdcInsnNode;
-//import org.objectweb.asm.tree.LineNumberNode;
-//import org.objectweb.asm.tree.LookupSwitchInsnNode;
-//import org.objectweb.asm.tree.MethodInsnNode;
-//import org.objectweb.asm.tree.MultiANewArrayInsnNode;
-//import org.objectweb.asm.tree.TableSwitchInsnNode;
-//import org.objectweb.asm.tree.TypeInsnNode;
-//import org.objectweb.asm.tree.VarInsnNode;
+//import Type;
+//import AbstractInsnNode;
+//import FieldInsnNode;
+//import IincInsnNode;
+//import InsnList;
+//import IntInsnNode;
+//import JumpInsnNode;
+//import LabelNode;
+//import LdcInsnNode;
+//import LineNumberNode;
+//import LookupSwitchInsnNode;
+//import MethodInsnNode;
+//import MultiANewArrayInsnNode;
+//import TableSwitchInsnNode;
+//import TypeInsnNode;
+//import VarInsnNode;
 //
 ///**
 // * @author Bibl (don't ban me pls)
@@ -220,7 +220,7 @@ package org.nullbool.pi.core.hook.serimpl.legacy._static;//package org.nullbool.
 //				} else if(cst instanceof Integer) {
 //					dos.writeByte(4);
 //					dos.writeInt((int)cst);
-//				} else if (cst instanceof org.objectweb.asm.Type) {
+//				} else if (cst instanceof Type) {
 //					Type type = (Type) cst;
 //					/* Types have:
 //					 *   int    sort

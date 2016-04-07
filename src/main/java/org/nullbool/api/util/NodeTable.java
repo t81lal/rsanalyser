@@ -2,7 +2,7 @@ package org.nullbool.api.util;
 
 import java.util.HashMap;
 
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.ClassNode;
 
 public class NodeTable<T extends ClassNode> extends HashMap<String, T> {
 	private static final long serialVersionUID = -1402515455164855815L;

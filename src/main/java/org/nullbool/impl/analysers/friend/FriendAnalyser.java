@@ -12,17 +12,17 @@ import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.api.rs.CaseAnalyser;
 import org.nullbool.pi.core.hook.api.FieldHook;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.AbstractNode;
-import org.objectweb.asm.commons.cfg.tree.node.ArithmeticNode;
-import org.objectweb.asm.commons.cfg.tree.node.FieldMemberNode;
-import org.objectweb.asm.commons.cfg.tree.node.IincNode;
-import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
-import org.objectweb.asm.commons.cfg.tree.node.VariableNode;
-import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.custom_asm.commons.cfg.tree.node.AbstractNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.ArithmeticNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.FieldMemberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.IincNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.NumberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.VariableNode;
+import org.objectweb.custom_asm.commons.cfg.tree.util.TreeBuilder;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.FieldInsnNode;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -99,7 +99,7 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(org.objectweb.asm.tree.ClassNode)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(ClassNode)
 	 */
 	@Override
 	protected boolean matches(ClassNode cn) {
@@ -204,7 +204,7 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
 	public class StringFieldsAnalyser implements IFieldAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(ClassNode)
 		 */
 		@Override
 		public List<FieldHook> findFields(ClassNode cn) {
@@ -220,7 +220,7 @@ public class FriendAnalyser extends ClassAnalyser implements Opcodes {
 	public class WorldFieldAnalyser implements IFieldAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(ClassNode)
 		 */
 		@Override
 		public List<FieldHook> findFields(ClassNode cn) {

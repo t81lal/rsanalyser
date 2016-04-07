@@ -12,12 +12,12 @@ import org.nullbool.api.obfuscation.cfg.SuccessorTree.Successor;
 import org.nullbool.api.util.InstructionUtil;
 import org.nullbool.api.util.map.NullPermeableLinkedHashMap;
 import org.nullbool.api.util.map.ValueCreator;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LookupSwitchInsnNode;
-import org.objectweb.asm.tree.TableSwitchInsnNode;
-import org.objectweb.asm.util.Printer;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.tree.JumpInsnNode;
+import org.objectweb.custom_asm.tree.LabelNode;
+import org.objectweb.custom_asm.tree.LookupSwitchInsnNode;
+import org.objectweb.custom_asm.tree.TableSwitchInsnNode;
+import org.objectweb.custom_asm.util.Printer;
 
 /**
  * <p>

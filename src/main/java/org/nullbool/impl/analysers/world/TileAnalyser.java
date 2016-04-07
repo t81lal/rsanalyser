@@ -11,7 +11,7 @@ import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.FieldHook;
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.ClassNode;
 
 /**
  * @author MalikDz

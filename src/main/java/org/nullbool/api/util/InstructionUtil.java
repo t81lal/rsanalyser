@@ -5,13 +5,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.LookupSwitchInsnNode;
-import org.objectweb.asm.tree.TableSwitchInsnNode;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.IntInsnNode;
+import org.objectweb.custom_asm.tree.LabelNode;
+import org.objectweb.custom_asm.tree.LdcInsnNode;
+import org.objectweb.custom_asm.tree.LookupSwitchInsnNode;
+import org.objectweb.custom_asm.tree.TableSwitchInsnNode;
 
 public class InstructionUtil implements Opcodes {
 

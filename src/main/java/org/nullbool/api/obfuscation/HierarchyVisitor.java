@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.nullbool.api.Context;
 import org.nullbool.api.util.ClassStructure;
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.ClassNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 
 public class HierarchyVisitor extends Visitor {

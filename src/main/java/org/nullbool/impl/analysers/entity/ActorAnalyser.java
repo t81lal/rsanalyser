@@ -5,10 +5,9 @@ import org.nullbool.api.Context;
 import org.nullbool.api.analysis.*;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.*;
-import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
-import org.objectweb.asm.tree.*;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.custom_asm.commons.cfg.tree.node.*;
+import org.objectweb.custom_asm.commons.cfg.tree.util.TreeBuilder;
 import org.topdank.banalysis.asm.insn.InstructionPattern;
 import org.topdank.banalysis.asm.insn.InstructionSearcher;
 
@@ -29,8 +28,8 @@ public class ActorAnalyser extends ClassAnalyser {
     }
 
     @Override
-    protected boolean matches(ClassNode cn) {
-        ClassNode renderable = getClassNodeByRefactoredName("Renderable");
+    protected boolean matches(org.objectweb.custom_asm.tree.ClassNode cn) {
+        org.objectweb.custom_asm.tree.ClassNode renderable = getClassNodeByRefactoredName("Renderable");
         return cn.superName.equals(renderable.name) && (cn.access & ACC_ABSTRACT) == ACC_ABSTRACT;
 
         // FIXME: BREAKS ON REV 70 AND 75
@@ -67,16 +66,16 @@ public class ActorAnalyser extends ClassAnalyser {
     public class OrientationAnalser implements IFieldAnalyser {
 
         /* (non-Javadoc)
-         * @see org.nullbool.api.analysis.IFieldAnalyser#findFields(org.objectweb.asm.tree.ClassNode)
+         * @see org.nullbool.api.analysis.IFieldAnalyser#findFields(ClassNode)
          */
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             String obj = "L" + findObfClassName("Actor");
             String h, regex = ";\\w*" + obj + ";" + "\\w*;V";
             List<FieldHook> list = new ArrayList<FieldHook>();
             String mPattern = "invokestatic java/lang/Math.atan2 (DD)D";
-            MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
-            MethodNode method = identifyMethod(mn, false, mPattern);
+            org.objectweb.custom_asm.tree.MethodNode[] mn = findMethods(Context.current().getClassNodes(), regex, true);
+            org.objectweb.custom_asm.tree.MethodNode method = identifyMethod(mn, false, mPattern);
 
             h = findField(method,true,true,1,'f',"d2i","sipush 2047");
             list.add(asFieldHook(h,"orientation"));
@@ -88,15 +87,15 @@ public class ActorAnalyser extends ClassAnalyser {
     public class MoveMethodAnalyser implements IMethodAnalyser {
 
         /* (non-Javadoc)
-         * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
+         * @see org.nullbool.api.analysis.IMethodAnalyser#find(ClassNode)
          */
         @Override
-        public List<MethodHook> findMethods(ClassNode cn) {
+        public List<MethodHook> findMethods(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<MethodHook> list = new ArrayList<MethodHook>();
 
             TreeBuilder tb = new TreeBuilder();
 
-            for (MethodNode m : cn.methods) {
+            for (org.objectweb.custom_asm.tree.MethodNode m : cn.methods) {
                 if (m.desc.equals("(IZ)V")) {
                     List<Integer> ints = new ArrayList<Integer>();
                     NodeVisitor nv = new NodeVisitor() {
@@ -126,9 +125,9 @@ public class ActorAnalyser extends ClassAnalyser {
         }
     }
 
-    private MethodNode moveMethod;
+    private org.objectweb.custom_asm.tree.MethodNode moveMethod;
 
-    public MethodNode findMoveMethod(ClassNode cn) {
+    public org.objectweb.custom_asm.tree.MethodNode findMoveMethod(org.objectweb.custom_asm.tree.ClassNode cn) {
         if (moveMethod != null) {
             return moveMethod;
         }
@@ -143,33 +142,33 @@ public class ActorAnalyser extends ClassAnalyser {
         // iaload
         // iastore
 
-        InstructionPattern ipattern = new InstructionPattern(new AbstractInsnNode[]{
-                new VarInsnNode(ALOAD, 0),
-                new FieldInsnNode(GETFIELD, cn.name, null, "[I"),
-                new VarInsnNode(ILOAD, -1),
-                new VarInsnNode(ALOAD, 0),
-                new FieldInsnNode(GETFIELD, cn.name, null, "[I"),
-                new VarInsnNode(ILOAD, -1),
-                new InsnNode(ICONST_1),
-                new InsnNode(ISUB),
-                new InsnNode(IALOAD),
-                new InsnNode(IASTORE)
+        InstructionPattern ipattern = new InstructionPattern(new org.objectweb.custom_asm.tree.AbstractInsnNode[]{
+                new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 0),
+                new org.objectweb.custom_asm.tree.FieldInsnNode(GETFIELD, cn.name, null, "[I"),
+                new org.objectweb.custom_asm.tree.VarInsnNode(ILOAD, -1),
+                new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 0),
+                new org.objectweb.custom_asm.tree.FieldInsnNode(GETFIELD, cn.name, null, "[I"),
+                new org.objectweb.custom_asm.tree.VarInsnNode(ILOAD, -1),
+                new org.objectweb.custom_asm.tree.InsnNode(ICONST_1),
+                new org.objectweb.custom_asm.tree.InsnNode(ISUB),
+                new org.objectweb.custom_asm.tree.InsnNode(IALOAD),
+                new org.objectweb.custom_asm.tree.InsnNode(IASTORE)
         });
 
-        InstructionPattern bpattern = new InstructionPattern(new AbstractInsnNode[]{
-                new VarInsnNode(ALOAD, 0),
-                new FieldInsnNode(GETFIELD, cn.name, null, "[Z"),
-                new VarInsnNode(ILOAD, -1),
-                new VarInsnNode(ALOAD, 0),
-                new FieldInsnNode(GETFIELD, cn.name, null, "[Z"),
-                new VarInsnNode(ILOAD, -1),
-                new InsnNode(ICONST_1),
-                new InsnNode(ISUB),
-                new InsnNode(BALOAD),
-                new InsnNode(BASTORE)
+        InstructionPattern bpattern = new InstructionPattern(new org.objectweb.custom_asm.tree.AbstractInsnNode[]{
+                new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 0),
+                new org.objectweb.custom_asm.tree.FieldInsnNode(GETFIELD, cn.name, null, "[Z"),
+                new org.objectweb.custom_asm.tree.VarInsnNode(ILOAD, -1),
+                new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 0),
+                new org.objectweb.custom_asm.tree.FieldInsnNode(GETFIELD, cn.name, null, "[Z"),
+                new org.objectweb.custom_asm.tree.VarInsnNode(ILOAD, -1),
+                new org.objectweb.custom_asm.tree.InsnNode(ICONST_1),
+                new org.objectweb.custom_asm.tree.InsnNode(ISUB),
+                new org.objectweb.custom_asm.tree.InsnNode(BALOAD),
+                new org.objectweb.custom_asm.tree.InsnNode(BASTORE)
         });
 
-        for (MethodNode m : cn.methods) {
+        for (org.objectweb.custom_asm.tree.MethodNode m : cn.methods) {
             if (m.desc.equals("(IIZ)V")) {
                 InstructionSearcher isearcher = new InstructionSearcher(m.instructions, ipattern);
                 InstructionSearcher bsearcher = new InstructionSearcher(m.instructions, bpattern);
@@ -187,13 +186,13 @@ public class ActorAnalyser extends ClassAnalyser {
     public class QueuePositionMethodAnalyser implements IMethodAnalyser {
 
         /* (non-Javadoc)
-         * @see org.nullbool.api.analysis.IMethodAnalyser#find(org.objectweb.asm.tree.ClassNode)
+         * @see org.nullbool.api.analysis.IMethodAnalyser#find(ClassNode)
          */
         @Override
-        public List<MethodHook> findMethods(ClassNode cn) {
+        public List<MethodHook> findMethods(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<MethodHook> list = new ArrayList<MethodHook>();
 
-            MethodNode m = findMoveMethod(cn);
+            org.objectweb.custom_asm.tree.MethodNode m = findMoveMethod(cn);
             if (m != null) {
                 list.add(asMethodHook(m, "queuePosition"));
             }
@@ -205,12 +204,12 @@ public class ActorAnalyser extends ClassAnalyser {
     public class QueueFieldsAnalyser implements IFieldAnalyser {
 
         /* (non-Javadoc)
-         * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+         * @see org.nullbool.api.analysis.IFieldAnalyser#find(ClassNode)
          */
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<FieldHook> list = new ArrayList<FieldHook>();
-            MethodNode m = findMoveMethod(cn);
+            org.objectweb.custom_asm.tree.MethodNode m = findMoveMethod(cn);
             if (m != null) {
                 // aload0 // reference to self
                 // getfield rs/Actor.bb:int[]
@@ -219,20 +218,20 @@ public class ActorAnalyser extends ClassAnalyser {
                 // iastore
 
 
-                InstructionPattern ipattern = new InstructionPattern(new AbstractInsnNode[]{
-                        new VarInsnNode(ALOAD, 0),
-                        new FieldInsnNode(GETFIELD, cn.name, null, "[I"),
-                        new InsnNode(ICONST_0),
-                        new VarInsnNode(ILOAD, -1),
-                        new InsnNode(IASTORE)
+                InstructionPattern ipattern = new InstructionPattern(new org.objectweb.custom_asm.tree.AbstractInsnNode[]{
+                        new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 0),
+                        new org.objectweb.custom_asm.tree.FieldInsnNode(GETFIELD, cn.name, null, "[I"),
+                        new org.objectweb.custom_asm.tree.InsnNode(ICONST_0),
+                        new org.objectweb.custom_asm.tree.VarInsnNode(ILOAD, -1),
+                        new org.objectweb.custom_asm.tree.InsnNode(IASTORE)
                 });
 
                 InstructionSearcher isearcher = new InstructionSearcher(m.instructions, ipattern);
                 if (isearcher.search() && isearcher.size() >= 2) {
                     List<Integer> found = new ArrayList<Integer>();
-                    for (AbstractInsnNode[] ains : isearcher.getMatches()) {
-                        FieldInsnNode fin = (FieldInsnNode) ains[1];
-                        VarInsnNode vin = (VarInsnNode) ains[3];
+                    for (org.objectweb.custom_asm.tree.AbstractInsnNode[] ains : isearcher.getMatches()) {
+                        org.objectweb.custom_asm.tree.FieldInsnNode fin = (org.objectweb.custom_asm.tree.FieldInsnNode) ains[1];
+                        org.objectweb.custom_asm.tree.VarInsnNode vin = (org.objectweb.custom_asm.tree.VarInsnNode) ains[3];
                         int var = vin.var;
                         if (!found.contains(var)) {
                             found.add(var);
@@ -245,17 +244,17 @@ public class ActorAnalyser extends ClassAnalyser {
                     }
                 }
 
-                InstructionPattern bpattern = new InstructionPattern(new AbstractInsnNode[]{
-                        new VarInsnNode(ALOAD, 0),
-                        new FieldInsnNode(GETFIELD, cn.name, null, "[Z"),
-                        new InsnNode(ICONST_0),
-                        new InsnNode(ICONST_0),
-                        new InsnNode(BASTORE)
+                InstructionPattern bpattern = new InstructionPattern(new org.objectweb.custom_asm.tree.AbstractInsnNode[]{
+                        new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 0),
+                        new org.objectweb.custom_asm.tree.FieldInsnNode(GETFIELD, cn.name, null, "[Z"),
+                        new org.objectweb.custom_asm.tree.InsnNode(ICONST_0),
+                        new org.objectweb.custom_asm.tree.InsnNode(ICONST_0),
+                        new org.objectweb.custom_asm.tree.InsnNode(BASTORE)
                 });
 
                 InstructionSearcher bsearcher = new InstructionSearcher(m.instructions, bpattern);
                 if (bsearcher.search()) {
-                    FieldInsnNode fin = (FieldInsnNode) bsearcher.getMatches().get(0)[1];
+                    org.objectweb.custom_asm.tree.FieldInsnNode fin = (org.objectweb.custom_asm.tree.FieldInsnNode) bsearcher.getMatches().get(0)[1];
                     list.add(asFieldHook(fin, "queueRun"));
                 }
 
@@ -269,18 +268,18 @@ public class ActorAnalyser extends ClassAnalyser {
                 //  goto L12
 
 
-                InstructionPattern lenPattern = new InstructionPattern(new AbstractInsnNode[]{
-                        new VarInsnNode(ALOAD, 0),
-                        new FieldInsnNode(GETFIELD, cn.name, null, "I"),
-                        new LdcInsnNode(null),
-                        new InsnNode(IMUL),
-                        new IntInsnNode(BIPUSH, 9),
-                        new JumpInsnNode(-1, null)
+                InstructionPattern lenPattern = new InstructionPattern(new org.objectweb.custom_asm.tree.AbstractInsnNode[]{
+                        new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 0),
+                        new org.objectweb.custom_asm.tree.FieldInsnNode(GETFIELD, cn.name, null, "I"),
+                        new org.objectweb.custom_asm.tree.LdcInsnNode(null),
+                        new org.objectweb.custom_asm.tree.InsnNode(IMUL),
+                        new org.objectweb.custom_asm.tree.IntInsnNode(BIPUSH, 9),
+                        new org.objectweb.custom_asm.tree.JumpInsnNode(-1, null)
                 });
 
                 InstructionSearcher lenSearcher = new InstructionSearcher(m.instructions, lenPattern);
                 if (lenSearcher.search()) {
-                    FieldInsnNode fin = (FieldInsnNode) lenSearcher.getMatches().get(0)[1];
+                    org.objectweb.custom_asm.tree.FieldInsnNode fin = (org.objectweb.custom_asm.tree.FieldInsnNode) lenSearcher.getMatches().get(0)[1];
                     list.add(asFieldHook(fin, "queueLength"));
                 }
             }
@@ -291,10 +290,10 @@ public class ActorAnalyser extends ClassAnalyser {
     public class CycleHookAnalyser implements IFieldAnalyser {
 
         /* (non-Javadoc)
-         * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+         * @see org.nullbool.api.analysis.IFieldAnalyser#find(ClassNode)
          */
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<FieldHook> list = new ArrayList<FieldHook>();
 
             //aload0 // reference to self
@@ -316,7 +315,7 @@ public class ActorAnalyser extends ClassAnalyser {
 //			});
 
             TreeBuilder tb = new TreeBuilder();
-            for (MethodNode m : cn.methods) {
+            for (org.objectweb.custom_asm.tree.MethodNode m : cn.methods) {
                 if (m.desc.equals("(III)V")) {
                     NodeVisitor nv = new NodeVisitor() {
                         @Override
@@ -350,15 +349,15 @@ public class ActorAnalyser extends ClassAnalyser {
     public class XYHooks implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<FieldHook> l = new ArrayList<FieldHook>();
             String h, actorObj = findObfClassName("Actor");
             String regexPat = ";\\w*" + "L" + actorObj + ";" + "\\w*;V";
-            MethodNode[] m = findMethods(Context.current().getClassNodes(), regexPat, true);
-            MethodNode method = identifyMethod(m, false, "sipush 256");
+            org.objectweb.custom_asm.tree.MethodNode[] m = findMethods(Context.current().getClassNodes(), regexPat, true);
+            org.objectweb.custom_asm.tree.MethodNode method = identifyMethod(m, false, "sipush 256");
 
             String fieldPattern[] = {"if_icmpeq|ifne", "\\w*", "\\w*", "\\w*", "imul", "istore"};
-            AbstractInsnNode[] ins = followJump(method, 40);
+            org.objectweb.custom_asm.tree.AbstractInsnNode[] ins = followJump(method, 40);
 
             // TODO: broke on rev72, verified by: Bibl
             h = findField(ins, false, true, 1, 'f', fieldPattern);
@@ -368,15 +367,15 @@ public class ActorAnalyser extends ClassAnalyser {
             l.add(asFieldHook(h, "localY"));
 
             healthbarcycle:
-            for (MethodNode mn : cn.methods) {
+            for (org.objectweb.custom_asm.tree.MethodNode mn : cn.methods) {
                 if (mn.name.equals("<init>")) {
-                    for (AbstractInsnNode ain : mn.instructions.toArray()) {
+                    for (org.objectweb.custom_asm.tree.AbstractInsnNode ain : mn.instructions.toArray()) {
                         if (ain.getOpcode() == PUTFIELD) {
-                            AbstractInsnNode prev = ain.getPrevious();
+                            org.objectweb.custom_asm.tree.AbstractInsnNode prev = ain.getPrevious();
                             if (prev.getOpcode() == LDC) {
-                                LdcInsnNode lin = (LdcInsnNode) prev;
+                                org.objectweb.custom_asm.tree.LdcInsnNode lin = (org.objectweb.custom_asm.tree.LdcInsnNode) prev;
                                 if (lin.cst instanceof Number) {
-                                    FieldInsnNode fin = (FieldInsnNode) ain;
+                                    org.objectweb.custom_asm.tree.FieldInsnNode fin = (org.objectweb.custom_asm.tree.FieldInsnNode) ain;
                                     int l1 = 0;
                                     if (lin.cst instanceof Long) {
                                         l1 = (int) (long) lin.cst;
@@ -403,12 +402,12 @@ public class ActorAnalyser extends ClassAnalyser {
     public class InteractingHooks implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<FieldHook> list = new ArrayList<FieldHook>();
             String h, actorObj = findObfClassName("Actor");
             String regex = ";\\w*" + "L" + actorObj + ";" + "\\w*;V";
-            MethodNode[] m = findMethods(Context.current().getClassNodes(), regex, true);
-            MethodNode method = identifyMethod(m, false, "ldc 32768");
+            org.objectweb.custom_asm.tree.MethodNode[] m = findMethods(Context.current().getClassNodes(), regex, true);
+            org.objectweb.custom_asm.tree.MethodNode method = identifyMethod(m, false, "ldc 32768");
 
             h = findField(method, true, false, 1, 'f', "ldc 32768");
             list.add(asFieldHook(h, "interactingId"));
@@ -420,13 +419,13 @@ public class ActorAnalyser extends ClassAnalyser {
     public class AnimationHooks implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<FieldHook> list = new ArrayList<FieldHook>();
             String h, actorObj = findObfClassName("Actor");
             String regex = ";\\w*" + "L" + actorObj + ";" + "\\w*;V";
-            MethodNode[] m = findMethods(Context.current().getClassNodes(), regex, true);
-            MethodNode method = identifyMethod(m, false, "sipush 1536");
-            AbstractInsnNode[] ins = followJump(method, 40);
+            org.objectweb.custom_asm.tree.MethodNode[] m = findMethods(Context.current().getClassNodes(), regex, true);
+            org.objectweb.custom_asm.tree.MethodNode method = identifyMethod(m, false, "sipush 1536");
+            org.objectweb.custom_asm.tree.AbstractInsnNode[] ins = followJump(method, 40);
             h = findField(ins, true, true, 1, 'f', "sipush 128", "if_icmplt");
             list.add(asFieldHook(h, "animationId"));
 
@@ -437,12 +436,12 @@ public class ActorAnalyser extends ClassAnalyser {
     public class HealthAndDamageHooks implements IFieldAnalyser {
 
         @Override
-        public List<FieldHook> findFields(ClassNode cn) {
+        public List<FieldHook> findFields(org.objectweb.custom_asm.tree.ClassNode cn) {
             List<FieldHook> list = new ArrayList<FieldHook>();
             String h, actorObj = findObfClassName("Actor");
             String r = ";.*" + "L" + actorObj + ";III" + ".*;V";
-            MethodNode[] ms = findMethods(Context.current().getClassNodes(), r, true);
-            MethodNode m = identifyMethod(ms, false, "bipush 30");
+            org.objectweb.custom_asm.tree.MethodNode[] ms = findMethods(Context.current().getClassNodes(), r, true);
+            org.objectweb.custom_asm.tree.MethodNode m = identifyMethod(ms, false, "bipush 30");
             String[] pat = {"getfield .* .*String;", "aastore"};
             String reg = "invokestatic java/lang/Integer.toString .*String;";
 

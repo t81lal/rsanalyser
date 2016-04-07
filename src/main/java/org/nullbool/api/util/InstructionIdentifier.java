@@ -3,50 +3,49 @@ package org.nullbool.api.util;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.objectweb.asm.tree.*;
-import org.objectweb.asm.util.Printer;
+import org.objectweb.custom_asm.util.Printer;
 
 public class InstructionIdentifier {
 
 	private List<String> instList;
 	private List<String> instCleanList;
 
-	public InstructionIdentifier(final AbstractInsnNode... instructions) {
+	public InstructionIdentifier(final org.objectweb.custom_asm.tree.AbstractInsnNode... instructions) {
 		try {
 			this.instList = new LinkedList<String>();
 			this.instCleanList = new LinkedList<String>();
-			for (AbstractInsnNode instruction : instructions) {
+			for (org.objectweb.custom_asm.tree.AbstractInsnNode instruction : instructions) {
 				if(instruction.getOpcode() == -1)
 					continue;
 				String name = Printer.OPCODES[instruction.getOpcode()].toLowerCase();
 				String extra = "";
-				if (instruction instanceof FieldInsnNode) {
-					FieldInsnNode f = ((FieldInsnNode) instruction);
+				if (instruction instanceof org.objectweb.custom_asm.tree.FieldInsnNode) {
+					org.objectweb.custom_asm.tree.FieldInsnNode f = ((org.objectweb.custom_asm.tree.FieldInsnNode) instruction);
 					extra = " " + f.owner + "." + f.name + " " + f.desc;
 				}
 
-				if (instruction instanceof MethodInsnNode) {
-					MethodInsnNode m = ((MethodInsnNode) instruction);
+				if (instruction instanceof org.objectweb.custom_asm.tree.MethodInsnNode) {
+					org.objectweb.custom_asm.tree.MethodInsnNode m = ((org.objectweb.custom_asm.tree.MethodInsnNode) instruction);
 					extra = " " + m.owner + "." + m.name + " " + m.desc;
 				}
 
-				if (instruction instanceof VarInsnNode) {
-					VarInsnNode m = ((VarInsnNode) instruction);
+				if (instruction instanceof org.objectweb.custom_asm.tree.VarInsnNode) {
+					org.objectweb.custom_asm.tree.VarInsnNode m = ((org.objectweb.custom_asm.tree.VarInsnNode) instruction);
 					extra = " " + String.valueOf(m.var);
 				}
 
-				if (instruction instanceof LdcInsnNode) {
-					LdcInsnNode m = ((LdcInsnNode) instruction);
+				if (instruction instanceof org.objectweb.custom_asm.tree.LdcInsnNode) {
+					org.objectweb.custom_asm.tree.LdcInsnNode m = ((org.objectweb.custom_asm.tree.LdcInsnNode) instruction);
 					extra = " " + String.valueOf(m.cst);
 				}
 
-				if (instruction instanceof IntInsnNode) {
-					IntInsnNode m = ((IntInsnNode) instruction);
+				if (instruction instanceof org.objectweb.custom_asm.tree.IntInsnNode) {
+					org.objectweb.custom_asm.tree.IntInsnNode m = ((org.objectweb.custom_asm.tree.IntInsnNode) instruction);
 					extra = " " + String.valueOf(m.operand);
 				}
 
-				if (instruction instanceof TypeInsnNode) {
-					TypeInsnNode m = ((TypeInsnNode) instruction);
+				if (instruction instanceof org.objectweb.custom_asm.tree.TypeInsnNode) {
+					org.objectweb.custom_asm.tree.TypeInsnNode m = ((org.objectweb.custom_asm.tree.TypeInsnNode) instruction);
 					extra = " " + String.valueOf(m.desc);
 				}
 

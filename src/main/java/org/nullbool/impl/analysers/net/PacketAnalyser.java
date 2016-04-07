@@ -1,27 +1,18 @@
 package org.nullbool.impl.analysers.net;
 
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
-import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.api.analysis.IFieldAnalyser;
-import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.analysis.IMultiAnalyser;
-import org.nullbool.api.analysis.SupportedHooks;
+import org.nullbool.api.analysis.*;
 import org.nullbool.api.util.InstructionUtil;
 import org.nullbool.pi.core.hook.api.Constants;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.*;
+
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @SupportedHooks(
 		fields = { "cipher&IsaacCipher", "bitCaret&I"}, 
@@ -78,7 +69,7 @@ public class PacketAnalyser extends ClassAnalyser {
 	public class HeaderMethodAnalyser implements IMethodAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IMethodAnalyser#findMethods(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IMethodAnalyser#findMethods(ClassNode)
 		 */
 		@Override
 		public List<MethodHook> findMethods(ClassNode cn) {
@@ -127,39 +118,41 @@ public class PacketAnalyser extends ClassAnalyser {
 			List<MethodHook> list = new ArrayList<MethodHook>();
 
 			for(MethodNode m : cn.methods) {
-				if(m.desc.startsWith("([I") && m.desc.endsWith("V")) {
-					MethodInsnNode min = (MethodInsnNode) findOpcodePattern(m, INIT_CIPHER_PATTERN);
-					if(min != null) {
-						list.add(asMethodHook(m, "initCipher").var(Constants.METHOD_TYPE, Constants.CALLBACK));
-					}
-				} else if(m.desc.endsWith("V")) {
-					FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, INIT_BIT_ACCESS_PATTERN1);
-					if(fin != null) {
-						list.add(asMethodHook(m, "initBitAccess").var(Constants.METHOD_TYPE, Constants.CALLBACK));
-					} else {
-						fin = (FieldInsnNode) findOpcodePattern(m, INIT_BIT_ACCESS_PATTERN2);
-						if(fin != null) {
+				if(!((m.access & ACC_STATIC) != 0)){
+					if (m.desc.startsWith("([I") && m.desc.endsWith("V")) {
+						MethodInsnNode min = (MethodInsnNode) findOpcodePattern(m, INIT_CIPHER_PATTERN);
+						if (min != null) {
+							list.add(asMethodHook(m, "initCipher").var(Constants.METHOD_TYPE, Constants.CALLBACK));
+						}
+					} else if (m.desc.endsWith("V")) {
+						FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, INIT_BIT_ACCESS_PATTERN1);
+						if (fin != null) {
 							list.add(asMethodHook(m, "initBitAccess").var(Constants.METHOD_TYPE, Constants.CALLBACK));
 						} else {
-							IntInsnNode iin = (IntInsnNode) findOpcodePattern(m, FINISH_BIT_ACCESS_PATTERN);
-							if(iin != null) {
-								if(InstructionUtil.resolve(iin) == 8) {
-									list.add(asMethodHook(m, "finishBitAccess").var(Constants.METHOD_TYPE, Constants.CALLBACK));
+							fin = (FieldInsnNode) findOpcodePattern(m, INIT_BIT_ACCESS_PATTERN2);
+							if (fin != null) {
+								list.add(asMethodHook(m, "initBitAccess").var(Constants.METHOD_TYPE, Constants.CALLBACK));
+							} else {
+								IntInsnNode iin = (IntInsnNode) findOpcodePattern(m, FINISH_BIT_ACCESS_PATTERN);
+								if (iin != null) {
+									if (InstructionUtil.resolve(iin) == 8) {
+										list.add(asMethodHook(m, "finishBitAccess").var(Constants.METHOD_TYPE, Constants.CALLBACK));
+									}
 								}
 							}
 						}
-					}
-				} else if(m.desc.endsWith(")I")) {
-					FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, READABLE_BEATS_PATTERN1);
-					if(fin == null) 
-						fin = (FieldInsnNode) findOpcodePattern(m, READABLE_BEATS_PATTERN2);
+					} else if (m.desc.endsWith(")I")) {
+						FieldInsnNode fin = (FieldInsnNode) findOpcodePattern(m, READABLE_BEATS_PATTERN1);
+						if (fin == null)
+							fin = (FieldInsnNode) findOpcodePattern(m, READABLE_BEATS_PATTERN2);
 
-					if(fin != null) {
-						list.add(asMethodHook(m, "readableBytes").var(Constants.METHOD_TYPE, Constants.CALLBACK));
-					} else {
-						AbstractInsnNode a1 = findOpcodePattern(m, READ_BITS_PATTERN);
-						if(a1 != null) {
-							list.add(asMethodHook(m, "readBits").var(Constants.METHOD_TYPE, Constants.CALLBACK));
+						if (fin != null) {
+							list.add(asMethodHook(m, "readableBytes").var(Constants.METHOD_TYPE, Constants.CALLBACK));
+						} else {
+							AbstractInsnNode a1 = findOpcodePattern(m, READ_BITS_PATTERN);
+							if (a1 != null) {
+								list.add(asMethodHook(m, "readBits").var(Constants.METHOD_TYPE, Constants.CALLBACK));
+							}
 						}
 					}
 				}

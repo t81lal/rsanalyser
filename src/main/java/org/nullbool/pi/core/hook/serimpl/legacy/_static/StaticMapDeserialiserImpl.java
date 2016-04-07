@@ -18,24 +18,24 @@ package org.nullbool.pi.core.hook.serimpl.legacy._static;//package org.nullbool.
 //import org.nullbool.pi.core.hook.api.Constants.MethodType;
 //import org.nullbool.pi.core.hook.api.ObfuscatedData;
 //import org.nullbool.pi.core.hook.api.serialisation.IMapDeserialiser;
-//import org.objectweb.asm.Opcodes;
-//import org.objectweb.asm.Type;
-//import org.objectweb.asm.tree.AbstractInsnNode;
-//import org.objectweb.asm.tree.FieldInsnNode;
-//import org.objectweb.asm.tree.IincInsnNode;
-//import org.objectweb.asm.tree.InsnList;
-//import org.objectweb.asm.tree.InsnNode;
-//import org.objectweb.asm.tree.IntInsnNode;
-//import org.objectweb.asm.tree.JumpInsnNode;
-//import org.objectweb.asm.tree.LabelNode;
-//import org.objectweb.asm.tree.LdcInsnNode;
-//import org.objectweb.asm.tree.LineNumberNode;
-//import org.objectweb.asm.tree.LookupSwitchInsnNode;
-//import org.objectweb.asm.tree.MethodInsnNode;
-//import org.objectweb.asm.tree.MultiANewArrayInsnNode;
-//import org.objectweb.asm.tree.TableSwitchInsnNode;
-//import org.objectweb.asm.tree.TypeInsnNode;
-//import org.objectweb.asm.tree.VarInsnNode;
+//import Opcodes;
+//import Type;
+//import AbstractInsnNode;
+//import FieldInsnNode;
+//import IincInsnNode;
+//import InsnList;
+//import InsnNode;
+//import IntInsnNode;
+//import JumpInsnNode;
+//import LabelNode;
+//import LdcInsnNode;
+//import LineNumberNode;
+//import LookupSwitchInsnNode;
+//import MethodInsnNode;
+//import MultiANewArrayInsnNode;
+//import TableSwitchInsnNode;
+//import TypeInsnNode;
+//import VarInsnNode;
 //
 ///**
 // * @author Bibl (don't ban me pls)

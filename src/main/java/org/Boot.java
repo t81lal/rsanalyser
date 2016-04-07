@@ -27,10 +27,11 @@ public class Boot {
     public static final File GAMEPACK_DIRECTORY = Paths.get(System.getProperty("user.home"), "Dropbox", "OSRS RE collection", "gamepacks").toFile();
 
     public static void main(String[] args) throws Exception {
-        System.out.printf("Remote rev: %d.%n", RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100));
-        File gamepackFile = new File(GAMEPACK_DIRECTORY, args[0] + ".jar");
+		int rev = RSVersionHelper.getVersion(RSVersionHelper.getServerAddress(58), 77, 100);
+        System.out.printf("Remote rev: %d.%n", rev);
+        File gamepackFile = new File(GAMEPACK_DIRECTORY, (args.length == 0 ? rev : args[0]) + ".jar");
         bootstrap();
-        Revision revision = new Revision(args[0], gamepackFile);
+        Revision revision = new Revision((args.length == 0 ? Integer.toString(rev) : args[0]), gamepackFile);
         runLatest(AnalysisProviderRegistry.get(revision).create(revision));
         System.exit(1);
     }

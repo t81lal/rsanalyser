@@ -5,13 +5,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.nullbool.api.util.BoundedInstructionIdentifier.DataPoint;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
-import org.objectweb.asm.util.Printer;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.FieldInsnNode;
+import org.objectweb.custom_asm.tree.IntInsnNode;
+import org.objectweb.custom_asm.tree.LdcInsnNode;
+import org.objectweb.custom_asm.tree.MethodInsnNode;
+import org.objectweb.custom_asm.tree.VarInsnNode;
+import org.objectweb.custom_asm.util.Printer;
 
 public class BoundedInstructionIdentifier implements Iterable<DataPoint> {
 

@@ -4,8 +4,8 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.Type;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)
@@ -30,7 +30,7 @@ public class MethodUtil {
 	}
 	
 	@Deprecated
-	public static int getLastParameterIndex(MethodNode m) {
+	private static int getLastParameterIndex(MethodNode m) {
 		Type[] args = Type.getArgumentTypes(m.desc);
 		return args.length + (Modifier.isStatic(m.access) ? -1 : 0);
 	}

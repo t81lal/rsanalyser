@@ -1,6 +1,6 @@
 package org.nullbool.pi.core.hook.api;
 
-import org.objectweb.asm.Type;
+import org.objectweb.custom_asm.Type;
 
 import java.io.Serializable;
 import java.util.Iterator;

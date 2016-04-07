@@ -1,6 +1,6 @@
 package org.nullbool.api.util.filtactor;
 
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 public class MethodFilter implements Filter<MethodNode> {
 

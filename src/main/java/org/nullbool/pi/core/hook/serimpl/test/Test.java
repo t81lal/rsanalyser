@@ -10,9 +10,9 @@ import org.nullbool.pi.core.hook.api.HookMap;
 import org.nullbool.pi.core.hook.api.MethodHook;
 import org.nullbool.pi.core.hook.serimpl.StaticMapDeserialiserImpl;
 import org.nullbool.pi.core.hook.serimpl.StaticMapSerialiserImpl;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.ClassReader;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 public class Test {
 

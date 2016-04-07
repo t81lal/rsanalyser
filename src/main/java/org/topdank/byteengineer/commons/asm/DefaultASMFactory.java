@@ -2,9 +2,9 @@ package org.topdank.byteengineer.commons.asm;
 
 import java.io.IOException;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.ClassReader;
+import org.objectweb.custom_asm.ClassWriter;
+import org.objectweb.custom_asm.tree.ClassNode;
 
 public class DefaultASMFactory implements ASMFactory<ClassNode> {
 

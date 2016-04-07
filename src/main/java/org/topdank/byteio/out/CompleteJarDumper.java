@@ -10,8 +10,8 @@ import java.util.jar.JarOutputStream;
 
 import org.nullbool.api.obfuscation.refactor.ClassTree;
 import org.nullbool.api.util.ClassStructure;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.ClassWriter;
+import org.objectweb.custom_asm.tree.ClassNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 import org.topdank.byteengineer.commons.data.JarResource;
 import org.topdank.byteio.util.Debug;

@@ -3,10 +3,10 @@ package org.nullbool.api.util.filtactor;
 import java.util.Arrays;
 import java.util.List;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.TypeInsnNode;
+import org.objectweb.custom_asm.tree.VarInsnNode;
 
 public class OpaquePredicateFilter implements Filter<AbstractInsnNode>, Opcodes {
 

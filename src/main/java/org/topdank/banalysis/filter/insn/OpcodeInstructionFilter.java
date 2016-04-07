@@ -1,6 +1,6 @@
 package org.topdank.banalysis.filter.insn;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
 import org.topdank.banalysis.filter.InstructionFilter;
 import org.topdank.banalysis.filter.OpcodeFilter;
 

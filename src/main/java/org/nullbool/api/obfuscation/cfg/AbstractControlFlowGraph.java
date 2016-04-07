@@ -18,16 +18,16 @@ import java.util.Stack;
 
 import org.nullbool.api.util.InsnListPrinter;
 import org.nullbool.api.util.LabelHelper;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LookupSwitchInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TableSwitchInsnNode;
-import org.objectweb.asm.tree.TryCatchBlockNode;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.InsnList;
+import org.objectweb.custom_asm.tree.JumpInsnNode;
+import org.objectweb.custom_asm.tree.LabelNode;
+import org.objectweb.custom_asm.tree.LookupSwitchInsnNode;
+import org.objectweb.custom_asm.tree.MethodInsnNode;
+import org.objectweb.custom_asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.TableSwitchInsnNode;
+import org.objectweb.custom_asm.tree.TryCatchBlockNode;
 
 public abstract class AbstractControlFlowGraph implements IControlFlowGraph, Opcodes, Iterable<FlowBlock> {
 

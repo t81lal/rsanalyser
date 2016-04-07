@@ -3,7 +3,7 @@ package org.nullbool.pi.core.hook.api.deprecated;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.ClassNode;
 
 @Deprecated
 public abstract class AbstractActor {

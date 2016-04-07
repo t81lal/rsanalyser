@@ -1,8 +1,8 @@
 package org.nullbool.api.obfuscation;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.FieldNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 
 /**

@@ -15,8 +15,8 @@ import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
 import org.nullbool.api.obfuscation.cfg.InsaneControlFlowGraph;
 import org.nullbool.api.util.ClassStructure;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)

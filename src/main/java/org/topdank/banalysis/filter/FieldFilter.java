@@ -1,6 +1,6 @@
 package org.topdank.banalysis.filter;
 
-import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.custom_asm.tree.FieldNode;
 
 public interface FieldFilter extends Filter<FieldNode> {
 }

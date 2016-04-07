@@ -1,24 +1,36 @@
 package org.nullbool.impl.analysers.client.grandexchange;
 
 import org.nullbool.api.Builder;
-import org.nullbool.api.analysis.ClassAnalyser;
-import org.nullbool.api.analysis.IFieldAnalyser;
-import org.nullbool.api.analysis.IMethodAnalyser;
-import org.nullbool.api.analysis.IMultiAnalyser;
-import org.objectweb.asm.tree.ClassNode;
+import org.nullbool.api.analysis.*;
+import org.nullbool.api.util.StaticDescFilter;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)
  * @created 30 Jul 2015 14:44:43
  */
+@SupportedHooks(
+		fields = { },
+		methods = { })
 public class ExchangeOfferAnalyser extends ClassAnalyser {
 
 	public ExchangeOfferAnalyser() {
-		super("ExhangeOffer");
+		super("ExchangeOffer");
 	}
 
 	@Override
 	protected boolean matches(ClassNode cn) {
+		int ints = getFieldCount(cn, new StaticDescFilter("I"));
+		int bytes = getFieldCount(cn, new StaticDescFilter("B"));
+
+		if(ints < 5 || bytes < 1)
+			return false;
+		for(MethodNode mn : cn.methods){
+			if(mn.name.equals("<init>") && mn.desc.contains("L"+ findObfClassName("Buffer") + ";")){
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -36,4 +48,5 @@ public class ExchangeOfferAnalyser extends ClassAnalyser {
 	public Builder<IMultiAnalyser> registerMultiAnalysers() {
 		return null;
 	}
+
 }

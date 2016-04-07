@@ -2,8 +2,8 @@ package org.nullbool.api.obfuscation.refactor;
 
 import java.util.Collection;
 
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 import org.topdank.banalysis.filter.Filter;
 
 /**

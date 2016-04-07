@@ -4,13 +4,12 @@ import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
 import org.nullbool.api.util.map.NullPermeableHashMap;
 import org.nullbool.api.util.map.ValueCreator;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.cfg.tree.NodeVisitor;
-import org.objectweb.asm.commons.cfg.tree.node.JumpNode;
-import org.objectweb.asm.commons.cfg.tree.node.NumberNode;
-import org.objectweb.asm.commons.cfg.tree.node.VariableNode;
-import org.objectweb.asm.commons.cfg.tree.util.TreeBuilder;
-import org.objectweb.asm.tree.*;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.commons.cfg.tree.NodeVisitor;
+import org.objectweb.custom_asm.commons.cfg.tree.node.JumpNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.NumberNode;
+import org.objectweb.custom_asm.commons.cfg.tree.node.VariableNode;
+import org.objectweb.custom_asm.commons.cfg.tree.util.TreeBuilder;
 import org.topdank.banalysis.asm.insn.InstructionPattern;
 import org.topdank.banalysis.asm.insn.InstructionSearcher;
 import org.topdank.banalysis.filter.InstructionFilter;
@@ -29,18 +28,18 @@ public class CaseAnalyser implements Opcodes {
     private final InstructionPattern pattern;
     private final NullPermeableHashMap<Integer, Set<FlowBlock>> found;
     private int count = 0;
-    private MethodNode method;
+    private org.objectweb.custom_asm.tree.MethodNode method;
 
     public CaseAnalyser() {
         tb = new TreeBuilder();
 
         // opcode loading mechanism
-        InstructionFilter[] filters = InstructionPattern.translate(new AbstractInsnNode[]{
-                new VarInsnNode(ALOAD, 9),
-                new IincInsnNode(8, 1),
-                new VarInsnNode(ILOAD, 8),
-                new InsnNode(IALOAD),
-                new VarInsnNode(ISTORE, 11)
+        InstructionFilter[] filters = InstructionPattern.translate(new org.objectweb.custom_asm.tree.AbstractInsnNode[]{
+                new org.objectweb.custom_asm.tree.VarInsnNode(ALOAD, 9),
+                new org.objectweb.custom_asm.tree.IincInsnNode(8, 1),
+                new org.objectweb.custom_asm.tree.VarInsnNode(ILOAD, 8),
+                new org.objectweb.custom_asm.tree.InsnNode(IALOAD),
+                new org.objectweb.custom_asm.tree.VarInsnNode(ISTORE, 11)
         });
         pattern = new InstructionPattern(filters);
         found = new NullPermeableHashMap<Integer, Set<FlowBlock>>(new ValueCreator<Set<FlowBlock>>() {
@@ -51,7 +50,7 @@ public class CaseAnalyser implements Opcodes {
         });
     }
 
-    public boolean analyse(MethodNode m, IControlFlowGraph graph) {
+    public boolean analyse(org.objectweb.custom_asm.tree.MethodNode m, IControlFlowGraph graph) {
         InstructionSearcher searcher = new InstructionSearcher(m.instructions, pattern);
         if (searcher.search()) {
             method = m;
@@ -85,7 +84,7 @@ public class CaseAnalyser implements Opcodes {
         return false;
     }
 
-    public MethodNode getMethod() {
+    public org.objectweb.custom_asm.tree.MethodNode getMethod() {
         return method;
     }
 

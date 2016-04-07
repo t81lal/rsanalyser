@@ -1,6 +1,6 @@
 package org.topdank.banalysis.filter.method;
 
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 import org.topdank.banalysis.filter.MethodFilter;
 
 import java.util.ArrayList;

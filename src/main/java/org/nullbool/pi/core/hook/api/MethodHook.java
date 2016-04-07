@@ -1,6 +1,6 @@
 package org.nullbool.pi.core.hook.api;
 
-import org.objectweb.asm.tree.InsnList;
+import org.objectweb.custom_asm.tree.InsnList;
 
 public class MethodHook extends ObfuscatedData {
 

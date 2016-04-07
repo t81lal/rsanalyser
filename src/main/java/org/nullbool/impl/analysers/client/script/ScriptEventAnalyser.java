@@ -12,12 +12,12 @@ import org.nullbool.api.analysis.IMethodAnalyser;
 import org.nullbool.api.analysis.IMultiAnalyser;
 import org.nullbool.api.analysis.SupportedHooks;
 import org.nullbool.pi.core.hook.api.FieldHook;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.custom_asm.Type;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.FieldInsnNode;
+import org.objectweb.custom_asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.VarInsnNode;
 import org.topdank.banalysis.asm.insn.InstructionSearcher;
 
 /**
@@ -51,7 +51,7 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(org.objectweb.asm.tree.ClassNode)
+	 * @see org.nullbool.api.analysis.ClassAnalyser#matches(ClassNode)
 	 */
 	@Override
 	protected boolean matches(ClassNode cn) {
@@ -97,7 +97,7 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 	public class DisposableAnalyser implements IFieldAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(ClassNode)
 		 */
 		@Override
 		public List<FieldHook> findFields(ClassNode node) {
@@ -116,10 +116,10 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 			//				}
 			//			}
 
-			// String regex = ";\\[L.*;IIIIIII.{0,1};V";
-			// MethodNode[] ms = findMethods(Context.current().getClassNodes(), regex, true);
-			// String[] pattern = new String[]{"new.*", "dup"};
-			// MethodNode m = identifyMethod(ms, false, pattern);
+			String regex = ";\\[L.*;IIIIIII.{0,1};V";
+			MethodNode[] ms = findMethods(Context.current().getClassNodes(), regex, true);
+			String[] pattern = new String[]{"new.*", "dup"};
+			MethodNode m = identifyMethod(ms, false, pattern);
 			
 			// l.add(asFieldHook(s, "isDisposable"));
 			// System.out.println(s);
@@ -146,7 +146,7 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 	public class ArgsAnalyser implements IFieldAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(ClassNode)
 		 */
 		@Override
 		public List<FieldHook> findFields(ClassNode cn) {
@@ -169,7 +169,7 @@ public class ScriptEventAnalyser extends ClassAnalyser {
 	public class OpbaseAnalyser implements IFieldAnalyser {
 
 		/* (non-Javadoc)
-		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(org.objectweb.asm.tree.ClassNode)
+		 * @see org.nullbool.api.analysis.IFieldAnalyser#find(ClassNode)
 		 */
 		@Override
 		public List<FieldHook> findFields(ClassNode cn) {

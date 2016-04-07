@@ -8,11 +8,11 @@ import java.util.Set;
 
 import org.nullbool.api.Context;
 import org.nullbool.api.obfuscation.refactor.ClassTree;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.FieldInsnNode;
+import org.objectweb.custom_asm.tree.FieldNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 import org.topdank.byteengineer.commons.data.JarContents;
 
 public class UnusedFieldRemover extends Visitor {

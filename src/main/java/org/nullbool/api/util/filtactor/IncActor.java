@@ -4,7 +4,7 @@ import static org.nullbool.api.util.InstructionUtil.next;
 import static org.nullbool.api.util.InstructionUtil.resolve;
 
 import org.nullbool.api.util.IntMap;
-import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
 
 public class IncActor implements Actor {
 	private final IntMap countMap;

@@ -11,7 +11,7 @@ import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 
-import org.objectweb.asm.ClassWriter;
+import org.objectweb.custom_asm.ClassWriter;
 
 public class ClassRepository {
 

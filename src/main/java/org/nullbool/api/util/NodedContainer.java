@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.ClassNode;
 import org.topdank.byteengineer.commons.data.DataContainer;
 
 public class NodedContainer<C extends ClassNode> extends DataContainer<C> {

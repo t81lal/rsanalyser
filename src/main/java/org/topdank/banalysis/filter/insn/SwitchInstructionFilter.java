@@ -3,9 +3,9 @@ package org.topdank.banalysis.filter.insn;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.LookupSwitchInsnNode;
-import org.objectweb.asm.tree.TableSwitchInsnNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.LookupSwitchInsnNode;
+import org.objectweb.custom_asm.tree.TableSwitchInsnNode;
 import org.topdank.banalysis.filter.Filter;
 import org.topdank.banalysis.filter.InstructionFilter;
 import org.topdank.banalysis.filter.OpcodeFilter;

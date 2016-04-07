@@ -4,9 +4,9 @@ import org.nullbool.api.Builder;
 import org.nullbool.api.Context;
 import org.nullbool.api.analysis.*;
 import org.nullbool.pi.core.hook.api.FieldHook;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;

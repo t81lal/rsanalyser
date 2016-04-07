@@ -1,18 +1,18 @@
 package org.nullbool.api.obfuscation.cfg;
 
-import static org.objectweb.asm.commons.util.Assembly.OPCODES;
-import static org.objectweb.asm.commons.util.Assembly.pad;
-import static org.objectweb.asm.tree.AbstractInsnNode.FIELD_INSN;
-import static org.objectweb.asm.tree.AbstractInsnNode.IINC_INSN;
-import static org.objectweb.asm.tree.AbstractInsnNode.INT_INSN;
-import static org.objectweb.asm.tree.AbstractInsnNode.JUMP_INSN;
-import static org.objectweb.asm.tree.AbstractInsnNode.LDC_INSN;
-import static org.objectweb.asm.tree.AbstractInsnNode.LOOKUPSWITCH_INSN;
-import static org.objectweb.asm.tree.AbstractInsnNode.METHOD_INSN;
-import static org.objectweb.asm.tree.AbstractInsnNode.MULTIANEWARRAY_INSN;
-import static org.objectweb.asm.tree.AbstractInsnNode.TABLESWITCH_INSN;
-import static org.objectweb.asm.tree.AbstractInsnNode.TYPE_INSN;
-import static org.objectweb.asm.tree.AbstractInsnNode.VAR_INSN;
+import static org.objectweb.custom_asm.commons.util.Assembly.OPCODES;
+import static org.objectweb.custom_asm.commons.util.Assembly.pad;
+import static org.objectweb.custom_asm.tree.AbstractInsnNode.FIELD_INSN;
+import static org.objectweb.custom_asm.tree.AbstractInsnNode.IINC_INSN;
+import static org.objectweb.custom_asm.tree.AbstractInsnNode.INT_INSN;
+import static org.objectweb.custom_asm.tree.AbstractInsnNode.JUMP_INSN;
+import static org.objectweb.custom_asm.tree.AbstractInsnNode.LDC_INSN;
+import static org.objectweb.custom_asm.tree.AbstractInsnNode.LOOKUPSWITCH_INSN;
+import static org.objectweb.custom_asm.tree.AbstractInsnNode.METHOD_INSN;
+import static org.objectweb.custom_asm.tree.AbstractInsnNode.MULTIANEWARRAY_INSN;
+import static org.objectweb.custom_asm.tree.AbstractInsnNode.TABLESWITCH_INSN;
+import static org.objectweb.custom_asm.tree.AbstractInsnNode.TYPE_INSN;
+import static org.objectweb.custom_asm.tree.AbstractInsnNode.VAR_INSN;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,21 +20,21 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.nullbool.api.util.InstructionUtil;
-import org.objectweb.asm.commons.util.Assembly;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.IincInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.IntInsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.LdcInsnNode;
-import org.objectweb.asm.tree.LookupSwitchInsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MultiANewArrayInsnNode;
-import org.objectweb.asm.tree.TableSwitchInsnNode;
-import org.objectweb.asm.tree.TypeInsnNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.custom_asm.commons.util.Assembly;
+import org.objectweb.custom_asm.tree.AbstractInsnNode;
+import org.objectweb.custom_asm.tree.FieldInsnNode;
+import org.objectweb.custom_asm.tree.IincInsnNode;
+import org.objectweb.custom_asm.tree.InsnList;
+import org.objectweb.custom_asm.tree.IntInsnNode;
+import org.objectweb.custom_asm.tree.JumpInsnNode;
+import org.objectweb.custom_asm.tree.LabelNode;
+import org.objectweb.custom_asm.tree.LdcInsnNode;
+import org.objectweb.custom_asm.tree.LookupSwitchInsnNode;
+import org.objectweb.custom_asm.tree.MethodInsnNode;
+import org.objectweb.custom_asm.tree.MultiANewArrayInsnNode;
+import org.objectweb.custom_asm.tree.TableSwitchInsnNode;
+import org.objectweb.custom_asm.tree.TypeInsnNode;
+import org.objectweb.custom_asm.tree.VarInsnNode;
 
 /**
  * @author Bibl (don't ban me pls)

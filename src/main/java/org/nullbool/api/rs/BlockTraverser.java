@@ -5,8 +5,8 @@ import java.util.Set;
 
 import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.nullbool.api.util.InstructionUtil;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.tree.MethodInsnNode;
 
 /**
  * @author Bibl (don't ban me pls)

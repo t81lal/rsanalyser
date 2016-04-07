@@ -17,8 +17,8 @@ import org.nullbool.api.obfuscation.cfg.DominatorTree;
 import org.nullbool.api.obfuscation.cfg.ExceptionData;
 import org.nullbool.api.obfuscation.cfg.FlowBlock;
 import org.nullbool.api.obfuscation.cfg.IControlFlowGraph;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.Opcodes;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 /**
  * @author Bibl (don't ban me pls)

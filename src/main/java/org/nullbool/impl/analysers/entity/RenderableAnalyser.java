@@ -5,8 +5,8 @@ import org.nullbool.api.Context;
 import org.nullbool.api.analysis.*;
 import org.nullbool.pi.core.hook.api.FieldHook;
 import org.nullbool.pi.core.hook.api.MethodHook;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.custom_asm.tree.ClassNode;
+import org.objectweb.custom_asm.tree.MethodNode;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
